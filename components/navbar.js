@@ -19,9 +19,9 @@ function MobileNav({ open, setOpen }) {
       <div className="flex items-center justify-center h-20 bg-white filter drop-shadow-md">
         {' '}
         {/*logo container*/}
-        <link href="/" className="text-xl font-semibold">
+        <Link href="/" className="text-xl font-semibold">
           <a>HOME</a>
-        </link>
+        </Link>
       </div>
       <div className="flex flex-col ml-4">
         <a
@@ -57,9 +57,9 @@ export default function Navbar() {
     <nav className="flex items-center h-20 px-4 py-4 bg-white filter drop-shadow-md">
       <MobileNav open={open} setOpen={setOpen} />
       <div className="flex items-center w-3/12">
-        <link href="/" className="text-xl font-semibold">
-          <a>HOME</a>
-        </link>
+        <Link href="/" className="text-xl font-semibold">
+        <a>Home</a>
+        </Link>
       </div>
       <div className="flex items-center justify-end w-9/12">
         <div
