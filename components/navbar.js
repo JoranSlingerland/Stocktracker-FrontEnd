@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import Link from 'next/link';
+import React, { useState, useEffect } from 'react';
 
 function NavLink({ to, children }) {
   return (
@@ -53,45 +53,78 @@ function MobileNav({ open, setOpen }) {
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  return (
-    <nav className="flex items-center h-20 px-4 py-4 bg-white filter drop-shadow-md">
-      <MobileNav open={open} setOpen={setOpen} />
-      <div className="flex items-center w-3/12">
-        <Link href="/" className="text-xl font-semibold">
-          <a>Home</a>
-        </Link>
-      </div>
-      <div className="flex items-center justify-end w-9/12">
-        <div
-          className="relative z-50 flex flex-col items-center justify-between w-8 h-8 md:hidden"
-          onClick={() => {
-            setOpen(!open);
-          }}
-        >
-          {/* hamburger button */}
-          <span
-            className={`h-1 w-full bg-black rounded-lg transform transition duration-300 ease-in-out ${
-              open ? 'rotate-45 translate-y-3.5' : ''
-            }`}
-          />
-          <span
-            className={`h-1 w-full bg-black rounded-lg transition-all duration-300 ease-in-out ${
-              open ? 'w-0' : 'w-full'
-            }`}
-          />
-          <span
-            className={`h-1 w-full bg-black rounded-lg transform transition duration-300 ease-in-out ${
-              open ? '-rotate-45 -translate-y-3.5' : ''
-            }`}
-          />
-        </div>
 
-        <div className="hidden md:flex">
-          <NavLink to="/portfolio">portfolio</NavLink>
-          <NavLink to="/performance">Performance</NavLink>
-          <NavLink to="/actions">Actions</NavLink>
+  const NavBar = (props) => {
+    const [userInfo, setUserInfo] = useState();
+
+    useEffect(() => {
+      (async () => {
+        setUserInfo(await getUserInfo());
+      })();
+    }, []);
+
+    async function getUserInfo() {
+      try {
+        const response = await fetch('/.auth/me');
+        const payload = await response.json();
+        const { clientPrincipal } = payload;
+        return clientPrincipal;
+      } catch (error) {
+        console.error('No profile could be found');
+        return undefined;
+      }
+    }
+    return (
+      <nav className="flex items-center h-20 px-4 py-4 bg-white filter drop-shadow-md">
+        <MobileNav open={open} setOpen={setOpen} />
+        <div className="flex items-center w-3/12">
+          <Link href="/" className="text-xl font-semibold">
+            <a>Home</a>
+          </Link>
         </div>
-      </div>
-    </nav>
-  );
+        <div className="flex items-center justify-end w-9/12">
+          <div
+            className="relative z-50 flex flex-col items-center justify-between w-8 h-8 md:hidden"
+            onClick={() => {
+              setOpen(!open);
+            }}
+          >
+            {/* hamburger button */}
+            <span
+              className={`h-1 w-full bg-black rounded-lg transform transition duration-300 ease-in-out ${
+                open ? 'rotate-45 translate-y-3.5' : ''
+              }`}
+            />
+            <span
+              className={`h-1 w-full bg-black rounded-lg transition-all duration-300 ease-in-out ${
+                open ? 'w-0' : 'w-full'
+              }`}
+            />
+            <span
+              className={`h-1 w-full bg-black rounded-lg transform transition duration-300 ease-in-out ${
+                open ? '-rotate-45 -translate-y-3.5' : ''
+              }`}
+            />
+          </div>
+
+          <div className="hidden md:flex">
+            <p>{userInfo && userInfo.userDetails}</p>
+            {!userInfo && (
+              <NavLink to="/.auth/login/aad?post_login_redirect_uri=/">
+                Login
+              </NavLink>
+            )}
+            {userInfo && (
+              <NavLink to="/.auth/logout?post_logout_redirect_uri=/">
+                Login
+              </NavLink>
+            )}
+            <NavLink to="/portfolio">portfolio</NavLink>
+            <NavLink to="/performance">Performance</NavLink>
+            <NavLink to="/actions">Actions</NavLink>
+          </div>
+        </div>
+      </nav>
+    );
+  };
 }
