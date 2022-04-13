@@ -1,7 +1,7 @@
-const Home = () => (
-  <div className="home">
-    <h1>What Can I Deploy to Static Apps?</h1>
-  </div>
-);
-
-export default Home;
+export default function Home() {
+  return (
+    <div className="flex flex=col items-center justify-center w-full h-screen">
+      <h1 className="text-3xl"> Actions</h1>
+    </div>
+  );
+}

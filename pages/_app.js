@@ -1,11 +1,12 @@
-import '../styles/reset.css';
-import '../styles/main.css';
+import Navbar from '../components/navbar'
+import '../styles/globals.css'
 
-// This default export is required in a new `pages/_app.js` file.
-export default function MyApp({ Component, pageProps }) {
-  return (
-    <div>
-      <Component {...pageProps} />
-    </div>
-  );
+function MyApp({ Component, pageProps }) {
+  return <>
+    <Navbar />
+    <Component {...pageProps} />
+  </>
+
 }
+
+export default MyApp
