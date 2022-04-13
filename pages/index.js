@@ -5,7 +5,7 @@ export default function Home() {
         <h1 className="text-3xl"> Index{'\n'}</h1>
       </div>
       <div className="absolute inset-0 z-10 flex items-center justify-center">
-       <a href="/.auth/login/aad?post_login_redirect_uri=/">Login</a>
+        <a href="/.auth/login/aad?post_login_redirect_uri=/">Login</a>
       </div>
     </div>
   );
