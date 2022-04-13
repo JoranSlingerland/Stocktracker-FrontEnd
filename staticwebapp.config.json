@@ -1,6 +1,23 @@
 {
-    "navigationFallback": {
-      "rewrite": "index.html",
-      "exclude": ["*.{png,jpg,gif,svg}", "*.css"]
+  "navigationFallback": {
+    "rewrite": "index.html",
+    "exclude": [
+      "*.{png,jpg,gif,svg}",
+      "*.css"
+    ]
+  },
+  "routes": [
+    {
+      "route": "/*",
+      "allowedRoles": [
+        "authenticated"
+      ]
     }
+  ],
+  "responseOverrides": {
+    "401": {
+      "statusCode": 302,
+      "redirect": "/.auth/login/aad"
+    }
+  }
 }
