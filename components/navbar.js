@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Link from 'next/link';
 
 function NavLink({ to, children }) {
   return (
@@ -18,9 +19,9 @@ function MobileNav({ open, setOpen }) {
       <div className="flex items-center justify-center h-20 bg-white filter drop-shadow-md">
         {' '}
         {/*logo container*/}
-        <a className="text-xl font-semibold" href="/">
-          Home
-        </a>
+        <link href="/" className="text-xl font-semibold">
+          <a>HOME</a>
+        </link>
       </div>
       <div className="flex flex-col ml-4">
         <a
@@ -56,9 +57,9 @@ export default function Navbar() {
     <nav className="flex items-center h-20 px-4 py-4 bg-white filter drop-shadow-md">
       <MobileNav open={open} setOpen={setOpen} />
       <div className="flex items-center w-3/12">
-        <a className="text-2xl font-semibold" href="/">
-          HOME
-        </a>
+        <link href="/" className="text-xl font-semibold">
+          <a>HOME</a>
+        </link>
       </div>
       <div className="flex items-center justify-end w-9/12">
         <div
