@@ -58,7 +58,7 @@ export default function Navbar() {
       <MobileNav open={open} setOpen={setOpen} />
       <div className="flex items-center w-3/12">
         <Link href="/" className="text-xl font-semibold">
-        <a>Home</a>
+          <a>Home</a>
         </Link>
       </div>
       <div className="flex items-center justify-end w-9/12">
