@@ -77,9 +77,15 @@ export default function Navbar() {
     <nav className="flex items-center h-20 px-4 py-4 bg-white filter drop-shadow-md">
       <MobileNav open={open} setOpen={setOpen} />
       <div className="flex items-center w-3/12">
-        <Link href="/" className="text-xl font-semibold">
-          <a>Home</a>
-        </Link>
+        {userInfo && (
+          <NavBarLink to="/authenticated/portfolio">portfolio</NavBarLink>
+        )}
+        {userInfo && (
+          <NavBarLink to="/authenticated/performance">Performance</NavBarLink>
+        )}
+        {userInfo && (
+          <NavBarLink to="/authenticated/actions">Actions</NavBarLink>
+        )}
       </div>
       <div className="flex items-center justify-end w-9/12">
         <div
@@ -105,11 +111,7 @@ export default function Navbar() {
             }`}
           />
         </div>
-
         <div className="hidden md:flex">
-          <NavBarLink to="/authenticated/portfolio">portfolio</NavBarLink>
-          <NavBarLink to="/authenticated/performance">Performance</NavBarLink>
-          <NavBarLink to="/authenticated/actions">Actions</NavBarLink>
           {!userInfo && (
             <NavBarLink to={`/.auth/login/aad?post_login_redirect_uri=/`}>
               login
