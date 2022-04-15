@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import mypic from '../public/ms-symbollockup_signin_light.png'
+import mypic from '../public/ms-symbollockup_signin_light.png';
 
 export default function Home() {
   return (
