@@ -1,7 +1,13 @@
 export default function Home() {
   return (
-    <div className="flex flex=col items-center justify-center w-full h-screen">
-      <h1 className="text-3xl"> Performance</h1>
+    <div className="w-full">
+      {/* Title */}
+      <div>
+        <h1 className="flex items-center justify-center p-5 text-3xl py">
+          Performance
+        </h1>
+      </div>
+      {/* Content */}
     </div>
   );
 }
