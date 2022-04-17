@@ -1,23 +1,20 @@
 {
-  "navigationFallback": {
-    "rewrite": "index.html",
-    "exclude": [
-      "*.{png,jpg,gif,svg}",
-      "*.css"
-    ]
-  },
   "routes": [
+    {
+      "route": "/",
+      "redirect": "/authenticated/portfolio"
+    },
     {
       "route": "/authenticated/*",
       "allowedRoles": [
-        "authenticated"
+        "admin"
       ]
     }
   ],
   "responseOverrides": {
     "401": {
       "statusCode": 302,
-      "redirect": "/.auth/login/aad"
+      "redirect": "/login"
     }
   }
 }

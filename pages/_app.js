@@ -1,3 +1,5 @@
+// pages/_app.js
+
 import Navbar from '../components/navbar';
 import '../styles/globals.css';
 
