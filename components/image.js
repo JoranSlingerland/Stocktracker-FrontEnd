@@ -1,14 +1,9 @@
-import NextImage from "next/image";
+import NextImage from 'next/image';
 
 const customLoader = ({ src }) => {
-  return src
-}
+  return src;
+};
 
 export default function Image(props) {
-  return (
-    <NextImage
-      {...props}
-      loader={customLoader}
-    />
-  );
+  return <NextImage {...props} loader={customLoader} />;
 }
