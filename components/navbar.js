@@ -112,11 +112,6 @@ export default function Navbar() {
           />
         </div>
         <div className="hidden md:flex">
-          {!userInfo && (
-            <NavBarLink to={`/.auth/login/aad?post_login_redirect_uri=/`}>
-              login
-            </NavBarLink>
-          )}
           {userInfo && (
             <NavBarLink to={`/.auth/logout?post_logout_redirect_uri=/`}>
               Logout
