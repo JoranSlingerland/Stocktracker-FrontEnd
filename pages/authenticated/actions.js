@@ -44,8 +44,6 @@ export default function Home() {
     fetchData();
   }, []);
 
-
-
   return (
     <div className="w-full">
       {/* Titel */}
@@ -68,10 +66,7 @@ export default function Home() {
           {/* Table */}
           <div>
             <div>
-              <Table
-                columns={stocktransactionscolumns}
-                dataSource={Data}
-              />
+              <Table columns={stocktransactionscolumns} dataSource={Data} />
             </div>
           </div>
         </div>

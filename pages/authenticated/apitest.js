@@ -26,11 +26,16 @@ export default function apitest() {
       </div>
       <div>
         <h2>dashboard 2</h2>
-        {Data && Data.length > 0 && Data.map(Data => (
+        {Data &&
+          Data.length > 0 &&
+          Data.map((Data) => (
             <div key={Data.uid}>
-                <h3> {Data.symbol} - {Data.transaction_date} </h3>
+              <h3>
+                {' '}
+                {Data.symbol} - {Data.transaction_date}{' '}
+              </h3>
             </div>
-        ))}
+          ))}
       </div>
     </div>
   );
