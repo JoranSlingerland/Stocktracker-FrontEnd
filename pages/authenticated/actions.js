@@ -1,10 +1,10 @@
 import { Divider, Table } from 'antd';
 import { useState, useEffect } from 'react';
 
-const stocktransactionscolumns = [
+const InputTransactionscolumns = [
   {
-    title: 'uid',
-    dataIndex: 'uid',
+    title: 'Transaction Date',
+    dataIndex: 'transaction_date',
   },
   {
     title: 'Symbol',
@@ -32,14 +32,45 @@ const stocktransactionscolumns = [
   },
 ];
 
+const InputInvestedscolumns = [
+  {
+    title: 'Transaction Type',
+    dataIndex: 'transaction_type',
+  },
+  {
+    title: 'Transaction Date',
+    dataIndex: 'transaction_date',
+  },
+  {
+    title: 'Amount',
+    dataIndex: 'amount',
+  },
+];
+
 export default function Home() {
-  const [Data, setData] = useState(null);
+  const [InputTransactionsData, setInputTransactionsData] = useState(null);
+  const [InputTransactionsDataisLoading, setInputTransactionsDataisLoading] =
+    useState(true);
+  const [InputInvestedData, setInputInvestedData] = useState(null);
+  const [InputInvestedDataisLoading, setInputInvestedDataisLoading] =
+    useState(true);
 
   useEffect(() => {
     async function fetchData() {
       const response = await fetch('/api/get_table_data/input_transactions');
-      const Data = await response.json();
-      setData(Data);
+      const InputTransactionsData = await response.json();
+      setInputTransactionsData(InputTransactionsData);
+      setInputTransactionsDataisLoading(false);
+    }
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch('/api/get_table_data/input_invested');
+      const InputInvestedData = await response.json();
+      setInputInvestedData(InputInvestedData);
+      setInputInvestedDataisLoading(false);
     }
     fetchData();
   }, []);
@@ -66,7 +97,11 @@ export default function Home() {
           {/* Table */}
           <div>
             <div>
-              <Table columns={stocktransactionscolumns} dataSource={Data} />
+              <Table
+                loading={InputTransactionsDataisLoading}
+                columns={InputTransactionscolumns}
+                dataSource={InputTransactionsData}
+              />
             </div>
           </div>
         </div>
@@ -82,7 +117,11 @@ export default function Home() {
           {/* Table */}
           <div>
             <div>
-              {/* <Table columns={moneytransactionscolumns} dataSource={data} /> */}
+              <Table
+                loading={InputInvestedDataisLoading}
+                columns={InputInvestedscolumns}
+                dataSource={InputInvestedData}
+              />
             </div>
           </div>
         </div>
