@@ -9,6 +9,12 @@
       "allowedRoles": [
         "admin"
       ]
+    },
+    {
+      "route": "/api/*",
+      "allowedRoles": [
+        "admin"
+      ]
     }
   ],
   "responseOverrides": {
