@@ -6,7 +6,6 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import React from 'react';
-import { Link } from 'next/link';
 import UserInfo from './UserInfo';
 
 const { SubMenu } = Menu;
