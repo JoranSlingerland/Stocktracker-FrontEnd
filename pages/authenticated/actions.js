@@ -1,50 +1,80 @@
 import { Divider, Table } from 'antd';
+import { useState, useEffect } from 'react';
 
-const columns = [
+const InputTransactionscolumns = [
   {
-    title: 'Name',
-    dataIndex: 'name',
-    width: '30%',
+    title: 'Transaction Date',
+    dataIndex: 'transaction_date',
   },
   {
-    title: 'Age',
-    dataIndex: 'age',
+    title: 'Symbol',
+    dataIndex: 'symbol',
   },
   {
-    title: 'Address',
-    dataIndex: 'address',
-    width: '40%',
+    title: 'Cost',
+    dataIndex: 'cost',
+  },
+  {
+    title: 'Quantity',
+    dataIndex: 'quantity',
+  },
+  {
+    title: 'Transaction Type',
+    dataIndex: 'transaction_type',
+  },
+  {
+    title: 'Transaction Cost',
+    dataIndex: 'transaction_cost',
+  },
+  {
+    title: 'Currency',
+    dataIndex: 'currency',
   },
 ];
 
-const data = [
+const InputInvestedscolumns = [
   {
-    key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
+    title: 'Transaction Type',
+    dataIndex: 'transaction_type',
   },
   {
-    key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
+    title: 'Transaction Date',
+    dataIndex: 'transaction_date',
   },
   {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-  },
-  {
-    key: '4',
-    name: 'Jim Red',
-    age: 32,
-    address: 'London No. 2 Lake Park',
+    title: 'Amount',
+    dataIndex: 'amount',
   },
 ];
 
 export default function Home() {
+  const [InputTransactionsData, setInputTransactionsData] = useState(null);
+  const [InputTransactionsDataisLoading, setInputTransactionsDataisLoading] =
+    useState(true);
+  const [InputInvestedData, setInputInvestedData] = useState(null);
+  const [InputInvestedDataisLoading, setInputInvestedDataisLoading] =
+    useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch('/api/get_table_data/input_transactions');
+      const InputTransactionsData = await response.json();
+      setInputTransactionsData(InputTransactionsData);
+      setInputTransactionsDataisLoading(false);
+    }
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch('/api/get_table_data/input_invested');
+      const InputInvestedData = await response.json();
+      setInputInvestedData(InputInvestedData);
+      setInputInvestedDataisLoading(false);
+    }
+    fetchData();
+  }, []);
+
   return (
     <div className="w-full">
       {/* Titel */}
@@ -67,7 +97,11 @@ export default function Home() {
           {/* Table */}
           <div>
             <div>
-              <Table columns={columns} dataSource={data} />
+              <Table
+                loading={InputTransactionsDataisLoading}
+                columns={InputTransactionscolumns}
+                dataSource={InputTransactionsData}
+              />
             </div>
           </div>
         </div>
@@ -83,7 +117,11 @@ export default function Home() {
           {/* Table */}
           <div>
             <div>
-              <Table columns={columns} dataSource={data} />
+              <Table
+                loading={InputInvestedDataisLoading}
+                columns={InputInvestedscolumns}
+                dataSource={InputInvestedData}
+              />
             </div>
           </div>
         </div>
