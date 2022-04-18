@@ -8,9 +8,8 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center">
       <div className="py-10 text-4xl">
-        {' '}
         <h1>Welcome to the stocktracker web app</h1>
-      </div>{' '}
+      </div>
       <div className="py-10">
         <Link
           href={
