@@ -1,50 +1,51 @@
 import { Divider, Table } from 'antd';
+import { useState, useEffect } from 'react';
 
-const columns = [
+const stocktransactionscolumns = [
   {
-    title: 'Name',
-    dataIndex: 'name',
-    width: '30%',
+    title: 'uid',
+    dataIndex: 'uid',
   },
   {
-    title: 'Age',
-    dataIndex: 'age',
+    title: 'Symbol',
+    dataIndex: 'symbol',
   },
   {
-    title: 'Address',
-    dataIndex: 'address',
-    width: '40%',
-  },
-];
-
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
+    title: 'Cost',
+    dataIndex: 'cost',
   },
   {
-    key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
+    title: 'Quantity',
+    dataIndex: 'quantity',
   },
   {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
+    title: 'Transaction Type',
+    dataIndex: 'transaction_type',
   },
   {
-    key: '4',
-    name: 'Jim Red',
-    age: 32,
-    address: 'London No. 2 Lake Park',
+    title: 'Transaction Cost',
+    dataIndex: 'transaction_cost',
+  },
+  {
+    title: 'Currency',
+    dataIndex: 'currency',
   },
 ];
 
 export default function Home() {
+  const [Data, setData] = useState(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch('/api/get_table_data/input_transactions');
+      const Data = await response.json();
+      setData(Data);
+    }
+    fetchData();
+  }, []);
+
+
+
   return (
     <div className="w-full">
       {/* Titel */}
@@ -67,7 +68,10 @@ export default function Home() {
           {/* Table */}
           <div>
             <div>
-              <Table columns={columns} dataSource={data} />
+              <Table
+                columns={stocktransactionscolumns}
+                dataSource={Data}
+              />
             </div>
           </div>
         </div>
@@ -83,7 +87,7 @@ export default function Home() {
           {/* Table */}
           <div>
             <div>
-              <Table columns={columns} dataSource={data} />
+              {/* <Table columns={moneytransactionscolumns} dataSource={data} /> */}
             </div>
           </div>
         </div>
