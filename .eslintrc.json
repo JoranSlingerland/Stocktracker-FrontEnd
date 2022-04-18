@@ -4,6 +4,7 @@
     "rules": {
       "@next/next/google-font-display": "off",
       "prettier/prettier": ["error"],
-      "react-hooks/rules-of-hooks": "off"
+      "react-hooks/rules-of-hooks": "off",
+      "next/next/no-html-link-for-pages": "off"
     }
   }
