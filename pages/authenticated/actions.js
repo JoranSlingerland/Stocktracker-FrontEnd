@@ -57,7 +57,9 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch(`/api/get_table_data/input_transactions?code=${process.env.api_key}`);
+      const response = await fetch(
+        `/api/get_table_data/input_transactions?code=${process.env.api_key}`
+      );
       const InputTransactionsData = await response.json();
       setInputTransactionsData(InputTransactionsData);
       setInputTransactionsDataisLoading(false);
@@ -67,7 +69,9 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch(`/api/get_table_data/input_invested?code=${process.env.api_key}`);
+      const response = await fetch(
+        `/api/get_table_data/input_invested?code=${process.env.api_key}`
+      );
       const InputInvestedData = await response.json();
       setInputInvestedData(InputInvestedData);
       setInputInvestedDataisLoading(false);
