@@ -1,5 +1,48 @@
-import DynamicTable from '../../components/DynamicTable';
-import imputtabledata from '../../components/TableData';
+import { Divider, Table } from 'antd';
+
+const columns = [
+  {
+    title: 'Name',
+    dataIndex: 'name',
+    width: '30%',
+  },
+  {
+    title: 'Age',
+    dataIndex: 'age',
+  },
+  {
+    title: 'Address',
+    dataIndex: 'address',
+    width: '40%',
+  },
+];
+
+const data = [
+  {
+    key: '1',
+    name: 'John Brown',
+    age: 32,
+    address: 'New York No. 1 Lake Park',
+  },
+  {
+    key: '2',
+    name: 'Jim Green',
+    age: 42,
+    address: 'London No. 1 Lake Park',
+  },
+  {
+    key: '3',
+    name: 'Joe Black',
+    age: 32,
+    address: 'Sidney No. 1 Lake Park',
+  },
+  {
+    key: '4',
+    name: 'Jim Red',
+    age: 32,
+    address: 'London No. 2 Lake Park',
+  },
+];
 
 export default function Home() {
   return (
@@ -10,6 +53,7 @@ export default function Home() {
           Actions
         </h1>
       </div>
+      <Divider plain></Divider>
       {/* Content */}
       <div>
         {/* stock transactions */}
@@ -21,12 +65,13 @@ export default function Home() {
             </h2>
           </div>
           {/* Table */}
-          <div className="flex flex-col mt-8 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-            <div className="inline-block min-w-full overflow-hidden align-middle border-b border-gray-200 shadow sm:rounded-lg">
-              <DynamicTable TableData={imputtabledata} />
+          <div>
+            <div>
+              <Table columns={columns} dataSource={data} />
             </div>
           </div>
         </div>
+        <Divider plain></Divider>
         {/* invested transactions */}
         <div>
           {/* Header */}
@@ -36,9 +81,9 @@ export default function Home() {
             </h2>
           </div>
           {/* Table */}
-          <div className="flex flex-col mt-8 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-            <div className="inline-block min-w-full overflow-hidden align-middle border-b border-gray-200 shadow sm:rounded-lg">
-              <DynamicTable TableData={imputtabledata} />
+          <div>
+            <div>
+              <Table columns={columns} dataSource={data} />
             </div>
           </div>
         </div>
