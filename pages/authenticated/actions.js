@@ -101,6 +101,8 @@ export default function Home() {
                 loading={InputTransactionsDataisLoading}
                 columns={InputTransactionscolumns}
                 dataSource={InputTransactionsData}
+                pagination={false}
+                size="small"
               />
             </div>
           </div>
@@ -121,6 +123,8 @@ export default function Home() {
                 loading={InputInvestedDataisLoading}
                 columns={InputInvestedscolumns}
                 dataSource={InputInvestedData}
+                pagination={false}
+                size="small"
               />
             </div>
           </div>
