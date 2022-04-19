@@ -1,5 +1,7 @@
 import { Divider, Table, Tabs } from 'antd';
 import { useState, useEffect } from 'react';
+import { Pie } from '@ant-design/plots';
+import PieSetup from '../../components/pieSetup';
 
 const { TabPane } = Tabs;
 
@@ -38,6 +40,17 @@ const SingleDaycolumns = [
   },
 ];
 
+const data = [
+  {
+    type: 'AMD',
+    value: 27,
+  },
+  {
+    type: 'Apple',
+    value: 25,
+  },
+];
+
 export default function Home() {
   const [SingleDayData, setSingleDayData] = useState(null);
   const [SingleDayDataisLoading, setSingleDayDataisLoading] = useState(true);
@@ -62,10 +75,10 @@ export default function Home() {
       </div>
       <Divider plain></Divider>
       {/* Tabs */}
-      <div className="w-full h-96 card-container">
+      <div className="w-full card-container">
         <Tabs type="card" defaultActiveKey="1" onChange={callback}>
-          <TabPane tab="Stocks" key="1">
-            Content of Tab Pane 1
+          <TabPane className="max-w-md" tab="Stocks" key="1">
+            <PieSetup data={data} />
           </TabPane>
           <TabPane tab="Country" key="2">
             Content of Tab Pane 2
