@@ -54,14 +54,15 @@ const data = [
 export default function Home() {
   const [SingleDayData, setSingleDayData] = useState(null);
   const [SingleDayDataisLoading, setSingleDayDataisLoading] = useState(true);
-  const [StockPieData, setStockPieData] = useState([{type: 'loading', value: 100}]);
+  const [StockPieData, setStockPieData] = useState([
+    { type: 'loading', value: 100 },
+  ]);
 
   useEffect(() => {
     async function fetchData() {
       const response = await fetch(`/api/get_pie_data/stocks`);
       const StockPieData = await response.json();
       setStockPieData(StockPieData);
-      setStockPieDataisLoading(false);
     }
     fetchData();
   }, []);

@@ -1,6 +1,6 @@
 import { Pie } from '@ant-design/plots';
 
-export default function PieSetup( {data} ) {
+export default function PieSetup({ data }) {
   const config = {
     appendPadding: 10,
     data,
@@ -16,9 +16,22 @@ export default function PieSetup( {data} ) {
         textAlign: 'center',
       },
     },
+    legend: {
+      itemValue: {
+        formatter: (text, item) => {
+          const items = data.filter((d) => d.type === item.value);
+          return items.length
+            ? items.reduce((a, b) => a + b.value, 0) / items.length
+            : '-';
+        },
+      },
+    },
     interactions: [
       {
         type: 'element-active',
+      },
+      {
+        type: 'pie-legend-active',
       },
     ],
   };
