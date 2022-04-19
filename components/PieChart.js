@@ -1,6 +1,6 @@
 import { Pie } from '@ant-design/plots';
 
-export default function PieSetup({ data }) {
+export default function PieChart({ data }) {
   const config = {
     appendPadding: 10,
     data,
