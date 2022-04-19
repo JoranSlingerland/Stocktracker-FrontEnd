@@ -1,7 +1,7 @@
 import { Divider, Table, Tabs } from 'antd';
 import { useState, useEffect } from 'react';
 import { Pie } from '@ant-design/plots';
-import PieSetup from '../../components/pieSetup';
+import PieChart from '../../components/PieChart';
 
 const { TabPane } = Tabs;
 
@@ -52,8 +52,21 @@ const data = [
 ];
 
 export default function Home() {
+  // get table data
   const [SingleDayData, setSingleDayData] = useState(null);
   const [SingleDayDataisLoading, setSingleDayDataisLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch(`/api/get_table_data/single_day`);
+      const SingleDayData = await response.json();
+      setSingleDayData(SingleDayData);
+      setSingleDayDataisLoading(false);
+    }
+    fetchData();
+  }, []);
+
+  // Get stock pie chart data
   const [StockPieData, setStockPieData] = useState([
     { type: 'loading', value: 100 },
   ]);
@@ -67,12 +80,16 @@ export default function Home() {
     fetchData();
   }, []);
 
+  // Get currency pie chart data
+  const [CurrencyPieData, setCurrencyPieData] = useState([
+    { type: 'loading', value: 100 },
+  ]);
+
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch(`/api/get_table_data/single_day`);
-      const SingleDayData = await response.json();
-      setSingleDayData(SingleDayData);
-      setSingleDayDataisLoading(false);
+      const response = await fetch(`/api/get_pie_data/currency`);
+      const CurrencyPieData = await response.json();
+      setCurrencyPieData(CurrencyPieData);
     }
     fetchData();
   }, []);
@@ -89,19 +106,19 @@ export default function Home() {
       {/* Tabs */}
       <div className="w-full card-container">
         <Tabs type="card" defaultActiveKey="1" onChange={callback}>
-          <TabPane className="max-w-md" tab="Stocks" key="1">
-            <PieSetup data={StockPieData} />
+          <TabPane className="max-w-2xl" tab="Stocks" key="1">
+            <PieChart data={StockPieData} />
           </TabPane>
-          <TabPane tab="Country" key="2">
+          <TabPane className="max-w-2xl" tab="Country" key="2">
             Content of Tab Pane 2
           </TabPane>
-          <TabPane tab="Currency" key="3">
-            Content of Tab Pane 3
+          <TabPane className="max-w-2xl" tab="Currency" key="3">
+            <PieChart data={CurrencyPieData} />
           </TabPane>
-          <TabPane tab="Exchange" key="4">
+          <TabPane className="max-w-2xl" tab="Exchange" key="4">
             Content of Tab Pane 4
           </TabPane>
-          <TabPane tab="Effect Type" key="5">
+          <TabPane className="max-w-2xl" tab="Effect Type" key="5">
             Content of Tab Pane 5
           </TabPane>
         </Tabs>
