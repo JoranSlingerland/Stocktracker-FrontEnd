@@ -54,6 +54,17 @@ const data = [
 export default function Home() {
   const [SingleDayData, setSingleDayData] = useState(null);
   const [SingleDayDataisLoading, setSingleDayDataisLoading] = useState(true);
+  const [StockPieData, setStockPieData] = useState([{type: 'loading', value: 100}]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch(`/api/get_pie_data/stocks`);
+      const StockPieData = await response.json();
+      setStockPieData(StockPieData);
+      setStockPieDataisLoading(false);
+    }
+    fetchData();
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -78,7 +89,7 @@ export default function Home() {
       <div className="w-full card-container">
         <Tabs type="card" defaultActiveKey="1" onChange={callback}>
           <TabPane className="max-w-md" tab="Stocks" key="1">
-            <PieSetup data={data} />
+            <PieSetup data={StockPieData} />
           </TabPane>
           <TabPane tab="Country" key="2">
             Content of Tab Pane 2
