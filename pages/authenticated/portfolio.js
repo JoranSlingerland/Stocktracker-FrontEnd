@@ -94,6 +94,34 @@ export default function Home() {
     fetchData();
   }, []);
 
+  // Get sector pie chart data
+  const [SectorPieData, setSectorPieData] = useState([
+    { type: 'loading', value: 100 },
+  ]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch(`/api/get_pie_data/sector`);
+      const SectorPieData = await response.json();
+      setSectorPieData(SectorPieData);
+    }
+    fetchData();
+  }, []);
+
+  // Get country pie chart data
+  const [CountryPieData, setCountryPieData] = useState([
+    { type: 'loading', value: 100 },
+  ]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch(`/api/get_pie_data/country`);
+      const CountryPieData = await response.json();
+      setCountryPieData(CountryPieData);
+    }
+    fetchData();
+  }, []);
+
   return (
     <div className="w-full">
       {/* Titel */}
@@ -110,16 +138,13 @@ export default function Home() {
             <PieChart data={StockPieData} />
           </TabPane>
           <TabPane className="max-w-2xl" tab="Country" key="2">
-            Content of Tab Pane 2
+            <PieChart data={CountryPieData} />
           </TabPane>
           <TabPane className="max-w-2xl" tab="Currency" key="3">
             <PieChart data={CurrencyPieData} />
           </TabPane>
-          <TabPane className="max-w-2xl" tab="Exchange" key="4">
-            Content of Tab Pane 4
-          </TabPane>
-          <TabPane className="max-w-2xl" tab="Effect Type" key="5">
-            Content of Tab Pane 5
+          <TabPane className="max-w-2xl" tab="Sector" key="4">
+            <PieChart data={SectorPieData} />
           </TabPane>
         </Tabs>
       </div>
