@@ -1,8 +1,7 @@
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import React, { useState, Component, useEffect } from 'react';
-import { FilterMatchMode, FilterOperator } from 'primereact/api';
-import { InputText } from 'primereact/inputtext';
+import React, { useState } from 'react';
+import { FilterMatchMode } from 'primereact/api';
 import { Button } from 'primereact/button';
 import { MultiSelect } from 'primereact/multiselect';
 
@@ -31,7 +30,6 @@ export default function PrimeFaceTable({ data, columns, loading }) {
     setGlobalFilterValue1('');
   };
 
- 
   // Column select setup
   const [selectedColumns, setSelectedColumns] = useState(columns);
 
@@ -43,10 +41,8 @@ export default function PrimeFaceTable({ data, columns, loading }) {
     setSelectedColumns(orderedSelectedColumns);
   };
 
-
-
-   // Header setup
-   const renderHeader1 = () => {
+  // Header setup
+  const renderHeader1 = () => {
     return (
       <div className="flex justify-content-between">
         <Button
@@ -56,14 +52,6 @@ export default function PrimeFaceTable({ data, columns, loading }) {
           className="p-button-outlined"
           onClick={clearFilter1}
         />
-        <span className="p-input-icon-left">
-          <i className="pi pi-search" />
-          <InputText
-            value={globalFilterValue1}
-            onChange={onGlobalFilterChange1}
-            placeholder="Keyword Search"
-          />
-        </span>
         <div style={{ textAlign: 'left' }}>
           <MultiSelect
             value={selectedColumns}
@@ -72,8 +60,7 @@ export default function PrimeFaceTable({ data, columns, loading }) {
             onChange={onColumnToggle}
             placeholder="Select Columns"
             fixedPlaceholder="true"
-            style={{ width: '20em' }
-          }
+            style={{ width: '20em' }}
           />
         </div>
       </div>
