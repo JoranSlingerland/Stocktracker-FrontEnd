@@ -41,6 +41,42 @@ export default function PrimeFaceTable({ data, columns, loading }) {
     setSelectedColumns(orderedSelectedColumns);
   };
 
+  // Formating setup
+  const formatCurrency = (value) => {
+    return value.toLocaleString('nl-NL', {
+      style: 'currency',
+      currency: 'EUR',
+    });
+  };
+
+  const average_costTemplate = (rowData) => {
+    return formatCurrency(rowData.average_cost);
+  };
+
+  const total_costTemplate = (rowData) => {
+    return formatCurrency(rowData.total_cost);
+  };
+
+  const total_valueTemplate = (rowData) => {
+    return formatCurrency(rowData.total_value);
+  };
+
+  const transaction_costTemplate = (rowData) => {
+    return formatCurrency(rowData.transaction_cost);
+  };
+
+  const close_valueTemplate = (rowData) => {
+    return formatCurrency(rowData.close_value);
+  };
+
+  const costTemplate = (rowData) => {
+    return formatCurrency(rowData.cost);
+  };
+
+  const amountTemplate = (rowData) => {
+    return formatCurrency(rowData.amount);
+  };
+
   // Header setup
   const renderHeader1 = () => {
     return (
@@ -69,15 +105,94 @@ export default function PrimeFaceTable({ data, columns, loading }) {
   const header1 = renderHeader1();
 
   const dynamicColumns = selectedColumns.map((col, i) => {
-    return (
-      <Column
-        key={col.field}
-        field={col.field}
-        header={col.header}
-        sortable
-        filter
-      />
-    );
+    if (col.field === 'average_cost') {
+      return (
+        <Column
+          key={col.field}
+          field={col.field}
+          header={col.header}
+          body={average_costTemplate}
+          sortable
+          filter
+        />
+      );
+    } else if (col.field === 'total_cost') {
+      return (
+        <Column
+          key={col.field}
+          field={col.field}
+          header={col.header}
+          body={total_costTemplate}
+          sortable
+          filter
+        />
+      );
+    } else if (col.field === 'total_value') {
+      return (
+        <Column
+          key={col.field}
+          field={col.field}
+          header={col.header}
+          body={total_valueTemplate}
+          sortable
+          filter
+        />
+      );
+    } else if (col.field === 'transaction_cost') {
+      return (
+        <Column
+          key={col.field}
+          field={col.field}
+          header={col.header}
+          body={transaction_costTemplate}
+          sortable
+          filter
+        />
+      );
+    } else if (col.field === 'close_value') {
+      return (
+        <Column
+          key={col.field}
+          field={col.field}
+          header={col.header}
+          body={close_valueTemplate}
+          sortable
+          filter
+        />
+      );
+    } else if (col.field === 'cost') {
+      return (
+        <Column
+          key={col.field}
+          field={col.field}
+          header={col.header}
+          body={costTemplate}
+          sortable
+          filter
+        />
+      );
+    } else if (col.field === 'amount') {
+      return (
+        <Column
+          key={col.field}
+          field={col.field}
+          header={col.header}
+          body={amountTemplate}
+          sortable
+          filter
+        />
+      );
+    } else {
+      return (
+        <Column
+          key={col.field}
+          field={col.field}
+          header={col.header}
+          sortable
+          filter
+        />
+      );
+    }
   });
 
   return (
