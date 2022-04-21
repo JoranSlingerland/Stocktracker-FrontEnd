@@ -77,6 +77,15 @@ export default function PrimeFaceTable({ data, columns, loading }) {
     return formatCurrency(rowData.amount);
   };
 
+  const stockNameTemplate = (rowData) => {
+    return (
+      <div className="flex flex-row">
+        <img className="pr-1" alt="logo" src={rowData.logo} width={35} />{' '}
+        {rowData.name}
+      </div>
+    );
+  };
+
   // Header setup
   const renderHeader1 = () => {
     return (
@@ -178,6 +187,17 @@ export default function PrimeFaceTable({ data, columns, loading }) {
           field={col.field}
           header={col.header}
           body={amountTemplate}
+          sortable
+          filter
+        />
+      );
+    } else if (col.field === 'name') {
+      return (
+        <Column
+          key={col.field}
+          field={col.field}
+          header={col.header}
+          body={stockNameTemplate}
           sortable
           filter
         />
