@@ -1,6 +1,5 @@
 import { Divider, Table, Tabs } from 'antd';
 import { useState, useEffect } from 'react';
-import { Pie } from '@ant-design/plots';
 import PieChart from '../../components/PieChart';
 
 const { TabPane } = Tabs;
@@ -13,6 +12,14 @@ const SingleDaycolumns = [
   {
     title: 'Symbol',
     dataIndex: 'symbol',
+  },
+  {
+    title: 'Name',
+    dataIndex: 'name',
+  },
+  {
+    title: 'Country',
+    dataIndex: 'country',
   },
   {
     title: 'Average Cost',
@@ -37,17 +44,6 @@ const SingleDaycolumns = [
   {
     title: 'Close Value',
     dataIndex: 'close_value',
-  },
-];
-
-const data = [
-  {
-    type: 'AMD',
-    value: 27,
-  },
-  {
-    type: 'Apple',
-    value: 25,
   },
 ];
 
@@ -134,16 +130,16 @@ export default function Home() {
       {/* Tabs */}
       <div className="w-full card-container">
         <Tabs type="card" defaultActiveKey="1" onChange={callback}>
-          <TabPane className="max-w-2xl" tab="Stocks" key="1">
+          <TabPane className="max-w-4xl" tab="Stocks" key="1">
             <PieChart data={StockPieData} />
           </TabPane>
-          <TabPane className="max-w-2xl" tab="Country" key="2">
+          <TabPane className="max-w-4xl" tab="Country" key="2">
             <PieChart data={CountryPieData} />
           </TabPane>
-          <TabPane className="max-w-2xl" tab="Currency" key="3">
+          <TabPane className="max-w-4xl" tab="Currency" key="3">
             <PieChart data={CurrencyPieData} />
           </TabPane>
-          <TabPane className="max-w-2xl" tab="Sector" key="4">
+          <TabPane className="max-w-4xl" tab="Sector" key="4">
             <PieChart data={SectorPieData} />
           </TabPane>
         </Tabs>
