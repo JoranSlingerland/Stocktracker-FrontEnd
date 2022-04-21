@@ -1,6 +1,7 @@
 import { Divider, Table, Tabs } from 'antd';
 import { useState, useEffect } from 'react';
 import PieChart from '../../components/PieChart';
+import PrimeFaceTable from '../../components/PrimeFaceTable';
 
 const { TabPane } = Tabs;
 
@@ -10,40 +11,40 @@ function callback(key) {
 
 const SingleDaycolumns = [
   {
-    title: 'Symbol',
-    dataIndex: 'symbol',
+    header: 'Symbol',
+    field: 'symbol',
   },
   {
-    title: 'Name',
-    dataIndex: 'name',
+    header: 'Name',
+    field: 'name',
   },
   {
-    title: 'Country',
-    dataIndex: 'country',
+    header: 'Country',
+    field: 'country',
   },
   {
-    title: 'Average Cost',
-    dataIndex: 'average_cost',
+    header: 'Average Cost',
+    field: 'average_cost',
   },
   {
-    title: 'Total Cost',
-    dataIndex: 'total_cost',
+    header: 'Total Cost',
+    field: 'total_cost',
   },
   {
-    title: 'Total Value',
-    dataIndex: 'total_value',
+    header: 'Total Value',
+    field: 'total_value',
   },
   {
-    title: 'Quantity',
-    dataIndex: 'quantity',
+    header: 'Quantity',
+    field: 'quantity',
   },
   {
-    title: 'Transaction Cost',
-    dataIndex: 'transaction_cost',
+    header: 'Transaction Cost',
+    field: 'transaction_cost',
   },
   {
-    title: 'Close Value',
-    dataIndex: 'close_value',
+    header: 'Close Value',
+    field: 'close_value',
   },
 ];
 
@@ -147,12 +148,10 @@ export default function Home() {
       <Divider plain></Divider>
       {/* Table */}
       <div className="w-full">
-        <Table
+        <PrimeFaceTable
           loading={SingleDayDataisLoading}
           columns={SingleDaycolumns}
-          dataSource={SingleDayData}
-          pagination={false}
-          size="small"
+          data={SingleDayData}
         />
       </div>
     </div>
