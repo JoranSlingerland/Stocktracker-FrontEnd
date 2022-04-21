@@ -8,7 +8,6 @@ export default function PieChart({ data }) {
     });
   };
 
-
   const config = {
     appendPadding: 10,
     data,
@@ -27,8 +26,12 @@ export default function PieChart({ data }) {
     legend: {
       itemValue: {
         formatter: (text, item) => {
-          const items = data.filter((d) => d.type === item.value)
-          return formatCurrency(items.length ? items.reduce((a, b) => a + b.value, 0) / items.length : '-');
+          const items = data.filter((d) => d.type === item.value);
+          return formatCurrency(
+            items.length
+              ? items.reduce((a, b) => a + b.value, 0) / items.length
+              : '-'
+          );
         },
       },
     },
