@@ -1,49 +1,50 @@
 import { Divider, Table } from 'antd';
 import { useState, useEffect } from 'react';
+import PrimeFaceTable from '../../components/PrimeFaceTable';
 
 const InputTransactionscolumns = [
   {
-    title: 'Transaction Date',
-    dataIndex: 'transaction_date',
+    header: 'Transaction Date',
+    field: 'transaction_date',
   },
   {
-    title: 'Symbol',
-    dataIndex: 'symbol',
+    header: 'Symbol',
+    field: 'symbol',
   },
   {
-    title: 'Cost',
-    dataIndex: 'cost',
+    header: 'Cost',
+    field: 'cost',
   },
   {
-    title: 'Quantity',
-    dataIndex: 'quantity',
+    header: 'Quantity',
+    field: 'quantity',
   },
   {
-    title: 'Transaction Type',
-    dataIndex: 'transaction_type',
+    header: 'Transaction Type',
+    field: 'transaction_type',
   },
   {
-    title: 'Transaction Cost',
-    dataIndex: 'transaction_cost',
+    header: 'Transaction Cost',
+    field: 'transaction_cost',
   },
   {
-    title: 'Currency',
-    dataIndex: 'currency',
+    header: 'Currency',
+    field: 'currency',
   },
 ];
 
 const InputInvestedscolumns = [
   {
-    title: 'Transaction Type',
-    dataIndex: 'transaction_type',
+    header: 'Transaction Type',
+    field: 'transaction_type',
   },
   {
-    title: 'Transaction Date',
-    dataIndex: 'transaction_date',
+    header: 'Transaction Date',
+    field: 'transaction_date',
   },
   {
-    title: 'Amount',
-    dataIndex: 'amount',
+    header: 'Amount',
+    field: 'amount',
   },
 ];
 
@@ -97,12 +98,10 @@ export default function Home() {
           {/* Table */}
           <div>
             <div>
-              <Table
+              <PrimeFaceTable
                 loading={InputTransactionsDataisLoading}
                 columns={InputTransactionscolumns}
-                dataSource={InputTransactionsData}
-                pagination={false}
-                size="small"
+                data={InputTransactionsData}
               />
             </div>
           </div>
@@ -119,12 +118,10 @@ export default function Home() {
           {/* Table */}
           <div>
             <div>
-              <Table
+              <PrimeFaceTable
                 loading={InputInvestedDataisLoading}
                 columns={InputInvestedscolumns}
-                dataSource={InputInvestedData}
-                pagination={false}
-                size="small"
+                data={InputInvestedData}
               />
             </div>
           </div>

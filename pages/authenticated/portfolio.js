@@ -1,7 +1,7 @@
 import { Divider, Table, Tabs } from 'antd';
 import { useState, useEffect } from 'react';
-import { Pie } from '@ant-design/plots';
 import PieChart from '../../components/PieChart';
+import PrimeFaceTable from '../../components/PrimeFaceTable';
 
 const { TabPane } = Tabs;
 
@@ -11,43 +11,40 @@ function callback(key) {
 
 const SingleDaycolumns = [
   {
-    title: 'Symbol',
-    dataIndex: 'symbol',
+    header: 'Symbol',
+    field: 'symbol',
   },
   {
-    title: 'Average Cost',
-    dataIndex: 'average_cost',
+    header: 'Name',
+    field: 'name',
   },
   {
-    title: 'Total Cost',
-    dataIndex: 'total_cost',
+    header: 'Country',
+    field: 'country',
   },
   {
-    title: 'Total Value',
-    dataIndex: 'total_value',
+    header: 'Average Cost',
+    field: 'average_cost',
   },
   {
-    title: 'Quantity',
-    dataIndex: 'quantity',
+    header: 'Total Cost',
+    field: 'total_cost',
   },
   {
-    title: 'Transaction Cost',
-    dataIndex: 'transaction_cost',
+    header: 'Total Value',
+    field: 'total_value',
   },
   {
-    title: 'Close Value',
-    dataIndex: 'close_value',
-  },
-];
-
-const data = [
-  {
-    type: 'AMD',
-    value: 27,
+    header: 'Quantity',
+    field: 'quantity',
   },
   {
-    type: 'Apple',
-    value: 25,
+    header: 'Transaction Cost',
+    field: 'transaction_cost',
+  },
+  {
+    header: 'Close Value',
+    field: 'close_value',
   },
 ];
 
@@ -94,6 +91,34 @@ export default function Home() {
     fetchData();
   }, []);
 
+  // Get sector pie chart data
+  const [SectorPieData, setSectorPieData] = useState([
+    { type: 'loading', value: 100 },
+  ]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch(`/api/get_pie_data/sector`);
+      const SectorPieData = await response.json();
+      setSectorPieData(SectorPieData);
+    }
+    fetchData();
+  }, []);
+
+  // Get country pie chart data
+  const [CountryPieData, setCountryPieData] = useState([
+    { type: 'loading', value: 100 },
+  ]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch(`/api/get_pie_data/country`);
+      const CountryPieData = await response.json();
+      setCountryPieData(CountryPieData);
+    }
+    fetchData();
+  }, []);
+
   return (
     <div className="w-full">
       {/* Titel */}
@@ -106,32 +131,27 @@ export default function Home() {
       {/* Tabs */}
       <div className="w-full card-container">
         <Tabs type="card" defaultActiveKey="1" onChange={callback}>
-          <TabPane className="max-w-2xl" tab="Stocks" key="1">
+          <TabPane className="max-w-4xl" tab="Stocks" key="1">
             <PieChart data={StockPieData} />
           </TabPane>
-          <TabPane className="max-w-2xl" tab="Country" key="2">
-            Content of Tab Pane 2
+          <TabPane className="max-w-4xl" tab="Country" key="2">
+            <PieChart data={CountryPieData} />
           </TabPane>
-          <TabPane className="max-w-2xl" tab="Currency" key="3">
+          <TabPane className="max-w-4xl" tab="Currency" key="3">
             <PieChart data={CurrencyPieData} />
           </TabPane>
-          <TabPane className="max-w-2xl" tab="Exchange" key="4">
-            Content of Tab Pane 4
-          </TabPane>
-          <TabPane className="max-w-2xl" tab="Effect Type" key="5">
-            Content of Tab Pane 5
+          <TabPane className="max-w-4xl" tab="Sector" key="4">
+            <PieChart data={SectorPieData} />
           </TabPane>
         </Tabs>
       </div>
       <Divider plain></Divider>
       {/* Table */}
       <div className="w-full">
-        <Table
+        <PrimeFaceTable
           loading={SingleDayDataisLoading}
           columns={SingleDaycolumns}
-          dataSource={SingleDayData}
-          pagination={false}
-          size="small"
+          data={SingleDayData}
         />
       </div>
     </div>
