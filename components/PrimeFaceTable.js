@@ -14,20 +14,9 @@ import { Slider } from 'primereact/slider';
 import { TriStateCheckbox } from 'primereact/tristatecheckbox';
 
 export default function PrimeFaceTable({ data, columns, loading }) {
+  // Search setup
   const [filters1, setFilters1] = useState(null);
   const [globalFilterValue1, setGlobalFilterValue1] = useState('');
-
-  const dynamicColumns = columns.map((col, i) => {
-    return (
-      <Column
-        key={col.field}
-        field={col.field}
-        header={col.header}
-        sortable
-        filter
-      />
-    );
-  });
 
   const clearFilter1 = () => {
     initFilters1();
@@ -49,7 +38,22 @@ export default function PrimeFaceTable({ data, columns, loading }) {
     setGlobalFilterValue1('');
   };
 
-  const renderHeader1 = () => {
+ 
+  // Column select setup
+  const [selectedColumns, setSelectedColumns] = useState(columns);
+
+  const onColumnToggle = (event) => {
+    let selectedColumns = event.value;
+    let orderedSelectedColumns = columns.filter((col) =>
+      selectedColumns.some((sCol) => sCol.field === col.field)
+    );
+    setSelectedColumns(orderedSelectedColumns);
+  };
+
+
+
+   // Header setup
+   const renderHeader1 = () => {
     return (
       <div className="flex justify-content-between">
         <Button
@@ -67,10 +71,34 @@ export default function PrimeFaceTable({ data, columns, loading }) {
             placeholder="Keyword Search"
           />
         </span>
+        <div style={{ textAlign: 'left' }}>
+          <MultiSelect
+            value={selectedColumns}
+            options={columns}
+            optionLabel="header"
+            onChange={onColumnToggle}
+            placeholder="Select Columns"
+            fixedPlaceholder="true"
+            style={{ width: '20em' }
+          }
+          />
+        </div>
       </div>
     );
   };
   const header1 = renderHeader1();
+
+  const dynamicColumns = selectedColumns.map((col, i) => {
+    return (
+      <Column
+        key={col.field}
+        field={col.field}
+        header={col.header}
+        sortable
+        filter
+      />
+    );
+  });
 
   return (
     <div>
@@ -91,4 +119,3 @@ export default function PrimeFaceTable({ data, columns, loading }) {
     </div>
   );
 }
-
