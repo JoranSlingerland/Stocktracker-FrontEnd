@@ -1,17 +1,10 @@
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import React, { useState, Component, useEffect } from 'react';
-import { classNames } from 'primereact/utils';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
-import { Dropdown } from 'primereact/dropdown';
-import { InputNumber } from 'primereact/inputnumber';
 import { Button } from 'primereact/button';
-import { ProgressBar } from 'primereact/progressbar';
-import { Calendar } from 'primereact/calendar';
 import { MultiSelect } from 'primereact/multiselect';
-import { Slider } from 'primereact/slider';
-import { TriStateCheckbox } from 'primereact/tristatecheckbox';
 
 export default function PrimeFaceTable({ data, columns, loading }) {
   // Search setup
