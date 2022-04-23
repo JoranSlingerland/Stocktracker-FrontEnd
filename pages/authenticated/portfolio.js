@@ -11,12 +11,12 @@ function callback(key) {
 
 const SingleDaycolumns = [
   {
-    header: 'Symbol',
-    field: 'symbol',
-  },
-  {
     header: 'Name',
     field: 'name',
+  },
+  {
+    header: 'Symbol',
+    field: 'symbol',
   },
   {
     header: 'Country',

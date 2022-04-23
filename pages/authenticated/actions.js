@@ -31,6 +31,10 @@ const InputTransactionscolumns = [
     header: 'Currency',
     field: 'currency',
   },
+  {
+    header: 'Domain',
+    field: 'domain',
+  },
 ];
 
 const InputInvestedscolumns = [
