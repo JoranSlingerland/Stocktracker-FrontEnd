@@ -39,12 +39,12 @@ const InputTransactionscolumns = [
 
 const InputInvestedscolumns = [
   {
-    header: 'Transaction Type',
-    field: 'transaction_type',
-  },
-  {
     header: 'Transaction Date',
     field: 'transaction_date',
+  },
+  {
+    header: 'Transaction Type',
+    field: 'transaction_type',
   },
   {
     header: 'Amount',
