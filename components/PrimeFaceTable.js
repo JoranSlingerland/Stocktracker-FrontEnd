@@ -4,6 +4,9 @@ import React, { useState } from 'react';
 import { FilterMatchMode } from 'primereact/api';
 import { Button } from 'primereact/button';
 import { MultiSelect } from 'primereact/multiselect';
+import 'primereact/resources/themes/md-light-indigo/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
 
 export default function PrimeFaceTable({ data, columns, loading }) {
   // Search setup
