@@ -34,6 +34,14 @@ export default function Home() {
     if (response.status === 200) {
       hide();
       message.success(successMessage);
+    }
+    if (response.status === 201) {
+      hide();
+      message.success(successMessage);
+    }
+    if (response.status === 202) {
+      hide();
+      message.success(successMessage);
     } else {
       hide();
       message.error('Something went wrong :(');
@@ -176,11 +184,7 @@ export default function Home() {
           <div className="grid grid-cols-2 grid-rows-2">
             <div className="text-xl">Delete all</div>
             <div className="row-span-2 text-right">
-              <Button
-                onClick={handleClickDelete}
-                type="primary"
-                size="large"
-              >
+              <Button onClick={handleClickDelete} type="primary" size="large">
                 Delete
               </Button>
               <Modal
