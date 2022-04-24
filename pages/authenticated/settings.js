@@ -31,15 +31,11 @@ export default function Home() {
     } catch (error) {
       console.log('error', error);
     }
-    if (response.status === 200) {
-      hide();
-      message.success(successMessage);
-    }
-    if (response.status === 201) {
-      hide();
-      message.success(successMessage);
-    }
-    if (response.status === 202) {
+    if (
+      response.status === 200 ||
+      response.status === 201 ||
+      response.status === 202
+    ) {
       hide();
       message.success(successMessage);
     } else {
