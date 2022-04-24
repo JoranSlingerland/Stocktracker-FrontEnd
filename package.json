@@ -21,6 +21,7 @@
     "autoprefixer": "^10.4.4",
     "isomorphic-unfetch": "^3.0.0",
     "next": "^12.1.6-canary.3",
+    "next-pwa": "^5.5.2",
     "postcss": "^8.4.12",
     "primeicons": "^5.0.0",
     "primereact": "^8.0.0",
