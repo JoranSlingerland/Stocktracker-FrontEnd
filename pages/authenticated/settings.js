@@ -1,25 +1,18 @@
 import { Modal, Divider, Button, message } from 'antd';
 import { useState, useEffect } from 'react';
-import PrimeFaceTable from '../../components/PrimeFaceTable';
 
 function delay(time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
 export default function Home() {
-  const [isModalTruncateVisible, setIsTruncateModalVisible] = useState(false);
   const [isModalDeleteVisible, setIsDeleteModalVisible] = useState(false);
 
   const handleClickDelete = () => {
     setIsDeleteModalVisible(true);
   };
 
-  const handleClickTruncate = () => {
-    setIsTruncateModalVisible(true);
-  };
-
   const handleModalCancel = () => {
-    setIsTruncateModalVisible(false);
     setIsDeleteModalVisible(false);
   };
 
@@ -46,7 +39,6 @@ export default function Home() {
 
   async function handleClick(url, runningMessage, successMessage) {
     callApi(url, runningMessage, successMessage);
-    setIsTruncateModalVisible(false);
     setIsDeleteModalVisible(false);
   }
 
@@ -87,14 +79,14 @@ export default function Home() {
           </div>
           <Divider plain></Divider>
           <div className="grid grid-cols-2 grid-rows-2">
-            <div className="text-xl">Create Tables</div>
+            <div className="text-xl">Create Containers</div>
             <div className="row-span-2 text-right">
               <Button
                 onClick={() =>
                   handleClick(
-                    '/api/create_sql_tables',
-                    'Creating tables',
-                    'Tables created :)'
+                    '/api/create_cosmosdb_db_and_container',
+                    'Creating Containers',
+                    'Containers created :)'
                   )
                 }
                 type="primary"
@@ -103,40 +95,21 @@ export default function Home() {
                 Create
               </Button>
             </div>
-            <div>This will create all tables that do not exist yet.</div>
-          </div>
-          <Divider plain></Divider>
-          <div className="grid grid-cols-2 grid-rows-2">
-            <div className="text-xl">Truncate Tables</div>
-            <div className="row-span-2 text-right">
-              <Button
-                onClick={() =>
-                  handleClick(
-                    '/api/truncate_sql_tables/output_only',
-                    'Truncating Tables',
-                    'Tables truncated :)'
-                  )
-                }
-                type="primary"
-                size="large"
-              >
-                Truncate
-              </Button>
-            </div>
             <div>
-              This will truncate all the tables except the input tables.
+              This will create all containers and databases that do not exist
+              yet.
             </div>
           </div>
           <Divider plain></Divider>
           <div className="grid grid-cols-2 grid-rows-2">
-            <div className="text-xl">Delete Tables</div>
+            <div className="text-xl">Delete Containers</div>
             <div className="row-span-2 text-right">
               <Button
                 onClick={() =>
                   handleClick(
-                    '/api/delete_sql_tables/output_only',
-                    'Deleting tables',
-                    'Tables deleted :)'
+                    '/api/delete_cosmosdb_container/output_only',
+                    'Deleting containers',
+                    'Containers deleted :)'
                   )
                 }
                 type="primary"
@@ -145,7 +118,9 @@ export default function Home() {
                 Delete
               </Button>
             </div>
-            <div>This will delete all the tables except the input tables.</div>
+            <div>
+              This will delete all the containers except the input containers.
+            </div>
           </div>
         </div>
         <Divider plain></Divider>
@@ -153,30 +128,6 @@ export default function Home() {
           <div className="flex items-center justify-center text-xl">
             <h2 className="text-red-600">Danger Zone</h2>
           </div>
-          <div className="grid grid-cols-2 grid-rows-2">
-            <div className="text-xl">Truncate all</div>
-            <div className="row-span-2 text-right">
-              <Button onClick={handleClickTruncate} type="primary" size="large">
-                Truncate
-              </Button>
-              <Modal
-                title="Truncate all"
-                visible={isModalTruncateVisible}
-                onOk={() =>
-                  handleClick(
-                    `/api/truncate_sql_tables/all`,
-                    'Truncating Tables',
-                    'All Tables truncated :)'
-                  )
-                }
-                onCancel={handleModalCancel}
-              >
-                <p>Are you sure you want to truncate all tables?</p>
-              </Modal>
-            </div>
-            <div>This will truncate all tables including the input tables.</div>
-          </div>
-          <Divider plain></Divider>
           <div className="grid grid-cols-2 grid-rows-2">
             <div className="text-xl">Delete all</div>
             <div className="row-span-2 text-right">
@@ -188,17 +139,19 @@ export default function Home() {
                 visible={isModalDeleteVisible}
                 onOk={() =>
                   handleClick(
-                    `/api/delete_sql_tables/all`,
-                    'Deleting Tables',
-                    'All Tables deleted :)'
+                    `/api/delete_cosmosdb_container/all`,
+                    'Deleting Containers',
+                    'All Containers deleted :)'
                   )
                 }
                 onCancel={handleModalCancel}
               >
-                <p>Are you sure you want to delete all tables?</p>
+                <p>Are you sure you want to delete all containers?</p>
               </Modal>
             </div>
-            <div>This will delete all tables including the input tables.</div>
+            <div>
+              This will delete all containers including the input containers.
+            </div>
           </div>
         </div>
       </div>
