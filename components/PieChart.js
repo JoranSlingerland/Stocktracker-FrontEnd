@@ -1,6 +1,7 @@
 import { Pie } from '@ant-design/plots';
+import { Spin } from 'antd';
 
-export default function PieChart({ data }) {
+export default function PieChart({ data, isloading }) {
   const formatCurrency = (value) => {
     return value.toLocaleString('nl-NL', {
       style: 'currency',
@@ -44,5 +45,10 @@ export default function PieChart({ data }) {
       },
     ],
   };
-  return <Pie {...config} />;
+
+  return (
+    <Spin spinning={isloading}>
+      <Pie {...config} />
+    </Spin>
+  );
 }
