@@ -43,7 +43,6 @@ const Tabs = ({ router }) => {
       field: 'total_pl_percentage',
     },
   ];
-      
 
   const [SingleDayData, setSingleDayData] = useState(null);
   const [SingleDayDataisLoading, setSingleDayDataisLoading] = useState(true);
