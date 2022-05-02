@@ -52,6 +52,13 @@ export default function PrimeFaceTable({ data, columns, loading }) {
     });
   };
 
+  const formatPercentage = (value) => {
+    return value.toLocaleString('nl-NL', {
+      style: 'percent',
+      minimumFractionDigits: 2,
+    });
+  };
+
   const average_costTemplate = (rowData) => {
     return formatCurrency(rowData.average_cost);
   };
@@ -78,6 +85,12 @@ export default function PrimeFaceTable({ data, columns, loading }) {
 
   const amountTemplate = (rowData) => {
     return formatCurrency(rowData.amount);
+  };
+  const profitTemplate = (rowData) => {
+    return formatCurrency(rowData.total_pl);
+  };
+  const profitPercentageTemplate = (rowData) => {
+    return formatPercentage(rowData.total_pl_percentage);
   };
 
   const stockNameTemplate = (rowData) => {
@@ -201,6 +214,28 @@ export default function PrimeFaceTable({ data, columns, loading }) {
           field={col.field}
           header={col.header}
           body={stockNameTemplate}
+          sortable
+          filter
+        />
+      );
+    } else if (col.field === 'total_pl') {
+      return (
+        <Column
+          key={col.field}
+          field={col.field}
+          header={col.header}
+          body={profitTemplate}
+          sortable
+          filter
+        />
+      );
+    } else if (col.field === 'total_pl_percentage') {
+      return (
+        <Column
+          key={col.field}
+          field={col.field}
+          header={col.header}
+          body={profitPercentageTemplate}
           sortable
           filter
         />
