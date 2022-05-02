@@ -64,57 +64,62 @@ export default function Home() {
   }, []);
 
   // Get stock pie chart data
-  const [StockPieData, setStockPieData] = useState([
-    { type: 'loading', value: 100 },
-  ]);
+  const [StockPieData, setStockPieData] = useState([{ type: '', value: 0 }]);
+  const [StockPieDataisLoading, setStockPieDataisLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
       const response = await fetch(`/api/get_pie_data/stocks`);
       const StockPieData = await response.json();
       setStockPieData(StockPieData);
+      setStockPieDataisLoading(false);
     }
     fetchData();
   }, []);
 
   // Get currency pie chart data
   const [CurrencyPieData, setCurrencyPieData] = useState([
-    { type: 'loading', value: 100 },
+    { type: '', value: 0 },
   ]);
+  const [CurrencyPieDataisLoading, setCurrencyPieDataisLoading] =
+    useState(true);
 
   useEffect(() => {
     async function fetchData() {
       const response = await fetch(`/api/get_pie_data/currency`);
       const CurrencyPieData = await response.json();
       setCurrencyPieData(CurrencyPieData);
+      setCurrencyPieDataisLoading(false);
     }
     fetchData();
   }, []);
 
   // Get sector pie chart data
-  const [SectorPieData, setSectorPieData] = useState([
-    { type: 'loading', value: 100 },
-  ]);
+  const [SectorPieData, setSectorPieData] = useState([{ type: '', value: 0 }]);
+  const [SectorPieDataisLoading, setSectorPieDataisLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
       const response = await fetch(`/api/get_pie_data/sector`);
       const SectorPieData = await response.json();
       setSectorPieData(SectorPieData);
+      setSectorPieDataisLoading(false);
     }
     fetchData();
   }, []);
 
   // Get country pie chart data
   const [CountryPieData, setCountryPieData] = useState([
-    { type: 'loading', value: 100 },
+    { type: '', value: 0 },
   ]);
+  const [CountryPieDataisLoading, setCountryPieDataisLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
       const response = await fetch(`/api/get_pie_data/country`);
       const CountryPieData = await response.json();
       setCountryPieData(CountryPieData);
+      setCountryPieDataisLoading(false);
     }
     fetchData();
   }, []);
@@ -129,19 +134,30 @@ export default function Home() {
       </div>
       <Divider plain></Divider>
       {/* Tabs */}
-      <div className="w-full card-container">
-        <Tabs type="card" defaultActiveKey="1" onChange={callback}>
-          <TabPane className="max-w-4xl" tab="Stocks" key="1">
-            <PieChart data={StockPieData} />
+      <div className="w-fullcard-container">
+        <Tabs
+          className="tabs-height"
+          type="card"
+          defaultActiveKey="1"
+          onChange={callback}
+        >
+          <TabPane className="w-full max-w-4xl" tab="Stocks" key="1">
+            <PieChart data={StockPieData} isloading={StockPieDataisLoading} />
           </TabPane>
-          <TabPane className="max-w-4xl" tab="Country" key="2">
-            <PieChart data={CountryPieData} />
+          <TabPane className="w-full max-w-4xl" tab="Country" key="2">
+            <PieChart
+              data={CountryPieData}
+              isloading={CountryPieDataisLoading}
+            />
           </TabPane>
-          <TabPane className="max-w-4xl" tab="Currency" key="3">
-            <PieChart data={CurrencyPieData} />
+          <TabPane className="w-full max-w-4xl" tab="Currency" key="3">
+            <PieChart
+              data={CurrencyPieData}
+              isloading={CurrencyPieDataisLoading}
+            />
           </TabPane>
-          <TabPane className="max-w-4xl" tab="Sector" key="4">
-            <PieChart data={SectorPieData} />
+          <TabPane className="w-full max-w-4xl" tab="Sector" key="4">
+            <PieChart data={SectorPieData} isloading={SectorPieDataisLoading} />
           </TabPane>
         </Tabs>
       </div>

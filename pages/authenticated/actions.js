@@ -1,4 +1,4 @@
-import { Divider, Table } from 'antd';
+import { Divider } from 'antd';
 import { useState, useEffect } from 'react';
 import PrimeFaceTable from '../../components/PrimeFaceTable';
 

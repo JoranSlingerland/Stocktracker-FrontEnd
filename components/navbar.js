@@ -58,13 +58,6 @@ export default function App() {
     callApi(url, runningMessage, successMessage);
   }
 
-  const centerStyle = {
-    position: 'relative',
-    display: 'flex',
-    justifyContent: 'center',
-  };
-  const rightStyle = { position: 'absolute', top: 0, right: 0 };
-
   return (
     <div>
       <Menu mode="horizontal">
@@ -77,7 +70,6 @@ export default function App() {
         <Menu.Item key="actions" icon={<InteractionOutlined />}>
           <a href="/authenticated/actions/">Actions</a>
         </Menu.Item>
-
         {userInfo && (
           <SubMenu
             icon={<UserOutlined />}
