@@ -50,7 +50,7 @@ const Tabs = ({ router }) => {
   const isTabFour = tab === '4';
   return (
     <div>
-      <div className="grid grid-cols-4 grid-rows-1 gap-4 p-2">
+      <div className="grid grid-cols-1 grid-rows-4 gap-4 p-2 sm:grid-rows-2 sm:grid-cols-2 lg:grid-rows-1 lg:grid-cols-4">
         <div
           className={`${
             isTabOne
