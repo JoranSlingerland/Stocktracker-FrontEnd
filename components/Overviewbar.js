@@ -42,12 +42,13 @@ const Tabs = ({ router }) => {
   }, []);
 
   const {
-    query: { tab },
+    query: { tab, date },
   } = router;
   const isTabOne = tab === '1' || tab == null;
   const isTabTwo = tab === '2';
   const isTabThree = tab === '3';
   const isTabFour = tab === '4';
+
   return (
     <div>
       <div className="grid grid-cols-1 grid-rows-4 gap-4 p-2 sm:grid-rows-2 sm:grid-cols-2 lg:grid-rows-1 lg:grid-cols-4">
@@ -61,7 +62,7 @@ const Tabs = ({ router }) => {
           <Link
             href={{
               pathname: '/authenticated/performance/',
-              query: { tab: '1' },
+              query: { tab: '1', date: date },
             }}
           >
             <div>
@@ -84,7 +85,7 @@ const Tabs = ({ router }) => {
           <Link
             href={{
               pathname: '/authenticated/performance/',
-              query: { tab: '2' },
+              query: { tab: '2', date: date },
             }}
           >
             <div>
@@ -103,7 +104,7 @@ const Tabs = ({ router }) => {
           <Link
             href={{
               pathname: '/authenticated/performance/',
-              query: { tab: '3' },
+              query: { tab: '3', date: date },
             }}
           >
             <div>
@@ -122,7 +123,7 @@ const Tabs = ({ router }) => {
           <Link
             href={{
               pathname: '/authenticated/performance/',
-              query: { tab: '4' },
+              query: { tab: '4', date: date },
             }}
           >
             <div>
