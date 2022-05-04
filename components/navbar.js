@@ -9,6 +9,7 @@ import {
   LogoutOutlined,
 } from '@ant-design/icons';
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 const { SubMenu } = Menu;
 
@@ -65,7 +66,14 @@ export default function App() {
           <a href="/authenticated/portfolio/">Portfolio</a>
         </Menu.Item>
         <Menu.Item key="performance" icon={<AreaChartOutlined />}>
-          <a href="/authenticated/performance/">Performance</a>
+          <Link
+            href={{
+              pathname: '/authenticated/performance/',
+              query: { tab: '1', date: 'max' },
+            }}
+          >
+            Performance
+          </Link>
         </Menu.Item>
         <Menu.Item key="actions" icon={<InteractionOutlined />}>
           <a href="/authenticated/actions/">Actions</a>
