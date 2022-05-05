@@ -32,14 +32,12 @@ const Tabs = ({ router }) => {
     setLoading(false);
   }
 
-  const [topBarData, settopBarData] = useState(
-    {
-      total_value: '',
-      total_value_gain: '',
-      total_pl: '',
-      total_pl_percentage: '',
-    },
-  );
+  const [topBarData, settopBarData] = useState({
+    total_value: '',
+    total_value_gain: '',
+    total_pl: '',
+    total_pl_percentage: '',
+  });
 
   async function fetchTopBar() {
     const response = await fetch(`/api/get_topbar_data/${date}`);
