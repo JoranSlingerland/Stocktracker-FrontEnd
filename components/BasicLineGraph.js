@@ -7,10 +7,6 @@ export default function PieChart({ isloading, data }) {
     xField: 'date',
     yField: 'value',
     seriesField: 'category',
-    slider: {
-      start: 0,
-      end: 1,
-    },
     smooth: true,
   };
   return (

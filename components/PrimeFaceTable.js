@@ -87,10 +87,26 @@ export default function PrimeFaceTable({ data, columns, loading }) {
     return formatCurrency(rowData.amount);
   };
   const profitTemplate = (rowData) => {
-    return formatCurrency(rowData.total_pl);
+    const data = formatCurrency(rowData.total_pl);
+    if (rowData.total_pl > 0) {
+      return <span className="text-green-500">{data}</span>;
+    } else if (rowData.total_pl < 0) {
+      return <span className="text-red-500">{data}</span>;
+    } else {
+      return data;
+    }
   };
   const profitPercentageTemplate = (rowData) => {
-    return formatPercentage(rowData.total_pl_percentage);
+    if (rowData.total_pl_percentage > 0) {
+      const data = formatPercentage(rowData.total_pl_percentage);
+      return <span className="text-green-500">{data}</span>;
+    } else if (rowData.total_pl_percentage < 0) {
+      const data = formatPercentage(rowData.total_pl_percentage);
+      return <span className="text-red-500">{data}</span>;
+    } else {
+      const data = formatPercentage(rowData.total_pl_percentage);
+      return data;
+    }
   };
 
   const stockNameTemplate = (rowData) => {
