@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { withRouter } from 'next/router';
 import { Spin } from 'antd';
+import { RiseOutlined, FallOutlined } from '@ant-design/icons';
 
 const Tabs = ({ router, topBarData, loading }) => {
   const formatCurrency = (value) => {
@@ -26,6 +27,19 @@ const Tabs = ({ router, topBarData, loading }) => {
   const isTabThree = tab === '3';
   const isTabFour = tab === '4';
 
+  const PercentageFormat = (value) => {
+    if (value > 0) {
+      const data = formatPercentage(value);
+      return <span className="text-green-500"><RiseOutlined /> {data}</span>;
+    } else if (value < 0) {
+      const data = formatPercentage(value);
+      return <span className="text-red-500"><FallOutlined/>{data}</span>;
+    } else {
+      const data = formatPercentage(value);
+      return data;
+    }
+  };
+
   return (
     <div>
       <div className="grid grid-cols-1 grid-rows-4 gap-4 p-2 sm:grid-rows-2 sm:grid-cols-2 lg:grid-rows-1 lg:grid-cols-4">
@@ -43,10 +57,11 @@ const Tabs = ({ router, topBarData, loading }) => {
             }}
           >
             <div>
-              <div className="px-5">Value</div>
               <Spin spinning={loading}>
-                <div className="px-5 font-bold">
-                  {formatCurrency(topBarData[0].total_value)}
+                <div className="px-5">Value growth</div>
+                <div className="grid grid-cols-2 grid-rows-1 px-5">
+                  <div className="font-bold">{formatCurrency(topBarData.total_value_gain) }</div>
+                  <div className="text-right">{formatCurrency(topBarData.total_value)}</div>
                 </div>
               </Spin>
             </div>
@@ -107,9 +122,9 @@ const Tabs = ({ router, topBarData, loading }) => {
               <div className="px-5">Total gains</div>
               <Spin spinning={loading}>
                 <div className="grid grid-cols-2 grid-rows-1 px-5 font-bold ">
-                  <div>{formatCurrency(topBarData[0].total_pl)}</div>
+                  <div>{formatCurrency(topBarData.total_pl)}</div>
                   <div className="text-right">
-                    {formatPercentage(topBarData[0].total_pl_percentage)}
+                    {PercentageFormat(topBarData.total_pl_percentage)}
                   </div>
                 </div>
               </Spin>

@@ -31,30 +31,24 @@ const Tabs = ({ router }) => {
     setvalueGrowthData(valueGrowthData);
     setLoading(false);
   }
-  useEffect(() => {
-    fetchDataline();
-    fetchTopBar();
-  }, []);
 
-  const [topBarData, settopBarData] = useState([
+  const [topBarData, settopBarData] = useState(
     {
-      date: '',
-      total_cost: '',
       total_value: '',
-      total_invested: '',
+      total_value_gain: '',
       total_pl: '',
       total_pl_percentage: '',
     },
-  ]);
-
-  const [topBarloading, settopBarLoading] = useState(true);
+  );
 
   async function fetchTopBar() {
-    const response = await fetch(`/api/get_table_data/single_day_totals`);
+    const response = await fetch(`/api/get_topbar_data/${date}`);
     const topBarData = await response.json();
     settopBarData(topBarData);
     settopBarLoading(false);
   }
+
+  const [topBarloading, settopBarLoading] = useState(true);
 
   const valueGrowthColumns = [
     {
@@ -73,24 +67,28 @@ const Tabs = ({ router }) => {
 
   function handleClick(newdate) {
     setLoading(true);
+    settopBarLoading(true);
     router.push(`/authenticated/performance?tab=1&date=${newdate}`);
     date = newdate;
     fetchDataline();
+    fetchTopBar();
   }
 
   const [SingleDayData, setSingleDayData] = useState(null);
   const [SingleDayDataisLoading, setSingleDayDataisLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchData() {
-      const response = await fetch(`/api/get_table_data/single_day/`);
-      const SingleDayData = await response.json();
-      setSingleDayData(SingleDayData);
-      setSingleDayDataisLoading(false);
-    }
-    fetchData();
-  }, []);
+  async function fetchTable() {
+    const response = await fetch(`/api/get_table_data/single_day/`);
+    const SingleDayData = await response.json();
+    setSingleDayData(SingleDayData);
+    setSingleDayDataisLoading(false);
+  }
 
+  useEffect(() => {
+    fetchDataline();
+    fetchTopBar();
+    fetchTable();
+  }, []);
   return (
     <div className="w-full">
       {/* Title */}
@@ -178,7 +176,6 @@ const Tabs = ({ router }) => {
           )}
         </div>
       </div>
-      {/* Content */}
     </div>
   );
 };
