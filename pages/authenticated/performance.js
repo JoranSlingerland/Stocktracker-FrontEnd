@@ -4,7 +4,6 @@ import { Divider } from 'antd';
 import { withRouter } from 'next/router';
 import BasicLineGraph from '../../components/BasicLineGraph';
 import PrimeFaceTable from '../../components/PrimeFaceTable';
-import Link from 'next/link';
 
 const Tabs = ({ router }) => {
   const {
@@ -34,7 +33,28 @@ const Tabs = ({ router }) => {
   }
   useEffect(() => {
     fetchDataline();
+    fetchTopBar();
   }, []);
+
+  const [topBarData, settopBarData] = useState([
+    {
+      date: '',
+      total_cost: '',
+      total_value: '',
+      total_invested: '',
+      total_pl: '',
+      total_pl_percentage: '',
+    },
+  ]);
+
+  const [topBarloading, settopBarLoading] = useState(true);
+
+  async function fetchTopBar() {
+    const response = await fetch(`/api/get_table_data/single_day_totals`);
+    const topBarData = await response.json();
+    settopBarData(topBarData);
+    settopBarLoading(false);
+  }
 
   const valueGrowthColumns = [
     {
@@ -54,6 +74,7 @@ const Tabs = ({ router }) => {
   function handleClick(newdate) {
     setLoading(true);
     router.push(`/authenticated/performance?tab=1&date=${newdate}`);
+    date = newdate;
     fetchDataline();
   }
 
@@ -131,7 +152,7 @@ const Tabs = ({ router }) => {
         </div>
       </div>
       <div>
-        <Overviewbar />
+        <Overviewbar topBarData={topBarData} loading={topBarloading} />
       </div>
       <div>
         <div>

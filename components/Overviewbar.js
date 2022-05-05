@@ -3,18 +3,7 @@ import Link from 'next/link';
 import { withRouter } from 'next/router';
 import { Spin } from 'antd';
 
-const Tabs = ({ router }) => {
-  const [topBarData, settopBarData] = useState([
-    {
-      date: '',
-      total_cost: '',
-      total_value: '',
-      total_invested: '',
-      total_pl: '',
-      total_pl_percentage: '',
-    },
-  ]);
-
+const Tabs = ({ router, topBarData, loading }) => {
   const formatCurrency = (value) => {
     return value.toLocaleString('nl-NL', {
       style: 'currency',
@@ -28,18 +17,6 @@ const Tabs = ({ router }) => {
       minimumFractionDigits: 2,
     });
   };
-
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchData() {
-      const response = await fetch(`/api/get_table_data/single_day_totals`);
-      const topBarData = await response.json();
-      settopBarData(topBarData);
-      setLoading(false);
-    }
-    fetchData();
-  }, []);
 
   const {
     query: { tab, date },
