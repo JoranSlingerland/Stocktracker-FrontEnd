@@ -35,6 +35,14 @@ const SingleDaycolumns = [
     field: 'total_value',
   },
   {
+    header: 'Profit / Loss',
+    field: 'total_pl',
+  },
+  {
+    header: 'Percentage',
+    field: 'total_pl_percentage',
+  },
+  {
     header: 'Quantity',
     field: 'quantity',
   },
