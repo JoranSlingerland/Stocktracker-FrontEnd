@@ -30,10 +30,19 @@ const Tabs = ({ router, topBarData, loading }) => {
   const PercentageFormat = (value) => {
     if (value > 0) {
       const data = formatPercentage(value);
-      return <span className="text-green-500"><RiseOutlined /> {data}</span>;
+      return (
+        <span className="text-green-500">
+          <RiseOutlined /> {data}
+        </span>
+      );
     } else if (value < 0) {
       const data = formatPercentage(value);
-      return <span className="text-red-500"><FallOutlined/>{data}</span>;
+      return (
+        <span className="text-red-500">
+          <FallOutlined />
+          {data}
+        </span>
+      );
     } else {
       const data = formatPercentage(value);
       return data;
@@ -60,8 +69,12 @@ const Tabs = ({ router, topBarData, loading }) => {
               <Spin spinning={loading}>
                 <div className="px-5">Value growth</div>
                 <div className="grid grid-cols-2 grid-rows-1 px-5">
-                  <div className="font-bold">{formatCurrency(topBarData.total_value_gain) }</div>
-                  <div className="text-right">{formatCurrency(topBarData.total_value)}</div>
+                  <div className="font-bold">
+                    {formatCurrency(topBarData.total_value_gain)}
+                  </div>
+                  <div className="text-right">
+                    {formatCurrency(topBarData.total_value)}
+                  </div>
                 </div>
               </Spin>
             </div>
