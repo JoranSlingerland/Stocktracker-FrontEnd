@@ -23,6 +23,19 @@ const Tabs = ({ router }) => {
   const [valueGrowthData, setvalueGrowthData] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [totalGainsData, settotalGainsData] = useState([]);
+  const [totalGainsDataLoading, settotalGainsDataLoading] = useState(true);
+
+  async function fetchTotalGainsData() {
+    const response = await fetch(
+      `/api/get_linechart_data/total_gains/${date}`
+    );
+    const data = await response.json();
+    settotalGainsData(data);
+    settotalGainsDataLoading(false);
+  }
+
+
   async function fetchDataline() {
     const response = await fetch(
       `/api/get_linechart_data/invested_and_value/${date}`
@@ -50,8 +63,8 @@ const Tabs = ({ router }) => {
 
   const valueGrowthColumns = [
     {
-      header: 'Name',
-      field: 'name',
+      header: 'Symbol',
+      field: 'symbol',
     },
     {
       header: 'Profit / Loss',
@@ -86,6 +99,7 @@ const Tabs = ({ router }) => {
     fetchDataline();
     fetchTopBar();
     fetchTable();
+    fetchTotalGainsData();
   }, []);
   return (
     <div className="w-full">
@@ -170,7 +184,17 @@ const Tabs = ({ router }) => {
             <React.Fragment>This is tab three content</React.Fragment>
           )}
           {isTabFour && (
-            <React.Fragment>This is tab four content</React.Fragment>
+            <React.Fragment>
+              <div>
+                <BasicLineGraph data={totalGainsData} isloading={totalGainsDataLoading} />
+                <Divider />
+                <PrimeFaceTable
+                  loading={SingleDayDataisLoading}
+                  columns={valueGrowthColumns}
+                  data={SingleDayData}
+                />
+              </div>
+            </React.Fragment>
           )}
         </div>
       </div>

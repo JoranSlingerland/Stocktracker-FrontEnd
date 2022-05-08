@@ -118,6 +118,20 @@ export default function PrimeFaceTable({ data, columns, loading }) {
     );
   };
 
+  const symbolTempalte = (rowData) => {
+    return (
+      <div className="flex flex-row">
+        <img className="pr-1" alt="logo" src={rowData.logo} width={35} />{' '}
+        {rowData.symbol}
+      </div>
+    );
+  };
+
+  const quantityTemplate = (rowData) => {
+    var quantity = rowData.quantity;
+    return Math.round(quantity * 100) / 100;
+  };
+
   // Header setup
   const renderHeader1 = () => {
     return (
@@ -223,17 +237,6 @@ export default function PrimeFaceTable({ data, columns, loading }) {
           filter
         />
       );
-    } else if (col.field === 'name') {
-      return (
-        <Column
-          key={col.field}
-          field={col.field}
-          header={col.header}
-          body={stockNameTemplate}
-          sortable
-          filter
-        />
-      );
     } else if (col.field === 'total_pl') {
       return (
         <Column
@@ -252,6 +255,28 @@ export default function PrimeFaceTable({ data, columns, loading }) {
           field={col.field}
           header={col.header}
           body={profitPercentageTemplate}
+          sortable
+          filter
+        />
+      );
+    } else if (col.field === 'quantity') {
+      return (
+        <Column
+          key={col.field}
+          field={col.field}
+          header={col.header}
+          body={quantityTemplate}
+          sortable
+          filter
+        />
+      );
+    } else if (col.field === 'symbol') {
+      return (
+        <Column
+          key={col.field}
+          field={col.field}
+          header={col.header}
+          body={symbolTempalte}
           sortable
           filter
         />
