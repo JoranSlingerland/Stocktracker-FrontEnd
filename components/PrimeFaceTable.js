@@ -86,6 +86,10 @@ export default function PrimeFaceTable({ data, columns, loading }) {
   const amountTemplate = (rowData) => {
     return formatCurrency(rowData.amount);
   };
+  const total_dividendsTemplate = (rowData) => {
+    return formatCurrency(rowData.total_dividends);
+  };
+
   const profitTemplate = (rowData) => {
     const data = formatCurrency(rowData.total_pl);
     if (rowData.total_pl > 0) {
@@ -281,7 +285,19 @@ export default function PrimeFaceTable({ data, columns, loading }) {
           filter
         />
       );
-    } else {
+    } else if (col.field === 'total_dividends') {
+      return (
+        <Column
+          key={col.field}
+          field={col.field}
+          header={col.header}
+          body={total_dividendsTemplate}
+          sortable
+          filter
+        />
+      );
+    }
+    else {
       return (
         <Column
           key={col.field}

@@ -54,6 +54,10 @@ const SingleDaycolumns = [
     header: 'Close Value',
     field: 'close_value',
   },
+  {
+    header: 'Dividends',
+    field: 'total_dividends',
+  },
 ];
 
 export default function Home() {
