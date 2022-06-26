@@ -31,14 +31,11 @@ const Tabs = ({ router }) => {
   const [totalGainsDataLoading, settotalGainsDataLoading] = useState(true);
 
   async function fetchTotalGainsData() {
-    const response = await fetch(
-      `/api/get_linechart_data/total_gains/${date}`
-    );
+    const response = await fetch(`/api/get_linechart_data/total_gains/${date}`);
     const data = await response.json();
     settotalGainsData(data);
     settotalGainsDataLoading(false);
   }
-
 
   async function fetchDataline() {
     const response = await fetch(
@@ -50,9 +47,7 @@ const Tabs = ({ router }) => {
   }
 
   async function fetchDividendData() {
-    const response = await fetch(
-      `/api/get_barchart_data/dividends/${date}`
-    );
+    const response = await fetch(`/api/get_barchart_data/dividends/${date}`);
     const dividendData = await response.json();
     setdividendData(dividendData);
     setLoadingDividend(false);
@@ -98,7 +93,7 @@ const Tabs = ({ router }) => {
     {
       header: 'Dividends',
       field: 'total_dividends',
-    }
+    },
   ];
 
   function handleClick(newdate) {
@@ -207,22 +202,27 @@ const Tabs = ({ router }) => {
               </div>
             </React.Fragment>
           )}
-          {isTabTwo && <React.Fragment>
-            <Barchart data={dividendData} isloading={loadingDividend} />
-            <Divider />
-            <PrimeFaceTable
-              loading={SingleDayDataisLoading}
-              columns={ReceivedDividedColumns}
-              data={SingleDayData}
-            />
-            </React.Fragment>}
+          {isTabTwo && (
+            <React.Fragment>
+              <Barchart data={dividendData} isloading={loadingDividend} />
+              <Divider />
+              <PrimeFaceTable
+                loading={SingleDayDataisLoading}
+                columns={ReceivedDividedColumns}
+                data={SingleDayData}
+              />
+            </React.Fragment>
+          )}
           {isTabThree && (
             <React.Fragment>This is tab three content</React.Fragment>
           )}
           {isTabFour && (
             <React.Fragment>
               <div>
-                <BasicLineGraph data={totalGainsData} isloading={totalGainsDataLoading} />
+                <BasicLineGraph
+                  data={totalGainsData}
+                  isloading={totalGainsDataLoading}
+                />
                 <Divider />
                 <PrimeFaceTable
                   loading={SingleDayDataisLoading}

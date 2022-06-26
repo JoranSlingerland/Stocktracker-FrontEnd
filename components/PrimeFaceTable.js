@@ -296,8 +296,7 @@ export default function PrimeFaceTable({ data, columns, loading }) {
           filter
         />
       );
-    }
-    else {
+    } else {
       return (
         <Column
           key={col.field}
