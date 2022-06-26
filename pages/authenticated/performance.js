@@ -105,7 +105,7 @@ const Tabs = ({ router }) => {
     setLoading(true);
     settopBarLoading(true);
     setLoadingDividend(true);
-    router.push(`/authenticated/performance?tab=1&date=${newdate}`);
+    router.push(`/authenticated/performance?tab=${tab}&date=${newdate}`);
     date = newdate;
     fetchDataline();
     fetchTopBar();
