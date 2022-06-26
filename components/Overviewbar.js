@@ -94,8 +94,12 @@ const Tabs = ({ router, topBarData, loading }) => {
             }}
           >
             <div>
-              <div className="px-5">Received dividends</div>
-              <div className="px-5 font-bold">Coming soon</div>
+              <Spin spinning={loading}>
+                <div className="px-5">Received dividends</div>
+                <div className="px-5 font-bold">
+                  {formatCurrency(topBarData.total_dividends)}
+                </div>
+              </Spin>
             </div>
           </Link>
         </div>

@@ -11,12 +11,12 @@ function callback(key) {
 
 const SingleDaycolumns = [
   {
-    header: 'Name',
-    field: 'name',
-  },
-  {
     header: 'Symbol',
     field: 'symbol',
+  },
+  {
+    header: 'Name',
+    field: 'name',
   },
   {
     header: 'Country',
@@ -53,6 +53,10 @@ const SingleDaycolumns = [
   {
     header: 'Close Value',
     field: 'close_value',
+  },
+  {
+    header: 'Dividends',
+    field: 'total_dividends',
   },
 ];
 

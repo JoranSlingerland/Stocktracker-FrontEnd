@@ -86,6 +86,10 @@ export default function PrimeFaceTable({ data, columns, loading }) {
   const amountTemplate = (rowData) => {
     return formatCurrency(rowData.amount);
   };
+  const total_dividendsTemplate = (rowData) => {
+    return formatCurrency(rowData.total_dividends);
+  };
+
   const profitTemplate = (rowData) => {
     const data = formatCurrency(rowData.total_pl);
     if (rowData.total_pl > 0) {
@@ -116,6 +120,20 @@ export default function PrimeFaceTable({ data, columns, loading }) {
         {rowData.name}
       </div>
     );
+  };
+
+  const symbolTempalte = (rowData) => {
+    return (
+      <div className="flex flex-row">
+        <img className="pr-1" alt="logo" src={rowData.logo} width={35} />{' '}
+        {rowData.symbol}
+      </div>
+    );
+  };
+
+  const quantityTemplate = (rowData) => {
+    var quantity = rowData.quantity;
+    return Math.round(quantity * 100) / 100;
   };
 
   // Header setup
@@ -223,17 +241,6 @@ export default function PrimeFaceTable({ data, columns, loading }) {
           filter
         />
       );
-    } else if (col.field === 'name') {
-      return (
-        <Column
-          key={col.field}
-          field={col.field}
-          header={col.header}
-          body={stockNameTemplate}
-          sortable
-          filter
-        />
-      );
     } else if (col.field === 'total_pl') {
       return (
         <Column
@@ -252,6 +259,39 @@ export default function PrimeFaceTable({ data, columns, loading }) {
           field={col.field}
           header={col.header}
           body={profitPercentageTemplate}
+          sortable
+          filter
+        />
+      );
+    } else if (col.field === 'quantity') {
+      return (
+        <Column
+          key={col.field}
+          field={col.field}
+          header={col.header}
+          body={quantityTemplate}
+          sortable
+          filter
+        />
+      );
+    } else if (col.field === 'symbol') {
+      return (
+        <Column
+          key={col.field}
+          field={col.field}
+          header={col.header}
+          body={symbolTempalte}
+          sortable
+          filter
+        />
+      );
+    } else if (col.field === 'total_dividends') {
+      return (
+        <Column
+          key={col.field}
+          field={col.field}
+          header={col.header}
+          body={total_dividendsTemplate}
           sortable
           filter
         />

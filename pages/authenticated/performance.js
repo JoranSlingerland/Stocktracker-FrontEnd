@@ -4,6 +4,7 @@ import { Divider } from 'antd';
 import { withRouter } from 'next/router';
 import BasicLineGraph from '../../components/BasicLineGraph';
 import PrimeFaceTable from '../../components/PrimeFaceTable';
+import Barchart from '../../components/BarChart';
 
 const Tabs = ({ router }) => {
   const {
@@ -23,6 +24,19 @@ const Tabs = ({ router }) => {
   const [valueGrowthData, setvalueGrowthData] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [dividendData, setdividendData] = useState([]);
+  const [loadingDividend, setLoadingDividend] = useState(true);
+
+  const [totalGainsData, settotalGainsData] = useState([]);
+  const [totalGainsDataLoading, settotalGainsDataLoading] = useState(true);
+
+  async function fetchTotalGainsData() {
+    const response = await fetch(`/api/get_linechart_data/total_gains/${date}`);
+    const data = await response.json();
+    settotalGainsData(data);
+    settotalGainsDataLoading(false);
+  }
+
   async function fetchDataline() {
     const response = await fetch(
       `/api/get_linechart_data/invested_and_value/${date}`
@@ -32,11 +46,19 @@ const Tabs = ({ router }) => {
     setLoading(false);
   }
 
+  async function fetchDividendData() {
+    const response = await fetch(`/api/get_barchart_data/dividends/${date}`);
+    const dividendData = await response.json();
+    setdividendData(dividendData);
+    setLoadingDividend(false);
+  }
+
   const [topBarData, settopBarData] = useState({
     total_value: '',
     total_value_gain: '',
     total_pl: '',
     total_pl_percentage: '',
+    total_dividends: '',
   });
 
   async function fetchTopBar() {
@@ -50,8 +72,8 @@ const Tabs = ({ router }) => {
 
   const valueGrowthColumns = [
     {
-      header: 'Name',
-      field: 'name',
+      header: 'Symbol',
+      field: 'symbol',
     },
     {
       header: 'Profit / Loss',
@@ -63,13 +85,26 @@ const Tabs = ({ router }) => {
     },
   ];
 
+  const ReceivedDividedColumns = [
+    {
+      header: 'Symbol',
+      field: 'symbol',
+    },
+    {
+      header: 'Dividends',
+      field: 'total_dividends',
+    },
+  ];
+
   function handleClick(newdate) {
     setLoading(true);
     settopBarLoading(true);
-    router.push(`/authenticated/performance?tab=1&date=${newdate}`);
+    setLoadingDividend(true);
+    router.push(`/authenticated/performance?tab=${tab}&date=${newdate}`);
     date = newdate;
     fetchDataline();
     fetchTopBar();
+    fetchDividendData();
   }
 
   const [SingleDayData, setSingleDayData] = useState(null);
@@ -86,6 +121,8 @@ const Tabs = ({ router }) => {
     fetchDataline();
     fetchTopBar();
     fetchTable();
+    fetchTotalGainsData();
+    fetchDividendData();
   }, []);
   return (
     <div className="w-full">
@@ -165,12 +202,35 @@ const Tabs = ({ router }) => {
               </div>
             </React.Fragment>
           )}
-          {isTabTwo && <React.Fragment>This is tab two content</React.Fragment>}
+          {isTabTwo && (
+            <React.Fragment>
+              <Barchart data={dividendData} isloading={loadingDividend} />
+              <Divider />
+              <PrimeFaceTable
+                loading={SingleDayDataisLoading}
+                columns={ReceivedDividedColumns}
+                data={SingleDayData}
+              />
+            </React.Fragment>
+          )}
           {isTabThree && (
             <React.Fragment>This is tab three content</React.Fragment>
           )}
           {isTabFour && (
-            <React.Fragment>This is tab four content</React.Fragment>
+            <React.Fragment>
+              <div>
+                <BasicLineGraph
+                  data={totalGainsData}
+                  isloading={totalGainsDataLoading}
+                />
+                <Divider />
+                <PrimeFaceTable
+                  loading={SingleDayDataisLoading}
+                  columns={valueGrowthColumns}
+                  data={SingleDayData}
+                />
+              </div>
+            </React.Fragment>
           )}
         </div>
       </div>
