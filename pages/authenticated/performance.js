@@ -4,7 +4,7 @@ import { Divider } from 'antd';
 import { withRouter } from 'next/router';
 import BasicLineGraph from '../../components/BasicLineGraph';
 import PrimeFaceTable from '../../components/PrimeFaceTable';
-import PrimeFaceBarChart from '../../components/PrimeFaceBarChart'
+import PrimeFaceBarChart from '../../components/PrimeFaceBarChart';
 
 const Tabs = ({ router }) => {
   const {
@@ -203,7 +203,10 @@ const Tabs = ({ router }) => {
           )}
           {isTabTwo && (
             <React.Fragment>
-              <PrimeFaceBarChart data={dividendData} isloading={loadingDividend} />
+              <PrimeFaceBarChart
+                data={dividendData}
+                isloading={loadingDividend}
+              />
               <Divider />
               <PrimeFaceTable
                 loading={SingleDayDataisLoading}
@@ -213,7 +216,9 @@ const Tabs = ({ router }) => {
             </React.Fragment>
           )}
           {isTabThree && (
-            <React.Fragment><PrimeFaceBarChart /></React.Fragment>
+            <React.Fragment>
+              <PrimeFaceBarChart />
+            </React.Fragment>
           )}
           {isTabFour && (
             <React.Fragment>

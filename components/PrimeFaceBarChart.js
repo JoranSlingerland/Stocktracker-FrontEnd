@@ -21,7 +21,7 @@ export default function PrimeFacePieChart(data, isloading) {
           element['date'] === uniquelabels[i - 1]
         ) {
           outputData.push(element);
-        } 
+        }
       }
     }
     const outputData_final = outputData.map(function (index) {
