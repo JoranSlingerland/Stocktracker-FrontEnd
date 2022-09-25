@@ -1,57 +1,36 @@
 import { Chart } from 'primereact/chart';
+import { Spin } from 'antd';
 
-export default function PrimeFacePieChart(jsondata) {
-  const data = [
-    { date: '2022 January', value: 0.0, category: 'MSFT' },
-    { date: '2022 January', value: 0.0, category: 'PEP' },
-    { date: '2022 January', value: 0.0, category: 'AAPL' },
-    { date: '2022 February', value: 2.2, category: 'MSFT' },
-    { date: '2022 February', value: 0.0, category: 'PEP' },
-    { date: '2022 February', value: 0.5700000000000001, category: 'AAPL' },
-    { date: '2022 March', value: 0.0, category: 'MSFT' },
-    { date: '2022 March', value: 2.9699999999999998, category: 'PEP' },
-    { date: '2022 March', value: 0.0, category: 'AAPL' },
-    { date: '2022 April', value: 0.0, category: 'MSFT' },
-    { date: '2022 April', value: 0.0, category: 'PEP' },
-    { date: '2022 April', value: 0.0, category: 'AAPL' },
-    { date: '2022 May', value: 1.77, category: 'MSFT' },
-    { date: '2022 May', value: 0.0, category: 'PEP' },
-    { date: '2022 May', value: 0.66, category: 'AAPL' },
-    { date: '2022 June', value: 0.0, category: 'MSFT' },
-    { date: '2022 June', value: 3.21, category: 'PEP' },
-    { date: '2022 June', value: 0.0, category: 'AAPL' },
-    { date: '2022 July', value: 0.0, category: 'MSFT' },
-    { date: '2022 July', value: 0.0, category: 'PEP' },
-    { date: '2022 July', value: 0.0, category: 'AAPL' },
-    { date: '2022 August', value: 1.8599999999999999, category: 'MSFT' },
-    { date: '2022 August', value: 0.0, category: 'PEP' },
-    { date: '2022 August', value: 0.6900000000000001, category: 'AAPL' },
-    { date: '2022 September', value: 0.0, category: 'MSFT' },
-    { date: '2022 September', value: 4.64, category: 'PEP' },
-    { date: '2022 September', value: 0.0, category: 'AAPL' },
-  ];
-  const labels = data.map(function (index) {
+export default function PrimeFacePieChart(data, isloading) {
+  const labels = data.data.map(function (index) {
     return index.date;
   });
 
-  const values = data.map(function (index) {
-    return index.value;
-  });
+  const uniquelabels = [...new Set(labels)];
 
-  const category = data.map(function (index) {
+  const category = data.data.map(function (index) {
     return index.category;
   });
 
   function filter_json(symbol) {
-    const output_data = data.map(function (index) {
-      if(index.category === symbol){
-        return index.value;
+    let outputData = [];
+    for (const element of data.data) {
+      for (let i = 1; i < uniquelabels.length + 1; i++) {
+        if (
+          element['category'] === symbol &&
+          element['date'] === uniquelabels[i - 1]
+        ) {
+          outputData.push(element);
+        } 
       }
-    })
-    return output_data
+    }
+    const outputData_final = outputData.map(function (index) {
+      return index.value;
+    });
+    return outputData_final;
   }
 
-  const barchart_datasets = []
+  const barchart_datasets = [];
   const uniquecategory = [...new Set(category)];
   const bg = [
     'rgba(27, 158, 119, 0.5)',
@@ -76,15 +55,15 @@ export default function PrimeFacePieChart(jsondata) {
 
   for (let i = 1; i < uniquecategory.length + 1; i++) {
     barchart_datasets.push({
+      type: 'bar',
       label: uniquecategory[i - 1],
       data: filter_json(uniquecategory[i - 1]),
       backgroundColor: bg[i - 1],
-      borderColor: bc[i - 1],
     });
   }
 
   const stackedData = {
-    labels: labels,
+    labels: uniquelabels,
     datasets: barchart_datasets,
   };
 
@@ -133,11 +112,8 @@ export default function PrimeFacePieChart(jsondata) {
   const { stackedOptions } = getLightTheme();
 
   return (
-    <div>
-      <div className="card">
-        <h5>Stacked</h5>
-        <Chart type="bar" data={stackedData} options={stackedOptions} />
-      </div>
-    </div>
+    <Spin spinning={data.isloading}>
+      <Chart type="bar" data={stackedData} options={stackedOptions} />
+    </Spin>
   );
 }
