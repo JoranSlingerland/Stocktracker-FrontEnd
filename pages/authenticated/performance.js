@@ -58,6 +58,7 @@ const Tabs = ({ router }) => {
     total_pl: '',
     total_pl_percentage: '',
     total_dividends: '',
+    transaction_cost: ''
   });
 
   async function fetchTopBar() {
@@ -92,6 +93,18 @@ const Tabs = ({ router }) => {
     {
       header: 'Dividends',
       field: 'total_dividends',
+    },
+  ];
+
+
+  const TransactionCostColumns = [
+    {
+      header: 'Symbol',
+      field: 'symbol',
+    },
+    {
+      header: 'Transaction Costs',
+      field: 'transaction_cost',
     },
   ];
 
@@ -217,7 +230,12 @@ const Tabs = ({ router }) => {
           )}
           {isTabThree && (
             <React.Fragment>
-              <PrimeFaceBarChart />
+              <Divider />
+              <PrimeFaceTable
+                loading={SingleDayDataisLoading}
+                columns={TransactionCostColumns}
+                data={SingleDayData}
+              />
             </React.Fragment>
           )}
           {isTabFour && (
