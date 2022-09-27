@@ -11,7 +11,6 @@ const Tabs = ({ router, topBarData, loading }) => {
       currency: 'EUR',
     });
   };
-  console.log(topBarData.transaction_cost);
 
   const formatPercentage = (value) => {
     return value.toLocaleString('nl-NL', {

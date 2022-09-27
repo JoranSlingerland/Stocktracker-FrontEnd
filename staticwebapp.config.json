@@ -6,21 +6,26 @@
     },
     {
       "route": "/authenticated/*",
-      "allowedRoles": [
-        "admin"
-      ]
+      "allowedRoles": ["admin"]
     },
     {
       "route": "/api/*",
-      "allowedRoles": [
-        "admin"
-      ]
+      "allowedRoles": ["admin"]
     }
   ],
   "responseOverrides": {
     "401": {
       "statusCode": 302,
       "redirect": "/login"
+    },
+    "403": {
+      "redirect": "/error_pages/403"
+    },
+    "404": {
+      "redirect": "/error_pages/404"
+    },
+    "500": {
+      "redirect": "/error_pages/500"
     }
   }
 }
