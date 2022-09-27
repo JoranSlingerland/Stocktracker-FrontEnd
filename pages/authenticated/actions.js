@@ -5,7 +5,7 @@ import PrimeFaceTable from '../../components/PrimeFaceTable';
 const InputTransactionscolumns = [
   {
     header: 'Transaction Date',
-    field: 'transaction_date',
+    field: 'date',
   },
   {
     header: 'Symbol',
@@ -40,7 +40,7 @@ const InputTransactionscolumns = [
 const InputInvestedscolumns = [
   {
     header: 'Transaction Date',
-    field: 'transaction_date',
+    field: 'date',
   },
   {
     header: 'Transaction Type',
