@@ -30,6 +30,10 @@ const Tabs = ({ router }) => {
   const [totalGainsData, settotalGainsData] = useState([]);
   const [totalGainsDataLoading, settotalGainsDataLoading] = useState(true);
 
+  const [totalTransactionCostData, settotalTransactionCostData] = useState([]);
+  const [totalTransactionCostDataLoading, settotalTransactionCostDataLoading] =
+    useState(true);
+
   async function fetchTotalGainsData() {
     const response = await fetch(`/api/get_linechart_data/total_gains/${date}`);
     const data = await response.json();
@@ -47,7 +51,7 @@ const Tabs = ({ router }) => {
   }
 
   async function fetchDividendData() {
-    const response = await fetch(`/api/get_barchart_data/dividends/${date}`);
+    const response = await fetch(`/api/get_barchart_data/dividend/${date}`);
     const dividendData = await response.json();
     setdividendData(dividendData);
     setLoadingDividend(false);
@@ -58,6 +62,7 @@ const Tabs = ({ router }) => {
     total_pl: '',
     total_pl_percentage: '',
     total_dividends: '',
+    transaction_cost: '',
   });
 
   async function fetchTopBar() {
@@ -65,6 +70,15 @@ const Tabs = ({ router }) => {
     const topBarData = await response.json();
     settopBarData(topBarData);
     settopBarLoading(false);
+  }
+
+  async function fetchTransactionCostData() {
+    const response = await fetch(
+      `/api/get_barchart_data/transaction_cost/${date}`
+    );
+    const totalTransactionCostData = await response.json();
+    settotalTransactionCostData(totalTransactionCostData);
+    settotalTransactionCostDataLoading(false);
   }
 
   const [topBarloading, settopBarLoading] = useState(true);
@@ -95,15 +109,30 @@ const Tabs = ({ router }) => {
     },
   ];
 
+  const TransactionCostColumns = [
+    {
+      header: 'Symbol',
+      field: 'symbol',
+    },
+    {
+      header: 'Transaction Costs',
+      field: 'transaction_cost',
+    },
+  ];
+
   function handleClick(newdate) {
     setLoading(true);
     settopBarLoading(true);
     setLoadingDividend(true);
+    settotalTransactionCostDataLoading(true);
+    settotalGainsDataLoading(true);
     router.push(`/authenticated/performance?tab=${tab}&date=${newdate}`);
     date = newdate;
     fetchDataline();
     fetchTopBar();
     fetchDividendData();
+    fetchTransactionCostData();
+    fetchTotalGainsData();
   }
 
   const [SingleDayData, setSingleDayData] = useState(null);
@@ -122,6 +151,7 @@ const Tabs = ({ router }) => {
     fetchTable();
     fetchTotalGainsData();
     fetchDividendData();
+    fetchTransactionCostData();
   }, []);
   return (
     <div className="w-full">
@@ -217,7 +247,16 @@ const Tabs = ({ router }) => {
           )}
           {isTabThree && (
             <React.Fragment>
-              <PrimeFaceBarChart />
+              <PrimeFaceBarChart
+                data={totalTransactionCostData}
+                isloading={totalTransactionCostDataLoading}
+              />
+              <Divider />
+              <PrimeFaceTable
+                loading={SingleDayDataisLoading}
+                columns={TransactionCostColumns}
+                data={SingleDayData}
+              />
             </React.Fragment>
           )}
           {isTabFour && (

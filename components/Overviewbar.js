@@ -11,6 +11,7 @@ const Tabs = ({ router, topBarData, loading }) => {
       currency: 'EUR',
     });
   };
+  console.log(topBarData.transaction_cost);
 
   const formatPercentage = (value) => {
     return value.toLocaleString('nl-NL', {
@@ -117,8 +118,12 @@ const Tabs = ({ router, topBarData, loading }) => {
             }}
           >
             <div>
-              <div className="px-5">Made expenses</div>
-              <div className="px-5 font-bold">Coming soon</div>
+              <Spin spinning={loading}>
+                <div className="px-5">Made expenses</div>
+                <div className="px-5 font-bold">
+                  {formatCurrency(topBarData.transaction_cost)}
+                </div>
+              </Spin>
             </div>
           </Link>
         </div>
@@ -136,8 +141,8 @@ const Tabs = ({ router, topBarData, loading }) => {
             }}
           >
             <div>
-              <div className="px-5">Total gains</div>
               <Spin spinning={loading}>
+                <div className="px-5">Total gains</div>
                 <div className="grid grid-cols-2 grid-rows-1 px-5 font-bold ">
                   <div>{formatCurrency(topBarData.total_pl)}</div>
                   <div className="text-right">
