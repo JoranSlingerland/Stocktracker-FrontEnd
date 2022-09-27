@@ -46,13 +46,4 @@ function errortext() {
       </div>
     );
   }
-  if (slug === '500') {
-    return (
-      <div>
-        <div className="text-center text-9xl">500</div>
-        <Divider />
-        <div className="text-2xl align-middle">Internal server error</div>
-      </div>
-    );
-  }
 }

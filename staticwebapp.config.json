@@ -23,9 +23,6 @@
     },
     "404": {
       "redirect": "/error_pages/404"
-    },
-    "500": {
-      "redirect": "/error_pages/500"
     }
   }
 }
