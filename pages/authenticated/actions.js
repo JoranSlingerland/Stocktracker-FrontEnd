@@ -62,7 +62,9 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch(`/api/get_table_data_basic/input_transactions`);
+      const response = await fetch(
+        `/api/get_table_data_basic/input_transactions`
+      );
       const InputTransactionsData = await response.json();
       setInputTransactionsData(InputTransactionsData);
       setInputTransactionsDataisLoading(false);
