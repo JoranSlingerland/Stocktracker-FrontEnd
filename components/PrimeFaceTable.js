@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { FilterMatchMode } from 'primereact/api';
 import { Button } from 'primereact/button';
 import { MultiSelect } from 'primereact/multiselect';
+import Image from '../components/Image';
 import 'primereact/resources/themes/md-light-indigo/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
@@ -116,7 +117,7 @@ export default function PrimeFaceTable({ data, columns, loading }) {
   const stockNameTemplate = (rowData) => {
     return (
       <div className="flex flex-row">
-        <img className="pr-1" alt="logo" src={rowData.logo} width={35} />{' '}
+        <Image className="pr-1" alt="logo" src={rowData.logo} width={35} height={35}/>
         {rowData.name}
       </div>
     );
@@ -125,7 +126,7 @@ export default function PrimeFaceTable({ data, columns, loading }) {
   const symbolTempalte = (rowData) => {
     return (
       <div className="flex flex-row">
-        <img className="pr-1" alt="logo" src={rowData.logo} width={35} />{' '}
+        <Image className="pr-1" alt="logo" src={rowData.logo} width={35} height={35} />
         {rowData.symbol}
       </div>
     );
