@@ -22,7 +22,7 @@ const Tabs = ({ router }) => {
   const isDateYTD = date === 'ytd';
 
   const [valueGrowthData, setvalueGrowthData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setvalueGrowthDataLoading] = useState(true);
 
   const [dividendData, setdividendData] = useState([]);
   const [loadingDividend, setLoadingDividend] = useState(true);
@@ -47,7 +47,7 @@ const Tabs = ({ router }) => {
     );
     const valueGrowthData = await response.json();
     setvalueGrowthData(valueGrowthData);
-    setLoading(false);
+    setvalueGrowthDataLoading(false);
   }
 
   async function fetchDividendData() {
@@ -121,11 +121,12 @@ const Tabs = ({ router }) => {
   ];
 
   function handleClick(newdate) {
-    setLoading(true);
+    setvalueGrowthDataLoading(true);
     settopBarLoading(true);
     setLoadingDividend(true);
     settotalTransactionCostDataLoading(true);
     settotalGainsDataLoading(true);
+    setSingleDayDataisLoading(true);
     router.push(`/authenticated/performance?tab=${tab}&date=${newdate}`);
     date = newdate;
     fetchDataline();
@@ -133,13 +134,14 @@ const Tabs = ({ router }) => {
     fetchDividendData();
     fetchTransactionCostData();
     fetchTotalGainsData();
+    fetchTable();
   }
 
   const [SingleDayData, setSingleDayData] = useState(null);
   const [SingleDayDataisLoading, setSingleDayDataisLoading] = useState(true);
 
   async function fetchTable() {
-    const response = await fetch(`/api/get_table_data/single_day/`);
+    const response = await fetch(`/api/get_table_data_performance/${date}`);
     const SingleDayData = await response.json();
     setSingleDayData(SingleDayData);
     setSingleDayDataisLoading(false);

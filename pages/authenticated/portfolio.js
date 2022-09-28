@@ -67,7 +67,7 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch(`/api/get_table_data/single_day`);
+      const response = await fetch(`/api/get_table_data_basic/single_day`);
       const SingleDayData = await response.json();
       setSingleDayData(SingleDayData);
       setSingleDayDataisLoading(false);
