@@ -1,19 +1,33 @@
-import { useRouter } from 'next/router';
 import { Divider } from 'antd';
 
-export default function DynamicPage(props) {
+export async function getStaticPaths() {
+  return {
+    paths: [
+      { params: { id: '401' } },
+      { params: { id: '403' } },
+      { params: { id: '404' } },
+    ],
+    fallback: false, // can also be true or 'blocking'
+  };
+}
+
+export async function getStaticProps(context) {
+  return {
+    props: { errorcode: context.params.id },
+  };
+}
+
+export default function DynamicPage(errorcode) {
+  console.log(errorcode.errorcode);
   return (
     <div className="flex items-center justify-center w-full h-screen">
-      <h1>{errortext()}</h1>
+      <h1>{errortext(errorcode)}</h1>
     </div>
   );
 }
 
-function errortext() {
-  const router = useRouter();
-  const { slug } = router.query;
-
-  if (slug === '401') {
+function errortext(errorcode) {
+  if (errorcode.errorcode === '401') {
     return (
       <div>
         <div className="text-center text-9xl">401</div>
@@ -24,7 +38,7 @@ function errortext() {
       </div>
     );
   }
-  if (slug === '403') {
+  if (errorcode.errorcode === '403') {
     return (
       <div>
         <div className="text-center text-9xl">403</div>
@@ -35,7 +49,7 @@ function errortext() {
       </div>
     );
   }
-  if (slug === '404') {
+  if (errorcode.errorcode === '404') {
     return (
       <div>
         <div className="text-center text-9xl">404</div>
