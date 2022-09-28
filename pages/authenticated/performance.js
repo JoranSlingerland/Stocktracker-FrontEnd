@@ -22,7 +22,7 @@ const Tabs = ({ router }) => {
   const isDateYTD = date === 'ytd';
 
   const [valueGrowthData, setvalueGrowthData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setvalueGrowthDataLoading] = useState(true);
 
   const [dividendData, setdividendData] = useState([]);
   const [loadingDividend, setLoadingDividend] = useState(true);
@@ -47,7 +47,7 @@ const Tabs = ({ router }) => {
     );
     const valueGrowthData = await response.json();
     setvalueGrowthData(valueGrowthData);
-    setLoading(false);
+    setvalueGrowthDataLoading(false);
   }
 
   async function fetchDividendData() {
@@ -121,7 +121,7 @@ const Tabs = ({ router }) => {
   ];
 
   function handleClick(newdate) {
-    setLoading(true);
+    setvalueGrowthDataLoading(true);
     settopBarLoading(true);
     setLoadingDividend(true);
     settotalTransactionCostDataLoading(true);

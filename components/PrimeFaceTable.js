@@ -117,19 +117,35 @@ export default function PrimeFaceTable({ data, columns, loading }) {
   const stockNameTemplate = (rowData) => {
     return (
       <div className="flex flex-row">
-        <Image className="pr-1" alt="logo" src={rowData.logo} width={35} height={35}/>
+        <Image
+          className="pr-1"
+          alt="logo"
+          src={rowData.logo}
+          width={35}
+          height={35}
+        />
         {rowData.name}
       </div>
     );
   };
 
   const symbolTempalte = (rowData) => {
-    return (
-      <div className="flex flex-row">
-        <Image className="pr-1" alt="logo" src={rowData.logo} width={35} height={35} />
-        {rowData.symbol}
-      </div>
-    );
+    if (rowData.logo === undefined) {
+      return <div className="flex flex-row">{rowData.symbol}</div>;
+    } else {
+      return (
+        <div className="flex flex-row">
+          <Image
+            className="pr-1"
+            alt="logo"
+            src={rowData.logo}
+            width={35}
+            height={35}
+          />
+          {rowData.symbol}
+        </div>
+      );
+    }
   };
 
   const quantityTemplate = (rowData) => {
