@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { FilterMatchMode } from 'primereact/api';
 import { Button } from 'primereact/button';
 import { MultiSelect } from 'primereact/multiselect';
-import Image from '../components/Image';
+import Image from '../components/image';
 import 'primereact/resources/themes/md-light-indigo/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
