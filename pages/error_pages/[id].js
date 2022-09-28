@@ -2,7 +2,7 @@ import { Divider } from 'antd';
 
 export async function getStaticPaths() {
   return {
-    paths: ["401", "403", "404"].map((errorcode) => ({
+    paths: ['401', '403', '404'].map((errorcode) => ({
       params: { id: errorcode },
     })),
     fallback: false,
