@@ -26,7 +26,7 @@
     "@playwright/test": "^1.26.0",
     "eslint": "^8.11.0",
     "eslint-config-next": "^12.1.0",
-    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-prettier": "^4.0.0",
     "prettier": "^2.6.0",
     "serve": "^13.0.2",
