@@ -23,7 +23,7 @@
     "autoprefixer": "^10.4.4"
   },
   "devDependencies": {
-    "@playwright/test": "^1.26.0",
+    "@playwright/test": "^1.29.2",
     "eslint": "^8.11.0",
     "eslint-config-next": "^12.1.0",
     "eslint-config-prettier": "^8.5.0",
