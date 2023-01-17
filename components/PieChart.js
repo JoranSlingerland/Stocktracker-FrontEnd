@@ -1,5 +1,8 @@
-import { Pie } from '@ant-design/plots';
 import { Spin } from 'antd';
+import { Chart } from 'primereact/chart';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+
+
 
 export default function PieChart({ data, isloading }) {
   const formatCurrency = (value) => {
@@ -8,47 +11,35 @@ export default function PieChart({ data, isloading }) {
       currency: 'EUR',
     });
   };
+  // const plugin = Chartjs.register(ChartDataLabels);
 
-  const config = {
-    appendPadding: 10,
-    data,
-    angleField: 'value',
-    colorField: 'type',
-    radius: 0.9,
-    label: {
-      type: 'inner',
-      offset: '-30%',
-      content: ({ percent }) => `${(percent * 100).toFixed(0)}%`,
-      style: {
-        fontSize: 14,
-        textAlign: 'center',
+  const chartData = {
+    labels: data['labels'],
+    datasets: [
+      {
+        data: data['data'],
+        backgroundColor: data['color'],
       },
-    },
-    legend: {
-      itemValue: {
-        formatter: (text, item) => {
-          const items = data.filter((d) => d.type === item.value);
-          return formatCurrency(
-            items.length
-              ? items.reduce((a, b) => a + b.value, 0) / items.length
-              : '-'
-          );
+    ],
+  };
+  const lightOptions = {
+    plugins: {
+      legend: {
+        labels: {
+          color: '#495057',
         },
       },
     },
-    interactions: [
-      {
-        type: 'element-active',
-      },
-      {
-        type: 'pie-legend-active',
-      },
-    ],
   };
 
   return (
     <Spin spinning={isloading}>
-      <Pie {...config} />
+      <Chart
+        type="pie"
+        data={chartData}
+        options={lightOptions}
+        style={{ position: 'relative', width: '40%' }}
+      />
     </Spin>
   );
 }

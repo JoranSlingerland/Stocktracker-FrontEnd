@@ -2,7 +2,7 @@ import Overviewbar from '../../components/Overviewbar';
 import React, { useState, useEffect } from 'react';
 import { Divider } from 'antd';
 import { withRouter } from 'next/router';
-import BasicLineGraph from '../../components/BasicLineGraph';
+// import BasicLineGraph from '../../components/BasicLineGraph';
 import PrimeFaceTable from '../../components/PrimeFaceTable';
 import PrimeFaceBarChart from '../../components/PrimeFaceBarChart';
 
@@ -223,7 +223,7 @@ const Tabs = ({ router }) => {
           {isTabOne && (
             <React.Fragment>
               <div>
-                <BasicLineGraph data={valueGrowthData} isloading={loading} />
+                {/* <BasicLineGraph data={valueGrowthData} isloading={loading} /> */}
                 <Divider />
                 <PrimeFaceTable
                   loading={SingleDayDataisLoading}
