@@ -2,7 +2,7 @@ import Overviewbar from '../../components/Overviewbar';
 import React, { useState, useEffect } from 'react';
 import { Divider } from 'antd';
 import { withRouter } from 'next/router';
-import BasicLineGraph from '../../components/BasicLineGraph';
+import BasicLineGraph from '../../components/PrimeFaceLineGraph';
 import PrimeFaceTable from '../../components/PrimeFaceTable';
 import PrimeFaceBarChart from '../../components/PrimeFaceBarChart';
 
