@@ -5,10 +5,6 @@ import PrimeFaceTable from '../../components/PrimeFaceTable';
 
 const { TabPane } = Tabs;
 
-function callback(key) {
-  console.log(key);
-}
-
 const SingleDaycolumns = [
   {
     header: 'Symbol',
@@ -151,7 +147,6 @@ export default function Home() {
           className="tabs-height"
           type="card"
           defaultActiveKey="1"
-          onChange={callback}
         >
           <TabPane className="w-full max-w-4xl" tab="Stocks" key="1">
             <PieChart data={StockPieData} isloading={StockPieDataisLoading} />

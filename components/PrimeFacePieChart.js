@@ -2,10 +2,14 @@ import { Spin } from 'antd';
 import { Chart } from 'primereact/chart';
 
 export default function PieChart({ data, isloading }) {
-  const formatCurrency = (value) => {
+  const formatCurrency = (value, maximumFractionDigits) => {
+    if (maximumFractionDigits == undefined) {
+      maximumFractionDigits == 2
+    }
     return value.toLocaleString('nl-NL', {
       style: 'currency',
       currency: 'EUR',
+      maximumFractionDigits: maximumFractionDigits,
     });
   };
 
@@ -25,14 +29,12 @@ export default function PieChart({ data, isloading }) {
         callbacks: {
           label: function (context) {
             let index = context.dataIndex;
-            console.log(context);
             let label = context.label;
             label += ': ';
             label += formatCurrency(context.dataset.data[index]);
             return label;
           },
           labelPointStyle: function (context) {
-            console.log(context);
             return {
               pointStyle: 'triangle',
               rotation: 0,
