@@ -46,13 +46,16 @@ export default function PrimeFaceTable({ data, columns, loading }) {
   };
 
   // Formating setup
-  const formatCurrency = (value) => {
+  const formatCurrency = (value, maximumFractionDigits) => {
+    if (maximumFractionDigits == undefined) {
+      maximumFractionDigits == 2;
+    }
     return value.toLocaleString('nl-NL', {
       style: 'currency',
       currency: 'EUR',
+      maximumFractionDigits: maximumFractionDigits,
     });
   };
-
   const formatPercentage = (value) => {
     return value.toLocaleString('nl-NL', {
       style: 'percent',

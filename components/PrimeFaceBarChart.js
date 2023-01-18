@@ -12,6 +12,17 @@ export default function PrimeFacePieChart(data, isloading) {
     return index.category;
   });
 
+  const formatCurrency = (value, maximumFractionDigits) => {
+    if (maximumFractionDigits == undefined) {
+      maximumFractionDigits == 2;
+    }
+    return value.toLocaleString('nl-NL', {
+      style: 'currency',
+      currency: 'EUR',
+      maximumFractionDigits: maximumFractionDigits,
+    });
+  };
+
   function filter_json(symbol) {
     let outputData = [];
     for (const element of data.data) {
@@ -80,33 +91,30 @@ export default function PrimeFacePieChart(data, isloading) {
       maintainAspectRatio: false,
       aspectRatio: 0.8,
       plugins: {
-        tooltips: {
-          mode: 'index',
-          intersect: false,
-        },
-        legend: {
-          labels: {
-            color: '#495057',
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              let index = context.dataIndex;
+              let label = context.dataset.label;
+              label += ': ';
+              label += formatCurrency(context.dataset.data[index]);
+              return label;
+            },
           },
         },
       },
       scales: {
         x: {
           stacked: true,
-          ticks: {
-            color: '#495057',
-          },
-          grid: {
-            color: '#ebedef',
-          },
         },
         y: {
           stacked: true,
           ticks: {
-            color: '#495057',
-          },
-          grid: {
-            color: '#ebedef',
+            callback: function (value) {
+              if (Math.floor(value) === value) {
+                return formatCurrency(value, 0);
+              }
+            },
           },
         },
       },

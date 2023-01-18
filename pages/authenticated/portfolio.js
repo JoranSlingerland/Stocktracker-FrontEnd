@@ -1,13 +1,9 @@
 import { Divider, Table, Tabs } from 'antd';
 import { useState, useEffect } from 'react';
-import PieChart from '../../components/PieChart';
+import PieChart from '../../components/PrimeFacePieChart';
 import PrimeFaceTable from '../../components/PrimeFaceTable';
 
 const { TabPane } = Tabs;
-
-function callback(key) {
-  console.log(key);
-}
 
 const SingleDaycolumns = [
   {
@@ -147,12 +143,7 @@ export default function Home() {
       <Divider plain></Divider>
       {/* Tabs */}
       <div className="w-fullcard-container">
-        <Tabs
-          className="tabs-height"
-          type="card"
-          defaultActiveKey="1"
-          onChange={callback}
-        >
+        <Tabs className="tabs-height" type="card" defaultActiveKey="1">
           <TabPane className="w-full max-w-4xl" tab="Stocks" key="1">
             <PieChart data={StockPieData} isloading={StockPieDataisLoading} />
           </TabPane>
