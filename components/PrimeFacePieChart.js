@@ -9,7 +9,6 @@ export default function PieChart({ data, isloading }) {
       currency: 'EUR',
     });
   };
-  // const plugin = Chartjs.register(ChartDataLabels);
 
   const chartData = {
     labels: data['labels'],
@@ -57,7 +56,7 @@ export default function PieChart({ data, isloading }) {
         type="pie"
         data={chartData}
         options={lightOptions}
-        style={{ position: 'relative', width: '40%' }}
+        style={{ position: 'relative', width: '50%' }}
       />
     </Spin>
   );

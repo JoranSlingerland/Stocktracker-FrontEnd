@@ -1,6 +1,6 @@
 import { Divider, Table, Tabs } from 'antd';
 import { useState, useEffect } from 'react';
-import PieChart from '../../components/PieChart';
+import PieChart from '../../components/PrimeFacePieChart';
 import PrimeFaceTable from '../../components/PrimeFaceTable';
 
 const { TabPane } = Tabs;
