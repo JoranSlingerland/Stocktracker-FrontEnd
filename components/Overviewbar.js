@@ -7,7 +7,7 @@ import { RiseOutlined, FallOutlined } from '@ant-design/icons';
 const Tabs = ({ router, topBarData, loading }) => {
   const formatCurrency = (value, maximumFractionDigits) => {
     if (maximumFractionDigits == undefined) {
-      maximumFractionDigits == 2
+      maximumFractionDigits == 2;
     }
     return value.toLocaleString('nl-NL', {
       style: 'currency',

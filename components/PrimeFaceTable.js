@@ -48,7 +48,7 @@ export default function PrimeFaceTable({ data, columns, loading }) {
   // Formating setup
   const formatCurrency = (value, maximumFractionDigits) => {
     if (maximumFractionDigits == undefined) {
-      maximumFractionDigits == 2
+      maximumFractionDigits == 2;
     }
     return value.toLocaleString('nl-NL', {
       style: 'currency',
