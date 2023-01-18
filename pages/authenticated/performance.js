@@ -2,7 +2,7 @@ import Overviewbar from '../../components/Overviewbar';
 import React, { useState, useEffect } from 'react';
 import { Divider } from 'antd';
 import { withRouter } from 'next/router';
-// import BasicLineGraph from '../../components/BasicLineGraph';
+import BasicLineGraph from '../../components/BasicLineGraph';
 import PrimeFaceTable from '../../components/PrimeFaceTable';
 import PrimeFaceBarChart from '../../components/PrimeFaceBarChart';
 
@@ -21,13 +21,36 @@ const Tabs = ({ router }) => {
   const isDateWeek = date === 'week';
   const isDateYTD = date === 'ytd';
 
-  const [valueGrowthData, setvalueGrowthData] = useState([]);
+  const [valueGrowthData, setvalueGrowthData] = useState({
+    labels: [],
+    datasets: [
+      {
+        label: 'Value',
+        borderColor: '#0e8505',
+        data: [],
+      },
+      {
+        label: 'Invested',
+        borderColor: '#090a09',
+        data: [],
+      },
+    ],
+  });
   const [loading, setvalueGrowthDataLoading] = useState(true);
 
   const [dividendData, setdividendData] = useState([]);
   const [loadingDividend, setLoadingDividend] = useState(true);
 
-  const [totalGainsData, settotalGainsData] = useState([]);
+  const [totalGainsData, settotalGainsData] = useState({
+    labels: [],
+    datasets: [
+      {
+        label: 'Gains',
+        borderColor: '#0e8505',
+        data: [],
+      },
+    ],
+  });
   const [totalGainsDataLoading, settotalGainsDataLoading] = useState(true);
 
   const [totalTransactionCostData, settotalTransactionCostData] = useState([]);
@@ -223,7 +246,7 @@ const Tabs = ({ router }) => {
           {isTabOne && (
             <React.Fragment>
               <div>
-                {/* <BasicLineGraph data={valueGrowthData} isloading={loading} /> */}
+                <BasicLineGraph data={valueGrowthData} isloading={loading} />
                 <Divider />
                 <PrimeFaceTable
                   loading={SingleDayDataisLoading}
