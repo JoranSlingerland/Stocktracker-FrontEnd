@@ -18,7 +18,7 @@
     "@headlessui/react": "^1.5.0",
     "@types/react-router-dom": "^5.3.3",
     "antd": "^4.19.5",
-    "autoprefixer": "^10.4.4",
+    "autoprefixer": "^10.4.13",
     "chart.js": "^3.9.1",
     "isomorphic-unfetch": "^3.0.0",
     "next": "^12.1.6-canary.3",
