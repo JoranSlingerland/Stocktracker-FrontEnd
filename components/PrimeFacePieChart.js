@@ -1,6 +1,5 @@
 import { Spin } from 'antd';
 import { Chart } from 'primereact/chart';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 export default function PieChart({ data, isloading }) {
   const formatCurrency = (value) => {
