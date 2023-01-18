@@ -2,7 +2,6 @@ import { Spin } from 'antd';
 import { Chart } from 'primereact/chart';
 
 export default function BasicLineGraph({ isloading, data }) {
-  
   let multiAxisOptions = {
     stacked: false,
     maintainAspectRatio: false,
@@ -10,8 +9,8 @@ export default function BasicLineGraph({ isloading, data }) {
     plugins: {},
     elements: {
       point: {
-        radius: 0
-      }
+        radius: 0,
+      },
     },
     scales: {
       y: {
