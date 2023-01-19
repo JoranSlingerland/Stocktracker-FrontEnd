@@ -2,6 +2,7 @@
 
 import { Modal, Divider, Button, message } from 'antd';
 import { useState } from 'react';
+import { ApiWithMessage } from '../../utils/api-utils';
 
 export default function Home() {
   const [isModalDeleteVisible, setIsDeleteModalVisible] = useState(false);
@@ -14,29 +15,8 @@ export default function Home() {
     setIsDeleteModalVisible(false);
   };
 
-  async function callApi(url, runningMessage, successMessage) {
-    const hide = message.loading(runningMessage, 10);
-    const response = await fetch(url);
-    try {
-      const body = await response.json();
-    } catch (error) {
-      console.log('error', error);
-    }
-    if (
-      response.status === 200 ||
-      response.status === 201 ||
-      response.status === 202
-    ) {
-      hide();
-      message.success(successMessage);
-    } else {
-      hide();
-      message.error('Something went wrong :(');
-    }
-  }
-
   async function handleClick(url, runningMessage, successMessage) {
-    callApi(url, runningMessage, successMessage);
+    ApiWithMessage(url, runningMessage, successMessage);
     setIsDeleteModalVisible(false);
   }
   function handlelocalstorageclearclick() {
@@ -159,7 +139,7 @@ export default function Home() {
               </Button>
               <Modal
                 title="Delete all"
-                visible={isModalDeleteVisible}
+                open={isModalDeleteVisible}
                 onOk={() =>
                   handleClick(
                     `/api/delete_cosmosdb_container/all`,

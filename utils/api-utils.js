@@ -1,4 +1,6 @@
-import { cache } from 'react';
+// utils\api-utils.js
+
+import { message } from 'antd';
 
 async function cachedFetch(url, hours = 24) {
   function setWithExpiry(key, value, ttl) {
@@ -48,4 +50,25 @@ async function regularFetch(url) {
   return data;
 }
 
-export { cachedFetch, regularFetch };
+async function ApiWithMessage(url, runningMessage, successMessage) {
+  const hide = message.loading(runningMessage, 10);
+  const response = await fetch(url);
+  try {
+    const body = await response.json();
+  } catch (error) {
+    console.log('error', error);
+  }
+  if (
+    response.status === 200 ||
+    response.status === 201 ||
+    response.status === 202
+  ) {
+    hide();
+    message.success(successMessage);
+  } else {
+    hide();
+    message.error('Something went wrong :(');
+  }
+}
+
+export { cachedFetch, regularFetch, ApiWithMessage };

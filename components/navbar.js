@@ -12,6 +12,7 @@ import {
 } from '@ant-design/icons';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { ApiWithMessage } from '../utils/api-utils';
 
 const { SubMenu } = Menu;
 
@@ -36,29 +37,8 @@ export default function App() {
     }
   }
 
-  async function callApi(url, runningMessage, successMessage) {
-    const hide = message.loading(runningMessage, 10);
-    const response = await fetch(url);
-    try {
-      const body = await response.json();
-    } catch (error) {
-      console.log('error', error);
-    }
-    if (
-      response.status === 200 ||
-      response.status === 201 ||
-      response.status === 202
-    ) {
-      hide();
-      message.success(successMessage);
-    } else {
-      hide();
-      message.error('Something went wrong :(');
-    }
-  }
-
   async function handleClick(url, runningMessage, successMessage) {
-    callApi(url, runningMessage, successMessage);
+    ApiWithMessage(url, runningMessage, successMessage);
   }
 
   return (
