@@ -2,6 +2,7 @@
 
 import { Chart } from 'primereact/chart';
 import { Spin } from 'antd';
+import { formatCurrency } from '../utils/formatting';
 
 export default function PrimeFacePieChart(data, isloading) {
   const labels = data.data.map(function (index) {
@@ -13,17 +14,6 @@ export default function PrimeFacePieChart(data, isloading) {
   const category = data.data.map(function (index) {
     return index.category;
   });
-
-  const formatCurrency = (value, maximumFractionDigits) => {
-    if (maximumFractionDigits == undefined) {
-      maximumFractionDigits == 2;
-    }
-    return value.toLocaleString('nl-NL', {
-      style: 'currency',
-      currency: 'EUR',
-      maximumFractionDigits: maximumFractionDigits,
-    });
-  };
 
   function filter_json(symbol) {
     let outputData = [];
