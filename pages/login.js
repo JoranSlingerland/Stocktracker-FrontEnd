@@ -16,9 +16,7 @@ export default function Home() {
             '/.auth/login/aad?post_login_redirect_uri=/authenticated/portfolio/'
           }
         >
-          <a>
-            <Image src={mypic} alt="mypic" />
-          </a>
+          <Image src={mypic} alt="mypic" />
         </Link>
       </div>
     </div>
