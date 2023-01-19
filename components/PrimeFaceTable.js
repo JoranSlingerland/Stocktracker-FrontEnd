@@ -1,3 +1,5 @@
+// components\PrimeFaceTable.js
+
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import React, { useState } from 'react';

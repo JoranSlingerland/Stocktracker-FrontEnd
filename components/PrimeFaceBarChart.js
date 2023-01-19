@@ -1,3 +1,5 @@
+// components\PrimeFaceBarChart.js
+
 import { Chart } from 'primereact/chart';
 import { Spin } from 'antd';
 

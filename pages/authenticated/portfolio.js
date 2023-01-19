@@ -1,4 +1,6 @@
-import { Divider, Table, Tabs } from 'antd';
+// pages\authenticated\portfolio.js
+
+import { Divider, Tabs } from 'antd';
 import { useState, useEffect } from 'react';
 import PieChart from '../../components/PrimeFacePieChart';
 import PrimeFaceTable from '../../components/PrimeFaceTable';

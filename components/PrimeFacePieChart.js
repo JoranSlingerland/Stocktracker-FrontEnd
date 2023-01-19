@@ -1,3 +1,5 @@
+// components\PrimeFacePieChart.js
+
 import { Spin } from 'antd';
 import { Chart } from 'primereact/chart';
 

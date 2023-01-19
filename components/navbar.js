@@ -1,3 +1,5 @@
+// components\navbar.js
+
 import { Menu, message, Tooltip } from 'antd';
 import {
   AreaChartOutlined,

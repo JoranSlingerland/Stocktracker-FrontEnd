@@ -1,3 +1,5 @@
+// pages\authenticated\settings.js
+
 import { Modal, Divider, Button, message } from 'antd';
 import { useState } from 'react';
 

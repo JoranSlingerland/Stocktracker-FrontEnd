@@ -1,3 +1,5 @@
+// pages\authenticated\actions.js
+
 import { Divider } from 'antd';
 import { useState, useEffect } from 'react';
 import PrimeFaceTable from '../../components/PrimeFaceTable';
