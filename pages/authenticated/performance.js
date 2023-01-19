@@ -10,7 +10,7 @@ import PrimeFaceBarChart from '../../components/PrimeFaceBarChart';
 import { cachedFetch } from '../../utils/api-utils.js';
 
 const Tabs = ({ router }) => {
-  const {
+  let {
     query: { tab, date },
   } = router;
   const isTabOne = tab === '1' || tab == null;

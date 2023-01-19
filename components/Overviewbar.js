@@ -53,7 +53,7 @@ const Tabs = ({ router, topBarData, loading }) => {
               query: { tab: '1', date: date },
             }}
           >
-            <div>
+            <div className="text-black">
               <Spin spinning={loading}>
                 <div className="px-5">Value growth</div>
                 <div className="grid grid-cols-2 grid-rows-1 px-5">
@@ -81,7 +81,7 @@ const Tabs = ({ router, topBarData, loading }) => {
               query: { tab: '2', date: date },
             }}
           >
-            <div>
+            <div className="text-black">
               <Spin spinning={loading}>
                 <div className="px-5">Received dividends</div>
                 <div className="px-5 font-bold">
@@ -104,7 +104,7 @@ const Tabs = ({ router, topBarData, loading }) => {
               query: { tab: '3', date: date },
             }}
           >
-            <div>
+            <div className="text-black">
               <Spin spinning={loading}>
                 <div className="px-5">Made expenses</div>
                 <div className="px-5 font-bold">
@@ -127,7 +127,7 @@ const Tabs = ({ router, topBarData, loading }) => {
               query: { tab: '4', date: date },
             }}
           >
-            <div>
+            <div className="text-black">
               <Spin spinning={loading}>
                 <div className="px-5">Total gains</div>
                 <div className="grid grid-cols-2 grid-rows-1 px-5 font-bold ">
