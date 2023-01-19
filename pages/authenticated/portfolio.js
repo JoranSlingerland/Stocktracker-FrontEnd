@@ -2,6 +2,7 @@ import { Divider, Table, Tabs } from 'antd';
 import { useState, useEffect } from 'react';
 import PieChart from '../../components/PrimeFacePieChart';
 import PrimeFaceTable from '../../components/PrimeFaceTable';
+import { cachedFetch } from '../../utils/api-utils.js';
 
 const { TabPane } = Tabs;
 
@@ -63,10 +64,10 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch(`/api/get_table_data_basic/single_day`);
-      const SingleDayData = await response.json();
-      setSingleDayData(SingleDayData);
-      setSingleDayDataisLoading(false);
+      cachedFetch(`/api/get_table_data_basic/single_day`).then((data) => {
+        setSingleDayData(data);
+        setSingleDayDataisLoading(false);
+      });
     }
     fetchData();
   }, []);
@@ -77,10 +78,10 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch(`/api/get_pie_data/stocks`);
-      const StockPieData = await response.json();
-      setStockPieData(StockPieData);
-      setStockPieDataisLoading(false);
+      cachedFetch(`/api/get_pie_data/stocks`).then((data) => {
+        setStockPieData(data);
+        setStockPieDataisLoading(false);
+      });
     }
     fetchData();
   }, []);
@@ -94,10 +95,10 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch(`/api/get_pie_data/currency`);
-      const CurrencyPieData = await response.json();
-      setCurrencyPieData(CurrencyPieData);
-      setCurrencyPieDataisLoading(false);
+      cachedFetch(`/api/get_pie_data/currency`).then((data) => {
+        setCurrencyPieData(data);
+        setCurrencyPieDataisLoading(false);
+      });
     }
     fetchData();
   }, []);
@@ -108,10 +109,10 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch(`/api/get_pie_data/sector`);
-      const SectorPieData = await response.json();
-      setSectorPieData(SectorPieData);
-      setSectorPieDataisLoading(false);
+      cachedFetch(`/api/get_pie_data/sector`).then((data) => {
+        setSectorPieData(data);
+        setSectorPieDataisLoading(false);
+      });
     }
     fetchData();
   }, []);
@@ -124,10 +125,10 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch(`/api/get_pie_data/country`);
-      const CountryPieData = await response.json();
-      setCountryPieData(CountryPieData);
-      setCountryPieDataisLoading(false);
+      cachedFetch(`/api/get_pie_data/country`).then((data) => {
+        setCountryPieData(data);
+        setCountryPieDataisLoading(false);
+      });
     }
     fetchData();
   }, []);

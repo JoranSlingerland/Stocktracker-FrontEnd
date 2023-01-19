@@ -1,9 +1,5 @@
 import { Modal, Divider, Button, message } from 'antd';
-import { useState, useEffect } from 'react';
-
-function delay(time) {
-  return new Promise((resolve) => setTimeout(resolve, time));
-}
+import { useState } from 'react';
 
 export default function Home() {
   const [isModalDeleteVisible, setIsDeleteModalVisible] = useState(false);
@@ -40,6 +36,14 @@ export default function Home() {
   async function handleClick(url, runningMessage, successMessage) {
     callApi(url, runningMessage, successMessage);
     setIsDeleteModalVisible(false);
+  }
+  function handlelocalstorageclearclick() {
+    localStorage.clear();
+    if (localStorage.length === 0) {
+      message.success('Local storage cleared');
+    } else {
+      message.error('Something went wrong :(');
+    }
   }
 
   return (
@@ -120,6 +124,23 @@ export default function Home() {
             </div>
             <div>
               This will delete all the containers except the input containers.
+            </div>
+          </div>
+          <Divider plain></Divider>
+          <div className="grid grid-cols-2 grid-rows-2">
+            <div className="text-xl">Clear local storage</div>
+            <div className="row-span-2 text-right">
+              <Button
+                onClick={() => handlelocalstorageclearclick()}
+                type="primary"
+                size="large"
+              >
+                Clear
+              </Button>
+            </div>
+            <div>
+              This will clear all cached data in the local storage of the
+              browser.
             </div>
           </div>
         </div>

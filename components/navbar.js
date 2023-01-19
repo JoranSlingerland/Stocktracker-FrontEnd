@@ -105,7 +105,14 @@ export default function App() {
             </Menu.Item>
 
             <Menu.Item key="logout" icon={<LogoutOutlined />}>
-              <a href="/.auth/logout?post_logout_redirect_uri=/">Logout</a>
+              <a
+                href="/.auth/logout?post_logout_redirect_uri=/"
+                onClick={() => {
+                  localStorage.clear();
+                }}
+              >
+                Logout
+              </a>
             </Menu.Item>
           </SubMenu>
         )}
