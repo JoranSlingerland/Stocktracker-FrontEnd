@@ -1,9 +1,8 @@
-import { Modal, Divider, Button, message } from 'antd';
-import { useState, useEffect } from 'react';
+// pages\authenticated\settings.js
 
-function delay(time) {
-  return new Promise((resolve) => setTimeout(resolve, time));
-}
+import { Modal, Divider, Button, message } from 'antd';
+import { useState } from 'react';
+import { ApiWithMessage } from '../../utils/api-utils';
 
 export default function Home() {
   const [isModalDeleteVisible, setIsDeleteModalVisible] = useState(false);
@@ -16,30 +15,17 @@ export default function Home() {
     setIsDeleteModalVisible(false);
   };
 
-  async function callApi(url, runningMessage, successMessage) {
-    const hide = message.loading(runningMessage, 10);
-    const response = await fetch(url);
-    try {
-      const body = await response.json();
-    } catch (error) {
-      console.log('error', error);
-    }
-    if (
-      response.status === 200 ||
-      response.status === 201 ||
-      response.status === 202
-    ) {
-      hide();
-      message.success(successMessage);
+  async function handleClick(url, runningMessage, successMessage) {
+    ApiWithMessage(url, runningMessage, successMessage);
+    setIsDeleteModalVisible(false);
+  }
+  function handlelocalstorageclearclick() {
+    localStorage.clear();
+    if (localStorage.length === 0) {
+      message.success('Local storage cleared');
     } else {
-      hide();
       message.error('Something went wrong :(');
     }
-  }
-
-  async function handleClick(url, runningMessage, successMessage) {
-    callApi(url, runningMessage, successMessage);
-    setIsDeleteModalVisible(false);
   }
 
   return (
@@ -122,6 +108,23 @@ export default function Home() {
               This will delete all the containers except the input containers.
             </div>
           </div>
+          <Divider plain></Divider>
+          <div className="grid grid-cols-2 grid-rows-2">
+            <div className="text-xl">Clear local storage</div>
+            <div className="row-span-2 text-right">
+              <Button
+                onClick={() => handlelocalstorageclearclick()}
+                type="primary"
+                size="large"
+              >
+                Clear
+              </Button>
+            </div>
+            <div>
+              This will clear all cached data in the local storage of the
+              browser.
+            </div>
+          </div>
         </div>
         <Divider plain></Divider>
         <div className="w-full max-w-3xl px-2 columns-1">
@@ -136,7 +139,7 @@ export default function Home() {
               </Button>
               <Modal
                 title="Delete all"
-                visible={isModalDeleteVisible}
+                open={isModalDeleteVisible}
                 onOk={() =>
                   handleClick(
                     `/api/delete_cosmosdb_container/all`,

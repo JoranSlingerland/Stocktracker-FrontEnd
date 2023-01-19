@@ -1,3 +1,5 @@
+// components\image.js
+
 import NextImage from 'next/image';
 
 const customLoader = ({ src }) => {

@@ -1,3 +1,5 @@
+// pages\error_pages\[id].js
+
 import { Divider } from 'antd';
 
 export async function getStaticPaths() {

@@ -1,18 +1,10 @@
+// components\PrimeFaceLineGraph.js
+
 import { Spin } from 'antd';
 import { Chart } from 'primereact/chart';
+import { formatCurrency } from '../utils/formatting';
 
 export default function BasicLineGraph({ isloading, data }) {
-  const formatCurrency = (value, maximumFractionDigits) => {
-    if (maximumFractionDigits == undefined) {
-      maximumFractionDigits == 2;
-    }
-    return value.toLocaleString('nl-NL', {
-      style: 'currency',
-      currency: 'EUR',
-      maximumFractionDigits: maximumFractionDigits,
-    });
-  };
-
   let multiAxisOptions = {
     stacked: false,
     maintainAspectRatio: false,

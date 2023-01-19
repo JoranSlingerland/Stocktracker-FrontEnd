@@ -1,3 +1,5 @@
+// pages\authenticated\performance.js
+
 import Overviewbar from '../../components/Overviewbar';
 import React, { useState, useEffect } from 'react';
 import { Divider } from 'antd';
@@ -5,6 +7,7 @@ import { withRouter } from 'next/router';
 import BasicLineGraph from '../../components/PrimeFaceLineGraph';
 import PrimeFaceTable from '../../components/PrimeFaceTable';
 import PrimeFaceBarChart from '../../components/PrimeFaceBarChart';
+import { cachedFetch } from '../../utils/api-utils.js';
 
 const Tabs = ({ router }) => {
   const {
@@ -58,26 +61,26 @@ const Tabs = ({ router }) => {
     useState(true);
 
   async function fetchTotalGainsData() {
-    const response = await fetch(`/api/get_linechart_data/total_gains/${date}`);
-    const data = await response.json();
-    settotalGainsData(data);
-    settotalGainsDataLoading(false);
+    cachedFetch(`/api/get_linechart_data/total_gains/${date}`).then((data) => {
+      settotalGainsData(data);
+      settotalGainsDataLoading(false);
+    });
   }
 
   async function fetchDataline() {
-    const response = await fetch(
-      `/api/get_linechart_data/invested_and_value/${date}`
+    cachedFetch(`/api/get_linechart_data/invested_and_value/${date}`).then(
+      (data) => {
+        setvalueGrowthData(data);
+        setvalueGrowthDataLoading(false);
+      }
     );
-    const valueGrowthData = await response.json();
-    setvalueGrowthData(valueGrowthData);
-    setvalueGrowthDataLoading(false);
   }
 
   async function fetchDividendData() {
-    const response = await fetch(`/api/get_barchart_data/dividend/${date}`);
-    const dividendData = await response.json();
-    setdividendData(dividendData);
-    setLoadingDividend(false);
+    cachedFetch(`/api/get_barchart_data/dividend/${date}`).then((data) => {
+      setdividendData(data);
+      setLoadingDividend(false);
+    });
   }
   const [topBarData, settopBarData] = useState({
     total_value: '',
@@ -89,19 +92,19 @@ const Tabs = ({ router }) => {
   });
 
   async function fetchTopBar() {
-    const response = await fetch(`/api/get_topbar_data/${date}`);
-    const topBarData = await response.json();
-    settopBarData(topBarData);
-    settopBarLoading(false);
+    cachedFetch(`/api/get_topbar_data/${date}`).then((data) => {
+      settopBarData(data);
+      settopBarLoading(false);
+    });
   }
 
   async function fetchTransactionCostData() {
-    const response = await fetch(
-      `/api/get_barchart_data/transaction_cost/${date}`
+    cachedFetch(`/api/get_barchart_data/transaction_cost/${date}`).then(
+      (data) => {
+        settotalTransactionCostData(data);
+        settotalTransactionCostDataLoading(false);
+      }
     );
-    const totalTransactionCostData = await response.json();
-    settotalTransactionCostData(totalTransactionCostData);
-    settotalTransactionCostDataLoading(false);
   }
 
   const [topBarloading, settopBarLoading] = useState(true);
@@ -164,10 +167,10 @@ const Tabs = ({ router }) => {
   const [SingleDayDataisLoading, setSingleDayDataisLoading] = useState(true);
 
   async function fetchTable() {
-    const response = await fetch(`/api/get_table_data_performance/${date}`);
-    const SingleDayData = await response.json();
-    setSingleDayData(SingleDayData);
-    setSingleDayDataisLoading(false);
+    cachedFetch(`/api/get_table_data_performance/${date}`).then((data) => {
+      setSingleDayData(data);
+      setSingleDayDataisLoading(false);
+    });
   }
 
   useEffect(() => {

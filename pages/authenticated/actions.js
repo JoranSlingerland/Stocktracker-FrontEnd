@@ -1,6 +1,9 @@
+// pages\authenticated\actions.js
+
 import { Divider } from 'antd';
 import { useState, useEffect } from 'react';
 import PrimeFaceTable from '../../components/PrimeFaceTable';
+import { cachedFetch } from '../../utils/api-utils.js';
 
 const InputTransactionscolumns = [
   {
@@ -62,22 +65,22 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch(
-        `/api/get_table_data_basic/input_transactions`
+      cachedFetch(`/api/get_table_data_basic/input_transactions`).then(
+        (data) => {
+          setInputTransactionsData(data);
+          setInputTransactionsDataisLoading(false);
+        }
       );
-      const InputTransactionsData = await response.json();
-      setInputTransactionsData(InputTransactionsData);
-      setInputTransactionsDataisLoading(false);
     }
     fetchData();
   }, []);
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch(`/api/get_table_data_basic/input_invested`);
-      const InputInvestedData = await response.json();
-      setInputInvestedData(InputInvestedData);
-      setInputInvestedDataisLoading(false);
+      cachedFetch(`/api/get_table_data_basic/input_invested`).then((data) => {
+        setInputInvestedData(data);
+        setInputInvestedDataisLoading(false);
+      });
     }
     fetchData();
   }, []);

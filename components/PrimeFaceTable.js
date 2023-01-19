@@ -1,3 +1,5 @@
+// components\PrimeFaceTable.js
+
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import React, { useState } from 'react';
@@ -5,6 +7,7 @@ import { FilterMatchMode } from 'primereact/api';
 import { Button } from 'primereact/button';
 import { MultiSelect } from 'primereact/multiselect';
 import Image from '../components/image';
+import { formatCurrency, formatPercentage } from '../utils/formatting';
 import 'primereact/resources/themes/md-light-indigo/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
@@ -46,23 +49,6 @@ export default function PrimeFaceTable({ data, columns, loading }) {
   };
 
   // Formating setup
-  const formatCurrency = (value, maximumFractionDigits) => {
-    if (maximumFractionDigits == undefined) {
-      maximumFractionDigits == 2;
-    }
-    return value.toLocaleString('nl-NL', {
-      style: 'currency',
-      currency: 'EUR',
-      maximumFractionDigits: maximumFractionDigits,
-    });
-  };
-  const formatPercentage = (value) => {
-    return value.toLocaleString('nl-NL', {
-      style: 'percent',
-      minimumFractionDigits: 2,
-    });
-  };
-
   const average_costTemplate = (rowData) => {
     return formatCurrency(rowData.average_cost);
   };

@@ -1,28 +1,12 @@
-import React, { useState, useEffect } from 'react';
+// components\Overviewbar.js
+
 import Link from 'next/link';
 import { withRouter } from 'next/router';
 import { Spin } from 'antd';
 import { RiseOutlined, FallOutlined } from '@ant-design/icons';
+import { formatCurrency, formatPercentage } from '../utils/formatting';
 
 const Tabs = ({ router, topBarData, loading }) => {
-  const formatCurrency = (value, maximumFractionDigits) => {
-    if (maximumFractionDigits == undefined) {
-      maximumFractionDigits == 2;
-    }
-    return value.toLocaleString('nl-NL', {
-      style: 'currency',
-      currency: 'EUR',
-      maximumFractionDigits: maximumFractionDigits,
-    });
-  };
-
-  const formatPercentage = (value) => {
-    return value.toLocaleString('nl-NL', {
-      style: 'percent',
-      minimumFractionDigits: 2,
-    });
-  };
-
   const {
     query: { tab, date },
   } = router;
