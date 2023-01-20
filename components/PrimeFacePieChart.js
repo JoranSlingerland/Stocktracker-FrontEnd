@@ -34,28 +34,16 @@ export default function PieChart({ data, isloading }) {
   });
 
   function clickevent(e) {
-    //get index of list item clicked on
     var target = e.target.parentNode.parentNode.parentNode;
-    console.log(target.parentNode.parentNode.parentNode)
+    var parent = target.parentNode;
+    var index = Array.prototype.indexOf.call(parent.children, target);
 
-    // check if target is a list item
-    if (target.tagName === 'LI') {
-      var parent = target.parentNode;
-      // get index of list item
-      var index = Array.prototype.indexOf.call(parent.children, target);
-    } else {
-      // get parent of target
-      var target = target.parentNode;
-      var parent = target.parentNode;
-      // get index of list item
-      var index = Array.prototype.indexOf.call(parent.children, target);
-    }
     const chart_ctx = myChartRef.current.getChart();
     chart_ctx.toggleDataVisibility(index);
     chart_ctx.update();
   }
 
-  const lightOptions = {
+  const options = {
     plugins: {
       tooltip: {
         usePointStyle: true,
@@ -87,7 +75,7 @@ export default function PieChart({ data, isloading }) {
         <Chart
           type="pie"
           data={chartData}
-          options={lightOptions}
+          options={options}
           className="w-1/2 mr-10"
           ref={myChartRef}
         />
