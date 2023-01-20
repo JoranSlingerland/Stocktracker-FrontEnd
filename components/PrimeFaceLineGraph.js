@@ -9,6 +9,10 @@ export default function BasicLineGraph({ isloading, data }) {
     stacked: false,
     maintainAspectRatio: false,
     aspectRatio: 0.6,
+    interaction: {
+      mode: 'index',
+      intersect: false,
+    },
     plugins: {
       tooltip: {
         callbacks: {
