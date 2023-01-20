@@ -20,7 +20,7 @@ export default function PieChart({ data, isloading }) {
 
   const legend = chartData['labels'].map((labels, i) => {
     return (
-      <li className="flex flex-col">
+      <li>
         <div className="flex">
           <div>
             <Checkbox onClick={clickevent} defaultChecked={true}></Checkbox>
