@@ -27,6 +27,7 @@ export default function PieChart({ data, isloading }) {
   const legend = chartData['labels'].map((labels, i) => {
     return (
       <li
+        key="legend_li_item"
         id="legend_li_item"
         onMouseEnter={mouseEnter}
         onMouseLeave={mouseLeave}
@@ -59,13 +60,16 @@ export default function PieChart({ data, isloading }) {
     }
     return target;
   }
+  function find_target_index(target) {
+    var parent = target.parentNode;
+    var index = Array.prototype.indexOf.call(parent.children, target);
+    return index;
+  }
 
   function clickevent(e) {
     var target = e.target;
     target = find_parent_with_id(target, 'legend_li_item');
-    var parent = target.parentNode;
-    var index = Array.prototype.indexOf.call(parent.children, target);
-
+    var index = find_target_index(target);
     const chart_ctx = myChartRef.current.getChart();
     chart_ctx.toggleDataVisibility(index);
     chart_ctx.update();
@@ -74,8 +78,7 @@ export default function PieChart({ data, isloading }) {
   function mouseEnter(e) {
     var target = e.target;
     target = find_parent_with_id(target, 'legend_li_item');
-    var parent = target.parentNode;
-    var index = Array.prototype.indexOf.call(parent.children, target);
+    var index = find_target_index(target);
     const chart_ctx = myChartRef.current.getChart();
     chart_ctx.setActiveElements([{ datasetIndex: 0, index: index }]);
     chart_ctx.update();
@@ -83,11 +86,7 @@ export default function PieChart({ data, isloading }) {
 
   function mouseLeave(e) {
     var target = e.target;
-
     target = find_parent_with_id(target, 'legend_li_item');
-    var parent = target.parentNode;
-    var index = Array.prototype.indexOf.call(parent.children, target);
-    console.log(index);
     const chart_ctx = myChartRef.current.getChart();
     chart_ctx.setActiveElements([]);
     chart_ctx.update();
