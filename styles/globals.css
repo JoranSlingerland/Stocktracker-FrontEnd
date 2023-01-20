@@ -16,3 +16,8 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.ant-btn-primary {
+  background: #1677ff;
+  border-color: #1677ff;
+}
