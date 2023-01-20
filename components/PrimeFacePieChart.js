@@ -1,6 +1,6 @@
 // components\PrimeFacePieChart.js
 
-import { Spin } from 'antd';
+import { Spin, Checkbox } from 'antd';
 import { Chart } from 'primereact/chart';
 import { formatCurrency } from '../utils/formatting';
 import React from 'react';
@@ -17,12 +17,13 @@ export default function PieChart({ data, isloading }) {
       },
     ],
   };
-  
+
   const legend = chartData['labels'].map((labels, i) => {
     return (
-      <li className="flex" onClick={clickevent}>
+      <li className="flex">
+        <Checkbox onClick={clickevent} defaultChecked={true}></Checkbox>
         <span
-          className="w-10 my-auto h-2.5 rounded-full mr-2.5"
+          className="w-10 my-auto h-2.5 rounded-full mx-2"
           style={{
             backgroundColor: chartData['datasets'][0]['backgroundColor'][i],
           }}
@@ -32,9 +33,10 @@ export default function PieChart({ data, isloading }) {
     );
   });
 
-  function clickevent(e, i) {
+  function clickevent(e) {
     //get index of list item clicked on
-    var target = e.target;
+    var target = e.target.parentNode.parentNode.parentNode;
+    console.log(target.parentNode.parentNode.parentNode)
 
     // check if target is a list item
     if (target.tagName === 'LI') {
@@ -48,26 +50,9 @@ export default function PieChart({ data, isloading }) {
       // get index of list item
       var index = Array.prototype.indexOf.call(parent.children, target);
     }
-
     const chart_ctx = myChartRef.current.getChart();
-    // console.log(chart_ctx);
     chart_ctx.toggleDataVisibility(index);
     chart_ctx.update();
-
-    // const chart = myChartRef.current.getChart();
-    // const hidden1 = myChartRef.current.getChart().getDatasetMeta(1)
-    // console.log('hidden1', hidden1)
-    // const test = myChartRef.current.getChart().getDatasetMeta(1).hidden = true
-    // myChartRef.current.getChart().update('active');
-    // const hidden2 = myChartRef.current.getChart().getDatasetMeta(1);
-    // console.log('hidden2', hidden2)
-    // chart.getDatasetMeta(1).hidden = true;
-    // const test = chart.getDatasetMeta(1)
-    // chart.update('active');
-    // console.log(test);
-    // hide the dataset
-    // chart.hide(2);
-    // chart.update();
   }
 
   const lightOptions = {
