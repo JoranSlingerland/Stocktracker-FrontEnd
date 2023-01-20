@@ -17,13 +17,20 @@ export default function PieChart({ data, isloading }) {
       {
         data: data['data'],
         backgroundColor: data['color'],
+        hoverBorderWidth: 0,
+        hoverBorderColor: data['color'],
+        hoverOffset: 3,
       },
     ],
   };
 
   const legend = chartData['labels'].map((labels, i) => {
     return (
-      <li id="legend_li_item">
+      <li
+        id="legend_li_item"
+        onMouseEnter={mouseEnter}
+        onMouseLeave={mouseLeave}
+      >
         <div className="flex">
           <div>
             <Checkbox onClick={clickevent} defaultChecked={true}></Checkbox>
@@ -55,8 +62,6 @@ export default function PieChart({ data, isloading }) {
 
   function clickevent(e) {
     var target = e.target;
-    console.log(target);
-
     target = find_parent_with_id(target, 'legend_li_item');
     var parent = target.parentNode;
     var index = Array.prototype.indexOf.call(parent.children, target);
@@ -66,19 +71,26 @@ export default function PieChart({ data, isloading }) {
     chart_ctx.update();
   }
 
-  function hoverevent(e) {
-    // console.log(e.target)
-    // loop through elements untill you find a li
+  function mouseEnter(e) {
     var target = e.target;
-    while (target && e.target.nodeName !== 'LI') {
-      target = e.target.parentNode;
-    }
-    var target = e.target.parentNode.parentNode.parentNode;
+    target = find_parent_with_id(target, 'legend_li_item');
+    var parent = target.parentNode;
+    var index = Array.prototype.indexOf.call(parent.children, target);
+    const chart_ctx = myChartRef.current.getChart();
+    chart_ctx.setActiveElements([{ datasetIndex: 0, index: index }]);
+    chart_ctx.update();
+  }
+
+  function mouseLeave(e) {
+    var target = e.target;
+
+    target = find_parent_with_id(target, 'legend_li_item');
     var parent = target.parentNode;
     var index = Array.prototype.indexOf.call(parent.children, target);
     console.log(index);
     const chart_ctx = myChartRef.current.getChart();
-    chart_ctx.setActiveElements([0, index]);
+    chart_ctx.setActiveElements([]);
+    chart_ctx.update();
   }
 
   const options = {
