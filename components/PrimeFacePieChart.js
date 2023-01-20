@@ -2,14 +2,12 @@
 
 import { Spin, Checkbox } from 'antd';
 import { Chart } from 'primereact/chart';
-import { Chart as Chartjs } from 'chart.js';
 import { formatCurrency } from '../utils/formatting';
 import React from 'react';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 export default function PieChart({ data, isloading }) {
   const myChartRef = React.createRef();
-  Chartjs.register(ChartDataLabels);
 
   const chartData = {
     labels: data['labels'],
@@ -140,6 +138,7 @@ export default function PieChart({ data, isloading }) {
             options={options}
             className="w-full mr-10"
             ref={myChartRef}
+            plugins={[ChartDataLabels]}
           />
         </div>
         <div className="flex justify-center mt-10 sm:items-center sm:my-2">
