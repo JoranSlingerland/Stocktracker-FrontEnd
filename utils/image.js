@@ -1,4 +1,4 @@
-// components\image.js
+// utils\image.js
 
 import NextImage from 'next/image';
 
