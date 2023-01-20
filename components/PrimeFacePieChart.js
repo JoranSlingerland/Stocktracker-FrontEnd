@@ -3,6 +3,7 @@
 import { Spin } from 'antd';
 import { Chart } from 'primereact/chart';
 import { formatCurrency } from '../utils/formatting';
+import { useCallback } from 'react';
 
 export default function PieChart({ data, isloading }) {
   const chartData = {
@@ -14,6 +15,26 @@ export default function PieChart({ data, isloading }) {
       },
     ],
   };
+
+  const legend = chartData['labels'].map((labels, i) => {
+    return (
+      <li className="flex" onClick={clickevent}>
+        <span
+          className="w-10 my-auto h-2.5 rounded-full mr-2.5"
+          style={{
+            backgroundColor: chartData['datasets'][0]['backgroundColor'][i],
+          }}
+        ></span>
+        <div className="text-align-left">{labels}</div>
+      </li>
+    );
+  });
+
+  function clickevent() {
+    // const visible = Chart.getDataVisibility(2);
+    // console.log(visible);
+  }
+
   const lightOptions = {
     plugins: {
       tooltip: {
@@ -35,22 +56,34 @@ export default function PieChart({ data, isloading }) {
         },
       },
       legend: {
-        position: 'right',
-        labels: {
-          color: '#495057',
-        },
+        display: false,
       },
     },
   };
 
+  const onRefChange = useCallback((node) => {
+    console.log(node);
+    if (node !== null) {
+      const canvasid = node.getChart();
+      console.log('element:', canvasid);
+    }
+    // console.log(canvasid);
+  }, []);
+
   return (
     <Spin spinning={isloading}>
-      <Chart
-        type="pie"
-        data={chartData}
-        options={lightOptions}
-        style={{ position: 'relative', width: '50%' }}
-      />
+      <div className="flex flex-row">
+        <Chart
+          type="pie"
+          data={chartData}
+          options={lightOptions}
+          className="w-1/2 mr-10"
+          ref={onRefChange}
+        />
+        <div className="flex items-center justify-center">
+          <ul className="content-center">{legend}</ul>
+        </div>
+      </div>
     </Spin>
   );
 }

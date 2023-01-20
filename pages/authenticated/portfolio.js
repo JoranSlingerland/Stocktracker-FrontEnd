@@ -75,7 +75,11 @@ export default function Home() {
   }, []);
 
   // Get stock pie chart data
-  const [StockPieData, setStockPieData] = useState([{ type: '', value: 0 }]);
+  const [StockPieData, setStockPieData] = useState({
+    labels: [],
+    data: [],
+    color: [],
+  });
   const [StockPieDataisLoading, setStockPieDataisLoading] = useState(true);
 
   useEffect(() => {
@@ -89,9 +93,11 @@ export default function Home() {
   }, []);
 
   // Get currency pie chart data
-  const [CurrencyPieData, setCurrencyPieData] = useState([
-    { type: '', value: 0 },
-  ]);
+  const [CurrencyPieData, setCurrencyPieData] = useState({
+    labels: [],
+    data: [],
+    color: [],
+  });
   const [CurrencyPieDataisLoading, setCurrencyPieDataisLoading] =
     useState(true);
 
@@ -106,7 +112,11 @@ export default function Home() {
   }, []);
 
   // Get sector pie chart data
-  const [SectorPieData, setSectorPieData] = useState([{ type: '', value: 0 }]);
+  const [SectorPieData, setSectorPieData] = useState({
+    labels: [],
+    data: [],
+    color: [],
+  });
   const [SectorPieDataisLoading, setSectorPieDataisLoading] = useState(true);
 
   useEffect(() => {
@@ -120,9 +130,11 @@ export default function Home() {
   }, []);
 
   // Get country pie chart data
-  const [CountryPieData, setCountryPieData] = useState([
-    { type: '', value: 0 },
-  ]);
+  const [CountryPieData, setCountryPieData] = useState({
+    labels: [],
+    data: [],
+    color: [],
+  });
   const [CountryPieDataisLoading, setCountryPieDataisLoading] = useState(true);
 
   useEffect(() => {
@@ -140,7 +152,7 @@ export default function Home() {
       {/* Titel */}
       <div>
         <h1 className="flex items-center justify-center p-5 text-3xl py">
-          Actions
+          Portfolio
         </h1>
       </div>
       <Divider plain></Divider>
