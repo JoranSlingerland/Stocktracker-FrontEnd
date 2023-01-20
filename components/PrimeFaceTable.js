@@ -6,7 +6,6 @@ import React, { useState } from 'react';
 import { FilterMatchMode } from 'primereact/api';
 import { Button } from 'primereact/button';
 import { MultiSelect } from 'primereact/multiselect';
-import Image from '../components/image';
 import { formatCurrency, formatPercentage } from '../utils/formatting';
 import 'primereact/resources/themes/md-light-indigo/theme.css';
 import 'primereact/resources/primereact.min.css';
@@ -106,7 +105,7 @@ export default function PrimeFaceTable({ data, columns, loading }) {
   const stockNameTemplate = (rowData) => {
     return (
       <div className="flex flex-row">
-        <Image
+        <img
           className="pr-1"
           alt="logo"
           src={rowData.logo}
@@ -124,7 +123,7 @@ export default function PrimeFaceTable({ data, columns, loading }) {
     } else {
       return (
         <div className="flex flex-row">
-          <Image
+          <img
             className="pr-1"
             alt="logo"
             src={rowData.logo}

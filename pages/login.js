@@ -1,7 +1,7 @@
 // pages/login.js
 
 import Link from 'next/link';
-import Image from '../components/image';
+import Image from '../utils/image';
 import mypic from '../public/images/ms-symbollockup_signin_light.png';
 
 export default function Home() {
