@@ -1,4 +1,5 @@
 // components\PrimeFaceTable.js
+/* eslint-disable @next/next/no-img-element */
 
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
