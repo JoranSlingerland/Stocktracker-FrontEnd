@@ -2,6 +2,7 @@ module.exports = {
   trailingSlash: true,
   images: {
     loader: 'custom',
+    domains: ['logo.clearbit.com'],
   },
 };
 
