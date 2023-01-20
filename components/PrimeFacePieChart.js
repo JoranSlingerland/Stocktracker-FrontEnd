@@ -1,12 +1,15 @@
 // components\PrimeFacePieChart.js
 
-import { Spin, Checkbox, Divider } from 'antd';
+import { Spin, Checkbox } from 'antd';
 import { Chart } from 'primereact/chart';
+import { Chart as Chartjs } from 'chart.js';
 import { formatCurrency } from '../utils/formatting';
 import React from 'react';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 export default function PieChart({ data, isloading }) {
   const myChartRef = React.createRef();
+  Chartjs.register(ChartDataLabels);
 
   const chartData = {
     labels: data['labels'],
@@ -20,7 +23,7 @@ export default function PieChart({ data, isloading }) {
 
   const legend = chartData['labels'].map((labels, i) => {
     return (
-      <li>
+      <li id="legend_li_item">
         <div className="flex">
           <div>
             <Checkbox onClick={clickevent} defaultChecked={true}></Checkbox>
@@ -43,8 +46,18 @@ export default function PieChart({ data, isloading }) {
     );
   });
 
+  function find_parent_with_id(target, id) {
+    while (target && target.id !== id) {
+      target = target.parentNode;
+    }
+    return target;
+  }
+
   function clickevent(e) {
-    var target = e.target.parentNode.parentNode.parentNode;
+    var target = e.target;
+    console.log(target);
+
+    target = find_parent_with_id(target, 'legend_li_item');
     var parent = target.parentNode;
     var index = Array.prototype.indexOf.call(parent.children, target);
 
@@ -53,8 +66,35 @@ export default function PieChart({ data, isloading }) {
     chart_ctx.update();
   }
 
+  function hoverevent(e) {
+    // console.log(e.target)
+    // loop through elements untill you find a li
+    var target = e.target;
+    while (target && e.target.nodeName !== 'LI') {
+      target = e.target.parentNode;
+    }
+    var target = e.target.parentNode.parentNode.parentNode;
+    var parent = target.parentNode;
+    var index = Array.prototype.indexOf.call(parent.children, target);
+    console.log(index);
+    const chart_ctx = myChartRef.current.getChart();
+    chart_ctx.setActiveElements([0, index]);
+  }
+
   const options = {
     plugins: {
+      datalabels: {
+        color: '#fff',
+        formatter: (value, ctx) => {
+          let sum = 0;
+          let dataArr = ctx.chart.data.datasets[0].data;
+          dataArr.map((data) => {
+            sum += data;
+          });
+          let percentage = ((value * 100) / sum).toFixed(0) + '%';
+          return percentage;
+        },
+      },
       tooltip: {
         usePointStyle: true,
         callbacks: {

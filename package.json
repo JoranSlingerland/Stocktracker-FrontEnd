@@ -19,6 +19,7 @@
     "antd": "^4.19.5",
     "autoprefixer": "^10.4.4",
     "chart.js": "^4.2.0",
+    "chartjs-plugin-datalabels": "^2.2.0",
     "isomorphic-unfetch": "^4.0.2",
     "next": "^13.1.2",
     "next-pwa": "^5.6.0",
