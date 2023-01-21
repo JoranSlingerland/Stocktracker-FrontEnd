@@ -2,7 +2,7 @@
 
 import Overviewbar from '../../components/Overviewbar';
 import React, { useState, useEffect } from 'react';
-import { Divider } from 'antd';
+import { Divider, Segmented } from 'antd';
 import { withRouter } from 'next/router';
 import BasicLineGraph from '../../components/PrimeFaceLineGraph';
 import PrimeFaceTable from '../../components/PrimeFaceTable';
@@ -189,62 +189,39 @@ const Tabs = ({ router }) => {
           <h1>Performance</h1>
         </div>
         <div className="flex flex-row-reverse p-3 gap-x-1">
-          <div
-            onClick={() => handleClick('max')}
-            className={`${
-              isDateMax
-                ? 'h-6 px-2 rounded-full bg-slate-300'
-                : 'h-6 px-2 rounded-full bg-slate-100'
-            }`}
-          >
-            Max
-          </div>
-          <div
-            onClick={() => handleClick('year')}
-            className={`${
-              isDateYear
-                ? 'h-6 px-2 rounded-full bg-slate-300'
-                : 'h-6 px-2 rounded-full bg-slate-100'
-            }`}
-          >
-            Year
-          </div>
-          <div
-            onClick={() => handleClick('month')}
-            className={`${
-              isDateMonth
-                ? 'h-6 px-2 rounded-full bg-slate-300'
-                : 'h-6 px-2 rounded-full bg-slate-100'
-            }`}
-          >
-            Month
-          </div>
-          <div
-            onClick={() => handleClick('week')}
-            className={`${
-              isDateWeek
-                ? 'h-6 px-2 rounded-full bg-slate-300'
-                : 'h-6 px-2 rounded-full bg-slate-100'
-            }`}
-          >
-            Week
-          </div>
-          <div
-            onClick={() => handleClick('ytd')}
-            className={`${
-              isDateYTD
-                ? 'h-6 px-2 rounded-full bg-slate-300'
-                : 'h-6 px-2 rounded-full bg-slate-100'
-            }`}
-          >
-            YTD
-          </div>
+          <Segmented
+            options={[
+              {
+                label: <div onClick={() => handleClick('ytd')}>YTD</div>,
+                value: 'ytd',
+              },
+              {
+                label: <div onClick={() => handleClick('week')}>Week</div>,
+                value: 'week',
+              },
+              {
+                label: <div onClick={() => handleClick('Month')}>Month</div>,
+                value: 'month',
+              },
+              {
+                label: <div onClick={() => handleClick('Year')}>Year</div>,
+                value: 'year',
+              },
+              {
+                label: <div onClick={() => handleClick('Max')}>Max</div>,
+                value: 'max',
+              },
+            ]}
+            value={date}
+            onChange={(e) => handleClick(e)}
+          />
         </div>
       </div>
       <div>
         <Overviewbar topBarData={topBarData} loading={topBarloading} />
       </div>
       <div>
+        <div></div>
         <div>
           {isTabOne && (
             <React.Fragment>
