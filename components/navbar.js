@@ -43,7 +43,7 @@ export default function App() {
 
   return (
     <div>
-      <Menu mode="horizontal">
+      <Menu mode="horizontal" className="block">
         <Menu.Item key="portfolio" icon={<HomeOutlined />}>
           <a href="/authenticated/portfolio/">Portfolio</a>
         </Menu.Item>
@@ -65,7 +65,7 @@ export default function App() {
             icon={<UserOutlined />}
             key="SubMenu"
             title={userInfo && userInfo.userDetails}
-            className="ml-auto"
+            className="float-right"
           >
             <Menu.Item
               onClick={() =>
