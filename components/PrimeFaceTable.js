@@ -15,27 +15,27 @@ import 'primeicons/primeicons.css';
 
 export default function PrimeFaceTable({ data, columns, loading }) {
   // Search setup
-  const [filters1, setFilters1] = useState(null);
-  const [globalFilterValue1, setGlobalFilterValue1] = useState('');
+  const [filters, setFilters] = useState(null);
+  const [globalFilterValue, setGlobalFilterValue] = useState('');
 
-  const clearFilter1 = () => {
-    initFilters1();
+  const clearFilter = () => {
+    initFilters();
   };
 
-  const onGlobalFilterChange1 = (e) => {
+  const onGlobalFilterChange = (e) => {
     const value = e.target.value;
-    let _filters1 = { ...filters1 };
-    _filters1['global'].value = value;
+    let _filters = { ...filters };
+    _filters['global'].value = value;
 
-    setFilters1(_filters1);
-    setGlobalFilterValue1(value);
+    setFilters(_filters);
+    setGlobalFilterValue(value);
   };
 
-  const initFilters1 = () => {
-    setFilters1({
+  const initFilters = () => {
+    setFilters({
       global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     });
-    setGlobalFilterValue1('');
+    setGlobalFilterValue('');
   };
 
   // Column select setup
@@ -144,7 +144,7 @@ export default function PrimeFaceTable({ data, columns, loading }) {
   };
 
   // Header setup
-  const renderHeader1 = () => {
+  const renderHeader = () => {
     return (
       <div className="flex">
         <div className="flex w-1/2">
@@ -153,7 +153,7 @@ export default function PrimeFaceTable({ data, columns, loading }) {
               <Button
                 icon={<FilterOutlined />}
                 shape="circle"
-                onClick={clearFilter1}
+                onClick={clearFilter}
               />
             </Tooltip>
           </div>
@@ -172,7 +172,7 @@ export default function PrimeFaceTable({ data, columns, loading }) {
       </div>
     );
   };
-  const header1 = renderHeader1();
+  const header = renderHeader();
 
   const renderHeaderWithAdd = () => {
     return (
@@ -183,7 +183,7 @@ export default function PrimeFaceTable({ data, columns, loading }) {
               <Button
                 icon={<FilterOutlined />}
                 shape="circle"
-                onClick={clearFilter1}
+                onClick={clearFilter}
               />
             </Tooltip>
           </div>
@@ -204,7 +204,7 @@ export default function PrimeFaceTable({ data, columns, loading }) {
               <Button
                 icon={<PlusOutlined />}
                 shape="circle"
-                onClick={clearFilter1}
+                onClick={clearFilter}
                 className="float-right"
               />
             </Tooltip>
@@ -369,9 +369,9 @@ export default function PrimeFaceTable({ data, columns, loading }) {
           responsiveLayout="scroll"
           size="small"
           stripedRows
-          filters={filters1}
+          filters={filters}
           filterDisplay="menu"
-          header={header1}
+          header={header}
           loading={loading}
         >
           {dynamicColumns}
