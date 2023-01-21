@@ -41,9 +41,14 @@ async function cachedFetch(url, hours = 24) {
   } else {
     // if not, fetch the url and cache the response
     const response = await fetch(url);
-    const data = await response.json();
-    setWithExpiry(url, data, hours * 1000 * 60 * 60);
-    return data;
+    try {
+      const data = await response.json();
+      setWithExpiry(url, data, hours * 1000 * 60 * 60);
+      return data;
+    } catch (error) {
+      const data = {};
+      return data;
+    }
   }
 }
 
