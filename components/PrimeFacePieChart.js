@@ -1,6 +1,6 @@
 // components\PrimeFacePieChart.js
 
-import { Spin, Checkbox } from 'antd';
+import { Spin, Checkbox, List } from 'antd';
 import { Chart } from 'primereact/chart';
 import { formatCurrency } from '../utils/formatting';
 import React from 'react';
@@ -22,34 +22,13 @@ export default function PieChart({ data, isloading }) {
     ],
   };
 
-  const legend = chartData['labels'].map((labels, i) => {
-    return (
-      <li
-        key="legend_li_item"
-        id="legend_li_item"
-        onMouseEnter={mouseEnter}
-        onMouseLeave={mouseLeave}
-      >
-        <div className="flex">
-          <div>
-            <Checkbox onClick={clickevent} defaultChecked={true}></Checkbox>
-          </div>
-          <div
-            className="w-20 my-auto h-2.5 mx-2 rounded-full"
-            style={{
-              backgroundColor: chartData['datasets'][0]['backgroundColor'][i],
-            }}
-          ></div>
-
-          <div className="grid w-full grid-cols-2 grid-rows-1">
-            <div className="truncate">{labels}:</div>
-            <div className="">
-              {formatCurrency(chartData['datasets'][0]['data'][i], 0)}
-            </div>
-          </div>
-        </div>
-      </li>
-    );
+  const list_data_source = chartData['labels'].map((label, i) => {
+    return {
+      title: label,
+      color: chartData['datasets'][0]['backgroundColor'][i],
+      data: chartData['datasets'][0]['data'][i],
+      key: i,
+    };
   });
 
   function find_parent_with_id(target, id) {
@@ -58,6 +37,7 @@ export default function PieChart({ data, isloading }) {
     }
     return target;
   }
+
   function find_target_index(target) {
     var parent = target.parentNode;
     var index = Array.prototype.indexOf.call(parent.children, target);
@@ -141,8 +121,46 @@ export default function PieChart({ data, isloading }) {
             plugins={[ChartDataLabels]}
           />
         </div>
-        <div className="flex justify-center mt-10 sm:items-center sm:my-2">
-          <ul>{legend}</ul>
+        <div className="flex justify-center w-full mt-10 sm:items-center sm:my-2">
+          <List
+            itemLayout="horizontal"
+            dataSource={list_data_source}
+            className="w-full"
+            renderItem={(item) => (
+              <List.Item
+                key="legend_li_item"
+                id="legend_li_item"
+                onMouseEnter={mouseEnter}
+                onMouseLeave={mouseLeave}
+              >
+                <List.Item.Meta
+                  title={
+                    <div>
+                      <div
+                        className="w-10 h-2 rounded-full display:"
+                        ref={(el) =>
+                          el &&
+                          el.style.setProperty(
+                            'background-color',
+                            item.color,
+                            'important'
+                          )
+                        }
+                      ></div>
+                      <div>{item.title}</div>
+                    </div>
+                  }
+                  avatar={
+                    <Checkbox
+                      onClick={clickevent}
+                      defaultChecked={true}
+                    ></Checkbox>
+                  }
+                />
+                <div>{formatCurrency(item.data)}</div>
+              </List.Item>
+            )}
+          />
         </div>
       </div>
     </Spin>
