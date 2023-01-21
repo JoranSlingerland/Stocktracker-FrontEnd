@@ -4,7 +4,8 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import React, { useState } from 'react';
 import { FilterMatchMode } from 'primereact/api';
-import { Button } from 'primereact/button';
+import { Button, Tooltip } from 'antd';
+import { FilterOutlined, PlusOutlined } from '@ant-design/icons';
 import { MultiSelect } from 'primereact/multiselect';
 import { formatCurrency, formatPercentage } from '../utils/formatting';
 import Image from '../utils/image';
@@ -145,29 +146,74 @@ export default function PrimeFaceTable({ data, columns, loading }) {
   // Header setup
   const renderHeader1 = () => {
     return (
-      <div className="flex justify-content-between">
-        <Button
-          type="button"
-          icon="pi pi-filter-slash"
-          label="Clear"
-          className="p-button-outlined"
-          onClick={clearFilter1}
-        />
-        <div style={{ textAlign: 'left' }}>
-          <MultiSelect
-            value={selectedColumns}
-            options={columns}
-            optionLabel="header"
-            onChange={onColumnToggle}
-            placeholder="Select Columns"
-            fixedPlaceholder="true"
-            style={{ width: '20em' }}
-          />
+      <div className="flex">
+        <div className="flex w-1/2">
+          <div className="container grid w-10 mx-0 place-items-center">
+            <Tooltip title="Clear filters">
+              <Button
+                icon={<FilterOutlined />}
+                shape="circle"
+                onClick={clearFilter1}
+              />
+            </Tooltip>
+          </div>
+          <div className="text-left">
+            <Tooltip title="Select Columns">
+              <MultiSelect
+                value={selectedColumns}
+                options={columns}
+                optionLabel="header"
+                onChange={onColumnToggle}
+              />
+            </Tooltip>
+          </div>
         </div>
+        <div className="w-1/2"></div>
       </div>
     );
   };
   const header1 = renderHeader1();
+
+  const renderHeaderWithAdd = () => {
+    return (
+      <div className="flex">
+        <div className="flex w-1/2">
+          <div className="container grid w-10 mx-0 place-items-center">
+            <Tooltip title="Clear filters">
+              <Button
+                icon={<FilterOutlined />}
+                shape="circle"
+                onClick={clearFilter1}
+              />
+            </Tooltip>
+          </div>
+          <div className="text-left">
+            <Tooltip title="Select Columns">
+              <MultiSelect
+                value={selectedColumns}
+                options={columns}
+                optionLabel="header"
+                onChange={onColumnToggle}
+              />
+            </Tooltip>
+          </div>
+        </div>
+        <div className="w-1/2">
+          <div className="">
+            <Tooltip title="Add items">
+              <Button
+                icon={<PlusOutlined />}
+                shape="circle"
+                onClick={clearFilter1}
+                className="float-right"
+              />
+            </Tooltip>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  const headerWithAdd = renderHeaderWithAdd();
 
   const dynamicColumns = selectedColumns.map((col, i) => {
     if (col.field === 'average_cost') {
