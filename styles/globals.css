@@ -39,3 +39,7 @@ div.ant-list-pagination {
   width: 0px;
   border: 0px !important;
 }
+
+.ant-form-item{
+  margin-bottom: 8px;
+}

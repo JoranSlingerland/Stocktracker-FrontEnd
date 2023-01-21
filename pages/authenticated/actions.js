@@ -111,6 +111,7 @@ export default function Home() {
                 loading={InputTransactionsDataisLoading}
                 columns={InputTransactionscolumns}
                 data={InputTransactionsData}
+                allowAdd={true}
               />
             </div>
           </div>
@@ -131,6 +132,7 @@ export default function Home() {
                 loading={InputInvestedDataisLoading}
                 columns={InputInvestedscolumns}
                 data={InputInvestedData}
+                allowAdd={true}
               />
             </div>
           </div>

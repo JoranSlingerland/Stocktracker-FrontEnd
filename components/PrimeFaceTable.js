@@ -9,11 +9,17 @@ import { FilterOutlined, PlusOutlined } from '@ant-design/icons';
 import { MultiSelect } from 'primereact/multiselect';
 import { formatCurrency, formatPercentage } from '../utils/formatting';
 import Image from '../utils/image';
+import AddStock from './formModal';
 import 'primereact/resources/themes/md-light-indigo/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 
-export default function PrimeFaceTable({ data, columns, loading }) {
+export default function PrimeFaceTable({
+  data,
+  columns,
+  loading,
+  allowAdd = false,
+}) {
   // Search setup
   const [filters, setFilters] = useState(null);
   const [globalFilterValue, setGlobalFilterValue] = useState('');
@@ -144,7 +150,7 @@ export default function PrimeFaceTable({ data, columns, loading }) {
   };
 
   // Header setup
-  const renderHeader = () => {
+  const renderHeaderNoAdd = () => {
     return (
       <div className="flex">
         <div className="flex w-1/2">
@@ -172,7 +178,6 @@ export default function PrimeFaceTable({ data, columns, loading }) {
       </div>
     );
   };
-  const header = renderHeader();
 
   const renderHeaderWithAdd = () => {
     return (
@@ -200,20 +205,18 @@ export default function PrimeFaceTable({ data, columns, loading }) {
         </div>
         <div className="w-1/2">
           <div className="">
-            <Tooltip title="Add items">
-              <Button
-                icon={<PlusOutlined />}
-                shape="circle"
-                onClick={clearFilter}
-                className="float-right"
-              />
-            </Tooltip>
+            <AddStock />
           </div>
         </div>
       </div>
     );
   };
-  const headerWithAdd = renderHeaderWithAdd();
+
+  if (allowAdd) {
+    var header = renderHeaderWithAdd();
+  } else {
+    var header = renderHeaderNoAdd();
+  }
 
   const dynamicColumns = selectedColumns.map((col, i) => {
     if (col.field === 'average_cost') {
