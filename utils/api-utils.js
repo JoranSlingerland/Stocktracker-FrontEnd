@@ -82,4 +82,4 @@ async function ApiWithMessage(url, runningMessage, successMessage) {
 }
 // End of main functions
 
-export { cachedFetch, ovewriteCachedFetch, regularFetch };
+export { cachedFetch, ovewriteCachedFetch, regularFetch, ApiWithMessage };
