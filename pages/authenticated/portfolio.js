@@ -157,7 +157,7 @@ export default function Home() {
       </div>
       <Divider plain></Divider>
       {/* Tabs */}
-      <div className="w-fullcard-container">
+      <div className="w-fullcard-container ">
         <Tabs className="tabs-height" type="card" defaultActiveKey="1">
           <TabPane className="w-full max-w-4xl" tab="Stocks" key="1">
             <PieChart data={StockPieData} isloading={StockPieDataisLoading} />

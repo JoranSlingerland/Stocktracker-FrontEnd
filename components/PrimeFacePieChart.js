@@ -110,22 +110,33 @@ export default function PieChart({ data, isloading }) {
 
   return (
     <Spin spinning={isloading}>
-      <div className="flex flex-col sm:flex-row">
+      <div className="flex flex-col justify-center md:flex-row">
         <div>
           <Chart
             type="pie"
             data={chartData}
             options={options}
-            className="w-full mr-10"
+            className="w-10/12 m-auto md:w-full md:mr-20"
             ref={myChartRef}
             plugins={[ChartDataLabels]}
           />
         </div>
-        <div className="flex justify-center w-full mt-10 sm:items-center sm:my-2">
+        <div className="w-full mt-10 md:items-center md:my-2">
+          {/* generate 2 list if more than 8 items */}
           <List
             itemLayout="horizontal"
             dataSource={list_data_source}
             className="w-full"
+            size="small"
+            pagination={{
+              onChange: (page) => {
+                console.log(page);
+              },
+              pageSize: 8,
+              size: 'small',
+              hideOnSinglePage: true,
+              className: 'm-0',
+            }}
             renderItem={(item) => (
               <List.Item
                 key="legend_li_item"
