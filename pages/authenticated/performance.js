@@ -25,12 +25,6 @@ const Tabs = ({ router }) => {
   const isTabThree = tab === '3';
   const isTabFour = tab === '4';
 
-  const isDateMax = date === 'max' || date == null;
-  const isDateYear = date === 'year';
-  const isDateMonth = date === 'month';
-  const isDateWeek = date === 'week';
-  const isDateYTD = date === 'ytd';
-
   const [valueGrowthData, setvalueGrowthData] = useState({
     labels: [],
     datasets: [
