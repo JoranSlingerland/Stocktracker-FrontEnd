@@ -21,3 +21,15 @@ a {
   background: #1677ff;
   border-color: #1677ff;
 }
+
+div.ant-list-pagination {
+  justify-content: center;
+  display: flex;
+  margin-top: 10px !important;
+}
+
+@media (min-width: 768px) {
+  .ant-list {
+    height: 505px;
+  }
+}
