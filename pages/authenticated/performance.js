@@ -188,7 +188,7 @@ const Tabs = ({ router }) => {
         <div className="flex px-5 py-2 text-2xl">
           <h1>Performance</h1>
         </div>
-        <div className="flex flex-row-reverse p-3 gap-x-1">
+        <div className="flex flex-row-reverse p-3 overflow-auto gap-x-1">
           <Segmented
             options={[
               {
