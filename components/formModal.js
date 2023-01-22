@@ -189,7 +189,8 @@ const AddTransactionForm = ({ open, onCreate, onCancel }) => {
   );
 };
 
-function AddStock(form) {
+function Main(form) {
+  console.log(form.form)
   const [open, setOpen] = useState(false);
   const onCreate = (values) => {
     console.log('Received values of form: ', values);
@@ -208,45 +209,31 @@ function AddStock(form) {
           className="float-right"
         />
       </Tooltip>
-      <AddStockForm
-        open={open}
-        onCreate={onCreate}
-        onCancel={() => {
-          setOpen(false);
-        }}
-      />
+      {form.form === 'addStock'
+        ? (console.log('addStock'),
+          (
+            <AddStockForm
+              open={open}
+              onCreate={onCreate}
+              onCancel={() => {
+                setOpen(false);
+              }}
+            />
+          ))
+        : form.form === 'addTransaction'
+        ? (console.log('addTransaction'),
+          (
+            <AddTransactionForm
+              open={open}
+              onCreate={onCreate}
+              onCancel={() => {
+                setOpen(false);
+              }}
+            />
+          ))
+        : console.log('nothing')}
     </div>
   );
 }
 
-function AddTransaction() {
-  const [open, setOpen] = useState(false);
-  const onCreate = (values) => {
-    console.log('Received values of form: ', values);
-    setOpen(false);
-  };
-
-  return (
-    <div>
-      <Tooltip title="Add items">
-        <Button
-          icon={<PlusOutlined />}
-          shape="circle"
-          onClick={() => {
-            setOpen(true);
-          }}
-          className="float-right"
-        />
-      </Tooltip>
-      <AddTransactionForm
-        open={open}
-        onCreate={onCreate}
-        onCancel={() => {
-          setOpen(false);
-        }}
-      />
-    </div>
-  );
-}
-
-export { AddStock, AddTransaction };
+export { Main };

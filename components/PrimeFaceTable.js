@@ -9,7 +9,7 @@ import { FilterOutlined, PlusOutlined } from '@ant-design/icons';
 import { MultiSelect } from 'primereact/multiselect';
 import { formatCurrency, formatPercentage } from '../utils/formatting';
 import Image from '../utils/image';
-import { AddStock, AddTransaction } from './formModal';
+import { Main } from './formModal';
 import 'primereact/resources/themes/md-light-indigo/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
@@ -206,7 +206,7 @@ export default function PrimeFaceTable({
         </div>
         <div className="w-1/2">
           <div className="">
-            <AddStock />
+            <Main form="addStock" />
           </div>
         </div>
       </div>
@@ -239,7 +239,7 @@ export default function PrimeFaceTable({
         </div>
         <div className="w-1/2">
           <div className="">
-            <AddTransaction />
+            <Main form="addTransaction" />
           </div>
         </div>
       </div>
@@ -248,7 +248,7 @@ export default function PrimeFaceTable({
 
   if (allowAdd && form === 'addTransaction') {
     var header = renderHeaderWithAddTransaction();
-  } else if (allowAdd && form === 'addStock' ) {
+  } else if (allowAdd && form === 'addStock') {
     var header = renderHeaderWithAddStock();
   } else {
     var header = renderHeaderNoAdd();
