@@ -12,7 +12,7 @@ import {
 import { useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 
-const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
+const AddStockForm = ({ open, onCreate, onCancel }) => {
   const [form] = Form.useForm();
   return (
     <Modal
@@ -128,7 +128,7 @@ const CollectionCreateForm = ({ open, onCreate, onCancel }) => {
   );
 };
 
-const CollectionCreateForm2 = ({ open, onCreate, onCancel }) => {
+const AddTransactionForm = ({ open, onCreate, onCancel }) => {
   const [form] = Form.useForm();
   return (
     <Modal
@@ -189,7 +189,7 @@ const CollectionCreateForm2 = ({ open, onCreate, onCancel }) => {
   );
 };
 
-function AddStock() {
+function AddStock(form) {
   const [open, setOpen] = useState(false);
   const onCreate = (values) => {
     console.log('Received values of form: ', values);
@@ -208,7 +208,7 @@ function AddStock() {
           className="float-right"
         />
       </Tooltip>
-      <CollectionCreateForm
+      <AddStockForm
         open={open}
         onCreate={onCreate}
         onCancel={() => {
@@ -219,7 +219,7 @@ function AddStock() {
   );
 }
 
-function AddStock2() {
+function AddTransaction() {
   const [open, setOpen] = useState(false);
   const onCreate = (values) => {
     console.log('Received values of form: ', values);
@@ -238,7 +238,7 @@ function AddStock2() {
           className="float-right"
         />
       </Tooltip>
-      <CollectionCreateForm2
+      <AddTransactionForm
         open={open}
         onCreate={onCreate}
         onCancel={() => {
@@ -249,4 +249,4 @@ function AddStock2() {
   );
 }
 
-export { AddStock, AddStock2 };
+export { AddStock, AddTransaction };

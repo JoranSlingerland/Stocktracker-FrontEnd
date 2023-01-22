@@ -9,7 +9,7 @@ import { FilterOutlined, PlusOutlined } from '@ant-design/icons';
 import { MultiSelect } from 'primereact/multiselect';
 import { formatCurrency, formatPercentage } from '../utils/formatting';
 import Image from '../utils/image';
-import { AddStock, AddStock2 } from './formModal';
+import { AddStock, AddTransaction } from './formModal';
 import 'primereact/resources/themes/md-light-indigo/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
@@ -239,7 +239,7 @@ export default function PrimeFaceTable({
         </div>
         <div className="w-1/2">
           <div className="">
-            <AddStock2 />
+            <AddTransaction />
           </div>
         </div>
       </div>
