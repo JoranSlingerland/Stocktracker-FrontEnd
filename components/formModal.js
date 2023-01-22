@@ -29,7 +29,6 @@ const AddStockForm = ({ open, onCreate, onCancel }) => {
             onCreate(values);
           })
           .catch((info) => {
-            console.log('Validate Failed:', info);
           });
       }}
     >
@@ -145,7 +144,6 @@ const AddTransactionForm = ({ open, onCreate, onCancel }) => {
             onCreate(values);
           })
           .catch((info) => {
-            console.log('Validate Failed:', info);
           });
       }}
     >
@@ -224,9 +222,7 @@ export default function AddXForm(form) {
             setOpen(false);
           }}
         />
-      ) : (
-        console.log('nothing')
-      )}
+      ) : null}
     </div>
   );
 }
