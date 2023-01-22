@@ -190,7 +190,6 @@ const AddTransactionForm = ({ open, onCreate, onCancel }) => {
 };
 
 export default function AddXForm(form) {
-  console.log(form.form);
   const [open, setOpen] = useState(false);
   const onCreate = (values) => {
     console.log('Received values of form: ', values);
@@ -209,29 +208,25 @@ export default function AddXForm(form) {
           className="float-right"
         />
       </Tooltip>
-      {form.form === 'addStock'
-        ? (console.log('addStock'),
-          (
-            <AddStockForm
-              open={open}
-              onCreate={onCreate}
-              onCancel={() => {
-                setOpen(false);
-              }}
-            />
-          ))
-        : form.form === 'addTransaction'
-        ? (console.log('addTransaction'),
-          (
-            <AddTransactionForm
-              open={open}
-              onCreate={onCreate}
-              onCancel={() => {
-                setOpen(false);
-              }}
-            />
-          ))
-        : console.log('nothing')}
+      {form.form === 'addStock' ? (
+        <AddStockForm
+          open={open}
+          onCreate={onCreate}
+          onCancel={() => {
+            setOpen(false);
+          }}
+        />
+      ) : form.form === 'addTransaction' ? (
+        <AddTransactionForm
+          open={open}
+          onCreate={onCreate}
+          onCancel={() => {
+            setOpen(false);
+          }}
+        />
+      ) : (
+        console.log('nothing')
+      )}
     </div>
   );
 }

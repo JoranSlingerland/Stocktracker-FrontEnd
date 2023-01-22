@@ -151,7 +151,7 @@ export default function PrimeFaceTable({
   };
 
   // Header setup
-  const renderHeaderNoAdd = () => {
+  const renderHeader = (form) => {
     return (
       <div className="flex">
         <div className="flex w-1/2">
@@ -175,53 +175,18 @@ export default function PrimeFaceTable({
             </Tooltip>
           </div>
         </div>
-        <div className="w-1/2"></div>
+        {allowAdd && (
+          <div className="w-1/2">
+            <div className="">
+              <AddXForm form={form} />
+            </div>
+          </div>
+        )}
       </div>
     );
   };
+  var header = renderHeader(form);
 
-  const renderHeaderWithAdd = (form) => {
-    return (
-      <div className="flex">
-        <div className="flex w-1/2">
-          <div className="container grid w-10 mx-0 place-items-center">
-            <Tooltip title="Clear filters">
-              <Button
-                icon={<FilterOutlined />}
-                shape="circle"
-                onClick={clearFilter}
-              />
-            </Tooltip>
-          </div>
-          <div className="text-left">
-            <Tooltip title="Select Columns">
-              <MultiSelect
-                value={selectedColumns}
-                options={columns}
-                optionLabel="header"
-                onChange={onColumnToggle}
-              />
-            </Tooltip>
-          </div>
-        </div>
-        <div className="w-1/2">
-          <div className="">
-            {form === 'addStock' ? (
-              <AddXForm form="addStock" />
-            ) : form === 'addTransaction' ? (
-              <AddXForm form="addTransaction" />
-            ) : null}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  if (allowAdd) {
-    var header = renderHeaderWithAdd(form);
-  } else {
-    var header = renderHeaderNoAdd();
-  }
 
   const dynamicColumns = selectedColumns.map((col, i) => {
     if (col.field === 'average_cost') {
