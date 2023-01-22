@@ -189,8 +189,8 @@ const AddTransactionForm = ({ open, onCreate, onCancel }) => {
   );
 };
 
-function Main(form) {
-  console.log(form.form)
+export default function AddXForm(form) {
+  console.log(form.form);
   const [open, setOpen] = useState(false);
   const onCreate = (values) => {
     console.log('Received values of form: ', values);
@@ -235,5 +235,3 @@ function Main(form) {
     </div>
   );
 }
-
-export { Main };
