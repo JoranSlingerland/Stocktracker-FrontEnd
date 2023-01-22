@@ -9,7 +9,7 @@ import { FilterOutlined, PlusOutlined } from '@ant-design/icons';
 import { MultiSelect } from 'primereact/multiselect';
 import { formatCurrency, formatPercentage } from '../utils/formatting';
 import Image from '../utils/image';
-import AddStock from './formModal';
+import { AddStock, AddStock2 } from './formModal';
 import 'primereact/resources/themes/md-light-indigo/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
@@ -19,6 +19,7 @@ export default function PrimeFaceTable({
   columns,
   loading,
   allowAdd = false,
+  form = 'null',
 }) {
   // Search setup
   const [filters, setFilters] = useState(null);
@@ -179,7 +180,7 @@ export default function PrimeFaceTable({
     );
   };
 
-  const renderHeaderWithAdd = () => {
+  const renderHeaderWithAddStock = () => {
     return (
       <div className="flex">
         <div className="flex w-1/2">
@@ -212,8 +213,43 @@ export default function PrimeFaceTable({
     );
   };
 
-  if (allowAdd) {
-    var header = renderHeaderWithAdd();
+  const renderHeaderWithAddTransaction = () => {
+    return (
+      <div className="flex">
+        <div className="flex w-1/2">
+          <div className="container grid w-10 mx-0 place-items-center">
+            <Tooltip title="Clear filters">
+              <Button
+                icon={<FilterOutlined />}
+                shape="circle"
+                onClick={clearFilter}
+              />
+            </Tooltip>
+          </div>
+          <div className="text-left">
+            <Tooltip title="Select Columns">
+              <MultiSelect
+                value={selectedColumns}
+                options={columns}
+                optionLabel="header"
+                onChange={onColumnToggle}
+              />
+            </Tooltip>
+          </div>
+        </div>
+        <div className="w-1/2">
+          <div className="">
+            <AddStock2 />
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  if (allowAdd && form === 'addTransaction') {
+    var header = renderHeaderWithAddTransaction();
+  } else if (allowAdd && form === 'addStock' ) {
+    var header = renderHeaderWithAddStock();
   } else {
     var header = renderHeaderNoAdd();
   }

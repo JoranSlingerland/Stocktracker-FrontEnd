@@ -112,6 +112,7 @@ export default function Home() {
                 columns={InputTransactionscolumns}
                 data={InputTransactionsData}
                 allowAdd={true}
+                form={'addStock'}
               />
             </div>
           </div>
@@ -133,6 +134,7 @@ export default function Home() {
                 columns={InputInvestedscolumns}
                 data={InputInvestedData}
                 allowAdd={true}
+                form={'addTransaction'}
               />
             </div>
           </div>
