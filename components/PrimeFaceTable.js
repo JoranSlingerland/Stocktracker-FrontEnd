@@ -187,7 +187,6 @@ export default function PrimeFaceTable({
   };
   var header = renderHeader(form);
 
-
   const dynamicColumns = selectedColumns.map((col, i) => {
     if (col.field === 'average_cost') {
       return (

@@ -28,8 +28,7 @@ const AddStockForm = ({ open, onCreate, onCancel }) => {
             form.resetFields();
             onCreate(values);
           })
-          .catch((info) => {
-          });
+          .catch((info) => {});
       }}
     >
       <Form
@@ -143,8 +142,7 @@ const AddTransactionForm = ({ open, onCreate, onCancel }) => {
             form.resetFields();
             onCreate(values);
           })
-          .catch((info) => {
-          });
+          .catch((info) => {});
       }}
     >
       <Form
