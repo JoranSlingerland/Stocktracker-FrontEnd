@@ -65,9 +65,23 @@ async function regularFetch(url) {
   return data;
 }
 
-async function ApiWithMessage(url, runningMessage, successMessage) {
+async function ApiWithMessage(
+  url,
+  runningMessage,
+  successMessage,
+  method = 'GET',
+  body = {}
+) {
+  var headers = new Headers();
+  headers.append('Content-Type', 'application/json');
+  const requestOptions = {
+    method: method,
+    headers: headers,
+    body: JSON.stringify(body),
+  };
+  console.log('requestOptions', requestOptions)
   const hide = message.loading(runningMessage, 10);
-  const response = await fetch(url);
+  const response = await fetch(url, requestOptions);
   try {
     const body = await response.json();
   } catch (error) {
