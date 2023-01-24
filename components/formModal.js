@@ -54,7 +54,7 @@ const AddStockForm = ({ open, onCreate, onCancel }) => {
           <DatePicker />
         </Form.Item>
         <Form.Item
-          name="Cost"
+          name="cost"
           label="Cost"
           rules={[
             {
@@ -65,7 +65,7 @@ const AddStockForm = ({ open, onCreate, onCancel }) => {
           <InputNumber />
         </Form.Item>
         <Form.Item
-          name="Quantity"
+          name="quantity"
           label="Quantity"
           rules={[
             {
@@ -76,7 +76,7 @@ const AddStockForm = ({ open, onCreate, onCancel }) => {
           <InputNumber />
         </Form.Item>
         <Form.Item
-          name="buy_sell"
+          name="transaction_type"
           rules={[
             {
               required: true,
@@ -89,7 +89,7 @@ const AddStockForm = ({ open, onCreate, onCancel }) => {
           </Radio.Group>
         </Form.Item>
         <Form.Item
-          name="Transaction"
+          name="transaction_cost"
           label="Transaction Cost"
           rules={[
             {
@@ -100,7 +100,7 @@ const AddStockForm = ({ open, onCreate, onCancel }) => {
           <InputNumber />
         </Form.Item>
         <Form.Item
-          name="Currency"
+          name="currency"
           label="Currency"
           rules={[
             {
@@ -111,7 +111,7 @@ const AddStockForm = ({ open, onCreate, onCancel }) => {
           <Input />
         </Form.Item>
         <Form.Item
-          name="Domain"
+          name="domain"
           label="Domain"
           rules={[
             {
@@ -153,11 +153,11 @@ const AddTransactionForm = ({ open, onCreate, onCancel }) => {
           deposit_withdrawal: 'deposit',
         }}
       >
-        <Form.Item name="Date" label="Date" rules={[{ required: true }]}>
+        <Form.Item name="date" label="Date" rules={[{ required: true }]}>
           <DatePicker />
         </Form.Item>
         <Form.Item
-          name="Amount"
+          name="amount"
           label="Amount"
           rules={[
             {
@@ -168,7 +168,7 @@ const AddTransactionForm = ({ open, onCreate, onCancel }) => {
           <InputNumber />
         </Form.Item>
         <Form.Item
-          name="deposit_withdrawal"
+          name="transaction_type"
           rules={[
             {
               required: true,
