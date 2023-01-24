@@ -11,6 +11,7 @@ import {
 } from 'antd';
 import { useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
+import { ApiWithMessage } from '../utils/api-utils';
 
 const AddStockForm = ({ open, onCreate, onCancel }) => {
   const [form] = Form.useForm();
@@ -185,11 +186,33 @@ const AddTransactionForm = ({ open, onCreate, onCancel }) => {
   );
 };
 
-export default function AddXForm(form) {
+export default function AddXForm(form, onCreate2) {
   const [open, setOpen] = useState(false);
+  console.log(onCreate2)
   const onCreate = (values) => {
     console.log('Received values of form: ', values);
     setOpen(false);
+    if (form.form === 'addStock') {
+      var value = {
+        type: 'stock',
+        items: [values],
+      };
+    } else if (form.form === 'addTransaction') {
+      var value = {
+        type: 'transaction',
+        items: [values],
+      };
+    }
+    async function fetchData() {
+      ApiWithMessage(
+        `/api/add_item_to_input`,
+        'Creating new items',
+        'Items Created',
+        'Post',
+        value
+      );
+    }
+    fetchData();
   };
 
   return (
