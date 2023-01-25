@@ -82,7 +82,8 @@ async function ApiWithMessage(
   const hide = message.loading(runningMessage, 10);
   if (method === 'GET') {
     var response = await fetch(url);
-  } if (method === 'POST' || method === 'PUT' || method === 'DELETE') {
+  }
+  if (method === 'POST' || method === 'PUT' || method === 'DELETE') {
     var response = await fetch(url, requestOptions);
   }
   try {
