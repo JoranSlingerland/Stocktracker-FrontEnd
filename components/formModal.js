@@ -37,29 +37,48 @@ const AddStockForm = ({ open, onCreate, onCancel }) => {
         layout="vertical"
         name="add_stock_form"
         initialValues={{
-          buy_sell: 'buy',
+          transaction_type: 'buy',
         }}
       >
         <Form.Item
           name="symbol"
           label="symbol"
+          hasFeedback
           rules={[
             {
               required: true,
+            },
+            {
+              pattern: new RegExp('^[A-Z]{1,5}$'),
+              message: 'Symbol must be 1-5 capital letters',
             },
           ]}
         >
           <Input />
         </Form.Item>
-        <Form.Item name="date" label="Date" rules={[{ required: true }]}>
+        <Form.Item
+          name="date"
+          label="Date"
+          hasFeedback
+          rules={[{ required: true }]}
+        >
           <DatePicker />
         </Form.Item>
         <Form.Item
           name="cost"
           label="Cost"
+          hasFeedback
           rules={[
             {
               required: true,
+            },
+            {
+              validator(rule, value) {
+                if (value < 0) {
+                  return Promise.reject('Value must be positive');
+                }
+                return Promise.resolve();
+              },
             },
           ]}
         >
@@ -68,9 +87,18 @@ const AddStockForm = ({ open, onCreate, onCancel }) => {
         <Form.Item
           name="quantity"
           label="Quantity"
+          hasFeedback
           rules={[
             {
               required: true,
+            },
+            {
+              validator(rule, value) {
+                if (value < 0) {
+                  return Promise.reject('Amount must be positive');
+                }
+                return Promise.resolve();
+              },
             },
           ]}
         >
@@ -78,6 +106,7 @@ const AddStockForm = ({ open, onCreate, onCancel }) => {
         </Form.Item>
         <Form.Item
           name="transaction_type"
+          hasFeedback
           rules={[
             {
               required: true,
@@ -92,9 +121,18 @@ const AddStockForm = ({ open, onCreate, onCancel }) => {
         <Form.Item
           name="transaction_cost"
           label="Transaction Cost"
+          hasFeedback
           rules={[
             {
               required: true,
+            },
+            {
+              validator(rule, value) {
+                if (value > 0) {
+                  return Promise.reject('Amount must be negative');
+                }
+                return Promise.resolve();
+              },
             },
           ]}
         >
@@ -103,9 +141,14 @@ const AddStockForm = ({ open, onCreate, onCancel }) => {
         <Form.Item
           name="currency"
           label="Currency"
+          hasFeedback
           rules={[
             {
               required: true,
+            },
+            {
+              pattern: new RegExp('^[A-Z]{3}$'),
+              message: 'Currency must be 3 capital letters',
             },
           ]}
         >
@@ -114,9 +157,16 @@ const AddStockForm = ({ open, onCreate, onCancel }) => {
         <Form.Item
           name="domain"
           label="Domain"
+          hasFeedback
           rules={[
             {
               required: true,
+            },
+            {
+              pattern: new RegExp(
+                '^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$'
+              ),
+              message: 'Please enter a valid domain',
             },
           ]}
         >
@@ -151,18 +201,35 @@ const AddTransactionForm = ({ open, onCreate, onCancel }) => {
         layout="vertical"
         name="add_transaction_form"
         initialValues={{
-          deposit_withdrawal: 'deposit',
+          transaction_type: 'deposit',
         }}
       >
-        <Form.Item name="date" label="Date" rules={[{ required: true }]}>
+        <Form.Item
+          name="date"
+          label="Date"
+          hasFeedback
+          rules={[{ required: true }]}
+        >
           <DatePicker />
         </Form.Item>
         <Form.Item
           name="amount"
           label="Amount"
+          hasFeedback
           rules={[
             {
               required: true,
+            },
+            {
+              validator(rule, value) {
+                if (value < 0) {
+                  return Promise.reject('Value must be positive');
+                }
+                return Promise.resolve();
+              },
+            },
+            {
+              type: 'number',
             },
           ]}
         >
@@ -170,6 +237,7 @@ const AddTransactionForm = ({ open, onCreate, onCancel }) => {
         </Form.Item>
         <Form.Item
           name="transaction_type"
+          hasFeedback
           rules={[
             {
               required: true,
@@ -206,7 +274,7 @@ export default function AddXForm({ form, parentCallback }) {
         `/api/add_item_to_input`,
         'Creating new items',
         'Items Created',
-        'Post',
+        'POST',
         value
       );
     }
