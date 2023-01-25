@@ -186,7 +186,7 @@ const AddTransactionForm = ({ open, onCreate, onCancel }) => {
   );
 };
 
-export default function AddXForm({form, parentCallback}) {
+export default function AddXForm({ form, parentCallback }) {
   const [open, setOpen] = useState(false);
   const onCreate = (values) => {
     setOpen(false);
@@ -246,4 +246,4 @@ export default function AddXForm({form, parentCallback}) {
       ) : null}
     </div>
   );
-};
+}

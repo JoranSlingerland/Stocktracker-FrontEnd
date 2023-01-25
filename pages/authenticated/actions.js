@@ -87,18 +87,22 @@ export default function Home() {
 
   async function callback_transactions() {
     setInputTransactionsDataisLoading(true);
-    ovewriteCachedFetch(`/api/get_table_data_basic/input_transactions`).then((data) => {
-      setInputTransactionsData(data);
-      setInputTransactionsDataisLoading(false);
-    });
+    ovewriteCachedFetch(`/api/get_table_data_basic/input_transactions`).then(
+      (data) => {
+        setInputTransactionsData(data);
+        setInputTransactionsDataisLoading(false);
+      }
+    );
   }
 
   async function callback_invested() {
     setInputInvestedDataisLoading(true);
-    ovewriteCachedFetch(`/api/get_table_data_basic/input_invested`).then((data) => {
-      setInputInvestedData(data);
-      setInputInvestedDataisLoading(false);
-    });
+    ovewriteCachedFetch(`/api/get_table_data_basic/input_invested`).then(
+      (data) => {
+        setInputInvestedData(data);
+        setInputInvestedDataisLoading(false);
+      }
+    );
   }
 
   return (
