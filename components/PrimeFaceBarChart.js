@@ -65,12 +65,16 @@ export default function PrimeFacePieChart(data, isloading) {
   }
 
   for (let i = 1; i < uniquecategory.length + 1; i++) {
-    barchart_datasets.push({
-      type: 'bar',
-      label: uniquecategory[i - 1],
-      data: filter_json(uniquecategory[i - 1]),
-      backgroundColor: stringToColour(uniquecategory[i - 1]),
-    });
+    // console.log(uniquecategory[i - 1])
+    const filterd_data = filter_json(uniquecategory[i - 1]);
+    const filterd_data_sum = filterd_data.reduce((a, b) => a + b, 0);
+    if (filterd_data_sum !== 0)
+      barchart_datasets.push({
+        type: 'bar',
+        label: uniquecategory[i - 1],
+        data: filterd_data,
+        backgroundColor: stringToColour(uniquecategory[i - 1]),
+      });
   }
 
   const stackedData = {
@@ -78,46 +82,38 @@ export default function PrimeFacePieChart(data, isloading) {
     datasets: barchart_datasets,
   };
 
-  const getLightTheme = () => {
-    let stackedOptions = {
-      maintainAspectRatio: false,
-      aspectRatio: 0.8,
-      plugins: {
-        tooltip: {
-          callbacks: {
-            label: function (context) {
-              let index = context.dataIndex;
-              let label = context.dataset.label;
-              label += ': ';
-              label += formatCurrency(context.dataset.data[index]);
-              return label;
-            },
+  let stackedOptions = {
+    maintainAspectRatio: false,
+    aspectRatio: 0.8,
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            let index = context.dataIndex;
+            let label = context.dataset.label;
+            label += ': ';
+            label += formatCurrency(context.dataset.data[index]);
+            return label;
           },
         },
       },
-      scales: {
-        x: {
-          stacked: true,
-        },
-        y: {
-          stacked: true,
-          ticks: {
-            callback: function (value) {
-              if (Math.floor(value) === value) {
-                return formatCurrency(value, 0);
-              }
-            },
+    },
+    scales: {
+      x: {
+        stacked: true,
+      },
+      y: {
+        stacked: true,
+        ticks: {
+          callback: function (value) {
+            if (Math.floor(value) === value) {
+              return formatCurrency(value, 0);
+            }
           },
         },
       },
-    };
-
-    return {
-      stackedOptions,
-    };
+    },
   };
-
-  const { stackedOptions } = getLightTheme();
 
   return (
     <Spin spinning={data.isloading}>
