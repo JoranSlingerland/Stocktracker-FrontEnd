@@ -65,7 +65,6 @@ export default function PrimeFacePieChart(data, isloading) {
   }
 
   for (let i = 1; i < uniquecategory.length + 1; i++) {
-    // console.log(uniquecategory[i - 1])
     const filterd_data = filter_json(uniquecategory[i - 1]);
     const filterd_data_sum = filterd_data.reduce((a, b) => a + b, 0);
     if (filterd_data_sum !== 0)
