@@ -43,8 +43,8 @@ const Tabs = ({ router, topBarData, loading }) => {
         <div
           className={`${
             isTabOne
-              ? 'grid h-12 grid-cols-1 grid-rows-2 rounded-full bg-slate-300'
-              : 'grid h-12 grid-cols-1 grid-rows-2 rounded-full bg-slate-100'
+              ? 'grid h-12 grid-cols-1 grid-rows-2 rounded-full bg-white shadow'
+              : 'grid h-12 grid-cols-1 grid-rows-2 rounded-full bg-neutral-100'
           }`}
         >
           <Link
@@ -71,8 +71,8 @@ const Tabs = ({ router, topBarData, loading }) => {
         <div
           className={`${
             isTabTwo
-              ? 'grid h-12 grid-cols-1 grid-rows-2 rounded-full bg-slate-300'
-              : 'grid h-12 grid-cols-1 grid-rows-2 rounded-full bg-slate-100'
+              ? 'grid h-12 grid-cols-1 grid-rows-2 rounded-full bg-white shadow'
+              : 'grid h-12 grid-cols-1 grid-rows-2 rounded-full bg-neutral-100'
           }`}
         >
           <Link
@@ -94,8 +94,8 @@ const Tabs = ({ router, topBarData, loading }) => {
         <div
           className={`${
             isTabThree
-              ? 'grid h-12 grid-cols-1 grid-rows-2 rounded-full bg-slate-300'
-              : 'grid h-12 grid-cols-1 grid-rows-2 rounded-full bg-slate-100'
+              ? 'grid h-12 grid-cols-1 grid-rows-2 rounded-full bg-white shadow'
+              : 'grid h-12 grid-cols-1 grid-rows-2 rounded-full bg-neutral-100'
           }`}
         >
           <Link
@@ -117,8 +117,8 @@ const Tabs = ({ router, topBarData, loading }) => {
         <div
           className={`${
             isTabFour
-              ? 'grid h-12 grid-cols-1 grid-rows-2 rounded-full bg-slate-300'
-              : 'grid h-12 grid-cols-1 grid-rows-2 rounded-full bg-slate-100'
+              ? 'grid h-12 grid-cols-1 grid-rows-2 rounded-full bg-white shadow transition-all'
+              : 'grid h-12 grid-cols-1 grid-rows-2 rounded-full bg-neutral-100'
           }`}
         >
           <Link

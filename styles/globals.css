@@ -33,3 +33,13 @@ div.ant-list-pagination {
     height: 505px;
   }
 }
+
+.p-multiselect {
+  height: 0px;
+  width: 0px;
+  border: 0px !important;
+}
+
+.ant-form-item{
+  margin-bottom: 8px;
+}

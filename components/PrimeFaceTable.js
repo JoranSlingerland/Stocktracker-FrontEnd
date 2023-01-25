@@ -4,37 +4,46 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import React, { useState } from 'react';
 import { FilterMatchMode } from 'primereact/api';
-import { Button } from 'primereact/button';
+import { Button, Tooltip } from 'antd';
+import { FilterOutlined } from '@ant-design/icons';
 import { MultiSelect } from 'primereact/multiselect';
 import { formatCurrency, formatPercentage } from '../utils/formatting';
 import Image from '../utils/image';
+import AddXForm from './formModal';
 import 'primereact/resources/themes/md-light-indigo/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 
-export default function PrimeFaceTable({ data, columns, loading }) {
+export default function PrimeFaceTable({
+  data,
+  columns,
+  loading,
+  allowAdd = false,
+  form = null,
+  parentCallback = null,
+}) {
   // Search setup
-  const [filters1, setFilters1] = useState(null);
-  const [globalFilterValue1, setGlobalFilterValue1] = useState('');
+  const [filters, setFilters] = useState(null);
+  const [globalFilterValue, setGlobalFilterValue] = useState('');
 
-  const clearFilter1 = () => {
-    initFilters1();
+  const clearFilter = () => {
+    initFilters();
   };
 
-  const onGlobalFilterChange1 = (e) => {
+  const onGlobalFilterChange = (e) => {
     const value = e.target.value;
-    let _filters1 = { ...filters1 };
-    _filters1['global'].value = value;
+    let _filters = { ...filters };
+    _filters['global'].value = value;
 
-    setFilters1(_filters1);
-    setGlobalFilterValue1(value);
+    setFilters(_filters);
+    setGlobalFilterValue(value);
   };
 
-  const initFilters1 = () => {
-    setFilters1({
+  const initFilters = () => {
+    setFilters({
       global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     });
-    setGlobalFilterValue1('');
+    setGlobalFilterValue('');
   };
 
   // Column select setup
@@ -143,31 +152,40 @@ export default function PrimeFaceTable({ data, columns, loading }) {
   };
 
   // Header setup
-  const renderHeader1 = () => {
+  const header = (form) => {
     return (
-      <div className="flex justify-content-between">
-        <Button
-          type="button"
-          icon="pi pi-filter-slash"
-          label="Clear"
-          className="p-button-outlined"
-          onClick={clearFilter1}
-        />
-        <div style={{ textAlign: 'left' }}>
-          <MultiSelect
-            value={selectedColumns}
-            options={columns}
-            optionLabel="header"
-            onChange={onColumnToggle}
-            placeholder="Select Columns"
-            fixedPlaceholder="true"
-            style={{ width: '20em' }}
-          />
+      <div className="flex">
+        <div className="flex w-1/2">
+          <div className="container grid w-10 mx-0 place-items-center">
+            <Tooltip title="Clear filters">
+              <Button
+                icon={<FilterOutlined />}
+                shape="circle"
+                onClick={clearFilter}
+              />
+            </Tooltip>
+          </div>
+          <div className="text-left">
+            <Tooltip title="Select Columns">
+              <MultiSelect
+                value={selectedColumns}
+                options={columns}
+                optionLabel="header"
+                onChange={onColumnToggle}
+              />
+            </Tooltip>
+          </div>
         </div>
+        {allowAdd && (
+          <div className="w-1/2">
+            <div className="">
+              <AddXForm form={form} parentCallback={parentCallback} />
+            </div>
+          </div>
+        )}
       </div>
     );
   };
-  const header1 = renderHeader1();
 
   const dynamicColumns = selectedColumns.map((col, i) => {
     if (col.field === 'average_cost') {
@@ -323,9 +341,9 @@ export default function PrimeFaceTable({ data, columns, loading }) {
           responsiveLayout="scroll"
           size="small"
           stripedRows
-          filters={filters1}
+          filters={filters}
           filterDisplay="menu"
-          header={header1}
+          header={header(form)}
           loading={loading}
         >
           {dynamicColumns}

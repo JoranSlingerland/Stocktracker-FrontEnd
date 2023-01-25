@@ -41,9 +41,14 @@ async function cachedFetch(url, hours = 24) {
   } else {
     // if not, fetch the url and cache the response
     const response = await fetch(url);
-    const data = await response.json();
-    setWithExpiry(url, data, hours * 1000 * 60 * 60);
-    return data;
+    try {
+      const data = await response.json();
+      setWithExpiry(url, data, hours * 1000 * 60 * 60);
+      return data;
+    } catch (error) {
+      const data = {};
+      return data;
+    }
   }
 }
 
@@ -60,9 +65,22 @@ async function regularFetch(url) {
   return data;
 }
 
-async function ApiWithMessage(url, runningMessage, successMessage) {
+async function ApiWithMessage(
+  url,
+  runningMessage,
+  successMessage,
+  method = 'GET',
+  body = {}
+) {
+  var headers = new Headers();
+  headers.append('Content-Type', 'application/json');
+  const requestOptions = {
+    method: method,
+    headers: headers,
+    body: JSON.stringify(body),
+  };
   const hide = message.loading(runningMessage, 10);
-  const response = await fetch(url);
+  const response = await fetch(url, requestOptions);
   try {
     const body = await response.json();
   } catch (error) {

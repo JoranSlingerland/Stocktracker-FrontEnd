@@ -3,7 +3,7 @@
 import { Divider } from 'antd';
 import { useState, useEffect } from 'react';
 import PrimeFaceTable from '../../components/PrimeFaceTable';
-import { cachedFetch } from '../../utils/api-utils.js';
+import { cachedFetch, ovewriteCachedFetch } from '../../utils/api-utils.js';
 
 const InputTransactionscolumns = [
   {
@@ -85,6 +85,26 @@ export default function Home() {
     fetchData();
   }, []);
 
+  async function callback_transactions() {
+    setInputTransactionsDataisLoading(true);
+    ovewriteCachedFetch(`/api/get_table_data_basic/input_transactions`).then(
+      (data) => {
+        setInputTransactionsData(data);
+        setInputTransactionsDataisLoading(false);
+      }
+    );
+  }
+
+  async function callback_invested() {
+    setInputInvestedDataisLoading(true);
+    ovewriteCachedFetch(`/api/get_table_data_basic/input_invested`).then(
+      (data) => {
+        setInputInvestedData(data);
+        setInputInvestedDataisLoading(false);
+      }
+    );
+  }
+
   return (
     <div className="w-full">
       {/* Titel */}
@@ -111,6 +131,9 @@ export default function Home() {
                 loading={InputTransactionsDataisLoading}
                 columns={InputTransactionscolumns}
                 data={InputTransactionsData}
+                allowAdd={true}
+                form={'addStock'}
+                parentCallback={callback_transactions}
               />
             </div>
           </div>
@@ -131,6 +154,9 @@ export default function Home() {
                 loading={InputInvestedDataisLoading}
                 columns={InputInvestedscolumns}
                 data={InputInvestedData}
+                allowAdd={true}
+                form={'addTransaction'}
+                parentCallback={callback_invested}
               />
             </div>
           </div>
