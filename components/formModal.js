@@ -186,10 +186,9 @@ const AddTransactionForm = ({ open, onCreate, onCancel }) => {
   );
 };
 
-export default function AddXForm({form}) {
+export default function AddXForm({form, parentCallback}) {
   const [open, setOpen] = useState(false);
   const onCreate = (values) => {
-    console.log('Received values of form: ', values);
     setOpen(false);
     if (form === 'addStock') {
       var value = {
@@ -211,7 +210,9 @@ export default function AddXForm({form}) {
         value
       );
     }
-    fetchData();
+    fetchData().then(() => {
+      parentCallback();
+    });
   };
 
   return (

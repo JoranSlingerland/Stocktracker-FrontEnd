@@ -20,6 +20,7 @@ export default function PrimeFaceTable({
   loading,
   allowAdd = false,
   form = null,
+  parentCallback = null,
 }) {
   // Search setup
   const [filters, setFilters] = useState(null);
@@ -151,7 +152,7 @@ export default function PrimeFaceTable({
   };
 
   // Header setup
-  const renderHeader = (form) => {
+  const header = (form) => {
     return (
       <div className="flex">
         <div className="flex w-1/2">
@@ -178,7 +179,7 @@ export default function PrimeFaceTable({
         {allowAdd && (
           <div className="w-1/2">
             <div className="">
-              <AddXForm form={form}/>
+              <AddXForm form={form} parentCallback={parentCallback} />
             </div>
           </div>
         )}
@@ -342,7 +343,7 @@ export default function PrimeFaceTable({
           stripedRows
           filters={filters}
           filterDisplay="menu"
-          header={renderHeader(form)}
+          header={header(form)}
           loading={loading}
         >
           {dynamicColumns}

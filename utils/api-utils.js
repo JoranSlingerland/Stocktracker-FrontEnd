@@ -79,7 +79,6 @@ async function ApiWithMessage(
     headers: headers,
     body: JSON.stringify(body),
   };
-  console.log('requestOptions', requestOptions)
   const hide = message.loading(runningMessage, 10);
   const response = await fetch(url, requestOptions);
   try {
