@@ -5,7 +5,7 @@ import { Column } from 'primereact/column';
 import React, { useState } from 'react';
 import { FilterMatchMode } from 'primereact/api';
 import { Button, Tooltip } from 'antd';
-import { FilterOutlined, PlusOutlined } from '@ant-design/icons';
+import { FilterOutlined } from '@ant-design/icons';
 import { MultiSelect } from 'primereact/multiselect';
 import { formatCurrency, formatPercentage } from '../utils/formatting';
 import Image from '../utils/image';
@@ -19,7 +19,7 @@ export default function PrimeFaceTable({
   columns,
   loading,
   allowAdd = false,
-  form = 'null',
+  form = null,
 }) {
   // Search setup
   const [filters, setFilters] = useState(null);
@@ -178,14 +178,13 @@ export default function PrimeFaceTable({
         {allowAdd && (
           <div className="w-1/2">
             <div className="">
-              <AddXForm form={form} />
+              <AddXForm form={form}/>
             </div>
           </div>
         )}
       </div>
     );
   };
-  var header = renderHeader(form);
 
   const dynamicColumns = selectedColumns.map((col, i) => {
     if (col.field === 'average_cost') {
@@ -343,7 +342,7 @@ export default function PrimeFaceTable({
           stripedRows
           filters={filters}
           filterDisplay="menu"
-          header={header}
+          header={renderHeader(form)}
           loading={loading}
         >
           {dynamicColumns}
