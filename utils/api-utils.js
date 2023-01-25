@@ -80,7 +80,12 @@ async function ApiWithMessage(
     body: JSON.stringify(body),
   };
   const hide = message.loading(runningMessage, 10);
-  const response = await fetch(url, requestOptions);
+  if (method === 'GET') {
+    var response = await fetch(url);
+  }
+  if (method === 'POST' || method === 'PUT' || method === 'DELETE') {
+    var response = await fetch(url, requestOptions);
+  }
   try {
     const body = await response.json();
   } catch (error) {
