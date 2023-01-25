@@ -186,18 +186,17 @@ const AddTransactionForm = ({ open, onCreate, onCancel }) => {
   );
 };
 
-export default function AddXForm(form, onCreate2) {
+export default function AddXForm({form}) {
   const [open, setOpen] = useState(false);
-  console.log(onCreate2)
   const onCreate = (values) => {
     console.log('Received values of form: ', values);
     setOpen(false);
-    if (form.form === 'addStock') {
+    if (form === 'addStock') {
       var value = {
         type: 'stock',
         items: [values],
       };
-    } else if (form.form === 'addTransaction') {
+    } else if (form === 'addTransaction') {
       var value = {
         type: 'transaction',
         items: [values],
@@ -227,7 +226,7 @@ export default function AddXForm(form, onCreate2) {
           className="float-right"
         />
       </Tooltip>
-      {form.form === 'addStock' ? (
+      {form === 'addStock' ? (
         <AddStockForm
           open={open}
           onCreate={onCreate}
@@ -235,7 +234,7 @@ export default function AddXForm(form, onCreate2) {
             setOpen(false);
           }}
         />
-      ) : form.form === 'addTransaction' ? (
+      ) : form === 'addTransaction' ? (
         <AddTransactionForm
           open={open}
           onCreate={onCreate}
@@ -246,4 +245,4 @@ export default function AddXForm(form, onCreate2) {
       ) : null}
     </div>
   );
-}
+};
