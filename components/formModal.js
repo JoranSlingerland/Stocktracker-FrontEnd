@@ -201,7 +201,7 @@ export default function AddXForm({form, parentCallback}) {
         items: [values],
       };
     }
-    async function fetchData() {
+    async function postData() {
       ApiWithMessage(
         `/api/add_item_to_input`,
         'Creating new items',
@@ -210,7 +210,7 @@ export default function AddXForm({form, parentCallback}) {
         value
       );
     }
-    fetchData().then(() => {
+    postData().then(() => {
       parentCallback();
     });
   };
