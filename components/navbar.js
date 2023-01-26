@@ -1,6 +1,6 @@
 // components\navbar.js
 
-import { Menu, message, Tooltip } from 'antd';
+import { Menu, Tooltip } from 'antd';
 import {
   AreaChartOutlined,
   HomeOutlined,
@@ -14,11 +14,13 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ApiWithMessage } from '../utils/api-utils';
 
-const { SubMenu } = Menu;
-
 export default function App() {
   const [userInfo, setUserInfo] = useState();
-
+  const [current, setCurrent] = useState('portfolio');
+  useEffect(() => {
+    setCurrent(window.location.pathname);
+  });
+  console.log(current);
   useEffect(() => {
     (async () => {
       setUserInfo(await getUserInfo());
@@ -40,65 +42,88 @@ export default function App() {
   async function handleClick(url, runningMessage, successMessage) {
     ApiWithMessage(url, runningMessage, successMessage);
   }
+  const items = [
+    {
+      key: '/authenticated/portfolio/',
+      icon: <HomeOutlined />,
+      label: <a href="/authenticated/portfolio/">Portfolio</a>,
+    },
+    {
+      key: '/authenticated/performance/',
+      icon: <AreaChartOutlined />,
+      label: (
+        <Link
+          href={{
+            pathname: '/authenticated/performance/',
+            query: { tab: '1', date: 'max' },
+          }}
+        >
+          Performance
+        </Link>
+      ),
+    },
+    {
+      key: '/authenticated/actions/',
+      icon: <InteractionOutlined />,
+      label: <a href="/authenticated/actions/">Actions</a>,
+    },
+    {
+      key: 'SubMenu',
+      icon: <UserOutlined />,
+      label: userInfo && userInfo.userDetails,
+      className: 'float-right',
+      disabled: !userInfo,
+      children: [
+        {
+          key: 'quick_refresh',
+          icon: <ReloadOutlined />,
+          label: (
+            <Tooltip title="Will refresh the last 7 days">
+              <a
+                onClick={() =>
+                  handleClick(
+                    `/api/orchestrators/stocktracker_orchestrator/7`,
+                    'Calling Orchestrator',
+                    'Orchestration called, This will take a bit'
+                  )
+                }
+              >
+                Quick refresh
+              </a>
+            </Tooltip>
+          ),
+        },
+        {
+          key: '/authenticated/settings/',
+          icon: <SettingOutlined />,
+          label: <a href="/authenticated/settings">Settings</a>,
+        },
+        {
+          key: 'logout',
+          icon: <LogoutOutlined />,
+          label: (
+            <a
+              href="/.auth/logout?post_logout_redirect_uri=/"
+              onClick={() => {
+                localStorage.clear();
+              }}
+            >
+              Logout
+            </a>
+          ),
+        },
+      ],
+    },
+  ];
 
   return (
     <div>
-      <Menu mode="horizontal" className="block">
-        <Menu.Item key="portfolio" icon={<HomeOutlined />}>
-          <a href="/authenticated/portfolio/">Portfolio</a>
-        </Menu.Item>
-        <Menu.Item key="performance" icon={<AreaChartOutlined />}>
-          <Link
-            href={{
-              pathname: '/authenticated/performance/',
-              query: { tab: '1', date: 'max' },
-            }}
-          >
-            Performance
-          </Link>
-        </Menu.Item>
-        <Menu.Item key="actions" icon={<InteractionOutlined />}>
-          <a href="/authenticated/actions/">Actions</a>
-        </Menu.Item>
-        {userInfo && (
-          <SubMenu
-            icon={<UserOutlined />}
-            key="SubMenu"
-            title={userInfo && userInfo.userDetails}
-            className="float-right"
-          >
-            <Menu.Item
-              onClick={() =>
-                handleClick(
-                  `/api/orchestrators/stocktracker_orchestrator/7`,
-                  'Calling Orchestrator',
-                  'Orchestration called, This will take a bit'
-                )
-              }
-              key="quick_refresh"
-              icon={<ReloadOutlined />}
-            >
-              <Tooltip title="Will refresh the last 7 days">
-                Quick Refresh
-              </Tooltip>
-            </Menu.Item>
-            <Menu.Item key="settings" icon={<SettingOutlined />}>
-              <a href="/authenticated/settings">Settings</a>
-            </Menu.Item>
-
-            <Menu.Item key="logout" icon={<LogoutOutlined />}>
-              <a
-                href="/.auth/logout?post_logout_redirect_uri=/"
-                onClick={() => {
-                  localStorage.clear();
-                }}
-              >
-                Logout
-              </a>
-            </Menu.Item>
-          </SubMenu>
-        )}
-      </Menu>
+      <Menu
+        selectedKeys={[current]}
+        mode="horizontal"
+        items={items}
+        className="block"
+      />
     </div>
   );
 }
