@@ -37,7 +37,7 @@ const AddStockForm = ({ open, onCreate, onCancel }) => {
         layout="vertical"
         name="add_stock_form"
         initialValues={{
-          transaction_type: 'buy',
+          transaction_type: 'Buy',
         }}
       >
         <Form.Item
@@ -114,8 +114,8 @@ const AddStockForm = ({ open, onCreate, onCancel }) => {
           ]}
         >
           <Radio.Group>
-            <Radio value="buy">Buy</Radio>
-            <Radio value="sell">Sell</Radio>
+            <Radio value="Buy">Buy</Radio>
+            <Radio value="Sell">Sell</Radio>
           </Radio.Group>
         </Form.Item>
         <Form.Item
@@ -201,7 +201,7 @@ const AddTransactionForm = ({ open, onCreate, onCancel }) => {
         layout="vertical"
         name="add_transaction_form"
         initialValues={{
-          transaction_type: 'deposit',
+          transaction_type: 'Deposit',
         }}
       >
         <Form.Item
@@ -245,8 +245,8 @@ const AddTransactionForm = ({ open, onCreate, onCancel }) => {
           ]}
         >
           <Radio.Group>
-            <Radio value="deposit">Deposit</Radio>
-            <Radio value="withdrawal">Withdrawal</Radio>
+            <Radio value="Deposit">Deposit</Radio>
+            <Radio value="Withdrawal">Withdrawal</Radio>
           </Radio.Group>
         </Form.Item>
       </Form>
