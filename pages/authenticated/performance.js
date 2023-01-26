@@ -84,10 +84,12 @@ const Tabs = ({ router }) => {
   }
 
   async function fetchDividendData() {
-    cachedFetch(`/api/get_barchart_data/dividend/${date}`, 24 , []).then((data) => {
-      setdividendData(data);
-      setLoadingDividend(false);
-    });
+    cachedFetch(`/api/get_barchart_data/dividend/${date}`, 24, []).then(
+      (data) => {
+        setdividendData(data);
+        setLoadingDividend(false);
+      }
+    );
   }
   const [topBarData, settopBarData] = useState({
     total_value: '',
