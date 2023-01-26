@@ -1,6 +1,7 @@
 // utils\api-utils.js
 
 import { message } from 'antd';
+import wretch from 'wretch';
 
 // Helper functions
 function setWithExpiry(key, value, ttl) {
@@ -32,37 +33,48 @@ function getWithExpiry(key) {
 // End of helper functions
 
 // main functions
-async function cachedFetch(url, hours = 24) {
-  // check if the url is in the cache
+async function cachedFetch(url, hours = 24, fallback_data = {}) {
   const cachedResponse = getWithExpiry(url);
   if (cachedResponse) {
-    // if it is, return the cached response
     return cachedResponse;
   } else {
-    // if not, fetch the url and cache the response
-    const response = await fetch(url);
-    try {
-      const data = await response.json();
-      setWithExpiry(url, data, hours * 1000 * 60 * 60);
-      return data;
-    } catch (error) {
-      const data = {};
-      return data;
+    const response = await wretch(url)
+      .get()
+      .json()
+      .catch(() => {
+        return fallback_data;
+      });
+    if (response === fallback_data) {
+      return response;
     }
+    setWithExpiry(url, response, hours * 1000 * 60 * 60);
+    return response;
   }
 }
 
-async function ovewriteCachedFetch(url, hours = 24) {
-  const response = await fetch(url);
-  const data = await response.json();
-  setWithExpiry(url, data, hours * 1000 * 60 * 60);
-  return data;
+async function ovewriteCachedFetch(url, hours = 24, fallback_data = {}) {
+  const response = await wretch(url)
+    .get()
+    .json()
+    .catch(() => {
+      return fallback_data;
+    });
+  if (response === fallback_data) {
+    return response;
+  }
+  setWithExpiry(url, response, hours * 1000 * 60 * 60);
+  return response;
 }
 
-async function regularFetch(url) {
-  const response = await fetch(url);
-  const data = await response.json();
-  return data;
+// convert above to wretch
+async function regularFetch(url, fallback_data = {}) {
+  const response = await wretch(url)
+    .get()
+    .json()
+    .catch(() => {
+      return fallback_data;
+    });
+  return response;
 }
 
 async function ApiWithMessage(
@@ -72,37 +84,33 @@ async function ApiWithMessage(
   method = 'GET',
   body = {}
 ) {
-  var headers = new Headers();
-  headers.append('Content-Type', 'application/json');
-  const requestOptions = {
-    method: method,
-    headers: headers,
-    body: JSON.stringify(body),
-  };
   const hide = message.loading(runningMessage, 10);
   if (method === 'GET') {
-    var response = await fetch(url);
+    const response = await wretch(url)
+      .get()
+      .json(() => {
+        hide();
+        message.success(successMessage);
+      })
+      .catch(() => {
+        hide();
+        message.error('Something went wrong :(');
+      });
   }
-  if (method === 'POST' || method === 'PUT' || method === 'DELETE') {
-    var response = await fetch(url, requestOptions);
-  }
-  try {
-    const body = await response.json();
-  } catch (error) {
-    console.log('error', error);
-  }
-  if (
-    response.status === 200 ||
-    response.status === 201 ||
-    response.status === 202
-  ) {
-    hide();
-    message.success(successMessage);
-  } else {
-    hide();
-    message.error('Something went wrong :(');
+  if (method === 'POST') {
+    const response = await wretch(url)
+      .post(body)
+      .json(() => {
+        hide();
+        message.success(successMessage);
+      })
+      .catch(() => {
+        hide();
+        message.error('Something went wrong :(');
+      });
   }
 }
+
 // End of main functions
 
 export { cachedFetch, ovewriteCachedFetch, regularFetch, ApiWithMessage };

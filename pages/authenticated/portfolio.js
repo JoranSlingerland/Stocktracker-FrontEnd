@@ -84,7 +84,7 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchData() {
-      cachedFetch(`/api/get_pie_data/stocks`).then((data) => {
+      cachedFetch(`/api/get_pie_data/stocks`, 24, StockPieData).then((data) => {
         setStockPieData(data);
         setStockPieDataisLoading(false);
       });
@@ -103,10 +103,12 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchData() {
-      cachedFetch(`/api/get_pie_data/currency`).then((data) => {
-        setCurrencyPieData(data);
-        setCurrencyPieDataisLoading(false);
-      });
+      cachedFetch(`/api/get_pie_data/currency`, 24, CurrencyPieData).then(
+        (data) => {
+          setCurrencyPieData(data);
+          setCurrencyPieDataisLoading(false);
+        }
+      );
     }
     fetchData();
   }, []);
@@ -121,10 +123,12 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchData() {
-      cachedFetch(`/api/get_pie_data/sector`).then((data) => {
-        setSectorPieData(data);
-        setSectorPieDataisLoading(false);
-      });
+      cachedFetch(`/api/get_pie_data/sector`, 24, SectorPieData).then(
+        (data) => {
+          setSectorPieData(data);
+          setSectorPieDataisLoading(false);
+        }
+      );
     }
     fetchData();
   }, []);
@@ -139,10 +143,12 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchData() {
-      cachedFetch(`/api/get_pie_data/country`).then((data) => {
-        setCountryPieData(data);
-        setCountryPieDataisLoading(false);
-      });
+      cachedFetch(`/api/get_pie_data/country`, 24, CountryPieData).then(
+        (data) => {
+          setCountryPieData(data);
+          setCountryPieDataisLoading(false);
+        }
+      );
     }
     fetchData();
   }, []);

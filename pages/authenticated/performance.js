@@ -62,23 +62,29 @@ const Tabs = ({ router }) => {
     useState(true);
 
   async function fetchTotalGainsData() {
-    cachedFetch(`/api/get_linechart_data/total_gains/${date}`).then((data) => {
+    cachedFetch(
+      `/api/get_linechart_data/total_gains/${date}`,
+      24,
+      totalGainsData
+    ).then((data) => {
       settotalGainsData(data);
       settotalGainsDataLoading(false);
     });
   }
 
   async function fetchDataline() {
-    cachedFetch(`/api/get_linechart_data/invested_and_value/${date}`).then(
-      (data) => {
-        setvalueGrowthData(data);
-        setvalueGrowthDataLoading(false);
-      }
-    );
+    cachedFetch(
+      `/api/get_linechart_data/invested_and_value/${date}`,
+      24,
+      valueGrowthData
+    ).then((data) => {
+      setvalueGrowthData(data);
+      setvalueGrowthDataLoading(false);
+    });
   }
 
   async function fetchDividendData() {
-    cachedFetch(`/api/get_barchart_data/dividend/${date}`).then((data) => {
+    cachedFetch(`/api/get_barchart_data/dividend/${date}`, 24 , []).then((data) => {
       setdividendData(data);
       setLoadingDividend(false);
     });
@@ -93,14 +99,14 @@ const Tabs = ({ router }) => {
   });
 
   async function fetchTopBar() {
-    cachedFetch(`/api/get_topbar_data/${date}`).then((data) => {
+    cachedFetch(`/api/get_topbar_data/${date}`, 24, topBarData).then((data) => {
       settopBarData(data);
       settopBarLoading(false);
     });
   }
 
   async function fetchTransactionCostData() {
-    cachedFetch(`/api/get_barchart_data/transaction_cost/${date}`).then(
+    cachedFetch(`/api/get_barchart_data/transaction_cost/${date}`, 24, []).then(
       (data) => {
         settotalTransactionCostData(data);
         settotalTransactionCostDataLoading(false);
