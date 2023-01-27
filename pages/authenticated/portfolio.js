@@ -153,8 +153,39 @@ export default function Home() {
     fetchData();
   }, []);
 
+  const items = [
+    {
+      key: '1',
+      label: 'Stocks',
+      children: (
+        <PieChart data={StockPieData} isloading={StockPieDataisLoading} />
+      ),
+    },
+    {
+      key: '2',
+      label: 'Sector',
+      children: (
+        <PieChart data={SectorPieData} isloading={SectorPieDataisLoading} />
+      ),
+    },
+    {
+      key: '3',
+      label: 'Country',
+      children: (
+        <PieChart data={CountryPieData} isloading={CountryPieDataisLoading} />
+      ),
+    },
+    {
+      key: '4',
+      label: 'Currency',
+      children: (
+        <PieChart data={CurrencyPieData} isloading={CurrencyPieDataisLoading} />
+      ),
+    },
+  ];
+
   return (
-    <div className="w-full">
+    <div>
       {/* Titel */}
       <div>
         <h1 className="flex items-center justify-center p-5 text-3xl py">
@@ -163,31 +194,12 @@ export default function Home() {
       </div>
       <Divider plain></Divider>
       {/* Tabs */}
-      <div className="w-fullcard-container ">
-        <Tabs className="tabs-height" type="card" defaultActiveKey="1">
-          <TabPane className="w-full max-w-4xl" tab="Stocks" key="1">
-            <PieChart data={StockPieData} isloading={StockPieDataisLoading} />
-          </TabPane>
-          <TabPane className="w-full max-w-4xl" tab="Country" key="2">
-            <PieChart
-              data={CountryPieData}
-              isloading={CountryPieDataisLoading}
-            />
-          </TabPane>
-          <TabPane className="w-full max-w-4xl" tab="Currency" key="3">
-            <PieChart
-              data={CurrencyPieData}
-              isloading={CurrencyPieDataisLoading}
-            />
-          </TabPane>
-          <TabPane className="w-full max-w-4xl" tab="Sector" key="4">
-            <PieChart data={SectorPieData} isloading={SectorPieDataisLoading} />
-          </TabPane>
-        </Tabs>
+      <div>
+        <Tabs type="card" defaultActiveKey="1" items={items} />
       </div>
       <Divider plain></Divider>
       {/* Table */}
-      <div className="w-full">
+      <div>
         <PrimeFaceTable
           loading={SingleDayDataisLoading}
           columns={SingleDaycolumns}
