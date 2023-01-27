@@ -59,6 +59,12 @@ const SingleDaycolumns = [
   },
 ];
 
+const fallbackObject = {
+  labels: [],
+  data: [],
+  color: [],
+};
+
 export default function Home() {
   // get table data
   const [SingleDayData, setSingleDayData] = useState(null);
@@ -75,80 +81,103 @@ export default function Home() {
   }, []);
 
   // Get stock pie chart data
-  const [StockPieData, setStockPieData] = useState({
-    labels: [],
-    data: [],
-    color: [],
-  });
+  const [StockPieData, setStockPieData] = useState(fallbackObject);
   const [StockPieDataisLoading, setStockPieDataisLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
-      cachedFetch(`/api/get_pie_data/stocks`).then((data) => {
-        setStockPieData(data);
-        setStockPieDataisLoading(false);
-      });
+      cachedFetch(`/api/get_pie_data/stocks`, 24, fallbackObject).then(
+        (data) => {
+          setStockPieData(data);
+          setStockPieDataisLoading(false);
+        }
+      );
     }
     fetchData();
   }, []);
 
   // Get currency pie chart data
-  const [CurrencyPieData, setCurrencyPieData] = useState({
-    labels: [],
-    data: [],
-    color: [],
-  });
+  const [CurrencyPieData, setCurrencyPieData] = useState(fallbackObject);
   const [CurrencyPieDataisLoading, setCurrencyPieDataisLoading] =
     useState(true);
 
   useEffect(() => {
     async function fetchData() {
-      cachedFetch(`/api/get_pie_data/currency`).then((data) => {
-        setCurrencyPieData(data);
-        setCurrencyPieDataisLoading(false);
-      });
+      cachedFetch(`/api/get_pie_data/currency`, 24, fallbackObject).then(
+        (data) => {
+          setCurrencyPieData(data);
+          setCurrencyPieDataisLoading(false);
+        }
+      );
     }
     fetchData();
   }, []);
 
   // Get sector pie chart data
-  const [SectorPieData, setSectorPieData] = useState({
-    labels: [],
-    data: [],
-    color: [],
-  });
+  const [SectorPieData, setSectorPieData] = useState(fallbackObject);
   const [SectorPieDataisLoading, setSectorPieDataisLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
-      cachedFetch(`/api/get_pie_data/sector`).then((data) => {
-        setSectorPieData(data);
-        setSectorPieDataisLoading(false);
-      });
+      cachedFetch(`/api/get_pie_data/sector`, 24, fallbackObject).then(
+        (data) => {
+          setSectorPieData(data);
+          setSectorPieDataisLoading(false);
+        }
+      );
     }
     fetchData();
   }, []);
 
   // Get country pie chart data
-  const [CountryPieData, setCountryPieData] = useState({
-    labels: [],
-    data: [],
-    color: [],
-  });
+  const [CountryPieData, setCountryPieData] = useState(fallbackObject);
   const [CountryPieDataisLoading, setCountryPieDataisLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
-      cachedFetch(`/api/get_pie_data/country`).then((data) => {
-        setCountryPieData(data);
-        setCountryPieDataisLoading(false);
-      });
+      cachedFetch(`/api/get_pie_data/country`, 24, fallbackObject).then(
+        (data) => {
+          setCountryPieData(data);
+          setCountryPieDataisLoading(false);
+        }
+      );
     }
     fetchData();
   }, []);
 
+  const items = [
+    {
+      key: '1',
+      label: 'Stocks',
+      children: (
+        <PieChart data={StockPieData} isloading={StockPieDataisLoading} />
+      ),
+    },
+    {
+      key: '2',
+      label: 'Sector',
+      children: (
+        <PieChart data={SectorPieData} isloading={SectorPieDataisLoading} />
+      ),
+    },
+    {
+      key: '3',
+      label: 'Country',
+      children: (
+        <PieChart data={CountryPieData} isloading={CountryPieDataisLoading} />
+      ),
+    },
+    {
+      key: '4',
+      label: 'Currency',
+      children: (
+        <PieChart data={CurrencyPieData} isloading={CurrencyPieDataisLoading} />
+      ),
+    },
+  ];
+
   return (
-    <div className="w-full">
+    <div>
       {/* Titel */}
       <div>
         <h1 className="flex items-center justify-center p-5 text-3xl py">
@@ -157,31 +186,12 @@ export default function Home() {
       </div>
       <Divider plain></Divider>
       {/* Tabs */}
-      <div className="w-fullcard-container ">
-        <Tabs className="tabs-height" type="card" defaultActiveKey="1">
-          <TabPane className="w-full max-w-4xl" tab="Stocks" key="1">
-            <PieChart data={StockPieData} isloading={StockPieDataisLoading} />
-          </TabPane>
-          <TabPane className="w-full max-w-4xl" tab="Country" key="2">
-            <PieChart
-              data={CountryPieData}
-              isloading={CountryPieDataisLoading}
-            />
-          </TabPane>
-          <TabPane className="w-full max-w-4xl" tab="Currency" key="3">
-            <PieChart
-              data={CurrencyPieData}
-              isloading={CurrencyPieDataisLoading}
-            />
-          </TabPane>
-          <TabPane className="w-full max-w-4xl" tab="Sector" key="4">
-            <PieChart data={SectorPieData} isloading={SectorPieDataisLoading} />
-          </TabPane>
-        </Tabs>
+      <div>
+        <Tabs type="card" defaultActiveKey="1" items={items} />
       </div>
       <Divider plain></Divider>
       {/* Table */}
-      <div className="w-full">
+      <div>
         <PrimeFaceTable
           loading={SingleDayDataisLoading}
           columns={SingleDaycolumns}
