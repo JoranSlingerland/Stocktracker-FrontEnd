@@ -19,7 +19,7 @@ export default function App() {
   const [current, setCurrent] = useState('portfolio');
   useEffect(() => {
     setCurrent(window.location.pathname);
-  });
+  }, []);
   console.log(current);
   useEffect(() => {
     (async () => {
@@ -52,14 +52,7 @@ export default function App() {
       key: '/authenticated/performance/',
       icon: <AreaChartOutlined />,
       label: (
-        <Link
-          href={{
-            pathname: '/authenticated/performance/',
-            query: { tab: '1', date: 'max' },
-          }}
-        >
-          Performance
-        </Link>
+        <a href="/authenticated/performance/?tab=1&date=max">Performance</a>
       ),
     },
     {
