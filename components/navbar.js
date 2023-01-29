@@ -1,26 +1,26 @@
 // components\navbar.js
 
-import { Menu, Tooltip } from 'antd';
 import {
   AreaChartOutlined,
   HomeOutlined,
   InteractionOutlined,
-  UserOutlined,
+  LogoutOutlined,
   ReloadOutlined,
   SettingOutlined,
-  LogoutOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { Menu, Tooltip } from 'antd';
+import React, { useEffect, useState } from 'react';
 import { ApiWithMessage } from '../utils/api-utils';
 
 export default function App() {
   const [userInfo, setUserInfo] = useState();
   const [current, setCurrent] = useState('portfolio');
+
   useEffect(() => {
     setCurrent(window.location.pathname);
   }, []);
-  console.log(current);
+
   useEffect(() => {
     (async () => {
       setUserInfo(await getUserInfo());
