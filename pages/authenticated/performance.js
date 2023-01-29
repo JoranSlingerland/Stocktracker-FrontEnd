@@ -102,10 +102,22 @@ export default function performance() {
   const [topBarloading, settopBarLoading] = useState(true);
   const [SingleDayData, setSingleDayData] = useState(null);
   const [SingleDayDataisLoading, setSingleDayDataisLoading] = useState(true);
-
-  // Query params
   const [tab, setTab] = useState((useRouter().query.tab || 1).toString());
   const [date, setDate] = useState(useRouter().query.date || 'max');
+
+  // Query params
+  function setQueryParams() {
+    setTab(router.query.tab.toString());
+    setDate(router.query.date);
+  }
+
+  useEffect(() => {
+    if (!router.isReady) {
+      return;
+    } else {
+      setQueryParams();
+    }
+  }, [router.isReady]);
 
   // Fetch data
   useEffect(() => {
