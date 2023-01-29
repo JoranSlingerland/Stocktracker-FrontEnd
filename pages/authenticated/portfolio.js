@@ -1,7 +1,7 @@
 // pages\authenticated\portfolio.js
 
 import { Divider, Tabs } from 'antd';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import PieChart from '../../components/PrimeFacePieChart';
 import PrimeFaceTable from '../../components/PrimeFaceTable';
 import { cachedFetch } from '../../utils/api-utils.js';
@@ -66,85 +66,73 @@ const fallbackObject = {
 };
 
 export default function Home() {
-  // get table data
+  // Const setup
   const [SingleDayData, setSingleDayData] = useState(null);
   const [SingleDayDataisLoading, setSingleDayDataisLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchData() {
-      cachedFetch(`/api/get_table_data_basic/single_day`).then((data) => {
-        setSingleDayData(data);
-        setSingleDayDataisLoading(false);
-      });
-    }
-    fetchData();
-  }, []);
-
-  // Get stock pie chart data
   const [StockPieData, setStockPieData] = useState(fallbackObject);
   const [StockPieDataisLoading, setStockPieDataisLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchData() {
-      cachedFetch(`/api/get_pie_data/stocks`, 24, fallbackObject).then(
-        (data) => {
-          setStockPieData(data);
-          setStockPieDataisLoading(false);
-        }
-      );
-    }
-    fetchData();
-  }, []);
-
-  // Get currency pie chart data
   const [CurrencyPieData, setCurrencyPieData] = useState(fallbackObject);
   const [CurrencyPieDataisLoading, setCurrencyPieDataisLoading] =
     useState(true);
-
-  useEffect(() => {
-    async function fetchData() {
-      cachedFetch(`/api/get_pie_data/currency`, 24, fallbackObject).then(
-        (data) => {
-          setCurrencyPieData(data);
-          setCurrencyPieDataisLoading(false);
-        }
-      );
-    }
-    fetchData();
-  }, []);
-
-  // Get sector pie chart data
   const [SectorPieData, setSectorPieData] = useState(fallbackObject);
   const [SectorPieDataisLoading, setSectorPieDataisLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchData() {
-      cachedFetch(`/api/get_pie_data/sector`, 24, fallbackObject).then(
-        (data) => {
-          setSectorPieData(data);
-          setSectorPieDataisLoading(false);
-        }
-      );
-    }
-    fetchData();
-  }, []);
-
-  // Get country pie chart data
   const [CountryPieData, setCountryPieData] = useState(fallbackObject);
   const [CountryPieDataisLoading, setCountryPieDataisLoading] = useState(true);
 
+  // get table data
+  async function fetchSingleDayData() {
+    cachedFetch(`/api/get_table_data_basic/single_day`).then((data) => {
+      setSingleDayData(data);
+      setSingleDayDataisLoading(false);
+    });
+  }
+
+  // Get stock pie chart data
+  async function fetchStockPieData() {
+    cachedFetch(`/api/get_pie_data/stocks`, 24, fallbackObject).then((data) => {
+      setStockPieData(data);
+      setStockPieDataisLoading(false);
+    });
+  }
+
+  // Get currency pie chart data
+  async function fetchCurrencyPieData() {
+    cachedFetch(`/api/get_pie_data/currency`, 24, fallbackObject).then(
+      (data) => {
+        setCurrencyPieData(data);
+        setCurrencyPieDataisLoading(false);
+      }
+    );
+  }
+
+  // Get sector pie chart data
+  async function fetchSectorPieData() {
+    cachedFetch(`/api/get_pie_data/sector`, 24, fallbackObject).then((data) => {
+      setSectorPieData(data);
+      setSectorPieDataisLoading(false);
+    });
+  }
+
+  // Get country pie chart data
+  async function fetchCountryPieData() {
+    cachedFetch(`/api/get_pie_data/country`, 24, fallbackObject).then(
+      (data) => {
+        setCountryPieData(data);
+        setCountryPieDataisLoading(false);
+      }
+    );
+  }
+
+  // Fetch data on page load
   useEffect(() => {
-    async function fetchData() {
-      cachedFetch(`/api/get_pie_data/country`, 24, fallbackObject).then(
-        (data) => {
-          setCountryPieData(data);
-          setCountryPieDataisLoading(false);
-        }
-      );
-    }
-    fetchData();
+    fetchSingleDayData();
+    fetchStockPieData();
+    fetchCurrencyPieData();
+    fetchSectorPieData();
+    fetchCountryPieData();
   }, []);
 
+  // Tabs setup
   const items = [
     {
       key: '1',
