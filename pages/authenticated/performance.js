@@ -3,7 +3,7 @@
 import Overviewbar from '../../components/Overviewbar';
 import React, { useState, useEffect } from 'react';
 import { Divider, Segmented } from 'antd';
-import { withRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import BasicLineGraph from '../../components/PrimeFaceLineGraph';
 import PrimeFaceTable from '../../components/PrimeFaceTable';
 import PrimeFaceBarChart from '../../components/PrimeFaceBarChart';
@@ -82,8 +82,9 @@ const valueGrowthDataFallBackObject = {
   ],
 };
 
-const Tabs = ({ router }) => {
+export default function performance() {
   // const setup
+  const router = useRouter();
   const [valueGrowthData, setvalueGrowthData] = useState(
     valueGrowthDataFallBackObject
   );
@@ -103,13 +104,8 @@ const Tabs = ({ router }) => {
   const [SingleDayDataisLoading, setSingleDayDataisLoading] = useState(true);
 
   // Query params
-  let tab = router.query.tab;
-  let date = router.query.date;
-
-  const isTabOne = tab === '1' || tab == null;
-  const isTabTwo = tab === '2';
-  const isTabThree = tab === '3';
-  const isTabFour = tab === '4';
+  const [tab, setTab] = useState((useRouter().query.tab || 1).toString());
+  const [date, setDate] = useState(useRouter().query.date || 'max');
 
   // Fetch data
   useEffect(() => {
@@ -199,18 +195,13 @@ const Tabs = ({ router }) => {
     settotalGainsDataLoading(true);
     setSingleDayDataisLoading(true);
     router.push(`/authenticated/performance?tab=${tab}&date=${newdate}`);
-    date = newdate;
+    setDate(newdate);
   }
 
-  // On mount
-  // useEffect(() => {
-  //   // fetchDataline();
-  //   // fetchTopBar();
-  //   // fetchTable();
-  //   // fetchTotalGainsData();
-  //   // fetchDividendData();
-  //   // fetchTransactionCostData();
-  // }, []);
+  function handleTabChange(newTab) {
+    setTab(newTab);
+    router.push(`/authenticated/performance?tab=${newTab}&date=${date}`);
+  }
 
   // Render
   return (
@@ -250,12 +241,16 @@ const Tabs = ({ router }) => {
         </div>
       </div>
       <div>
-        <Overviewbar topBarData={topBarData} loading={topBarloading} />
+        <Overviewbar
+          topBarData={topBarData}
+          loading={topBarloading}
+          handleTabChange={handleTabChange}
+        />
       </div>
       <div>
         <div></div>
         <div>
-          {isTabOne && (
+          {tab === '1' && (
             <React.Fragment>
               <div>
                 <BasicLineGraph
@@ -271,7 +266,7 @@ const Tabs = ({ router }) => {
               </div>
             </React.Fragment>
           )}
-          {isTabTwo && (
+          {tab === '2' && (
             <React.Fragment>
               <PrimeFaceBarChart
                 data={dividendData}
@@ -285,7 +280,7 @@ const Tabs = ({ router }) => {
               />
             </React.Fragment>
           )}
-          {isTabThree && (
+          {tab === '3' && (
             <React.Fragment>
               <PrimeFaceBarChart
                 data={totalTransactionCostData}
@@ -299,7 +294,7 @@ const Tabs = ({ router }) => {
               />
             </React.Fragment>
           )}
-          {isTabFour && (
+          {tab === '4' && (
             <React.Fragment>
               <div>
                 <BasicLineGraph
@@ -319,6 +314,4 @@ const Tabs = ({ router }) => {
       </div>
     </div>
   );
-};
-
-export default withRouter(Tabs);
+}
