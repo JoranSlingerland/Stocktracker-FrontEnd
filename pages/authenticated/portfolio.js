@@ -6,8 +6,6 @@ import PieChart from '../../components/PrimeFacePieChart';
 import PrimeFaceTable from '../../components/PrimeFaceTable';
 import { cachedFetch } from '../../utils/api-utils.js';
 
-const { TabPane } = Tabs;
-
 const SingleDaycolumns = [
   {
     header: 'Symbol',
@@ -79,7 +77,7 @@ export default function Home() {
   const [CountryPieData, setCountryPieData] = useState(fallbackObject);
   const [CountryPieDataisLoading, setCountryPieDataisLoading] = useState(true);
 
-  // get table data
+  //  Fetch data
   async function fetchSingleDayData() {
     cachedFetch(`/api/get_table_data_basic/single_day`).then((data) => {
       setSingleDayData(data);
@@ -87,7 +85,6 @@ export default function Home() {
     });
   }
 
-  // Get stock pie chart data
   async function fetchStockPieData() {
     cachedFetch(`/api/get_pie_data/stocks`, 24, fallbackObject).then((data) => {
       setStockPieData(data);
@@ -95,7 +92,6 @@ export default function Home() {
     });
   }
 
-  // Get currency pie chart data
   async function fetchCurrencyPieData() {
     cachedFetch(`/api/get_pie_data/currency`, 24, fallbackObject).then(
       (data) => {
@@ -105,7 +101,6 @@ export default function Home() {
     );
   }
 
-  // Get sector pie chart data
   async function fetchSectorPieData() {
     cachedFetch(`/api/get_pie_data/sector`, 24, fallbackObject).then((data) => {
       setSectorPieData(data);
@@ -113,7 +108,6 @@ export default function Home() {
     });
   }
 
-  // Get country pie chart data
   async function fetchCountryPieData() {
     cachedFetch(`/api/get_pie_data/country`, 24, fallbackObject).then(
       (data) => {
@@ -164,6 +158,7 @@ export default function Home() {
     },
   ];
 
+  // Render
   return (
     <div>
       {/* Titel */}
