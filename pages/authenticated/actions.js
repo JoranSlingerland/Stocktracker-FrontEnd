@@ -63,28 +63,28 @@ export default function Home() {
   const [InputInvestedDataisLoading, setInputInvestedDataisLoading] =
     useState(true);
 
+  // Fetch data
+  async function fetchTransactionsData() {
+    cachedFetch(`/api/get_table_data_basic/input_transactions`).then((data) => {
+      setInputTransactionsData(data);
+      setInputTransactionsDataisLoading(false);
+    });
+  }
+
+  async function fetchInputInvestedData() {
+    cachedFetch(`/api/get_table_data_basic/input_invested`).then((data) => {
+      setInputInvestedData(data);
+      setInputInvestedDataisLoading(false);
+    });
+  }
+
+  // Fetch data on mount
   useEffect(() => {
-    async function fetchData() {
-      cachedFetch(`/api/get_table_data_basic/input_transactions`).then(
-        (data) => {
-          setInputTransactionsData(data);
-          setInputTransactionsDataisLoading(false);
-        }
-      );
-    }
-    fetchData();
+    fetchTransactionsData();
+    fetchInputInvestedData();
   }, []);
 
-  useEffect(() => {
-    async function fetchData() {
-      cachedFetch(`/api/get_table_data_basic/input_invested`).then((data) => {
-        setInputInvestedData(data);
-        setInputInvestedDataisLoading(false);
-      });
-    }
-    fetchData();
-  }, []);
-
+  // Callbacks
   async function callback_transactions() {
     setInputTransactionsDataisLoading(true);
     ovewriteCachedFetch(`/api/get_table_data_basic/input_transactions`).then(
@@ -105,6 +105,7 @@ export default function Home() {
     );
   }
 
+  // Render
   return (
     <div className="w-full">
       {/* Titel */}

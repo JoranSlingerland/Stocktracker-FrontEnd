@@ -1,19 +1,12 @@
 // components\Overviewbar.js
 
-import Link from 'next/link';
-import { withRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { Spin } from 'antd';
 import { RiseOutlined, FallOutlined } from '@ant-design/icons';
 import { formatCurrency, formatPercentage } from '../utils/formatting';
 
-const Tabs = ({ router, topBarData, loading }) => {
-  const {
-    query: { tab, date },
-  } = router;
-  const isTabOne = tab === '1' || tab == null;
-  const isTabTwo = tab === '2';
-  const isTabThree = tab === '3';
-  const isTabFour = tab === '4';
+export default function tabs({ topBarData, loading, handleTabChange }) {
+  const tab = (useRouter().query.tab || 1).toString();
 
   const PercentageFormat = (value) => {
     if (value > 0) {
@@ -42,107 +35,81 @@ const Tabs = ({ router, topBarData, loading }) => {
       <div className="grid grid-cols-1 grid-rows-4 gap-4 p-2 sm:grid-rows-2 sm:grid-cols-2 lg:grid-rows-1 lg:grid-cols-4">
         <div
           className={`${
-            isTabOne
+            tab === '1'
               ? 'grid h-12 grid-cols-1 grid-rows-2 rounded-full bg-white shadow'
               : 'grid h-12 grid-cols-1 grid-rows-2 rounded-full bg-neutral-100'
           }`}
+          onClick={() => handleTabChange('1')}
         >
-          <Link
-            href={{
-              pathname: '/authenticated/performance/',
-              query: { tab: '1', date: date },
-            }}
-          >
-            <div className="text-black">
-              <Spin spinning={loading}>
-                <div className="px-5">Value growth</div>
-                <div className="grid grid-cols-2 grid-rows-1 px-5">
-                  <div className="font-bold">
-                    {formatCurrency(topBarData.total_value_gain)}
-                  </div>
-                  <div className="text-right">
-                    {formatCurrency(topBarData.total_value)}
-                  </div>
+          <div className="text-black">
+            <Spin spinning={loading}>
+              <div className="px-5">Value growth</div>
+              <div className="grid grid-cols-2 grid-rows-1 px-5">
+                <div className="font-bold">
+                  {formatCurrency(topBarData.total_value_gain)}
                 </div>
-              </Spin>
-            </div>
-          </Link>
+                <div className="text-right">
+                  {formatCurrency(topBarData.total_value)}
+                </div>
+              </div>
+            </Spin>
+          </div>
         </div>
         <div
           className={`${
-            isTabTwo
+            tab === '2'
               ? 'grid h-12 grid-cols-1 grid-rows-2 rounded-full bg-white shadow'
               : 'grid h-12 grid-cols-1 grid-rows-2 rounded-full bg-neutral-100'
           }`}
+          onClick={() => handleTabChange('2')}
         >
-          <Link
-            href={{
-              pathname: '/authenticated/performance/',
-              query: { tab: '2', date: date },
-            }}
-          >
-            <div className="text-black">
-              <Spin spinning={loading}>
-                <div className="px-5">Received dividends</div>
-                <div className="px-5 font-bold">
-                  {formatCurrency(topBarData.total_dividends)}
-                </div>
-              </Spin>
-            </div>
-          </Link>
+          <div className="text-black">
+            <Spin spinning={loading}>
+              <div className="px-5">Received dividends</div>
+              <div className="px-5 font-bold">
+                {formatCurrency(topBarData.total_dividends)}
+              </div>
+            </Spin>
+          </div>
         </div>
         <div
           className={`${
-            isTabThree
+            tab === '3'
               ? 'grid h-12 grid-cols-1 grid-rows-2 rounded-full bg-white shadow'
               : 'grid h-12 grid-cols-1 grid-rows-2 rounded-full bg-neutral-100'
           }`}
+          onClick={() => handleTabChange('3')}
         >
-          <Link
-            href={{
-              pathname: '/authenticated/performance/',
-              query: { tab: '3', date: date },
-            }}
-          >
-            <div className="text-black">
-              <Spin spinning={loading}>
-                <div className="px-5">Made expenses</div>
-                <div className="px-5 font-bold">
-                  {formatCurrency(topBarData.transaction_cost)}
-                </div>
-              </Spin>
-            </div>
-          </Link>
+          <div className="text-black">
+            <Spin spinning={loading}>
+              <div className="px-5">Made expenses</div>
+              <div className="px-5 font-bold">
+                {formatCurrency(topBarData.transaction_cost)}
+              </div>
+            </Spin>
+          </div>
         </div>
         <div
           className={`${
-            isTabFour
+            tab === '4'
               ? 'grid h-12 grid-cols-1 grid-rows-2 rounded-full bg-white shadow transition-all'
               : 'grid h-12 grid-cols-1 grid-rows-2 rounded-full bg-neutral-100'
           }`}
+          onClick={() => handleTabChange('4')}
         >
-          <Link
-            href={{
-              pathname: '/authenticated/performance/',
-              query: { tab: '4', date: date },
-            }}
-          >
-            <div className="text-black">
-              <Spin spinning={loading}>
-                <div className="px-5">Total gains</div>
-                <div className="grid grid-cols-2 grid-rows-1 px-5 font-bold ">
-                  <div>{formatCurrency(topBarData.total_pl)}</div>
-                  <div className="text-right">
-                    {PercentageFormat(topBarData.total_pl_percentage)}
-                  </div>
+          <div className="text-black">
+            <Spin spinning={loading}>
+              <div className="px-5">Total gains</div>
+              <div className="grid grid-cols-2 grid-rows-1 px-5 font-bold ">
+                <div>{formatCurrency(topBarData.total_pl)}</div>
+                <div className="text-right">
+                  {PercentageFormat(topBarData.total_pl_percentage)}
                 </div>
-              </Spin>
-            </div>
-          </Link>
+              </div>
+            </Spin>
+          </div>
         </div>
       </div>
     </div>
   );
-};
-
-export default withRouter(Tabs);
+}
