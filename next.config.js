@@ -3,6 +3,7 @@ module.exports = {
   images: {
     loader: 'custom',
     domains: ['logo.uplead.com'],
+    unoptimized: true,
   },
 };
 

@@ -128,8 +128,8 @@ const AddStockForm = ({ open, onCreate, onCancel }) => {
             },
             {
               validator(rule, value) {
-                if (value > 0) {
-                  return Promise.reject('Amount must be negative');
+                if (value < 0) {
+                  return Promise.reject('Amount must be positive');
                 }
                 return Promise.resolve();
               },
