@@ -105,19 +105,14 @@ export default function performance() {
   const [tab, setTab] = useState((useRouter().query.tab || 1).toString());
   const [date, setDate] = useState(useRouter().query.date || 'max');
 
-  // Query params
-  function setQueryParams() {
-    setTab(router.query.tab.toString());
-    setDate(router.query.date);
-  }
-
   useEffect(() => {
     if (!router.isReady) {
       return;
     } else {
-      setQueryParams();
+      setTab(router.query.tab.toString());
+      setDate(router.query.date);
     }
-  }, [router.isReady]);
+  }, [router.isReady, router.query.date, router.query.tab]);
 
   // Fetch data
   useEffect(() => {
