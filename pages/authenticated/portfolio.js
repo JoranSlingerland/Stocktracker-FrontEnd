@@ -20,8 +20,8 @@ const SingleDaycolumns = [
     field: 'country',
   },
   {
-    header: 'Average Cost',
-    field: 'average_cost',
+    header: 'Cost per Share',
+    field: 'cost_per_share',
   },
   {
     header: 'Total Cost',

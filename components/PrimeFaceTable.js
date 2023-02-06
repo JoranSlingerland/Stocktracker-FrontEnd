@@ -62,6 +62,10 @@ export default function PrimeFaceTable({
     return formatCurrency(rowData.average_cost);
   };
 
+  const cost_per_shareTemplate = (rowData) => {
+    return formatCurrency(rowData.cost_per_share);
+  };
+
   const total_costTemplate = (rowData) => {
     return formatCurrency(rowData.total_cost);
   };
@@ -206,6 +210,17 @@ export default function PrimeFaceTable({
           field={col.field}
           header={col.header}
           body={total_costTemplate}
+          sortable
+          filter
+        />
+      );
+    } else if (col.field === 'cost_per_share') {
+      return (
+        <Column
+          key={col.field}
+          field={col.field}
+          header={col.header}
+          body={cost_per_shareTemplate}
           sortable
           filter
         />
