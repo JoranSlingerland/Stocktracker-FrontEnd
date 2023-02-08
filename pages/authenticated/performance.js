@@ -16,11 +16,11 @@ const valueGrowthColumns = [
   },
   {
     header: 'Profit / Loss',
-    field: 'total_pl',
+    field: 'unrealized.total_pl',
   },
   {
     header: 'Percentage',
-    field: 'total_pl_percentage',
+    field: 'unrealized.total_pl_percentage',
   },
 ];
 
@@ -31,7 +31,7 @@ const ReceivedDividedColumns = [
   },
   {
     header: 'Dividends',
-    field: 'total_dividends',
+    field: 'realized.total_dividends',
   },
 ];
 
@@ -42,7 +42,7 @@ const TransactionCostColumns = [
   },
   {
     header: 'Transaction Costs',
-    field: 'transaction_cost',
+    field: 'realized.transaction_cost',
   },
 ];
 
