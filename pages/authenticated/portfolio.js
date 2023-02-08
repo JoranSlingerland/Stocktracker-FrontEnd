@@ -13,47 +13,47 @@ const SingleDaycolumns = [
   },
   {
     header: 'Name',
-    field: 'name',
+    field: 'meta.name',
   },
   {
     header: 'Country',
-    field: 'country',
+    field: 'meta.country',
   },
   {
-    header: 'Average Cost',
-    field: 'average_cost',
+    header: 'Cost per Share',
+    field: 'unrealized.cost_per_share',
   },
   {
     header: 'Total Cost',
-    field: 'total_cost',
+    field: 'unrealized.total_cost',
   },
   {
     header: 'Total Value',
-    field: 'total_value',
+    field: 'unrealized.total_value',
   },
   {
     header: 'Profit / Loss',
-    field: 'total_pl',
+    field: 'unrealized.total_pl',
   },
   {
     header: 'Percentage',
-    field: 'total_pl_percentage',
+    field: 'unrealized.total_pl_percentage',
   },
   {
     header: 'Quantity',
-    field: 'quantity',
+    field: 'unrealized.quantity',
   },
   {
     header: 'Transaction Cost',
-    field: 'transaction_cost',
+    field: 'realized.transaction_cost',
   },
   {
     header: 'Close Value',
-    field: 'close_value',
+    field: 'unrealized.close_value',
   },
   {
     header: 'Dividends',
-    field: 'total_dividends',
+    field: 'realized.total_dividends',
   },
 ];
 

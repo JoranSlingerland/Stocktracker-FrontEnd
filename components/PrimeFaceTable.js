@@ -62,20 +62,24 @@ export default function PrimeFaceTable({
     return formatCurrency(rowData.average_cost);
   };
 
+  const cost_per_shareTemplate = (rowData) => {
+    return formatCurrency(rowData.unrealized.cost_per_share);
+  };
+
   const total_costTemplate = (rowData) => {
-    return formatCurrency(rowData.total_cost);
+    return formatCurrency(rowData.unrealized.total_cost);
   };
 
   const total_valueTemplate = (rowData) => {
-    return formatCurrency(rowData.total_value);
+    return formatCurrency(rowData.unrealized.total_value);
   };
 
   const transaction_costTemplate = (rowData) => {
-    return formatCurrency(rowData.transaction_cost);
+    return formatCurrency(rowData.realized.transaction_cost);
   };
 
   const close_valueTemplate = (rowData) => {
-    return formatCurrency(rowData.close_value);
+    return formatCurrency(rowData.unrealized.close_value);
   };
 
   const costTemplate = (rowData) => {
@@ -86,28 +90,28 @@ export default function PrimeFaceTable({
     return formatCurrency(rowData.amount);
   };
   const total_dividendsTemplate = (rowData) => {
-    return formatCurrency(rowData.total_dividends);
+    return formatCurrency(rowData.realized.total_dividends);
   };
 
   const profitTemplate = (rowData) => {
-    const data = formatCurrency(rowData.total_pl);
-    if (rowData.total_pl > 0) {
+    const data = formatCurrency(rowData.unrealized.total_pl);
+    if (rowData.unrealized.total_pl > 0) {
       return <span className="text-green-500">{data}</span>;
-    } else if (rowData.total_pl < 0) {
+    } else if (rowData.unrealized.total_pl < 0) {
       return <span className="text-red-500">{data}</span>;
     } else {
       return data;
     }
   };
   const profitPercentageTemplate = (rowData) => {
-    if (rowData.total_pl_percentage > 0) {
-      const data = formatPercentage(rowData.total_pl_percentage);
+    if (rowData.unrealized.total_pl_percentage > 0) {
+      const data = formatPercentage(rowData.unrealized.total_pl_percentage);
       return <span className="text-green-500">{data}</span>;
-    } else if (rowData.total_pl_percentage < 0) {
-      const data = formatPercentage(rowData.total_pl_percentage);
+    } else if (rowData.unrealized.total_pl_percentage < 0) {
+      const data = formatPercentage(rowData.unrealized.total_pl_percentage);
       return <span className="text-red-500">{data}</span>;
     } else {
-      const data = formatPercentage(rowData.total_pl_percentage);
+      const data = formatPercentage(rowData.unrealized.total_pl_percentage);
       return data;
     }
   };
@@ -128,7 +132,7 @@ export default function PrimeFaceTable({
   };
 
   const symbolTempalte = (rowData) => {
-    if (rowData.logo === undefined) {
+    if (rowData.meta === undefined) {
       return <div className="flex flex-row">{rowData.symbol}</div>;
     } else {
       return (
@@ -136,7 +140,7 @@ export default function PrimeFaceTable({
           <Image
             className="pr-1"
             alt="logo"
-            src={rowData.logo}
+            src={rowData.meta.logo}
             width={35}
             height={35}
           />
@@ -199,7 +203,7 @@ export default function PrimeFaceTable({
           filter
         />
       );
-    } else if (col.field === 'total_cost') {
+    } else if (col.field === 'unrealized.total_cost') {
       return (
         <Column
           key={col.field}
@@ -210,7 +214,18 @@ export default function PrimeFaceTable({
           filter
         />
       );
-    } else if (col.field === 'total_value') {
+    } else if (col.field === 'unrealized.cost_per_share') {
+      return (
+        <Column
+          key={col.field}
+          field={col.field}
+          header={col.header}
+          body={cost_per_shareTemplate}
+          sortable
+          filter
+        />
+      );
+    } else if (col.field === 'unrealized.total_value') {
       return (
         <Column
           key={col.field}
@@ -221,7 +236,7 @@ export default function PrimeFaceTable({
           filter
         />
       );
-    } else if (col.field === 'transaction_cost') {
+    } else if (col.field === 'realized.transaction_cost') {
       return (
         <Column
           key={col.field}
@@ -232,7 +247,7 @@ export default function PrimeFaceTable({
           filter
         />
       );
-    } else if (col.field === 'close_value') {
+    } else if (col.field === 'unrealized.close_value') {
       return (
         <Column
           key={col.field}
@@ -265,7 +280,7 @@ export default function PrimeFaceTable({
           filter
         />
       );
-    } else if (col.field === 'total_pl') {
+    } else if (col.field === 'unrealized.total_pl') {
       return (
         <Column
           key={col.field}
@@ -276,7 +291,7 @@ export default function PrimeFaceTable({
           filter
         />
       );
-    } else if (col.field === 'total_pl_percentage') {
+    } else if (col.field === 'unrealized.total_pl_percentage') {
       return (
         <Column
           key={col.field}
@@ -309,7 +324,7 @@ export default function PrimeFaceTable({
           filter
         />
       );
-    } else if (col.field === 'total_dividends') {
+    } else if (col.field === 'realized.total_dividends') {
       return (
         <Column
           key={col.field}
