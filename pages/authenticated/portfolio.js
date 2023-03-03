@@ -16,20 +16,12 @@ const SingleDaycolumns = [
     field: 'meta.name',
   },
   {
-    header: 'Country',
-    field: 'meta.country',
-  },
-  {
-    header: 'Cost per Share',
-    field: 'unrealized.cost_per_share',
+    header: 'Quantity',
+    field: 'unrealized.quantity',
   },
   {
     header: 'Total Cost',
     field: 'unrealized.total_cost',
-  },
-  {
-    header: 'Total Value',
-    field: 'unrealized.total_value',
   },
   {
     header: 'Profit / Loss',
@@ -40,21 +32,9 @@ const SingleDaycolumns = [
     field: 'unrealized.total_pl_percentage',
   },
   {
-    header: 'Quantity',
-    field: 'unrealized.quantity',
-  },
-  {
-    header: 'Transaction Cost',
-    field: 'realized.transaction_cost',
-  },
-  {
-    header: 'Close Value',
-    field: 'unrealized.close_value',
-  },
-  {
-    header: 'Dividends',
-    field: 'realized.total_dividends',
-  },
+    header: 'Total Value',
+    field: 'unrealized.total_value',
+  }
 ];
 
 const fallbackObject = {
