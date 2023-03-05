@@ -41,8 +41,8 @@ async function cachedFetch(
   body = {},
   key = ''
 ) {
-  if (key === ''){
-    key = url
+  if (key === '') {
+    key = url;
   }
   const cachedResponse = getWithExpiry(key);
   if (cachedResponse) {
@@ -65,8 +65,8 @@ async function ovewriteCachedFetch(
   body = {},
   key = ''
 ) {
-  if (key === ''){
-    key = url
+  if (key === '') {
+    key = url;
   }
   const response = await regularFetch(url, fallback_data, method, body);
   if (response === fallback_data) {
