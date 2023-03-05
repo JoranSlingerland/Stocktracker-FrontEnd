@@ -103,6 +103,18 @@ export default function PrimeFaceTable({
       return data;
     }
   };
+
+  const realizedProfitTemplate = (rowData) => {
+    const data = formatCurrency(rowData.realized.total_pl);
+    if (rowData.realized.total_pl > 0) {
+      return <span className="text-green-500">{data}</span>;
+    } else if (rowData.realized.total_pl < 0) {
+      return <span className="text-red-500">{data}</span>;
+    } else {
+      return data;
+    }
+  };
+
   const profitPercentageTemplate = (rowData) => {
     if (rowData.unrealized.total_pl_percentage > 0) {
       const data = formatPercentage(rowData.unrealized.total_pl_percentage);
@@ -112,6 +124,19 @@ export default function PrimeFaceTable({
       return <span className="text-red-500">{data}</span>;
     } else {
       const data = formatPercentage(rowData.unrealized.total_pl_percentage);
+      return data;
+    }
+  };
+
+  const realizedProfitPercentageTemplate = (rowData) => {
+    if (rowData.realized.total_pl_percentage > 0) {
+      const data = formatPercentage(rowData.realized.total_pl_percentage);
+      return <span className="text-green-500">{data}</span>;
+    } else if (rowData.realized.total_pl_percentage < 0) {
+      const data = formatPercentage(rowData.realized.total_pl_percentage);
+      return <span className="text-red-500">{data}</span>;
+    } else {
+      const data = formatPercentage(rowData.realized.total_pl_percentage);
       return data;
     }
   };
@@ -291,6 +316,17 @@ export default function PrimeFaceTable({
           filter
         />
       );
+    } else if (col.field === 'realized.total_pl') {
+      return (
+        <Column
+          key={col.field}
+          field={col.field}
+          header={col.header}
+          body={realizedProfitTemplate}
+          sortable
+          filter
+        />
+      );
     } else if (col.field === 'unrealized.total_pl_percentage') {
       return (
         <Column
@@ -298,6 +334,17 @@ export default function PrimeFaceTable({
           field={col.field}
           header={col.header}
           body={profitPercentageTemplate}
+          sortable
+          filter
+        />
+      );
+    } else if (col.field === 'realized.total_pl_percentage') {
+      return (
+        <Column
+          key={col.field}
+          field={col.field}
+          header={col.header}
+          body={realizedProfitPercentageTemplate}
           sortable
           filter
         />
@@ -355,7 +402,6 @@ export default function PrimeFaceTable({
           value={data}
           responsiveLayout="scroll"
           size="small"
-          stripedRows
           filters={filters}
           filterDisplay="menu"
           header={header(form)}

@@ -1,12 +1,14 @@
 // pages\authenticated\portfolio.js
 
-import { Divider, Tabs } from 'antd';
+import { Divider, Tabs, Collapse } from 'antd';
 import { useEffect, useState } from 'react';
 import PieChart from '../../components/PrimeFacePieChart';
 import PrimeFaceTable from '../../components/PrimeFaceTable';
 import { cachedFetch } from '../../utils/api-utils.js';
 
-const SingleDaycolumns = [
+const { Panel } = Collapse;
+
+const UnRealizedColumns = [
   {
     header: 'Symbol',
     field: 'symbol',
@@ -34,7 +36,38 @@ const SingleDaycolumns = [
   {
     header: 'Total Value',
     field: 'unrealized.total_value',
-  }
+  },
+];
+
+const RealizedColumns = [
+  {
+    header: 'Symbol',
+    field: 'symbol',
+  },
+  {
+    header: 'Name',
+    field: 'meta.name',
+  },
+  {
+    header: 'Quantity',
+    field: 'realized.quantity',
+  },
+  {
+    header: 'Total Cost',
+    field: 'realized.buy_price',
+  },
+  {
+    header: 'Profit / Loss',
+    field: 'realized.total_pl',
+  },
+  {
+    header: 'Percentage',
+    field: 'realized.total_pl_percentage',
+  },
+  {
+    header: 'Sell Price',
+    field: 'realized.sell_price',
+  },
 ];
 
 const fallbackObject = {
@@ -45,8 +78,10 @@ const fallbackObject = {
 
 export default function Home() {
   // Const setup
-  const [SingleDayData, setSingleDayData] = useState(null);
-  const [SingleDayDataisLoading, setSingleDayDataisLoading] = useState(true);
+  const [UnRealizedData, setUnRealizedData] = useState(null);
+  const [UnRealizedDataisLoading, setUnRealizedDataisLoading] = useState(true);
+  const [RealizedData, setRealizedData] = useState(null);
+  const [RealizedDataisLoading, setRealizedDataisLoading] = useState(true);
   const [StockPieData, setStockPieData] = useState(fallbackObject);
   const [StockPieDataisLoading, setStockPieDataisLoading] = useState(true);
   const [CurrencyPieData, setCurrencyPieData] = useState(fallbackObject);
@@ -58,10 +93,37 @@ export default function Home() {
   const [CountryPieDataisLoading, setCountryPieDataisLoading] = useState(true);
 
   //  Fetch data
-  async function fetchSingleDayData() {
-    cachedFetch(`/api/get_table_data_basic/single_day`).then((data) => {
-      setSingleDayData(data);
-      setSingleDayDataisLoading(false);
+  async function fetchUnRealizedData() {
+    cachedFetch(
+      `/api/get_table_data_basic/single_day`,
+      24,
+      {},
+      'POST',
+      {
+        fully_realized: false,
+      },
+      '/api/get_table_data_basic/single_day?fully_realized=false'
+    ).then((data) => {
+      setUnRealizedData(data);
+      setUnRealizedDataisLoading(false);
+    });
+  }
+
+  async function fetchRealizedData() {
+    cachedFetch(
+      `/api/get_table_data_basic/single_day`,
+      24,
+      {},
+      'POST',
+      {
+        fully_realized: true,
+        partial_realized: true,
+        andor: 'or',
+      },
+      '/api/get_table_data_basic/single_day?fully_realized=true?partial_realized=true?andor=or'
+    ).then((data) => {
+      setRealizedData(data);
+      setRealizedDataisLoading(false);
     });
   }
 
@@ -99,7 +161,8 @@ export default function Home() {
 
   // Fetch data on page load
   useEffect(() => {
-    fetchSingleDayData();
+    fetchUnRealizedData();
+    fetchRealizedData();
     fetchStockPieData();
     fetchCurrencyPieData();
     fetchSectorPieData();
@@ -147,19 +210,29 @@ export default function Home() {
           Portfolio
         </h1>
       </div>
-      <Divider plain></Divider>
       {/* Tabs */}
       <div>
         <Tabs type="card" defaultActiveKey="1" items={items} />
       </div>
-      <Divider plain></Divider>
       {/* Table */}
       <div>
         <PrimeFaceTable
-          loading={SingleDayDataisLoading}
-          columns={SingleDaycolumns}
-          data={SingleDayData}
+          loading={UnRealizedDataisLoading}
+          columns={UnRealizedColumns}
+          data={UnRealizedData}
         />
+      </div>
+      {/* Table */}
+      <div>
+        <Collapse bordered={false} ghost>
+          <Panel header="Realized Stocks">
+            <PrimeFaceTable
+              loading={RealizedDataisLoading}
+              columns={RealizedColumns}
+              data={RealizedData}
+            />
+          </Panel>
+        </Collapse>
       </div>
     </div>
   );
