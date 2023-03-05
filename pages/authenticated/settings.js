@@ -29,7 +29,7 @@ export default function Home() {
   }
 
   return (
-    <div className="w-full">
+    <div>
       {/* Titel */}
       <div>
         <h1 className="flex items-center justify-center p-5 text-3xl py">
@@ -40,7 +40,7 @@ export default function Home() {
 
       <div className="flex flex-col items-center">
         {/* Safe changes */}
-        <div className="w-full max-w-3xl px-2 columns-1">
+        <div className="w-full px-2 columns-1">
           <div className="flex items-center justify-center text-xl">
             <h2>Safe changes</h2>
           </div>
@@ -127,7 +127,7 @@ export default function Home() {
           </div>
         </div>
         <Divider plain></Divider>
-        <div className="w-full max-w-3xl px-2 columns-1">
+        <div className="w-full px-2 columns-1">
           <div className="flex items-center justify-center text-xl">
             <h2 className="text-red-600">Danger Zone</h2>
           </div>

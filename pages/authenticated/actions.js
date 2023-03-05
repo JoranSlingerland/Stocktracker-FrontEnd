@@ -107,7 +107,7 @@ export default function Home() {
 
   // Render
   return (
-    <div className="w-full">
+    <div>
       {/* Titel */}
       <div>
         <h1 className="flex items-center justify-center p-5 text-3xl py">

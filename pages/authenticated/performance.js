@@ -212,7 +212,7 @@ export default function performance() {
 
   // Render
   return (
-    <div className="w-full">
+    <div>
       {/* Title */}
       <div className="grid grid-cols-2 grid-rows-1">
         <div className="flex px-5 py-2 text-2xl">
