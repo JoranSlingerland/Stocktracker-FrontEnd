@@ -33,48 +33,73 @@ function getWithExpiry(key) {
 // End of helper functions
 
 // main functions
-async function cachedFetch(url, hours = 24, fallback_data = {}) {
-  const cachedResponse = getWithExpiry(url);
+async function cachedFetch(
+  url,
+  hours = 24,
+  fallback_data = {},
+  method = 'GET',
+  body = {},
+  key = ''
+) {
+  if (key === '') {
+    key = url;
+  }
+  const cachedResponse = getWithExpiry(key);
   if (cachedResponse) {
     return cachedResponse;
   } else {
+    const response = await regularFetch(url, fallback_data, method, body);
+    if (response === fallback_data) {
+      return response;
+    }
+    setWithExpiry(key, response, hours * 1000 * 60 * 60);
+    return response;
+  }
+}
+
+async function ovewriteCachedFetch(
+  url,
+  hours = 24,
+  fallback_data = {},
+  method = 'GET',
+  body = {},
+  key = ''
+) {
+  if (key === '') {
+    key = url;
+  }
+  const response = await regularFetch(url, fallback_data, method, body);
+  if (response === fallback_data) {
+    return response;
+  }
+  setWithExpiry(key, response, hours * 1000 * 60 * 60);
+  return response;
+}
+
+async function regularFetch(
+  url,
+  fallback_data = {},
+  method = 'GET',
+  body = {}
+) {
+  if (method === 'GET') {
     const response = await wretch(url)
       .get()
       .json()
       .catch(() => {
         return fallback_data;
       });
-    if (response === fallback_data) {
-      return response;
-    }
-    setWithExpiry(url, response, hours * 1000 * 60 * 60);
     return response;
   }
-}
-
-async function ovewriteCachedFetch(url, hours = 24, fallback_data = {}) {
-  const response = await wretch(url)
-    .get()
-    .json()
-    .catch(() => {
-      return fallback_data;
-    });
-  if (response === fallback_data) {
+  if (method === 'POST') {
+    const response = await wretch(url)
+      .post(body)
+      .json()
+      .catch(() => {
+        return fallback_data;
+      });
     return response;
   }
-  setWithExpiry(url, response, hours * 1000 * 60 * 60);
-  return response;
-}
-
-// convert above to wretch
-async function regularFetch(url, fallback_data = {}) {
-  const response = await wretch(url)
-    .get()
-    .json()
-    .catch(() => {
-      return fallback_data;
-    });
-  return response;
 }
 
 async function ApiWithMessage(

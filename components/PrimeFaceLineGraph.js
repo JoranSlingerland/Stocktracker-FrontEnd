@@ -32,6 +32,12 @@ export default function BasicLineGraph({ isloading, data }) {
       },
     },
     scales: {
+      x: {
+        ticks: {
+          autoSkip: true,
+          maxTicksLimit: 12,
+        },
+      },
       y: {
         type: 'linear',
         display: true,
