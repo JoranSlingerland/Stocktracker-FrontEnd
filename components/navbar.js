@@ -42,23 +42,37 @@ export default function App() {
   async function handleClick(url, runningMessage, successMessage) {
     ApiWithMessage(url, runningMessage, successMessage);
   }
+
   const items = [
     {
       key: '/authenticated/portfolio/',
       icon: <HomeOutlined />,
-      label: <a href="/authenticated/portfolio/">Portfolio</a>,
+      label: (
+        <span>
+          <a className="" href="/authenticated/portfolio/"></a>
+          <p className="hidden sm:inline-block">Portfolio</p>
+        </span>
+      ),
     },
     {
       key: '/authenticated/performance/',
       icon: <AreaChartOutlined />,
       label: (
-        <a href="/authenticated/performance/?tab=1&date=max">Performance</a>
+        <span>
+          <a href="/authenticated/performance/?tab=1&date=max"></a>
+          <p className="hidden sm:inline-block">Performance</p>
+        </span>
       ),
     },
     {
       key: '/authenticated/actions/',
       icon: <InteractionOutlined />,
-      label: <a href="/authenticated/actions/">Actions</a>,
+      label: (
+        <span>
+          <a href="/authenticated/actions/"></a>
+          <p className="hidden sm:inline-block">Actions</p>
+        </span>
+      ),
     },
     {
       key: 'SubMenu',
