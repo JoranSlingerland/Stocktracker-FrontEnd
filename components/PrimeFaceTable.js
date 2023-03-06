@@ -4,7 +4,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import React, { useState } from 'react';
 import { FilterMatchMode } from 'primereact/api';
-import { Button, Tooltip } from 'antd';
+import { Button, Tooltip, Skeleton, Empty } from 'antd';
 import { FilterOutlined } from '@ant-design/icons';
 import { MultiSelect } from 'primereact/multiselect';
 import { formatCurrency, formatPercentage } from '../utils/formatting';
@@ -395,21 +395,32 @@ export default function PrimeFaceTable({
     }
   });
 
-  return (
-    <div>
-      <div className="card">
-        <DataTable
-          value={data}
-          responsiveLayout="scroll"
-          size="small"
-          filters={filters}
-          filterDisplay="menu"
-          header={header(form)}
+  const emptyMessage = () => {
+    if (loading) {
+      return (
+        <Skeleton
+          active={loading}
           loading={loading}
-        >
-          {dynamicColumns}
-        </DataTable>
-      </div>
-    </div>
+          title={false}
+          paragraph={{ width: '100%' }}
+        />
+      );
+    } else {
+      return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />;
+    }
+  };
+
+  return (
+    <DataTable
+      value={data}
+      responsiveLayout="scroll"
+      size="small"
+      filters={filters}
+      filterDisplay="menu"
+      header={header(form)}
+      emptyMessage={emptyMessage()}
+    >
+      {dynamicColumns}
+    </DataTable>
   );
 }
