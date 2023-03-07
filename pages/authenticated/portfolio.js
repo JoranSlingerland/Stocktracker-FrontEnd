@@ -212,7 +212,7 @@ export default function Home() {
       </div>
       {/* Tabs */}
       <div>
-        <Tabs type="card" defaultActiveKey="1" items={items} />
+        <Tabs type="line" defaultActiveKey="1" items={items} />
       </div>
       {/* Table */}
       <div>

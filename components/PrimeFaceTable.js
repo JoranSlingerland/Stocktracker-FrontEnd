@@ -5,7 +5,11 @@ import { Column } from 'primereact/column';
 import React, { useState } from 'react';
 import { FilterMatchMode } from 'primereact/api';
 import { Button, Tooltip, Skeleton, Empty } from 'antd';
-import { FilterOutlined } from '@ant-design/icons';
+import {
+  FilterOutlined,
+  StopOutlined,
+  DeleteOutlined,
+} from '@ant-design/icons';
 import { MultiSelect } from 'primereact/multiselect';
 import { formatCurrency, formatPercentage } from '../utils/formatting';
 import Image from '../utils/image';
@@ -21,6 +25,7 @@ export default function PrimeFaceTable({
   allowAdd = false,
   form = null,
   parentCallback = null,
+  parentCallback2 = null,
 }) {
   // Search setup
   const [filters, setFilters] = useState(null);
@@ -91,6 +96,46 @@ export default function PrimeFaceTable({
     } else {
       return data;
     }
+  };
+
+  const runTimeStatusTemplate = (rowData, col) => {
+    col.field.split('.').forEach((item) => {
+      rowData = rowData[item];
+    });
+    if (rowData === 'Completed') {
+      return <span className="text-green-500">{rowData}</span>;
+    } else if (rowData === 'Failed') {
+      return <span className="text-red-500">{rowData}</span>;
+    } else if (
+      rowData === 'Pending' ||
+      rowData === 'Suspended' ||
+      rowData === 'Terminated'
+    ) {
+      return <span className="text-yellow-500">{rowData}</span>;
+    } else if (rowData === 'Running' || rowData === 'ContinueAsNew') {
+      return <span className="text-blue-500">{rowData}</span>;
+    }
+  };
+
+  const actionsTemplate = (rowData) => {
+    return (
+      <div className="flex flex-row">
+        <div className="flex flex-row">
+          <Tooltip title="Terminate orchestration">
+            <Button
+              icon={<StopOutlined />}
+              onClick={() => parentCallback(rowData.instanceId)}
+            />
+          </Tooltip>
+          <Tooltip title="Purge Orchestration">
+            <Button
+              icon={<DeleteOutlined />}
+              onClick={() => parentCallback2(rowData.instanceId)}
+            />
+          </Tooltip>
+        </div>
+      </div>
+    );
   };
 
   const symbolTempalte = (rowData) => {
@@ -235,6 +280,25 @@ export default function PrimeFaceTable({
           header={col.header}
           body={symbolTempalte}
           {...columnProps}
+        />
+      );
+    } else if (col.field === 'runtimeStatus') {
+      return (
+        <Column
+          key={col.field}
+          field={col.field}
+          header={col.header}
+          body={runTimeStatusTemplate}
+          {...columnProps}
+        />
+      );
+    } else if (col.field === 'actions') {
+      return (
+        <Column
+          key={col.field}
+          field={col.field}
+          header={col.header}
+          body={actionsTemplate}
         />
       );
     } else {
