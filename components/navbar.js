@@ -77,8 +77,12 @@ export default function App() {
     {
       key: 'SubMenu',
       icon: <UserOutlined />,
-      label: userInfo && userInfo.userDetails,
-      className: 'float-right',
+      label: (
+        <p className="hidden sm:inline-block">
+          {userInfo && userInfo.userDetails}
+        </p>
+      ),
+      className: 'float-right hidden sm:inline-block',
       disabled: !userInfo,
       children: [
         {
