@@ -132,7 +132,7 @@ export default function Home() {
     cachedFetch(
       `/api/get_table_data_basic/single_day`,
       24,
-      {},
+      [],
       'POST',
       {
         fully_realized: false,
@@ -148,7 +148,7 @@ export default function Home() {
     cachedFetch(
       `/api/get_table_data_basic/single_day`,
       24,
-      {},
+      [],
       'POST',
       {
         fully_realized: true,

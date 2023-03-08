@@ -205,10 +205,12 @@ export default function performance() {
 
   useEffect(() => {
     async function fetchTable() {
-      cachedFetch(`/api/get_table_data_performance/${date}`).then((data) => {
-        setSingleDayData(data);
-        setSingleDayDataisLoading(false);
-      });
+      cachedFetch(`/api/get_table_data_performance/${date}`, 24, []).then(
+        (data) => {
+          setSingleDayData(data);
+          setSingleDayDataisLoading(false);
+        }
+      );
     }
     fetchTable();
   }, [date]);
