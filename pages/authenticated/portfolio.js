@@ -126,12 +126,10 @@ export default function Home() {
   const [SectorPieDataisLoading, setSectorPieDataisLoading] = useState(true);
   const [CountryPieData, setCountryPieData] = useState(fallbackObject);
   const [CountryPieDataisLoading, setCountryPieDataisLoading] = useState(true);
-
   //  Fetch data
   async function fetchUnRealizedData() {
     cachedFetch(
       `/api/get_table_data_basic/single_day`,
-      24,
       [],
       'POST',
       {
@@ -147,7 +145,6 @@ export default function Home() {
   async function fetchRealizedData() {
     cachedFetch(
       `/api/get_table_data_basic/single_day`,
-      24,
       [],
       'POST',
       {
@@ -163,35 +160,31 @@ export default function Home() {
   }
 
   async function fetchStockPieData() {
-    cachedFetch(`/api/get_pie_data/stocks`, 24, fallbackObject).then((data) => {
+    cachedFetch(`/api/get_pie_data/stocks`, fallbackObject).then((data) => {
       setStockPieData(data);
       setStockPieDataisLoading(false);
     });
   }
 
   async function fetchCurrencyPieData() {
-    cachedFetch(`/api/get_pie_data/currency`, 24, fallbackObject).then(
-      (data) => {
-        setCurrencyPieData(data);
-        setCurrencyPieDataisLoading(false);
-      }
-    );
+    cachedFetch(`/api/get_pie_data/currency`, fallbackObject).then((data) => {
+      setCurrencyPieData(data);
+      setCurrencyPieDataisLoading(false);
+    });
   }
 
   async function fetchSectorPieData() {
-    cachedFetch(`/api/get_pie_data/sector`, 24, fallbackObject).then((data) => {
+    cachedFetch(`/api/get_pie_data/sector`, fallbackObject).then((data) => {
       setSectorPieData(data);
       setSectorPieDataisLoading(false);
     });
   }
 
   async function fetchCountryPieData() {
-    cachedFetch(`/api/get_pie_data/country`, 24, fallbackObject).then(
-      (data) => {
-        setCountryPieData(data);
-        setCountryPieDataisLoading(false);
-      }
-    );
+    cachedFetch(`/api/get_pie_data/country`, fallbackObject).then((data) => {
+      setCountryPieData(data);
+      setCountryPieDataisLoading(false);
+    });
   }
 
   // Fetch data on page load

@@ -92,21 +92,17 @@ export default function Home() {
 
   // Fetch data
   async function fetchTransactionsData() {
-    cachedFetch(`/api/get_table_data_basic/input_transactions`, 24, []).then(
-      (data) => {
-        setInputTransactionsData(data);
-        setInputTransactionsDataisLoading(false);
-      }
-    );
+    cachedFetch(`/api/get_table_data_basic/input_transactions`).then((data) => {
+      setInputTransactionsData(data);
+      setInputTransactionsDataisLoading(false);
+    });
   }
 
   async function fetchInputInvestedData() {
-    cachedFetch(`/api/get_table_data_basic/input_invested`, 24, []).then(
-      (data) => {
-        setInputInvestedData(data);
-        setInputInvestedDataisLoading(false);
-      }
-    );
+    cachedFetch(`/api/get_table_data_basic/input_invested`).then((data) => {
+      setInputInvestedData(data);
+      setInputInvestedDataisLoading(false);
+    });
   }
 
   // Fetch data on mount

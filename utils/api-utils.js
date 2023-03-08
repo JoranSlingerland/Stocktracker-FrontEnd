@@ -35,11 +35,11 @@ function getWithExpiry(key) {
 // main functions
 async function cachedFetch(
   url,
-  hours = 24,
-  fallback_data = {},
+  fallback_data = [],
   method = 'GET',
   body = {},
-  key = ''
+  key = '',
+  hours = 24
 ) {
   if (key === '') {
     key = url;
@@ -59,11 +59,11 @@ async function cachedFetch(
 
 async function ovewriteCachedFetch(
   url,
-  hours = 24,
-  fallback_data = {},
+  fallback_data = [],
   method = 'GET',
   body = {},
-  key = ''
+  key = '',
+  hours = 24
 ) {
   if (key === '') {
     key = url;
@@ -78,7 +78,7 @@ async function ovewriteCachedFetch(
 
 async function regularFetch(
   url,
-  fallback_data = {},
+  fallback_data = [],
   method = 'GET',
   body = {}
 ) {

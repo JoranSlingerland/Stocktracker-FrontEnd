@@ -139,7 +139,6 @@ export default function performance() {
     async function fetchTotalGainsData() {
       cachedFetch(
         `/api/get_linechart_data/total_gains/${date}`,
-        24,
         totalGainsDataFallBackObject
       ).then((data) => {
         settotalGainsData(data);
@@ -153,7 +152,6 @@ export default function performance() {
     async function fetchDataline() {
       cachedFetch(
         `/api/get_linechart_data/invested_and_value/${date}`,
-        24,
         valueGrowthDataFallBackObject
       ).then((data) => {
         setvalueGrowthData(data);
@@ -165,12 +163,10 @@ export default function performance() {
 
   useEffect(() => {
     async function fetchDividendData() {
-      cachedFetch(`/api/get_barchart_data/dividend/${date}`, 24, []).then(
-        (data) => {
-          setdividendData(data);
-          setLoadingDividend(false);
-        }
-      );
+      cachedFetch(`/api/get_barchart_data/dividend/${date}`).then((data) => {
+        setdividendData(data);
+        setLoadingDividend(false);
+      });
     }
     fetchDividendData();
   }, [date]);
@@ -179,7 +175,6 @@ export default function performance() {
     async function fetchTopBar() {
       cachedFetch(
         `/api/get_topbar_data/${date}`,
-        24,
         topBarDataFallBackObject
       ).then((data) => {
         settopBarData(data);
@@ -191,26 +186,22 @@ export default function performance() {
 
   useEffect(() => {
     async function fetchTransactionCostData() {
-      cachedFetch(
-        `/api/get_barchart_data/transaction_cost/${date}`,
-        24,
-        []
-      ).then((data) => {
-        settotalTransactionCostData(data);
-        settotalTransactionCostDataLoading(false);
-      });
+      cachedFetch(`/api/get_barchart_data/transaction_cost/${date}`).then(
+        (data) => {
+          settotalTransactionCostData(data);
+          settotalTransactionCostDataLoading(false);
+        }
+      );
     }
     fetchTransactionCostData();
   }, [date]);
 
   useEffect(() => {
     async function fetchTable() {
-      cachedFetch(`/api/get_table_data_performance/${date}`, 24, []).then(
-        (data) => {
-          setSingleDayData(data);
-          setSingleDayDataisLoading(false);
-        }
-      );
+      cachedFetch(`/api/get_table_data_performance/${date}`).then((data) => {
+        setSingleDayData(data);
+        setSingleDayDataisLoading(false);
+      });
     }
     fetchTable();
   }, [date]);
