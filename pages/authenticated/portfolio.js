@@ -1,72 +1,107 @@
 // pages\authenticated\portfolio.js
 
-import { Divider, Tabs, Collapse } from 'antd';
+import { Tabs, Collapse } from 'antd';
 import { useEffect, useState } from 'react';
 import PieChart from '../../components/PrimeFacePieChart';
-import PrimeFaceTable from '../../components/PrimeFaceTable';
+import AntdTable from '../../components/antdTable';
 import { cachedFetch } from '../../utils/api-utils.js';
+import {
+  formatCurrency,
+  formatCurrencyWithColors,
+  formatPercentageWithColors,
+  formatNumber,
+  formatImageAndText,
+} from '../../utils/formatting.js';
 
 const { Panel } = Collapse;
 
 const UnRealizedColumns = [
   {
-    header: 'Symbol',
-    field: 'symbol',
+    title: 'symbol',
+    dataIndex: 'symbol',
+    key: 'symbol',
+    render: (text, record) => formatImageAndText(text, record.meta.logo),
   },
   {
-    header: 'Name',
-    field: 'meta.name',
+    title: 'Name',
+    dataIndex: 'meta',
+    key: 'meta.name',
+    render: (text) => text.name,
   },
   {
-    header: 'Quantity',
-    field: 'unrealized.quantity',
+    title: 'Quantity',
+    dataIndex: 'unrealized',
+    key: 'unrealized.quantity',
+    render: (text) => formatNumber(text.quantity),
   },
   {
-    header: 'Total Cost',
-    field: 'unrealized.total_cost',
+    title: 'Total Cost',
+    dataIndex: 'unrealized',
+    key: 'unrealized.total_cost',
+    render: (text) => formatCurrency(text.total_cost),
   },
   {
-    header: 'Profit / Loss',
-    field: 'unrealized.total_pl',
+    title: 'Profit / Loss',
+    dataIndex: 'unrealized',
+    key: 'unrealized.total_pl',
+    render: (text) => formatCurrencyWithColors(text.total_pl),
   },
   {
-    header: 'Percentage',
-    field: 'unrealized.total_pl_percentage',
+    title: 'Percentage',
+    dataIndex: 'unrealized',
+    key: 'unrealized.total_pl_percentage',
+    render: (text) => formatPercentageWithColors(text.total_pl_percentage),
   },
   {
-    header: 'Total Value',
-    field: 'unrealized.total_value',
+    title: 'Total Value',
+    dataIndex: 'unrealized',
+    key: 'unrealized.total_value',
+    render: (text) => formatCurrency(text.total_value),
   },
 ];
 
 const RealizedColumns = [
   {
-    header: 'Symbol',
-    field: 'symbol',
+    title: 'symbol',
+    dataIndex: 'symbol',
+    key: 'symbol',
+    render: (text, record) => formatImageAndText(text, record.meta.logo),
   },
   {
-    header: 'Name',
-    field: 'meta.name',
+    title: 'Name',
+    dataIndex: 'meta',
+    key: 'meta.name',
+    render: (text) => text.name,
   },
   {
-    header: 'Quantity',
-    field: 'realized.quantity',
+    title: 'Quantity',
+    dataIndex: 'realized',
+    key: 'realized.quantity',
+    render: (text) => formatNumber(text.quantity),
   },
   {
-    header: 'Total Cost',
-    field: 'realized.buy_price',
+    title: 'Total Cost',
+    dataIndex: 'realized',
+    key: 'realized.buy_price',
+    render: (text) => formatCurrency(text.buy_price),
   },
   {
-    header: 'Profit / Loss',
-    field: 'realized.total_pl',
+    title: 'Profit / Loss',
+    dataIndex: 'realized',
+    key: 'realized.total_pl',
+    render: (text) => formatCurrencyWithColors(text.total_pl),
   },
   {
-    header: 'Percentage',
-    field: 'realized.total_pl_percentage',
+    title: 'Percentage',
+    dataIndex: 'realized',
+    key: 'realized.total_pl_percentage',
+    render: (text) => formatPercentageWithColors(text.total_pl_percentage),
   },
   {
-    header: 'Sell Price',
-    field: 'realized.sell_price',
+    title: 'Sell Price',
+    dataIndex: 'realized',
+    key: 'realized.sell_price',
+    render: (text) => formatCurrency(text.sell_price),
   },
 ];
 
@@ -78,7 +113,7 @@ const fallbackObject = {
 
 export default function Home() {
   // Const setup
-  const [UnRealizedData, setUnRealizedData] = useState(null);
+  const [UnRealizedData, setUnRealizedData] = useState([null]);
   const [UnRealizedDataisLoading, setUnRealizedDataisLoading] = useState(true);
   const [RealizedData, setRealizedData] = useState(null);
   const [RealizedDataisLoading, setRealizedDataisLoading] = useState(true);
@@ -97,7 +132,7 @@ export default function Home() {
     cachedFetch(
       `/api/get_table_data_basic/single_day`,
       24,
-      {},
+      [],
       'POST',
       {
         fully_realized: false,
@@ -113,7 +148,7 @@ export default function Home() {
     cachedFetch(
       `/api/get_table_data_basic/single_day`,
       24,
-      {},
+      [],
       'POST',
       {
         fully_realized: true,
@@ -212,24 +247,26 @@ export default function Home() {
       </div>
       {/* Tabs */}
       <div>
-        <Tabs type="card" defaultActiveKey="1" items={items} />
+        <Tabs type="line" defaultActiveKey="1" items={items} />
       </div>
       {/* Table */}
       <div>
-        <PrimeFaceTable
-          loading={UnRealizedDataisLoading}
+        <AntdTable
           columns={UnRealizedColumns}
           data={UnRealizedData}
+          isLoading={UnRealizedDataisLoading}
+          globalSorter={true}
         />
       </div>
       {/* Table */}
       <div>
         <Collapse bordered={false} ghost>
-          <Panel header="Realized Stocks">
-            <PrimeFaceTable
-              loading={RealizedDataisLoading}
+          <Panel className="p-0" header="Realized Stocks">
+            <AntdTable
               columns={RealizedColumns}
               data={RealizedData}
+              isLoading={RealizedDataisLoading}
+              globalSorter={true}
             />
           </Panel>
         </Collapse>

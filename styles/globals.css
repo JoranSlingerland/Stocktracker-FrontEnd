@@ -19,7 +19,6 @@ a {
 
 .ant-btn-primary {
   background: #1677ff;
-  border-color: #1677ff;
 }
 
 div.ant-list-pagination {
@@ -42,4 +41,8 @@ div.ant-list-pagination {
 
 .ant-form-item {
   margin-bottom: 8px;
+}
+
+.min-w-16 {
+  min-width: 4rem;
 }

@@ -1,6 +1,6 @@
 // components\PrimeFacePieChart.js
 
-import { Spin, Checkbox, List } from 'antd';
+import { Spin, Checkbox, List, Skeleton } from 'antd';
 import { Chart } from 'primereact/chart';
 import { formatCurrency } from '../utils/formatting';
 import React from 'react';
@@ -109,8 +109,8 @@ export default function PieChart({ data, isloading }) {
   };
 
   return (
-    <Spin spinning={isloading}>
-      <div className="flex flex-col justify-center md:flex-row">
+    <div className="flex flex-col justify-center md:flex-row">
+      <Spin spinning={isloading}>
         <div>
           <Chart
             type="pie"
@@ -121,8 +121,14 @@ export default function PieChart({ data, isloading }) {
             plugins={[ChartDataLabels]}
           />
         </div>
-        <div className="w-full mt-10 md:items-center md:my-2">
-          {/* generate 2 list if more than 8 items */}
+      </Spin>
+      <div className="w-full mt-10 md:items-center md:w-1/2 md:my-2">
+        <Skeleton
+          title={false}
+          paragraph={{ width: '100%' }}
+          loading={isloading}
+          active={isloading}
+        >
           <List
             itemLayout="horizontal"
             dataSource={list_data_source}
@@ -172,8 +178,8 @@ export default function PieChart({ data, isloading }) {
               </List.Item>
             )}
           />
-        </div>
+        </Skeleton>
       </div>
-    </Spin>
+    </div>
   );
 }

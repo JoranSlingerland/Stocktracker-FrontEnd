@@ -5,44 +5,64 @@ import React, { useState, useEffect } from 'react';
 import { Divider, Segmented } from 'antd';
 import { useRouter } from 'next/router';
 import BasicLineGraph from '../../components/PrimeFaceLineGraph';
-import PrimeFaceTable from '../../components/PrimeFaceTable';
 import PrimeFaceBarChart from '../../components/PrimeFaceBarChart';
 import { cachedFetch } from '../../utils/api-utils.js';
+import AntdTable from '../../components/antdTable';
+import {
+  formatCurrency,
+  formatCurrencyWithColors,
+  formatPercentageWithColors,
+  formatImageAndText,
+} from '../../utils/formatting.js';
 
 const valueGrowthColumns = [
   {
-    header: 'Symbol',
-    field: 'symbol',
+    title: 'symbol',
+    dataIndex: 'symbol',
+    key: 'symbol',
+    render: (text, record) => formatImageAndText(text, record.meta.logo),
   },
   {
-    header: 'Profit / Loss',
-    field: 'unrealized.total_pl',
+    title: 'Profit / Loss',
+    dataIndex: 'unrealized',
+    key: 'unrealized.total_pl',
+    render: (text) => formatCurrencyWithColors(text.total_pl),
   },
   {
-    header: 'Percentage',
-    field: 'unrealized.total_pl_percentage',
+    title: 'Percentage',
+    dataIndex: 'unrealized',
+    key: 'unrealized.total_pl_percentage',
+    render: (text) => formatPercentageWithColors(text.total_pl_percentage),
   },
 ];
 
 const ReceivedDividedColumns = [
   {
-    header: 'Symbol',
-    field: 'symbol',
+    title: 'symbol',
+    dataIndex: 'symbol',
+    key: 'symbol',
+    render: (text, record) => formatImageAndText(text, record.meta.logo),
   },
   {
-    header: 'Dividends',
-    field: 'realized.total_dividends',
+    title: 'Dividends',
+    dataIndex: 'realized',
+    key: 'realized.total_dividends',
+    render: (text) => formatCurrency(text.total_dividends),
   },
 ];
 
 const TransactionCostColumns = [
   {
-    header: 'Symbol',
-    field: 'symbol',
+    title: 'symbol',
+    dataIndex: 'symbol',
+    key: 'symbol',
+    render: (text, record) => formatImageAndText(text, record.meta.logo),
   },
   {
-    header: 'Transaction Costs',
-    field: 'realized.transaction_cost',
+    title: 'Transaction Costs',
+    dataIndex: 'realized',
+    key: 'realized.transaction_cost',
+    render: (text) => formatCurrency(text.transaction_cost),
   },
 ];
 
@@ -185,10 +205,12 @@ export default function performance() {
 
   useEffect(() => {
     async function fetchTable() {
-      cachedFetch(`/api/get_table_data_performance/${date}`).then((data) => {
-        setSingleDayData(data);
-        setSingleDayDataisLoading(false);
-      });
+      cachedFetch(`/api/get_table_data_performance/${date}`, 24, []).then(
+        (data) => {
+          setSingleDayData(data);
+          setSingleDayDataisLoading(false);
+        }
+      );
     }
     fetchTable();
   }, [date]);
@@ -265,10 +287,11 @@ export default function performance() {
                   isloading={valueGrowthDataLoading}
                 />
                 <Divider />
-                <PrimeFaceTable
-                  loading={SingleDayDataisLoading}
+                <AntdTable
+                  isLoading={SingleDayDataisLoading}
                   columns={valueGrowthColumns}
                   data={SingleDayData}
+                  globalSorter={true}
                 />
               </div>
             </React.Fragment>
@@ -280,10 +303,11 @@ export default function performance() {
                 isloading={loadingDividend}
               />
               <Divider />
-              <PrimeFaceTable
-                loading={SingleDayDataisLoading}
+              <AntdTable
+                isLoading={SingleDayDataisLoading}
                 columns={ReceivedDividedColumns}
                 data={SingleDayData}
+                globalSorter={true}
               />
             </React.Fragment>
           )}
@@ -294,10 +318,11 @@ export default function performance() {
                 isloading={totalTransactionCostDataLoading}
               />
               <Divider />
-              <PrimeFaceTable
-                loading={SingleDayDataisLoading}
+              <AntdTable
+                isLoading={SingleDayDataisLoading}
                 columns={TransactionCostColumns}
                 data={SingleDayData}
+                globalSorter={true}
               />
             </React.Fragment>
           )}
@@ -309,10 +334,11 @@ export default function performance() {
                   isloading={totalGainsDataLoading}
                 />
                 <Divider />
-                <PrimeFaceTable
-                  loading={SingleDayDataisLoading}
+                <AntdTable
+                  isLoading={SingleDayDataisLoading}
                   columns={valueGrowthColumns}
                   data={SingleDayData}
+                  globalSorter={true}
                 />
               </div>
             </React.Fragment>
