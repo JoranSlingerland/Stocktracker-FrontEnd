@@ -1,57 +1,81 @@
 // pages\authenticated\actions.js
 
-import { Divider } from 'antd';
+import { Divider, Input } from 'antd';
 import { useState, useEffect } from 'react';
-import PrimeFaceTable from '../../components/PrimeFaceTable';
+import AntdTable from '../../components/antdTable';
 import { cachedFetch, ovewriteCachedFetch } from '../../utils/api-utils.js';
+import {
+  formatCurrency,
+  formatImageAndText,
+  formatNumber,
+} from '../../utils/formatting.js';
+import AddXForm from '../../components/formModal';
+
+const { Search } = Input;
 
 const InputTransactionscolumns = [
   {
-    header: 'Transaction Date',
-    field: 'date',
+    title: 'Symbol',
+    dataIndex: 'symbol',
+    key: 'symbol',
+    render: (text, record) => formatImageAndText(text, record.meta.logo),
   },
   {
-    header: 'Symbol',
-    field: 'symbol',
+    title: 'Transaction Date',
+    dataIndex: 'date',
+    key: 'date',
   },
   {
-    header: 'Cost',
-    field: 'cost',
+    title: 'Cost',
+    dataIndex: 'cost',
+    key: 'cost',
+    render: (text) => formatCurrency(text),
   },
   {
-    header: 'Quantity',
-    field: 'quantity',
+    title: 'Quantity',
+    dataIndex: 'quantity',
+    key: 'quantity',
+    render: (text) => formatNumber(text),
   },
   {
-    header: 'Transaction Type',
-    field: 'transaction_type',
+    title: 'Transaction Type',
+    dataIndex: 'transaction_type',
+    key: 'transaction_type',
   },
   {
-    header: 'Transaction Cost',
-    field: 'transaction_cost',
+    title: 'Transaction Cost',
+    dataIndex: 'transaction_cost',
+    key: 'transaction_cost',
+    render: (text) => formatCurrency(text),
   },
   {
-    header: 'Currency',
-    field: 'currency',
+    title: 'Currency',
+    dataIndex: 'currency',
+    key: 'currency',
   },
   {
-    header: 'Domain',
-    field: 'domain',
+    title: 'Domain',
+    dataIndex: 'domain',
+    key: 'domain',
   },
 ];
 
 const InputInvestedscolumns = [
   {
-    header: 'Transaction Date',
-    field: 'date',
+    title: 'Transaction Date',
+    dataIndex: 'date',
+    key: 'date',
   },
   {
-    header: 'Transaction Type',
-    field: 'transaction_type',
+    title: 'Transaction Type',
+    dataIndex: 'transaction_type',
+    key: 'transaction_type',
   },
   {
-    header: 'Amount',
-    field: 'amount',
+    title: 'Amount',
+    dataIndex: 'amount',
+    key: 'amount',
+    render: (text) => formatCurrency(text),
   },
 ];
 
@@ -59,9 +83,12 @@ export default function Home() {
   const [InputTransactionsData, setInputTransactionsData] = useState(null);
   const [InputTransactionsDataisLoading, setInputTransactionsDataisLoading] =
     useState(true);
+  const [InputTransactionsSearchText, setInputTransactionsSearchText] =
+    useState(null);
   const [InputInvestedData, setInputInvestedData] = useState(null);
   const [InputInvestedDataisLoading, setInputInvestedDataisLoading] =
     useState(true);
+  const [InputInvestedSearchText, setInputInvestedSearchText] = useState(null);
 
   // Fetch data
   async function fetchTransactionsData() {
@@ -86,21 +113,17 @@ export default function Home() {
 
   // Callbacks
   async function callback_transactions() {
-    setInputTransactionsDataisLoading(true);
     ovewriteCachedFetch(`/api/get_table_data_basic/input_transactions`).then(
       (data) => {
         setInputTransactionsData(data);
-        setInputTransactionsDataisLoading(false);
       }
     );
   }
 
   async function callback_invested() {
-    setInputInvestedDataisLoading(true);
     ovewriteCachedFetch(`/api/get_table_data_basic/input_invested`).then(
       (data) => {
         setInputInvestedData(data);
-        setInputInvestedDataisLoading(false);
       }
     );
   }
@@ -108,59 +131,97 @@ export default function Home() {
   // Render
   return (
     <div>
-      {/* Titel */}
-      <div>
-        <h1 className="flex items-center justify-center p-5 text-3xl py">
-          Actions
-        </h1>
-      </div>
+      <h1 className="flex items-center justify-center p-5 text-3xl py">
+        Actions
+      </h1>
       <Divider plain></Divider>
-      {/* Content */}
       <div>
-        {/* stock transactions */}
-        <div>
-          {/* Header */}
-          <div>
-            <h2 className="flex items-center justify-start px-3 text-3xl py">
-              Stock Transactions
-            </h2>
-          </div>
-          {/* Table */}
-          <div>
-            <div>
-              <PrimeFaceTable
-                loading={InputTransactionsDataisLoading}
-                columns={InputTransactionscolumns}
-                data={InputTransactionsData}
-                allowAdd={true}
+        <h2 className="mb-3 text-3xl">Stock Transactions</h2>
+        <AntdTable
+          isLoading={InputTransactionsDataisLoading}
+          columns={InputTransactionscolumns}
+          data={InputTransactionsData}
+          globalSorter={true}
+          searchEnabled={true}
+          searchText={InputTransactionsSearchText}
+          tableProps={{
+            size: 'small',
+            pagination: {
+              onChange: (page) => {
+                console.log(page);
+              },
+              pageSize: 12,
+              size: 'small',
+              hideOnSinglePage: true,
+              className: 'm-0',
+            },
+          }}
+          caption={
+            <div className="flex">
+              <Search
+                allowClear
+                placeholder="Search"
+                onChange={(e) => {
+                  setInputTransactionsSearchText([e.target.value]);
+                }}
+                onSearch={(value) => {
+                  setInputTransactionsSearchText([value]);
+                }}
+                className="max-w-xs"
+              />
+              <AddXForm
                 form={'addStock'}
                 parentCallback={callback_transactions}
               />
             </div>
-          </div>
-        </div>
+          }
+        />
         <Divider plain></Divider>
-        {/* invested transactions */}
         <div>
-          {/* Header */}
-          <div>
-            <h2 className="flex items-center justify-start px-3 pt-3 text-3xl py">
-              Money Transactions
-            </h2>
-          </div>
-          {/* Table */}
-          <div>
-            <div>
-              <PrimeFaceTable
-                loading={InputInvestedDataisLoading}
-                columns={InputInvestedscolumns}
-                data={InputInvestedData}
-                allowAdd={true}
-                form={'addTransaction'}
-                parentCallback={callback_invested}
-              />
-            </div>
-          </div>
+          <h2 className="mb-3 text-3xl">Money Transactions</h2>
+          <AntdTable
+            isLoading={InputInvestedDataisLoading}
+            columns={InputInvestedscolumns}
+            data={InputInvestedData}
+            globalSorter={true}
+            searchEnabled={true}
+            searchText={InputInvestedSearchText}
+            tableProps={{
+              size: 'small',
+              pagination: {
+                onChange: (page) => {
+                  console.log(page);
+                },
+                pageSize: 12,
+                size: 'small',
+                hideOnSinglePage: true,
+                className: 'm-0',
+              },
+            }}
+            caption={
+              <div className="flex">
+                <div>
+                  <Search
+                    allowClear
+                    placeholder="Search"
+                    onChange={(e) => {
+                      setInputInvestedSearchText([e.target.value]);
+                    }}
+                    onSearch={(value) => {
+                      setInputInvestedSearchText([value]);
+                    }}
+                    className="max-w-xs"
+                  />
+                </div>
+                <div className="ml-auto mr-0">
+                  <AddXForm
+                    form={'addTransaction'}
+                    parentCallback={callback_invested}
+                  />
+                </div>
+              </div>
+            }
+          />
         </div>
       </div>
     </div>

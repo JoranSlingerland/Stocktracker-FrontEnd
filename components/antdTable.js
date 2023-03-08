@@ -1,18 +1,25 @@
 import { Table, Skeleton, Empty } from 'antd';
-import { useState } from 'react';
 
 export default function AntdTable({
   columns,
   data,
   isLoading,
-  searchEnabled = true,
+  caption,
+  searchEnabled,
   tableProps,
   columnProps,
   searchText,
+  globalSorter,
 }) {
   const sorterBy = (key) => (a, b) => {
-    if (a[key] < b[key]) return -1;
-    if (a[key] > b[key]) return 1;
+    const keyList = key.split('.');
+    keyList.forEach((key) => {
+      a = a[key];
+      b = b[key];
+    });
+
+    if (a < b) return -1;
+    if (a > b) return 1;
     return 0;
   };
 
@@ -23,14 +30,16 @@ export default function AntdTable({
     if (searchEnabled) {
       filterProps.filteredValue = searchText;
       filterProps.onFilter = (value, record) => {
-        Object.keys(record).forEach((key) => {
+        // deep copy record
+        let searchrecord = JSON.parse(JSON.stringify(record));
+        Object.keys(searchrecord).forEach((key) => {
           if (!colDataIndexList.includes(key)) {
-            delete record[key];
+            delete searchrecord[key];
           }
         });
 
-        record = Object.values(record);
-        return String(record).toLowerCase().includes(value.toLowerCase());
+        searchrecord = Object.values(searchrecord);
+        return String(searchrecord).toLowerCase().includes(value.toLowerCase());
       };
     }
 
@@ -38,11 +47,11 @@ export default function AntdTable({
       ...col,
       ...columnProps,
       ...filterProps,
-      sorter: col.sorter ? sorterBy(col.dataIndex) : false,
+      sorter: col.sorter || globalSorter ? sorterBy(col.key) : false,
+      showSorterTooltip: false,
     };
   });
 
-  console.log(columns);
   return (
     <Table
       columns={columns}
@@ -51,8 +60,9 @@ export default function AntdTable({
         emptyText: isLoading ? <Skeleton active={true} /> : <Empty />,
       }}
       pagination={false}
+      caption={caption}
       {...tableProps}
-      className='overflow-x-auto'
+      className="overflow-x-auto"
     />
   );
 }

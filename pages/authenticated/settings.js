@@ -1,34 +1,21 @@
 // pages\authenticated\settings.js
 
-import { Divider, Button, message, Popconfirm, Tabs } from 'antd';
+import {
+  Divider,
+  Button,
+  message,
+  Popconfirm,
+  Tabs,
+  Typography,
+  Spin,
+} from 'antd';
 import { useEffect, useState } from 'react';
 import { ApiWithMessage } from '../../utils/api-utils';
 import useWindowDimensions from '../../utils/useWindowDimensions';
 import { regularFetch } from '../../utils/api-utils';
-import PrimeFaceTable from '../../components/PrimeFaceTable';
+import AntdTable from '../../components/antdTable';
 
-const orchestratorColumns = [
-  {
-    header: 'Status',
-    field: 'runtimeStatus',
-  },
-  {
-    header: 'Created Time',
-    field: 'createdTime',
-  },
-  {
-    header: 'Last Updated Time',
-    field: 'lastUpdatedTime',
-  },
-  {
-    header: 'Instance ID',
-    field: 'instanceId',
-  },
-  {
-    header: 'Actions',
-    field: 'actions',
-  },
-];
+const { Text } = Typography;
 
 export default function Home() {
   const [orchestratorList, setOrchestratorList] = useState(null);
@@ -90,7 +77,94 @@ export default function Home() {
 
   const { height, width } = useWindowDimensions();
 
-  console.log(width);
+  const orchestratorColumns = [
+    {
+      title: 'Status',
+      dataIndex: 'runtimeStatus',
+      key: 'runtimeStatus',
+      render: (text) => {
+        if (text === 'Completed') {
+          return <Text type="success">{text}</Text>;
+        } else if (text === 'Failed') {
+          return <Text type="danger">{text}</Text>;
+        } else if (text === 'Suspended' || text === 'Terminated') {
+          return <Text type="warning">{text}</Text>;
+        } else if (text === 'Running' || text === 'Pending') {
+          return (
+            <span>
+              <Spin size="small" className="mr-1" />
+              <Text>{text}</Text>
+            </span>
+          );
+        } else {
+          return <Text>{text}</Text>;
+        }
+      },
+    },
+    {
+      title: 'Created Time',
+      dataIndex: 'createdTime',
+      key: 'createdTime',
+    },
+    {
+      title: 'Last Updated Time',
+      dataIndex: 'lastUpdatedTime',
+      key: 'lastUpdatedTime',
+    },
+    {
+      title: 'Instance ID',
+      dataIndex: 'instanceId',
+      key: 'instanceId',
+      render: (text) => <Text copyable>{text}</Text>,
+    },
+    {
+      title: 'Actions',
+      dataIndex: 'actions',
+      key: 'actions',
+      render: (text, record) => (
+        <div className="">
+          <Popconfirm
+            title="Are you sure you want to terminate this orchestrator?"
+            onConfirm={() => {
+              handleClickTerminateOrchestrator(record.instanceId);
+            }}
+            okText="Yes"
+            cancelText="No"
+            arrow={false}
+            icon={false}
+          >
+            <Button
+              danger
+              disabled={
+                record.runtimeStatus === 'Running' ||
+                record.runtimeStatus === 'Pending'
+                  ? false
+                  : true
+              }
+              className="mb-1 mr-1"
+              size="small"
+            >
+              Terminate
+            </Button>
+          </Popconfirm>
+          <Popconfirm
+            title="Are you sure you want to purge this orchestrator?"
+            onConfirm={() => {
+              handleClickPurgeOrchestrator(record.instanceId);
+            }}
+            okText="Yes"
+            cancelText="No"
+            arrow={false}
+            icon={false}
+          >
+            <Button size="small" danger>
+              Purge
+            </Button>
+          </Popconfirm>
+        </div>
+      ),
+    },
+  ];
 
   const items = [
     {
@@ -194,9 +268,6 @@ export default function Home() {
             <div className="grid grid-cols-2 grid-rows-2">
               <div className="text-xl">Delete all</div>
               <div className="row-span-2 text-right">
-                {/* <Button onClick={handleClickDelete} type="primary" size="large">
-                  Delete
-                </Button> */}
                 <Popconfirm
                   title="Delete all"
                   description="Are you sure you want to delete all containers"
@@ -212,7 +283,7 @@ export default function Home() {
                     )
                   }
                 >
-                  <Button type="primary" size="large">
+                  <Button danger type="primary" size="large">
                     Delete
                   </Button>
                 </Popconfirm>
@@ -231,12 +302,10 @@ export default function Home() {
       label: 'Orchestrations',
       children: (
         <div>
-          <PrimeFaceTable
-            loading={orchestratorListIsLoading}
+          <AntdTable
+            isLoading={orchestratorListIsLoading}
             columns={orchestratorColumns}
             data={orchestratorList}
-            parentCallback={handleClickTerminateOrchestrator}
-            parentCallback2={handleClickPurgeOrchestrator}
           />
         </div>
       ),
@@ -256,7 +325,6 @@ export default function Home() {
           type="line"
           defaultActiveKey="1"
           items={items}
-          // if width is bigger than 768px or undefined, then show tabs on the left
           tabPosition={width === null || width > 768 ? 'left' : 'top'}
         />
       </div>
