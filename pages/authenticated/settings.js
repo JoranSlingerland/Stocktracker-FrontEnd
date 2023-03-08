@@ -23,7 +23,7 @@ export default function Home() {
     useState(true);
 
   async function fetchOrchestratorList() {
-    regularFetch(`/api/orchestartor_list/7`, 24, []).then((data) => {
+    regularFetch(`/api/orchestartor_list/7`, []).then((data) => {
       setOrchestratorList(data);
       setOrchestratorListIsLoading(false);
     });
