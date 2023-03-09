@@ -2,7 +2,7 @@
 
 import Overviewbar from '../../components/Overviewbar';
 import React, { useState, useEffect } from 'react';
-import { Divider, Segmented } from 'antd';
+import { Divider, Segmented, Typography } from 'antd';
 import { useRouter } from 'next/router';
 import BasicLineGraph from '../../components/PrimeFaceLineGraph';
 import PrimeFaceBarChart from '../../components/PrimeFaceBarChart';
@@ -14,6 +14,8 @@ import {
   formatPercentageWithColors,
   formatImageAndText,
 } from '../../utils/formatting.js';
+
+const { Title } = Typography;
 
 const valueGrowthColumns = [
   {
@@ -67,8 +69,8 @@ const TransactionCostColumns = [
 ];
 
 const topBarDataFallBackObject = {
-  total_value: '',
   total_value_gain: '',
+  total_value_gain_percentage: '',
   total_pl: '',
   total_pl_percentage: '',
   total_dividends: '',
@@ -227,11 +229,11 @@ export default function performance() {
   return (
     <div>
       {/* Title */}
-      <div className="grid grid-cols-2 grid-rows-1">
-        <div className="flex px-5 py-2 text-2xl">
-          <h1>Performance</h1>
+      <div className="flex">
+        <div className="flex pt-2">
+          <Title level={1}>Performance</Title>
         </div>
-        <div className="flex flex-row-reverse p-3 overflow-auto gap-x-1">
+        <div className="pt-3 ml-auto mr-0 overflow-auto">
           <Segmented
             options={[
               {

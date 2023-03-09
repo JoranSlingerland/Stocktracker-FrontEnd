@@ -1,9 +1,11 @@
 // components\Overviewbar.js
 
 import { useRouter } from 'next/router';
-import { Skeleton } from 'antd';
+import { Skeleton, Typography, Statistic } from 'antd';
 import { RiseOutlined, FallOutlined } from '@ant-design/icons';
 import { formatCurrency, formatPercentage } from '../utils/formatting';
+
+const { Text } = Typography;
 
 export default function tabs({ topBarData, loading, handleTabChange }) {
   const tab = (useRouter().query.tab || 1).toString();
@@ -12,17 +14,16 @@ export default function tabs({ topBarData, loading, handleTabChange }) {
     if (value > 0) {
       const data = formatPercentage(value);
       return (
-        <span className="text-green-500">
+        <Text strong type="success">
           <RiseOutlined /> {data}
-        </span>
+        </Text>
       );
     } else if (value < 0) {
       const data = formatPercentage(value);
       return (
-        <span className="text-red-500">
-          <FallOutlined />
-          {data}
-        </span>
+        <Text strong type="danger">
+          <FallOutlined /> {data}
+        </Text>
       );
     } else {
       const data = formatPercentage(value);
@@ -34,14 +35,14 @@ export default function tabs({ topBarData, loading, handleTabChange }) {
     paragraph: { rows: 1 },
     active: loading,
     loading: loading,
-    title: false,
+    title: true,
   };
 
   const skeletonProps_full_width = {
     paragraph: { rows: 1, width: '100%' },
     active: loading,
     loading: loading,
-    title: false,
+    title: true,
   };
 
   return (
@@ -49,84 +50,94 @@ export default function tabs({ topBarData, loading, handleTabChange }) {
       <div
         className={`${
           tab === '1'
-            ? 'flex flex-col basis-0 flex-grow rounded-full px-4 h-12 bg-white shadow'
-            : 'flex flex-col basis-0 flex-grow rounded-full px-4 h-12 bg-neutral-100'
+            ? 'flex flex-col basis-0 flex-grow rounded-full px-4 bg-white shadow'
+            : 'flex flex-col basis-0 flex-grow rounded-full px-4 bg-neutral-100'
         }`}
         onClick={() => handleTabChange('1')}
       >
-        <div>Value growth</div>
-        <div className="flex">
-          <div className="flex-grow font-bold">
-            <Skeleton {...skeletonProps}>
-              {formatCurrency(topBarData.total_value_gain)}
+        <div className="flex my-1">
+          <Skeleton {...skeletonProps_full_width}>
+            <Statistic
+              value={topBarData.total_value_gain}
+              formatter={(value) => formatCurrency(value)}
+              title={
+                topBarData.total_value_gain > 0 ? 'Value growth' : 'Value loss'
+              }
+              className="ml-1"
+            ></Statistic>
+          </Skeleton>
+          <div className="mt-auto mb-0 ml-auto mr-0 ">
+            <Skeleton {...skeletonProps_full_width}>
+              <Statistic
+                value={topBarData.total_value_gain_percentage}
+                formatter={(value) => PercentageFormat(value)}
+              />
             </Skeleton>
-          </div>
-          <div className="flex flex-row-reverse flex-grow">
-            <div className="min-w-16">
-              <Skeleton {...skeletonProps_full_width}>
-                {formatCurrency(topBarData.total_value)}
-              </Skeleton>
-            </div>
           </div>
         </div>
       </div>
       <div
         className={`${
           tab === '2'
-            ? 'flex flex-col basis-0 flex-grow rounded-full px-4 h-12 bg-white shadow'
-            : 'flex flex-col basis-0 flex-grow rounded-full px-4 h-12 bg-neutral-100'
+            ? 'flex flex-col basis-0 flex-grow rounded-full px-4 bg-white shadow'
+            : 'flex flex-col basis-0 flex-grow rounded-full px-4 bg-neutral-100'
         }`}
         onClick={() => handleTabChange('2')}
       >
-        <div>Received dividends</div>
-        <div className="flex">
-          <div className="flex-grow font-bold">
-            <Skeleton {...skeletonProps}>
-              {formatCurrency(topBarData.total_dividends)}
-            </Skeleton>
-          </div>
-          <div className="flex-grow"></div>
+        <div className="flex my-1">
+          <Skeleton {...skeletonProps}>
+            <Statistic
+              value={topBarData.total_dividends}
+              title={'Received dividends'}
+              formatter={(value) => formatCurrency(value)}
+              className="ml-1"
+            />
+          </Skeleton>
         </div>
       </div>
       <div
         className={`${
           tab === '3'
-            ? 'flex flex-col basis-0 flex-grow rounded-full px-4 h-12 bg-white shadow'
-            : 'flex flex-col basis-0 flex-grow rounded-full px-4 h-12 bg-neutral-100'
+            ? 'flex flex-col basis-0 flex-grow rounded-full px-4 bg-white shadow'
+            : 'flex flex-col basis-0 flex-grow rounded-full px-4 bg-neutral-100'
         }`}
         onClick={() => handleTabChange('3')}
       >
-        <div>Made expenses</div>
-        <div className="flex">
-          <div className="flex-grow font-bold">
-            <Skeleton {...skeletonProps}>
-              {formatCurrency(topBarData.total_dividends)}
-            </Skeleton>
-          </div>
-          <div className="flex-grow"></div>
+        <div className="flex my-1">
+          <Skeleton {...skeletonProps}>
+            <Statistic
+              value={topBarData.transaction_cost}
+              title={'Received dividends'}
+              formatter={(value) => formatCurrency(value)}
+              className="ml-1"
+            />
+          </Skeleton>
         </div>
       </div>
       <div
         className={`${
           tab === '4'
-            ? 'flex flex-col basis-0 flex-grow rounded-full px-4 h-12 bg-white shadow'
-            : 'flex flex-col basis-0 flex-grow rounded-full px-4 h-12 bg-neutral-100'
+            ? 'flex flex-col basis-0 flex-grow rounded-full px-4 bg-white shadow'
+            : 'flex flex-col basis-0 flex-grow rounded-full px-4 bg-neutral-100'
         }`}
         onClick={() => handleTabChange('4')}
       >
-        <div>Total gains</div>
-        <div className="flex">
-          <div className="flex-grow font-bold">
-            <Skeleton {...skeletonProps}>
-              {formatCurrency(topBarData.total_pl)}
+        <div className="flex my-1">
+          <Skeleton {...skeletonProps_full_width}>
+            <Statistic
+              value={topBarData.total_pl}
+              formatter={(value) => formatCurrency(value)}
+              title={topBarData.total_pl > 0 ? 'Gains' : 'Losses'}
+              className="ml-1"
+            ></Statistic>
+          </Skeleton>
+          <div className="mt-auto mb-0 ml-auto mr-0 ">
+            <Skeleton {...skeletonProps_full_width}>
+              <Statistic
+                value={topBarData.total_pl_percentage}
+                formatter={(value) => PercentageFormat(value)}
+              />
             </Skeleton>
-          </div>
-          <div className="flex flex-row-reverse flex-grow">
-            <div className="min-w-16">
-              <Skeleton {...skeletonProps_full_width}>
-                {PercentageFormat(topBarData.total_pl_percentage)}
-              </Skeleton>
-            </div>
           </div>
         </div>
       </div>

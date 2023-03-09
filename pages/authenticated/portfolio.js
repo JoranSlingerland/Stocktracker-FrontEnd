@@ -1,6 +1,6 @@
 // pages\authenticated\portfolio.js
 
-import { Tabs, Collapse } from 'antd';
+import { Tabs, Collapse, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import PieChart from '../../components/PrimeFacePieChart';
 import AntdTable from '../../components/antdTable';
@@ -12,6 +12,8 @@ import {
   formatNumber,
   formatImageAndText,
 } from '../../utils/formatting.js';
+
+const { Title } = Typography;
 
 const { Panel } = Collapse;
 
@@ -234,9 +236,9 @@ export default function Home() {
     <div>
       {/* Titel */}
       <div>
-        <h1 className="flex items-center justify-center p-5 text-3xl py">
+        <Title className="flex items-center justify-center pt-5" level={1}>
           Portfolio
-        </h1>
+        </Title>
       </div>
       {/* Tabs */}
       <div>

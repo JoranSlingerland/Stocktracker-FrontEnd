@@ -1,6 +1,6 @@
 // pages\authenticated\actions.js
 
-import { Divider, Input } from 'antd';
+import { Divider, Input, Typography } from 'antd';
 import { useState, useEffect } from 'react';
 import AntdTable from '../../components/antdTable';
 import { cachedFetch, ovewriteCachedFetch } from '../../utils/api-utils.js';
@@ -12,6 +12,7 @@ import {
 import AddXForm from '../../components/formModal';
 
 const { Search } = Input;
+const { Title } = Typography;
 
 const InputTransactionscolumns = [
   {
@@ -131,12 +132,14 @@ export default function Home() {
   // Render
   return (
     <div>
-      <h1 className="flex items-center justify-center p-5 text-3xl py">
+      <Title className="flex items-center justify-center p-5" level={1}>
         Actions
-      </h1>
+      </Title>
       <Divider plain></Divider>
       <div>
-        <h2 className="mb-3 text-3xl">Stock Transactions</h2>
+        <Title className="mb-3" level={2}>
+          Stock Transactions
+        </Title>
         <AntdTable
           isLoading={InputTransactionsDataisLoading}
           columns={InputTransactionscolumns}
@@ -178,7 +181,9 @@ export default function Home() {
         />
         <Divider plain></Divider>
         <div>
-          <h2 className="mb-3 text-3xl">Money Transactions</h2>
+          <Title className="mb-3" level={2}>
+            Money Transactions
+          </Title>
           <AntdTable
             isLoading={InputInvestedDataisLoading}
             columns={InputInvestedscolumns}

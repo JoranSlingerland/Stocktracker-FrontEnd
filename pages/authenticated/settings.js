@@ -15,7 +15,7 @@ import useWindowDimensions from '../../utils/useWindowDimensions';
 import { regularFetch } from '../../utils/api-utils';
 import AntdTable from '../../components/antdTable';
 
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 export default function Home() {
   const [orchestratorList, setOrchestratorList] = useState(null);
@@ -175,11 +175,11 @@ export default function Home() {
         <div className="flex flex-col items-center">
           {/* Safe changes */}
           <div className="w-full px-2 columns-1">
-            <div className="flex items-center justify-center text-xl">
-              <h2>Safe changes</h2>
+            <div className="flex items-center justify-center">
+              <Title level={3}>Safe changes</Title>
             </div>
             <div className="grid grid-cols-2 grid-rows-2">
-              <div className="text-xl">Refresh data</div>
+              <Title level={4}>Refresh data</Title>
               <div className="row-span-2 text-right">
                 <Button
                   onClick={() =>
@@ -199,7 +199,7 @@ export default function Home() {
             </div>
             <Divider plain></Divider>
             <div className="grid grid-cols-2 grid-rows-2">
-              <div className="text-xl">Create Containers</div>
+              <Title level={4}>Create Containers</Title>
               <div className="row-span-2 text-right">
                 <Button
                   onClick={() =>
@@ -222,7 +222,7 @@ export default function Home() {
             </div>
             <Divider plain></Divider>
             <div className="grid grid-cols-2 grid-rows-2">
-              <div className="text-xl">Delete Containers</div>
+              <Title level={4}>Delete Containers</Title>
               <div className="row-span-2 text-right">
                 <Button
                   onClick={() =>
@@ -244,7 +244,7 @@ export default function Home() {
             </div>
             <Divider plain></Divider>
             <div className="grid grid-cols-2 grid-rows-2">
-              <div className="text-xl">Clear local storage</div>
+              <Title level={4}>Delete Databases</Title>
               <div className="row-span-2 text-right">
                 <Button
                   onClick={() => handlelocalstorageclearclick()}
@@ -263,10 +263,12 @@ export default function Home() {
           <Divider plain></Divider>
           <div className="w-full px-2 columns-1">
             <div className="flex items-center justify-center text-xl">
-              <h2 className="text-red-600">Danger Zone</h2>
+              <Title type={'danger'} level={3}>
+                Danger Zone
+              </Title>
             </div>
             <div className="grid grid-cols-2 grid-rows-2">
-              <div className="text-xl">Delete all</div>
+              <Title level={4}>Delete all</Title>
               <div className="row-span-2 text-right">
                 <Popconfirm
                   title="Delete all"
@@ -315,9 +317,9 @@ export default function Home() {
   return (
     <div>
       <div>
-        <h1 className="flex items-center justify-center p-5 text-3xl py">
+        <Title className="flex items-center justify-center p-5" level={1}>
           Settings
-        </h1>
+        </Title>
       </div>
       <Divider plain></Divider>
       <div>
