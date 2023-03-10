@@ -4,7 +4,7 @@ import { Tabs, Collapse, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import PieChart from '../../components/PrimeFacePieChart';
 import AntdTable from '../../components/antdTable';
-import { cachedFetch } from '../../utils/api-utils.js';
+import { cachedFetch, regularFetch } from '../../utils/api-utils.js';
 import {
   formatCurrency,
   formatCurrencyWithColors,
@@ -115,6 +115,7 @@ const fallbackObject = {
 
 export default function Home() {
   // Const setup
+  const [userInfo, setUserInfo] = useState(null);
   const [UnRealizedData, setUnRealizedData] = useState([null]);
   const [UnRealizedDataisLoading, setUnRealizedDataisLoading] = useState(true);
   const [RealizedData, setRealizedData] = useState(null);
@@ -128,7 +129,14 @@ export default function Home() {
   const [SectorPieDataisLoading, setSectorPieDataisLoading] = useState(true);
   const [CountryPieData, setCountryPieData] = useState(fallbackObject);
   const [CountryPieDataisLoading, setCountryPieDataisLoading] = useState(true);
+
   //  Fetch data
+  async function getUserInfo() {
+    await regularFetch('/.auth/me', undefined).then((data) => {
+      setUserInfo(data);
+    });
+  }
+
   async function fetchUnRealizedData() {
     cachedFetch(
       `/api/get_table_data_basic/single_day`,
@@ -162,28 +170,36 @@ export default function Home() {
   }
 
   async function fetchStockPieData() {
-    cachedFetch(`/api/get_pie_data/stocks`, fallbackObject).then((data) => {
+    cachedFetch(`/api/get_pie_data/stocks`, fallbackObject, 'POST', {
+      userId: userInfo.clientPrincipal.userId,
+    }).then((data) => {
       setStockPieData(data);
       setStockPieDataisLoading(false);
     });
   }
 
   async function fetchCurrencyPieData() {
-    cachedFetch(`/api/get_pie_data/currency`, fallbackObject).then((data) => {
+    cachedFetch(`/api/get_pie_data/currency`, fallbackObject, 'POST', {
+      userId: userInfo.clientPrincipal.userId,
+    }).then((data) => {
       setCurrencyPieData(data);
       setCurrencyPieDataisLoading(false);
     });
   }
 
   async function fetchSectorPieData() {
-    cachedFetch(`/api/get_pie_data/sector`, fallbackObject).then((data) => {
+    cachedFetch(`/api/get_pie_data/sector`, fallbackObject, 'POST', {
+      userId: userInfo.clientPrincipal.userId,
+    }).then((data) => {
       setSectorPieData(data);
       setSectorPieDataisLoading(false);
     });
   }
 
   async function fetchCountryPieData() {
-    cachedFetch(`/api/get_pie_data/country`, fallbackObject).then((data) => {
+    cachedFetch(`/api/get_pie_data/country`, fallbackObject, 'POST', {
+      userId: userInfo.clientPrincipal.userId,
+    }).then((data) => {
       setCountryPieData(data);
       setCountryPieDataisLoading(false);
     });
@@ -193,11 +209,17 @@ export default function Home() {
   useEffect(() => {
     fetchUnRealizedData();
     fetchRealizedData();
-    fetchStockPieData();
-    fetchCurrencyPieData();
-    fetchSectorPieData();
-    fetchCountryPieData();
+    getUserInfo();
   }, []);
+
+  useEffect(() => {
+    if (userInfo) {
+      fetchStockPieData();
+      fetchCurrencyPieData();
+      fetchSectorPieData();
+      fetchCountryPieData();
+    }
+  }, [userInfo]);
 
   // Tabs setup
   const items = [
