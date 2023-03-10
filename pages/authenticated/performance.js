@@ -6,7 +6,7 @@ import { Divider, Segmented, Typography } from 'antd';
 import { useRouter } from 'next/router';
 import BasicLineGraph from '../../components/PrimeFaceLineGraph';
 import PrimeFaceBarChart from '../../components/PrimeFaceBarChart';
-import { cachedFetch } from '../../utils/api-utils.js';
+import { cachedFetch, regularFetch } from '../../utils/api-utils.js';
 import AntdTable from '../../components/antdTable';
 import {
   formatCurrency,
@@ -107,6 +107,7 @@ const valueGrowthDataFallBackObject = {
 export default function performance() {
   // const setup
   const router = useRouter();
+  const [userInfo, setUserInfo] = useState(null);
   const [valueGrowthData, setvalueGrowthData] = useState(
     valueGrowthDataFallBackObject
   );
@@ -125,7 +126,7 @@ export default function performance() {
   const [SingleDayData, setSingleDayData] = useState(null);
   const [SingleDayDataisLoading, setSingleDayDataisLoading] = useState(true);
   const [tab, setTab] = useState((useRouter().query.tab || 1).toString());
-  const [date, setDate] = useState(useRouter().query.date || 'max');
+  const [date, setDate] = useState(useRouter().query.date || null);
 
   useEffect(() => {
     if (!router.isReady) {
@@ -134,79 +135,89 @@ export default function performance() {
       setTab(router.query.tab.toString());
       setDate(router.query.date);
     }
-  }, [router.isReady, router.query.date, router.query.tab]);
+  }, [router.isReady]);
 
-  // Fetch data
-  useEffect(() => {
-    async function fetchTotalGainsData() {
-      cachedFetch(
-        `/api/get_linechart_data/total_gains/${date}`,
-        totalGainsDataFallBackObject
-      ).then((data) => {
-        settotalGainsData(data);
-        settotalGainsDataLoading(false);
-      });
-    }
-    fetchTotalGainsData();
-  }, [date]);
+  // Fetch functions
+  async function getUserInfo() {
+    await regularFetch('/.auth/me', undefined).then((data) => {
+      setUserInfo(data);
+    });
+  }
 
-  useEffect(() => {
-    async function fetchDataline() {
-      cachedFetch(
-        `/api/get_linechart_data/invested_and_value/${date}`,
-        valueGrowthDataFallBackObject
-      ).then((data) => {
-        setvalueGrowthData(data);
-        setvalueGrowthDataLoading(false);
-      });
-    }
-    fetchDataline();
-  }, [date]);
+  async function fetchTotalGainsData() {
+    cachedFetch(
+      `/api/get_linechart_data/total_gains/${date}`,
+      totalGainsDataFallBackObject
+    ).then((data) => {
+      settotalGainsData(data);
+      settotalGainsDataLoading(false);
+    });
+  }
 
-  useEffect(() => {
-    async function fetchDividendData() {
-      cachedFetch(`/api/get_barchart_data/dividend/${date}`).then((data) => {
-        setdividendData(data);
-        setLoadingDividend(false);
-      });
-    }
-    fetchDividendData();
-  }, [date]);
+  async function fetchDataline() {
+    cachedFetch(
+      `/api/get_linechart_data/invested_and_value/${date}`,
+      valueGrowthDataFallBackObject
+    ).then((data) => {
+      setvalueGrowthData(data);
+      setvalueGrowthDataLoading(false);
+    });
+  }
 
-  useEffect(() => {
-    async function fetchTopBar() {
-      cachedFetch(
-        `/api/get_topbar_data/${date}`,
-        topBarDataFallBackObject
-      ).then((data) => {
+  async function fetchDividendData() {
+    cachedFetch(`/api/get_barchart_data/dividend/${date}`, [], 'POST', {
+      userId: userInfo.clientPrincipal.userId,
+    }).then((data) => {
+      setdividendData(data);
+      setLoadingDividend(false);
+    });
+  }
+
+  async function fetchTopBar() {
+    cachedFetch(`/api/get_topbar_data/${date}`, topBarDataFallBackObject).then(
+      (data) => {
         settopBarData(data);
         settopBarLoading(false);
-      });
+      }
+    );
+  }
+
+  async function fetchTransactionCostData() {
+    cachedFetch(`/api/get_barchart_data/transaction_cost/${date}`, [], 'POST', {
+      userId: userInfo.clientPrincipal.userId,
+    }).then((data) => {
+      settotalTransactionCostData(data);
+      settotalTransactionCostDataLoading(false);
+    });
+  }
+
+  async function fetchTable() {
+    cachedFetch(`/api/get_table_data_performance/${date}`).then((data) => {
+      setSingleDayData(data);
+      setSingleDayDataisLoading(false);
+    });
+  }
+
+  // useEffects
+  useEffect(() => {
+    getUserInfo();
+  }, []);
+
+  useEffect(() => {
+    if (date) {
+      fetchTotalGainsData();
+      fetchDataline();
+      fetchTopBar();
+      fetchTable();
     }
-    fetchTopBar();
   }, [date]);
 
   useEffect(() => {
-    async function fetchTransactionCostData() {
-      cachedFetch(`/api/get_barchart_data/transaction_cost/${date}`).then(
-        (data) => {
-          settotalTransactionCostData(data);
-          settotalTransactionCostDataLoading(false);
-        }
-      );
+    if (userInfo && date) {
+      fetchDividendData();
+      fetchTransactionCostData();
     }
-    fetchTransactionCostData();
-  }, [date]);
-
-  useEffect(() => {
-    async function fetchTable() {
-      cachedFetch(`/api/get_table_data_performance/${date}`).then((data) => {
-        setSingleDayData(data);
-        setSingleDayDataisLoading(false);
-      });
-    }
-    fetchTable();
-  }, [date]);
+  }, [date, userInfo]);
 
   // Refresh data
   function handleClick(newdate) {
@@ -245,15 +256,15 @@ export default function performance() {
                 value: 'week',
               },
               {
-                label: <div onClick={() => handleClick('Month')}>Month</div>,
+                label: <div onClick={() => handleClick('month')}>Month</div>,
                 value: 'month',
               },
               {
-                label: <div onClick={() => handleClick('Year')}>Year</div>,
+                label: <div onClick={() => handleClick('year')}>Year</div>,
                 value: 'year',
               },
               {
-                label: <div onClick={() => handleClick('Max')}>Max</div>,
+                label: <div onClick={() => handleClick('max')}>Max</div>,
                 value: 'max',
               },
             ]}

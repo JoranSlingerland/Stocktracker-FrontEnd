@@ -160,22 +160,26 @@ export default function Home() {
             },
           }}
           caption={
-            <div className="flex">
-              <Search
-                allowClear
-                placeholder="Search"
-                onChange={(e) => {
-                  setInputTransactionsSearchText([e.target.value]);
-                }}
-                onSearch={(value) => {
-                  setInputTransactionsSearchText([value]);
-                }}
-                className="max-w-xs"
-              />
-              <AddXForm
-                form={'addStock'}
-                parentCallback={callback_transactions}
-              />
+            <div className="flex mx-1 mb-1">
+              <div>
+                <Search
+                  allowClear
+                  placeholder="Search"
+                  onChange={(e) => {
+                    setInputTransactionsSearchText([e.target.value]);
+                  }}
+                  onSearch={(value) => {
+                    setInputTransactionsSearchText([value]);
+                  }}
+                  className="max-w-xs"
+                />
+              </div>
+              <div className="mb-1 ml-auto">
+                <AddXForm
+                  form={'addStock'}
+                  parentCallback={callback_transactions}
+                />
+              </div>
             </div>
           }
         />
@@ -204,7 +208,7 @@ export default function Home() {
               },
             }}
             caption={
-              <div className="flex">
+              <div className="flex mx-1 mb-1">
                 <div>
                   <Search
                     allowClear
@@ -218,7 +222,7 @@ export default function Home() {
                     className="max-w-xs"
                   />
                 </div>
-                <div className="ml-auto mr-0">
+                <div className="ml-auto">
                   <AddXForm
                     form={'addTransaction'}
                     parentCallback={callback_invested}

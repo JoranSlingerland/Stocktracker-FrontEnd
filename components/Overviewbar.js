@@ -107,7 +107,7 @@ export default function tabs({ topBarData, loading, handleTabChange }) {
           <Skeleton {...skeletonProps}>
             <Statistic
               value={topBarData.transaction_cost}
-              title={'Received dividends'}
+              title={'Transaction cost'}
               formatter={(value) => formatCurrency(value)}
               className="ml-1"
             />

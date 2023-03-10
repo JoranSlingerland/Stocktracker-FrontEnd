@@ -244,7 +244,7 @@ export default function Home() {
             </div>
             <Divider plain></Divider>
             <div className="grid grid-cols-2 grid-rows-2">
-              <Title level={4}>Delete Databases</Title>
+              <Title level={4}>Clear local storage</Title>
               <div className="row-span-2 text-right">
                 <Button
                   onClick={() => handlelocalstorageclearclick()}

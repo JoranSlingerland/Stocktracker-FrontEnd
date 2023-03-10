@@ -11,7 +11,7 @@ import {
 } from '@ant-design/icons';
 import { Menu, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { ApiWithMessage } from '../utils/api-utils';
+import { ApiWithMessage, regularFetch } from '../utils/api-utils';
 
 export default function App() {
   const [userInfo, setUserInfo] = useState();
@@ -19,24 +19,13 @@ export default function App() {
 
   useEffect(() => {
     setCurrent(window.location.pathname);
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      setUserInfo(await getUserInfo());
-    })();
+    getUserInfo();
   }, []);
 
   async function getUserInfo() {
-    try {
-      const response = await fetch('/.auth/me');
-      const payload = await response.json();
-      const { clientPrincipal } = payload;
-      return clientPrincipal;
-    } catch (error) {
-      console.error('No profile could be found');
-      return undefined;
-    }
+    await regularFetch('/.auth/me', undefined).then((data) => {
+      setUserInfo(data);
+    });
   }
 
   async function handleClick(url, runningMessage, successMessage) {
@@ -79,7 +68,7 @@ export default function App() {
       icon: <UserOutlined />,
       label: (
         <p className="hidden sm:inline-block">
-          {userInfo && userInfo.userDetails}
+          {userInfo && userInfo.clientPrincipal.userDetails}
         </p>
       ),
       className: 'float-right hidden sm:inline-block',
