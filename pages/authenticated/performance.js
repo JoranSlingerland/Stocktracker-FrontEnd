@@ -208,7 +208,10 @@ export default function performance() {
   }
 
   async function fetchTable() {
-    cachedFetch(`/api/get_table_data_performance/${date}`).then((data) => {
+    cachedFetch(`/api/get_table_data_performance`, [], 'POST', {
+      userId: userInfo.clientPrincipal.userId,
+      dataToGet: date,
+    }).then((data) => {
       setSingleDayData(data);
       setSingleDayDataisLoading(false);
     });
@@ -222,7 +225,6 @@ export default function performance() {
   useEffect(() => {
     if (date) {
       fetchTopBar();
-      fetchTable();
     }
   }, [date]);
 
@@ -232,6 +234,7 @@ export default function performance() {
       fetchTransactionCostData();
       fetchTotalGainsData();
       fetchDataline();
+      fetchTable();
     }
   }, [date, userInfo]);
 
