@@ -14,6 +14,7 @@ import {
   formatPercentageWithColors,
   formatImageAndText,
 } from '../../utils/formatting.js';
+import { data } from 'autoprefixer';
 
 const { Title } = Typography;
 
@@ -188,12 +189,13 @@ export default function performance() {
   }
 
   async function fetchTopBar() {
-    cachedFetch(`/api/get_topbar_data/${date}`, topBarDataFallBackObject).then(
-      (data) => {
-        settopBarData(data);
-        settopBarLoading(false);
-      }
-    );
+    cachedFetch(`/api/get_topbar_data`, topBarDataFallBackObject, 'POST', {
+      userId: userInfo.clientPrincipal.userId,
+      dataToGet: date,
+    }).then((data) => {
+      settopBarData(data);
+      settopBarLoading(false);
+    });
   }
 
   async function fetchTransactionCostData() {
@@ -223,18 +225,13 @@ export default function performance() {
   }, []);
 
   useEffect(() => {
-    if (date) {
-      fetchTopBar();
-    }
-  }, [date]);
-
-  useEffect(() => {
     if (userInfo && date) {
       fetchDividendData();
       fetchTransactionCostData();
       fetchTotalGainsData();
       fetchDataline();
       fetchTable();
+      fetchTopBar();
     }
   }, [date, userInfo]);
 
