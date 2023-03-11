@@ -138,40 +138,33 @@ export default function Home() {
   }
 
   async function fetchUnRealizedData() {
-    cachedFetch(
-      `/api/get_table_data_basic/single_day`,
-      [],
-      'POST',
-      {
-        fully_realized: false,
-      },
-      '/api/get_table_data_basic/single_day?fully_realized=false'
-    ).then((data) => {
+    cachedFetch(`/api/get_table_data_basic`, [], 'POST', {
+      userId: userInfo.clientPrincipal.userId,
+      containername: 'single_day',
+      fully_realized: false,
+    }).then((data) => {
       setUnRealizedData(data);
       setUnRealizedDataisLoading(false);
     });
   }
 
   async function fetchRealizedData() {
-    cachedFetch(
-      `/api/get_table_data_basic/single_day`,
-      [],
-      'POST',
-      {
-        fully_realized: true,
-        partial_realized: true,
-        andor: 'or',
-      },
-      '/api/get_table_data_basic/single_day?fully_realized=true?partial_realized=true?andor=or'
-    ).then((data) => {
+    cachedFetch(`/api/get_table_data_basic`, [], 'POST', {
+      userId: userInfo.clientPrincipal.userId,
+      containername: 'single_day',
+      fully_realized: true,
+      partial_realized: true,
+      andor: 'or',
+    }).then((data) => {
       setRealizedData(data);
       setRealizedDataisLoading(false);
     });
   }
 
   async function fetchStockPieData() {
-    cachedFetch(`/api/get_pie_data/stocks`, fallbackObject, 'POST', {
+    cachedFetch(`/api/get_pie_data`, fallbackObject, 'POST', {
       userId: userInfo.clientPrincipal.userId,
+      dataType: 'stocks',
     }).then((data) => {
       setStockPieData(data);
       setStockPieDataisLoading(false);
@@ -179,8 +172,9 @@ export default function Home() {
   }
 
   async function fetchCurrencyPieData() {
-    cachedFetch(`/api/get_pie_data/currency`, fallbackObject, 'POST', {
+    cachedFetch(`/api/get_pie_data`, fallbackObject, 'POST', {
       userId: userInfo.clientPrincipal.userId,
+      dataType: 'currency',
     }).then((data) => {
       setCurrencyPieData(data);
       setCurrencyPieDataisLoading(false);
@@ -188,8 +182,9 @@ export default function Home() {
   }
 
   async function fetchSectorPieData() {
-    cachedFetch(`/api/get_pie_data/sector`, fallbackObject, 'POST', {
+    cachedFetch(`/api/get_pie_data`, fallbackObject, 'POST', {
       userId: userInfo.clientPrincipal.userId,
+      dataType: 'sector',
     }).then((data) => {
       setSectorPieData(data);
       setSectorPieDataisLoading(false);
@@ -197,8 +192,9 @@ export default function Home() {
   }
 
   async function fetchCountryPieData() {
-    cachedFetch(`/api/get_pie_data/country`, fallbackObject, 'POST', {
+    cachedFetch(`/api/get_pie_data`, fallbackObject, 'POST', {
       userId: userInfo.clientPrincipal.userId,
+      dataType: 'country',
     }).then((data) => {
       setCountryPieData(data);
       setCountryPieDataisLoading(false);
@@ -207,13 +203,13 @@ export default function Home() {
 
   // Fetch data on page load
   useEffect(() => {
-    fetchUnRealizedData();
-    fetchRealizedData();
     getUserInfo();
   }, []);
 
   useEffect(() => {
     if (userInfo) {
+      fetchUnRealizedData();
+      fetchRealizedData();
       fetchStockPieData();
       fetchCurrencyPieData();
       fetchSectorPieData();

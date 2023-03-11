@@ -81,6 +81,7 @@ const InputInvestedscolumns = [
 ];
 
 export default function Home() {
+  const [userInfo, setUserInfo] = useState(null);
   const [InputTransactionsData, setInputTransactionsData] = useState(null);
   const [InputTransactionsDataisLoading, setInputTransactionsDataisLoading] =
     useState(true);
@@ -92,15 +93,27 @@ export default function Home() {
   const [InputInvestedSearchText, setInputInvestedSearchText] = useState(null);
 
   // Fetch data
+  async function getUserInfo() {
+    await regularFetch('/.auth/me', undefined).then((data) => {
+      setUserInfo(data);
+    });
+  }
+
   async function fetchTransactionsData() {
-    cachedFetch(`/api/get_table_data_basic/input_transactions`).then((data) => {
+    cachedFetch(`/api/get_table_data_basic`, [], 'POST', {
+      userId: userInfo.clientPrincipal.userId,
+      containername: 'input_transactions',
+    }).then((data) => {
       setInputTransactionsData(data);
       setInputTransactionsDataisLoading(false);
     });
   }
 
   async function fetchInputInvestedData() {
-    cachedFetch(`/api/get_table_data_basic/input_invested`).then((data) => {
+    cachedFetch(`/api/get_table_data_basic`, [], 'POST', {
+      userId: userInfo.clientPrincipal.userId,
+      containername: 'input_invested',
+    }).then((data) => {
       setInputInvestedData(data);
       setInputInvestedDataisLoading(false);
     });
@@ -108,25 +121,33 @@ export default function Home() {
 
   // Fetch data on mount
   useEffect(() => {
-    fetchTransactionsData();
-    fetchInputInvestedData();
+    getUserInfo();
   }, []);
+
+  useEffect(() => {
+    if (userInfo) {
+      fetchTransactionsData();
+      fetchInputInvestedData();
+    }
+  }, [userInfo]);
 
   // Callbacks
   async function callback_transactions() {
-    ovewriteCachedFetch(`/api/get_table_data_basic/input_transactions`).then(
-      (data) => {
-        setInputTransactionsData(data);
-      }
-    );
+    ovewriteCachedFetch(`/api/get_table_data_basic`, [], 'POST', {
+      userId: userInfo.clientPrincipal.userId,
+      containername: 'input_transactions',
+    }).then((data) => {
+      setInputTransactionsData(data);
+    });
   }
 
   async function callback_invested() {
-    ovewriteCachedFetch(`/api/get_table_data_basic/input_invested`).then(
-      (data) => {
-        setInputInvestedData(data);
-      }
-    );
+    ovewriteCachedFetch(`/api/get_table_data_basic`, [], 'POST', {
+      userId: userInfo.clientPrincipal.userId,
+      containername: 'input_invested',
+    }).then((data) => {
+      setInputInvestedData(data);
+    });
   }
 
   // Render

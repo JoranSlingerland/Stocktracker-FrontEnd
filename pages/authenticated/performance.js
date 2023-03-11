@@ -165,8 +165,10 @@ export default function performance() {
   }
 
   async function fetchDividendData() {
-    cachedFetch(`/api/get_barchart_data/dividend/${date}`, [], 'POST', {
+    cachedFetch(`/api/get_barchart_data`, [], 'POST', {
       userId: userInfo.clientPrincipal.userId,
+      datatype: 'dividend',
+      datatoget: date,
     }).then((data) => {
       setdividendData(data);
       setLoadingDividend(false);
@@ -183,8 +185,10 @@ export default function performance() {
   }
 
   async function fetchTransactionCostData() {
-    cachedFetch(`/api/get_barchart_data/transaction_cost/${date}`, [], 'POST', {
+    cachedFetch(`/api/get_barchart_data`, [], 'POST', {
       userId: userInfo.clientPrincipal.userId,
+      datatype: 'transaction_cost',
+      datatoget: date,
     }).then((data) => {
       settotalTransactionCostData(data);
       settotalTransactionCostDataLoading(false);

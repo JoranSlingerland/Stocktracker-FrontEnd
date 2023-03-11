@@ -2,6 +2,8 @@
 
 import { message } from 'antd';
 import wretch from 'wretch';
+import FormDataAddon from 'wretch/addons/formData';
+import hash from 'object-hash';
 
 // Helper functions
 function setWithExpiry(key, value, ttl) {
@@ -30,6 +32,13 @@ function getWithExpiry(key) {
   }
   return item.value;
 }
+
+function newKey(url, body) {
+  body = JSON.parse(JSON.stringify(body));
+  delete body.userId;
+  return hash(url + JSON.stringify(body));
+}
+
 // End of helper functions
 
 // main functions
@@ -38,12 +47,9 @@ async function cachedFetch(
   fallback_data = [],
   method = 'GET',
   body = {},
-  key = '',
   hours = 24
 ) {
-  if (key === '') {
-    key = url;
-  }
+  const key = newKey(url, body);
   const cachedResponse = getWithExpiry(key);
   if (cachedResponse) {
     return cachedResponse;
@@ -52,6 +58,7 @@ async function cachedFetch(
     if (response === fallback_data) {
       return response;
     }
+
     setWithExpiry(key, response, hours * 1000 * 60 * 60);
     return response;
   }
@@ -62,12 +69,9 @@ async function ovewriteCachedFetch(
   fallback_data = [],
   method = 'GET',
   body = {},
-  key = '',
   hours = 24
 ) {
-  if (key === '') {
-    key = url;
-  }
+  const key = newKey(url, body);
   const response = await regularFetch(url, fallback_data, method, body);
   if (response === fallback_data) {
     return response;
@@ -93,7 +97,9 @@ async function regularFetch(
   }
   if (method === 'POST') {
     const response = await wretch(url)
-      .post(body)
+      .addon(FormDataAddon)
+      .formData(body)
+      .post()
       .json()
       .catch(() => {
         return fallback_data;
