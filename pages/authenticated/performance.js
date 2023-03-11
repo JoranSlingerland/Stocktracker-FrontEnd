@@ -146,8 +146,14 @@ export default function performance() {
 
   async function fetchTotalGainsData() {
     cachedFetch(
-      `/api/get_linechart_data/total_gains/${date}`,
-      totalGainsDataFallBackObject
+      `/api/get_linechart_data`,
+      totalGainsDataFallBackObject,
+      'POST',
+      {
+        userId: userInfo.clientPrincipal.userId,
+        dataType: 'total_gains',
+        dataToGet: date,
+      }
     ).then((data) => {
       settotalGainsData(data);
       settotalGainsDataLoading(false);
@@ -156,8 +162,14 @@ export default function performance() {
 
   async function fetchDataline() {
     cachedFetch(
-      `/api/get_linechart_data/invested_and_value/${date}`,
-      valueGrowthDataFallBackObject
+      `/api/get_linechart_data`,
+      valueGrowthDataFallBackObject,
+      'POST',
+      {
+        userId: userInfo.clientPrincipal.userId,
+        dataType: 'invested_and_value',
+        dataToGet: date,
+      }
     ).then((data) => {
       setvalueGrowthData(data);
       setvalueGrowthDataLoading(false);
@@ -167,8 +179,8 @@ export default function performance() {
   async function fetchDividendData() {
     cachedFetch(`/api/get_barchart_data`, [], 'POST', {
       userId: userInfo.clientPrincipal.userId,
-      datatype: 'dividend',
-      datatoget: date,
+      dataType: 'dividend',
+      dataToGet: date,
     }).then((data) => {
       setdividendData(data);
       setLoadingDividend(false);
@@ -187,8 +199,8 @@ export default function performance() {
   async function fetchTransactionCostData() {
     cachedFetch(`/api/get_barchart_data`, [], 'POST', {
       userId: userInfo.clientPrincipal.userId,
-      datatype: 'transaction_cost',
-      datatoget: date,
+      dataType: 'transaction_cost',
+      dataToGet: date,
     }).then((data) => {
       settotalTransactionCostData(data);
       settotalTransactionCostDataLoading(false);
@@ -209,8 +221,6 @@ export default function performance() {
 
   useEffect(() => {
     if (date) {
-      fetchTotalGainsData();
-      fetchDataline();
       fetchTopBar();
       fetchTable();
     }
@@ -220,6 +230,8 @@ export default function performance() {
     if (userInfo && date) {
       fetchDividendData();
       fetchTransactionCostData();
+      fetchTotalGainsData();
+      fetchDataline();
     }
   }, [date, userInfo]);
 

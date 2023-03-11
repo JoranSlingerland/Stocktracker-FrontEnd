@@ -140,8 +140,8 @@ export default function Home() {
   async function fetchUnRealizedData() {
     cachedFetch(`/api/get_table_data_basic`, [], 'POST', {
       userId: userInfo.clientPrincipal.userId,
-      containername: 'single_day',
-      fully_realized: false,
+      containerName: 'single_day',
+      fullyRealized: false,
     }).then((data) => {
       setUnRealizedData(data);
       setUnRealizedDataisLoading(false);
@@ -151,10 +151,10 @@ export default function Home() {
   async function fetchRealizedData() {
     cachedFetch(`/api/get_table_data_basic`, [], 'POST', {
       userId: userInfo.clientPrincipal.userId,
-      containername: 'single_day',
-      fully_realized: true,
-      partial_realized: true,
-      andor: 'or',
+      containerName: 'single_day',
+      fullyRealized: true,
+      partialRealized: true,
+      andOr: 'or',
     }).then((data) => {
       setRealizedData(data);
       setRealizedDataisLoading(false);

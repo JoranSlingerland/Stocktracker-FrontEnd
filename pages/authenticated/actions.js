@@ -3,7 +3,11 @@
 import { Divider, Input, Typography } from 'antd';
 import { useState, useEffect } from 'react';
 import AntdTable from '../../components/antdTable';
-import { cachedFetch, ovewriteCachedFetch } from '../../utils/api-utils.js';
+import {
+  cachedFetch,
+  ovewriteCachedFetch,
+  regularFetch,
+} from '../../utils/api-utils.js';
 import {
   formatCurrency,
   formatImageAndText,
@@ -102,7 +106,7 @@ export default function Home() {
   async function fetchTransactionsData() {
     cachedFetch(`/api/get_table_data_basic`, [], 'POST', {
       userId: userInfo.clientPrincipal.userId,
-      containername: 'input_transactions',
+      containerName: 'input_transactions',
     }).then((data) => {
       setInputTransactionsData(data);
       setInputTransactionsDataisLoading(false);
@@ -112,7 +116,7 @@ export default function Home() {
   async function fetchInputInvestedData() {
     cachedFetch(`/api/get_table_data_basic`, [], 'POST', {
       userId: userInfo.clientPrincipal.userId,
-      containername: 'input_invested',
+      containerName: 'input_invested',
     }).then((data) => {
       setInputInvestedData(data);
       setInputInvestedDataisLoading(false);
@@ -135,7 +139,7 @@ export default function Home() {
   async function callback_transactions() {
     ovewriteCachedFetch(`/api/get_table_data_basic`, [], 'POST', {
       userId: userInfo.clientPrincipal.userId,
-      containername: 'input_transactions',
+      containerName: 'input_transactions',
     }).then((data) => {
       setInputTransactionsData(data);
     });
@@ -144,7 +148,7 @@ export default function Home() {
   async function callback_invested() {
     ovewriteCachedFetch(`/api/get_table_data_basic`, [], 'POST', {
       userId: userInfo.clientPrincipal.userId,
-      containername: 'input_invested',
+      containerName: 'input_invested',
     }).then((data) => {
       setInputInvestedData(data);
     });
