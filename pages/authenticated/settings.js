@@ -16,55 +16,56 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
-import { ApiWithMessage } from '../../utils/api-utils';
+import { ApiWithMessage, regularFetch } from '../../utils/api-utils';
 import useWindowDimensions from '../../utils/useWindowDimensions';
-import { regularFetch } from '../../utils/api-utils';
 import AntdTable from '../../components/antdTable';
 
 const { Text, Title } = Typography;
 
 export default function Home() {
+  const [userInfo, setUserInfo] = useState(null);
   const [orchestratorList, setOrchestratorList] = useState(null);
   const [orchestratorListIsLoading, setOrchestratorListIsLoading] =
     useState(true);
 
+  // fetch functions
+  async function getUserInfo() {
+    await regularFetch('/.auth/me', undefined).then((data) => {
+      setUserInfo(data);
+    });
+  }
+
   async function fetchOrchestratorList() {
-    regularFetch(`/api/orchestartor_list/7`).then((data) => {
+    regularFetch(`/api/orchestartors/list`, [], 'POST', {
+      userId: userInfo.clientPrincipal.userId,
+      days: 7,
+    }).then((data) => {
       setOrchestratorList(data);
       setOrchestratorListIsLoading(false);
     });
   }
 
-  async function handleClickTerminateOrchestrator(instanceId) {
+  // handle click functions
+  async function handleClickOrchestratorAction(
+    url,
+    runningMessage,
+    successMessage,
+    body
+  ) {
+    if (userInfo === null) {
+      await getUserInfo();
+    }
     ApiWithMessage(
-      `/api/orchestartor_terminate/${instanceId}`,
-      'Terminating orchestrator',
-      'Orchestrator terminated'
+      url,
+      runningMessage,
+      successMessage,
+      'POST',
+      body,
+      'multipart/form-data'
     ).then(() => {
       fetchOrchestratorList();
     });
   }
-
-  async function handleClickPurgeOrchestrator(instanceId) {
-    ApiWithMessage(
-      `/api/orchestartor_purge/${instanceId}`,
-      'Purging orchestrator',
-      'Orchestrator purged'
-    ).then(() => {
-      fetchOrchestratorList();
-    });
-  }
-
-  useEffect(() => {
-    fetchOrchestratorList();
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      fetchOrchestratorList();
-    }, 60000);
-    return () => clearInterval(interval);
-  }, []);
 
   async function handleClick(url, runningMessage, successMessage) {
     ApiWithMessage(url, runningMessage, successMessage).then(() => {
@@ -81,6 +82,25 @@ export default function Home() {
     }
   }
 
+  // useEffects
+  useEffect(() => {
+    getUserInfo();
+  }, []);
+
+  useEffect(() => {
+    if (userInfo) {
+      fetchOrchestratorList();
+    }
+  }, [userInfo]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchOrchestratorList();
+    }, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // constants
   const { height, width } = useWindowDimensions();
 
   const orchestratorColumns = [
@@ -143,7 +163,15 @@ export default function Home() {
           <Popconfirm
             title="Are you sure you want to terminate this orchestrator?"
             onConfirm={() => {
-              handleClickTerminateOrchestrator(record.instanceId);
+              handleClickOrchestratorAction(
+                '/api/orchestartors/terminate',
+                'Terminating orchestrator',
+                'Orchestrator terminated',
+                {
+                  instanceId: record.instanceId,
+                  userId: userInfo.clientPrincipal.userId,
+                }
+              );
             }}
             okText="Yes"
             cancelText="No"
@@ -167,7 +195,15 @@ export default function Home() {
           <Popconfirm
             title="Are you sure you want to purge this orchestrator?"
             onConfirm={() => {
-              handleClickPurgeOrchestrator(record.instanceId);
+              handleClickOrchestratorAction(
+                '/api/orchestartors/purge',
+                'Purging orchestrator',
+                'Orchestrator purged',
+                {
+                  instanceId: record.instanceId,
+                  userId: userInfo.clientPrincipal.userId,
+                }
+              );
             }}
             okText="Yes"
             cancelText="No"
@@ -200,10 +236,15 @@ export default function Home() {
               <div className="row-span-2 text-right">
                 <Button
                   onClick={() =>
-                    handleClick(
-                      `/api/orchestrators/stocktracker_orchestrator/all`,
+                    handleClickOrchestratorAction(
+                      `/api/orchestrators/start`,
                       'Calling Orchestrator',
-                      'Orchestration called, This will take a while'
+                      'Orchestration called, This will take a while',
+                      {
+                        userId: userInfo.clientPrincipal.userId,
+                        functionName: 'stocktracker_orchestrator',
+                        daysToUpdate: 'all',
+                      }
                     )
                   }
                   type="primary"

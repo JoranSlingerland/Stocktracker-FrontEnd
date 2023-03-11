@@ -28,10 +28,6 @@ export default function App() {
     });
   }
 
-  async function handleClick(url, runningMessage, successMessage) {
-    ApiWithMessage(url, runningMessage, successMessage);
-  }
-
   const items = [
     {
       key: '/authenticated/portfolio/',
@@ -81,10 +77,17 @@ export default function App() {
             <Tooltip title="Will refresh the last 7 days">
               <a
                 onClick={() =>
-                  handleClick(
-                    `/api/orchestrators/stocktracker_orchestrator/7`,
+                  ApiWithMessage(
+                    `/api/orchestrators/start`,
                     'Calling Orchestrator',
-                    'Orchestration called, This will take a bit'
+                    'Orchestration called, This will take a bit',
+                    'POST',
+                    {
+                      userId: userInfo.clientPrincipal.userId,
+                      functionName: 'stocktracker_orchestrator',
+                      daysToUpdate: 7,
+                    },
+                    'multipart/form-data'
                   )
                 }
               >

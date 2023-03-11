@@ -260,29 +260,29 @@ export default function AddXForm({ form, parentCallback }) {
   const onCreate = (values) => {
     setOpen(false);
     async function postData() {
-      await regularFetch('/.auth/me', undefined).then((data) => {
-        values['userid'] = data.clientPrincipal.userId;
+      const data = await regularFetch('/.auth/me', undefined);
+      values['userid'] = data.clientPrincipal.userId;
+      let value;
 
-        if (form === 'addStock') {
-          var value = {
-            type: 'stock',
-            items: [values],
-          };
-        } else if (form === 'addTransaction') {
-          var value = {
-            type: 'transaction',
-            items: [values],
-          };
-        }
-        console.log(value);
-        ApiWithMessage(
-          `/api/add_item_to_input`,
-          'Creating new items',
-          'Items Created',
-          'POST',
-          value
-        );
-      });
+      if (form === 'addStock') {
+        value = {
+          type: 'stock',
+          items: [values],
+        };
+      } else if (form === 'addTransaction') {
+        value = {
+          type: 'transaction',
+          items: [values],
+        };
+      }
+      const response = ApiWithMessage(
+        `/api/add_item_to_input`,
+        'Creating new items',
+        'Items Created',
+        'POST',
+        value
+      );
+      return response;
     }
 
     postData().then(() => {

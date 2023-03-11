@@ -109,7 +109,8 @@ async function ApiWithMessage(
   runningMessage,
   successMessage,
   method = 'GET',
-  body = {}
+  body = {},
+  contentType = 'application/json'
 ) {
   const hide = message.loading(runningMessage, 10);
   if (method === 'GET') {
@@ -123,10 +124,18 @@ async function ApiWithMessage(
         hide();
         message.error('Something went wrong :(');
       });
+    return response;
   }
   if (method === 'POST') {
-    const response = await wretch(url)
-      .post(body)
+    let w = wretch(url);
+    if (contentType === 'application/json') {
+      w = w.post(body);
+    }
+    if (contentType === 'multipart/form-data') {
+      w = w.addon(FormDataAddon).formData(body).post();
+    }
+
+    const response = await w
       .json(() => {
         hide();
         message.success(successMessage);
@@ -135,6 +144,7 @@ async function ApiWithMessage(
         hide();
         message.error('Something went wrong :(');
       });
+    return response;
   }
 }
 
