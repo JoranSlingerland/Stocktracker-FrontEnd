@@ -7,8 +7,14 @@ import {
   Popconfirm,
   Tabs,
   Typography,
-  Spin,
+  Tag,
 } from 'antd';
+import {
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  ExclamationCircleOutlined,
+  SyncOutlined,
+} from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { ApiWithMessage } from '../../utils/api-utils';
 import useWindowDimensions from '../../utils/useWindowDimensions';
@@ -84,20 +90,31 @@ export default function Home() {
       key: 'runtimeStatus',
       render: (text) => {
         if (text === 'Completed') {
-          return <Text type="success">{text}</Text>;
+          return (
+            <Tag icon={<CheckCircleOutlined />} color="success">
+              {text}
+            </Tag>
+          );
         } else if (text === 'Failed') {
-          return <Text type="danger">{text}</Text>;
+          return (
+            <Tag icon={<CloseCircleOutlined />} color="error">
+              {text}
+            </Tag>
+          );
         } else if (text === 'Suspended' || text === 'Terminated') {
-          return <Text type="warning">{text}</Text>;
+          return (
+            <Tag icon={<ExclamationCircleOutlined />} color="warning">
+              {text}
+            </Tag>
+          );
         } else if (text === 'Running' || text === 'Pending') {
           return (
-            <span>
-              <Spin size="small" className="mr-1" />
-              <Text>{text}</Text>
-            </span>
+            <Tag icon={<SyncOutlined spin />} color="processing">
+              {text}
+            </Tag>
           );
         } else {
-          return <Text>{text}</Text>;
+          return <Tag color="default">{text}</Tag>;
         }
       },
     },
