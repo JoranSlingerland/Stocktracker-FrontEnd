@@ -14,7 +14,6 @@ import {
   formatPercentageWithColors,
   formatImageAndText,
 } from '../../utils/formatting.js';
-import { data } from 'autoprefixer';
 
 const { Title } = Typography;
 
@@ -105,6 +104,78 @@ const valueGrowthDataFallBackObject = {
   ],
 };
 
+async function fetchDividendData(userInfo, date) {
+  const data = await cachedFetch(`/api/data/get_barchart_data`, [], 'POST', {
+    userId: userInfo.clientPrincipal.userId,
+    dataType: 'dividend',
+    dataToGet: date,
+  });
+  return { data: data, loading: false };
+}
+
+async function fetchTransactionCostData(userInfo, date) {
+  const data = await cachedFetch(`/api/data/get_barchart_data`, [], 'POST', {
+    userId: userInfo.clientPrincipal.userId,
+    dataType: 'transaction_cost',
+    dataToGet: date,
+  });
+  return { data: data, loading: false };
+}
+
+async function fetchTotalGainsData(userInfo, date) {
+  const data = await cachedFetch(
+    `/api/data/get_linechart_data`,
+    totalGainsDataFallBackObject,
+    'POST',
+    {
+      userId: userInfo.clientPrincipal.userId,
+      dataType: 'total_gains',
+      dataToGet: date,
+    }
+  );
+  return { data: data, loading: false };
+}
+
+async function fetchDataline(userInfo, date) {
+  const data = await cachedFetch(
+    `/api/data/get_linechart_data`,
+    valueGrowthDataFallBackObject,
+    'POST',
+    {
+      userId: userInfo.clientPrincipal.userId,
+      dataType: 'invested_and_value',
+      dataToGet: date,
+    }
+  );
+  return { data: data, loading: false };
+}
+
+async function fetchTable(userInfo, date) {
+  const data = await cachedFetch(
+    `/api/data/get_table_data_performance`,
+    [],
+    'POST',
+    {
+      userId: userInfo.clientPrincipal.userId,
+      dataToGet: date,
+    }
+  );
+  return { data: data, loading: false };
+}
+
+async function fetchTopBar(userInfo, date) {
+  const data = await cachedFetch(
+    `/api/data/get_topbar_data`,
+    topBarDataFallBackObject,
+    'POST',
+    {
+      userId: userInfo.clientPrincipal.userId,
+      dataToGet: date,
+    }
+  );
+  return { data: data, loading: false };
+}
+
 export default function performance() {
   // const setup
   const router = useRouter();
@@ -136,86 +207,12 @@ export default function performance() {
       setTab(router.query.tab.toString());
       setDate(router.query.date);
     }
-  }, [router.isReady]);
+  }, [router]);
 
   // Fetch functions
   async function getUserInfo() {
     await regularFetch('/.auth/me', undefined).then((data) => {
       setUserInfo(data);
-    });
-  }
-
-  async function fetchTotalGainsData() {
-    cachedFetch(
-      `/api/data/get_linechart_data`,
-      totalGainsDataFallBackObject,
-      'POST',
-      {
-        userId: userInfo.clientPrincipal.userId,
-        dataType: 'total_gains',
-        dataToGet: date,
-      }
-    ).then((data) => {
-      settotalGainsData(data);
-      settotalGainsDataLoading(false);
-    });
-  }
-
-  async function fetchDataline() {
-    cachedFetch(
-      `/api/data/get_linechart_data`,
-      valueGrowthDataFallBackObject,
-      'POST',
-      {
-        userId: userInfo.clientPrincipal.userId,
-        dataType: 'invested_and_value',
-        dataToGet: date,
-      }
-    ).then((data) => {
-      setvalueGrowthData(data);
-      setvalueGrowthDataLoading(false);
-    });
-  }
-
-  async function fetchDividendData() {
-    cachedFetch(`/api/data/get_barchart_data`, [], 'POST', {
-      userId: userInfo.clientPrincipal.userId,
-      dataType: 'dividend',
-      dataToGet: date,
-    }).then((data) => {
-      setdividendData(data);
-      setLoadingDividend(false);
-    });
-  }
-
-  async function fetchTopBar() {
-    cachedFetch(`/api/data/get_topbar_data`, topBarDataFallBackObject, 'POST', {
-      userId: userInfo.clientPrincipal.userId,
-      dataToGet: date,
-    }).then((data) => {
-      settopBarData(data);
-      settopBarLoading(false);
-    });
-  }
-
-  async function fetchTransactionCostData() {
-    cachedFetch(`/api/data/get_barchart_data`, [], 'POST', {
-      userId: userInfo.clientPrincipal.userId,
-      dataType: 'transaction_cost',
-      dataToGet: date,
-    }).then((data) => {
-      settotalTransactionCostData(data);
-      settotalTransactionCostDataLoading(false);
-    });
-  }
-
-  async function fetchTable() {
-    cachedFetch(`/api/data/get_table_data_performance`, [], 'POST', {
-      userId: userInfo.clientPrincipal.userId,
-      dataToGet: date,
-    }).then((data) => {
-      setSingleDayData(data);
-      setSingleDayDataisLoading(false);
     });
   }
 
@@ -226,12 +223,30 @@ export default function performance() {
 
   useEffect(() => {
     if (userInfo && date) {
-      fetchDividendData();
-      fetchTransactionCostData();
-      fetchTotalGainsData();
-      fetchDataline();
-      fetchTable();
-      fetchTopBar();
+      fetchDividendData(userInfo, date).then(({ data, loading }) => {
+        setdividendData(data);
+        setLoadingDividend(loading);
+      });
+      fetchTransactionCostData(userInfo, date).then(({ data, loading }) => {
+        settotalTransactionCostData(data);
+        settotalTransactionCostDataLoading(loading);
+      });
+      fetchTotalGainsData(userInfo, date).then(({ data, loading }) => {
+        settotalGainsData(data);
+        settotalGainsDataLoading(loading);
+      });
+      fetchDataline(userInfo, date).then(({ data, loading }) => {
+        setvalueGrowthData(data);
+        setvalueGrowthDataLoading(loading);
+      });
+      fetchTable(userInfo, date).then(({ data, loading }) => {
+        setSingleDayData(data);
+        setSingleDayDataisLoading(loading);
+      });
+      fetchTopBar(userInfo, date).then(({ data, loading }) => {
+        settopBarData(data);
+        settopBarLoading(loading);
+      });
     }
   }, [date, userInfo]);
 

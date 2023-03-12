@@ -84,6 +84,22 @@ const InputInvestedscolumns = [
   },
 ];
 
+async function fetchTransactionsData(userInfo) {
+  const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
+    userId: userInfo.clientPrincipal.userId,
+    containerName: 'input_transactions',
+  });
+  return { data: data, loading: false };
+}
+
+async function fetchInputInvestedData(userInfo) {
+  const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
+    userId: userInfo.clientPrincipal.userId,
+    containerName: 'input_invested',
+  });
+  return { data: data, loading: false };
+}
+
 export default function Home() {
   const [userInfo, setUserInfo] = useState(null);
   const [InputTransactionsData, setInputTransactionsData] = useState(null);
@@ -103,26 +119,6 @@ export default function Home() {
     });
   }
 
-  async function fetchTransactionsData() {
-    cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
-      userId: userInfo.clientPrincipal.userId,
-      containerName: 'input_transactions',
-    }).then((data) => {
-      setInputTransactionsData(data);
-      setInputTransactionsDataisLoading(false);
-    });
-  }
-
-  async function fetchInputInvestedData() {
-    cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
-      userId: userInfo.clientPrincipal.userId,
-      containerName: 'input_invested',
-    }).then((data) => {
-      setInputInvestedData(data);
-      setInputInvestedDataisLoading(false);
-    });
-  }
-
   // Fetch data on mount
   useEffect(() => {
     getUserInfo();
@@ -130,8 +126,14 @@ export default function Home() {
 
   useEffect(() => {
     if (userInfo) {
-      fetchTransactionsData();
-      fetchInputInvestedData();
+      fetchTransactionsData(userInfo).then(({ data, loading }) => {
+        setInputTransactionsData(data);
+        setInputTransactionsDataisLoading(loading);
+      });
+      fetchInputInvestedData(userInfo).then(({ data, loading }) => {
+        setInputInvestedData(data);
+        setInputInvestedDataisLoading(loading);
+      });
     }
   }, [userInfo]);
 

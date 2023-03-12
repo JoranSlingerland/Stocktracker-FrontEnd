@@ -22,6 +22,14 @@ import AntdTable from '../../components/antdTable';
 
 const { Text, Title } = Typography;
 
+async function fetchOrchestratorList(userInfo) {
+  const data = await regularFetch(`/api/orchestrator/list`, [], 'POST', {
+    userId: userInfo.clientPrincipal.userId,
+    days: 7,
+  });
+  return { data: data, loading: false };
+}
+
 export default function Home() {
   const [userInfo, setUserInfo] = useState(null);
   const [orchestratorList, setOrchestratorList] = useState(null);
@@ -32,16 +40,6 @@ export default function Home() {
   async function getUserInfo() {
     await regularFetch('/.auth/me', undefined).then((data) => {
       setUserInfo(data);
-    });
-  }
-
-  async function fetchOrchestratorList() {
-    regularFetch(`/api/orchestrator/list`, [], 'POST', {
-      userId: userInfo.clientPrincipal.userId,
-      days: 7,
-    }).then((data) => {
-      setOrchestratorList(data);
-      setOrchestratorListIsLoading(false);
     });
   }
 
@@ -89,18 +87,24 @@ export default function Home() {
 
   useEffect(() => {
     if (userInfo) {
-      fetchOrchestratorList();
+      fetchOrchestratorList(userInfo).then(({ data, loading }) => {
+        setOrchestratorList(data);
+        setOrchestratorListIsLoading(loading);
+      });
     }
   }, [userInfo]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       if (userInfo) {
-        fetchOrchestratorList();
+        fetchOrchestratorList(userInfo).then(({ data, loading }) => {
+          setOrchestratorList(data);
+          setOrchestratorListIsLoading(loading);
+        });
       }
     }, 60000);
     return () => clearInterval(interval);
-  }, []);
+  }, [userInfo]);
 
   // constants
   const { height, width } = useWindowDimensions();
