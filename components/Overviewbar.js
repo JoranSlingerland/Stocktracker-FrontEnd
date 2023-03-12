@@ -46,7 +46,7 @@ export default function tabs({ topBarData, loading, handleTabChange }) {
   };
 
   return (
-    <div className="flex flex-col space-y-5 sm:space-x-5 justify-items-stretch sm:space-y-0 sm:flex-row">
+    <div className="flex flex-col space-y-5 lg:space-x-5 lg:space-y-0 lg:flex-row">
       <div
         className={`${
           tab === '1'
