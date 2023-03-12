@@ -1,9 +1,13 @@
 // pages\authenticated\actions.js
 
-import { Divider, Input } from 'antd';
+import { Divider, Input, Typography } from 'antd';
 import { useState, useEffect } from 'react';
 import AntdTable from '../../components/antdTable';
-import { cachedFetch, ovewriteCachedFetch } from '../../utils/api-utils.js';
+import {
+  cachedFetch,
+  ovewriteCachedFetch,
+  regularFetch,
+} from '../../utils/api-utils.js';
 import {
   formatCurrency,
   formatImageAndText,
@@ -12,6 +16,7 @@ import {
 import AddXForm from '../../components/formModal';
 
 const { Search } = Input;
+const { Title } = Typography;
 
 const InputTransactionscolumns = [
   {
@@ -79,7 +84,24 @@ const InputInvestedscolumns = [
   },
 ];
 
+async function fetchTransactionsData(userInfo) {
+  const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
+    userId: userInfo.clientPrincipal.userId,
+    containerName: 'input_transactions',
+  });
+  return { data: data, loading: false };
+}
+
+async function fetchInputInvestedData(userInfo) {
+  const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
+    userId: userInfo.clientPrincipal.userId,
+    containerName: 'input_invested',
+  });
+  return { data: data, loading: false };
+}
+
 export default function Home() {
+  const [userInfo, setUserInfo] = useState(null);
   const [InputTransactionsData, setInputTransactionsData] = useState(null);
   const [InputTransactionsDataisLoading, setInputTransactionsDataisLoading] =
     useState(true);
@@ -91,56 +113,60 @@ export default function Home() {
   const [InputInvestedSearchText, setInputInvestedSearchText] = useState(null);
 
   // Fetch data
-  async function fetchTransactionsData() {
-    cachedFetch(`/api/get_table_data_basic/input_transactions`, 24, []).then(
-      (data) => {
-        setInputTransactionsData(data);
-        setInputTransactionsDataisLoading(false);
-      }
-    );
-  }
-
-  async function fetchInputInvestedData() {
-    cachedFetch(`/api/get_table_data_basic/input_invested`, 24, []).then(
-      (data) => {
-        setInputInvestedData(data);
-        setInputInvestedDataisLoading(false);
-      }
-    );
+  async function getUserInfo() {
+    await regularFetch('/.auth/me', undefined).then((data) => {
+      setUserInfo(data);
+    });
   }
 
   // Fetch data on mount
   useEffect(() => {
-    fetchTransactionsData();
-    fetchInputInvestedData();
+    getUserInfo();
   }, []);
+
+  useEffect(() => {
+    if (userInfo) {
+      fetchTransactionsData(userInfo).then(({ data, loading }) => {
+        setInputTransactionsData(data);
+        setInputTransactionsDataisLoading(loading);
+      });
+      fetchInputInvestedData(userInfo).then(({ data, loading }) => {
+        setInputInvestedData(data);
+        setInputInvestedDataisLoading(loading);
+      });
+    }
+  }, [userInfo]);
 
   // Callbacks
   async function callback_transactions() {
-    ovewriteCachedFetch(`/api/get_table_data_basic/input_transactions`).then(
-      (data) => {
-        setInputTransactionsData(data);
-      }
-    );
+    ovewriteCachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
+      userId: userInfo.clientPrincipal.userId,
+      containerName: 'input_transactions',
+    }).then((data) => {
+      setInputTransactionsData(data);
+    });
   }
 
   async function callback_invested() {
-    ovewriteCachedFetch(`/api/get_table_data_basic/input_invested`).then(
-      (data) => {
-        setInputInvestedData(data);
-      }
-    );
+    ovewriteCachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
+      userId: userInfo.clientPrincipal.userId,
+      containerName: 'input_invested',
+    }).then((data) => {
+      setInputInvestedData(data);
+    });
   }
 
   // Render
   return (
     <div>
-      <h1 className="flex items-center justify-center p-5 text-3xl py">
+      <Title className="flex items-center justify-center p-5" level={1}>
         Actions
-      </h1>
+      </Title>
       <Divider plain></Divider>
       <div>
-        <h2 className="mb-3 text-3xl">Stock Transactions</h2>
+        <Title className="mb-3" level={2}>
+          Stock Transactions
+        </Title>
         <AntdTable
           isLoading={InputTransactionsDataisLoading}
           columns={InputTransactionscolumns}
@@ -161,28 +187,34 @@ export default function Home() {
             },
           }}
           caption={
-            <div className="flex">
-              <Search
-                allowClear
-                placeholder="Search"
-                onChange={(e) => {
-                  setInputTransactionsSearchText([e.target.value]);
-                }}
-                onSearch={(value) => {
-                  setInputTransactionsSearchText([value]);
-                }}
-                className="max-w-xs"
-              />
-              <AddXForm
-                form={'addStock'}
-                parentCallback={callback_transactions}
-              />
+            <div className="flex mx-1 mb-1">
+              <div>
+                <Search
+                  allowClear
+                  placeholder="Search"
+                  onChange={(e) => {
+                    setInputTransactionsSearchText([e.target.value]);
+                  }}
+                  onSearch={(value) => {
+                    setInputTransactionsSearchText([value]);
+                  }}
+                  className="max-w-xs"
+                />
+              </div>
+              <div className="mb-1 ml-auto">
+                <AddXForm
+                  form={'addStock'}
+                  parentCallback={callback_transactions}
+                />
+              </div>
             </div>
           }
         />
         <Divider plain></Divider>
         <div>
-          <h2 className="mb-3 text-3xl">Money Transactions</h2>
+          <Title className="mb-3" level={2}>
+            Money Transactions
+          </Title>
           <AntdTable
             isLoading={InputInvestedDataisLoading}
             columns={InputInvestedscolumns}
@@ -203,7 +235,7 @@ export default function Home() {
               },
             }}
             caption={
-              <div className="flex">
+              <div className="flex mx-1 mb-1">
                 <div>
                   <Search
                     allowClear
@@ -217,7 +249,7 @@ export default function Home() {
                     className="max-w-xs"
                   />
                 </div>
-                <div className="ml-auto mr-0">
+                <div className="ml-auto">
                   <AddXForm
                     form={'addTransaction'}
                     parentCallback={callback_invested}

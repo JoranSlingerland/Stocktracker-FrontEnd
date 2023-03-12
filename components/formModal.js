@@ -11,7 +11,7 @@ import {
 } from 'antd';
 import { useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import { ApiWithMessage } from '../utils/api-utils';
+import { ApiWithMessage, regularFetch } from '../utils/api-utils';
 
 const AddStockForm = ({ open, onCreate, onCancel }) => {
   const [form] = Form.useForm();
@@ -256,28 +256,35 @@ const AddTransactionForm = ({ open, onCreate, onCancel }) => {
 
 export default function AddXForm({ form, parentCallback }) {
   const [open, setOpen] = useState(false);
+
   const onCreate = (values) => {
     setOpen(false);
-    if (form === 'addStock') {
-      var value = {
-        type: 'stock',
-        items: [values],
-      };
-    } else if (form === 'addTransaction') {
-      var value = {
-        type: 'transaction',
-        items: [values],
-      };
-    }
     async function postData() {
-      ApiWithMessage(
-        `/api/add_item_to_input`,
+      const data = await regularFetch('/.auth/me', undefined);
+      values['userid'] = data.clientPrincipal.userId;
+      let value;
+
+      if (form === 'addStock') {
+        value = {
+          type: 'stock',
+          items: [values],
+        };
+      } else if (form === 'addTransaction') {
+        value = {
+          type: 'transaction',
+          items: [values],
+        };
+      }
+      const response = ApiWithMessage(
+        `/api/add/add_item_to_input`,
         'Creating new items',
         'Items Created',
         'POST',
         value
       );
+      return response;
     }
+
     postData().then(() => {
       parentCallback();
     });
@@ -292,7 +299,6 @@ export default function AddXForm({ form, parentCallback }) {
           onClick={() => {
             setOpen(true);
           }}
-          className="float-right"
         />
       </Tooltip>
       {form === 'addStock' ? (

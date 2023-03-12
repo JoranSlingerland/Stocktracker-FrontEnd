@@ -6,10 +6,22 @@
     },
     {
       "route": "/authenticated/*",
-      "allowedRoles": ["admin"]
+      "allowedRoles": ["authenticated"]
     },
     {
-      "route": "/api/*",
+      "route": "/api/add/*",
+      "allowedRoles": ["authenticated"]
+    },
+    {
+      "route": "/api/data/*",
+      "allowedRoles": ["authenticated"]
+    },
+    {
+      "route": "/api/orchestartors/*",
+      "allowedRoles": ["authenticated"]
+    },
+    {
+      "route": "/api/priveleged/*",
       "allowedRoles": ["admin"]
     },
     {

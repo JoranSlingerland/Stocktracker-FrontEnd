@@ -2,6 +2,8 @@
 
 import { message } from 'antd';
 import wretch from 'wretch';
+import FormDataAddon from 'wretch/addons/formData';
+import hash from 'object-hash';
 
 // Helper functions
 function setWithExpiry(key, value, ttl) {
@@ -15,35 +17,35 @@ function setWithExpiry(key, value, ttl) {
 
 function getWithExpiry(key) {
   const itemStr = localStorage.getItem(key);
-  // if the item doesn't exist, return null
   if (!itemStr) {
     return null;
   }
   const item = JSON.parse(itemStr);
   const now = new Date();
-  // compare the expiry time of the item with the current time
   if (now.getTime() > item.expiry) {
-    // If the item is expired, delete the item from storage
-    // and return null
     localStorage.removeItem(key);
     return null;
   }
   return item.value;
 }
+
+function newKey(url, body) {
+  body = JSON.parse(JSON.stringify(body));
+  delete body.userId;
+  return hash(url + JSON.stringify(body));
+}
+
 // End of helper functions
 
 // main functions
 async function cachedFetch(
   url,
-  hours = 24,
-  fallback_data = {},
+  fallback_data = [],
   method = 'GET',
   body = {},
-  key = ''
+  hours = 24
 ) {
-  if (key === '') {
-    key = url;
-  }
+  const key = newKey(url, body);
   const cachedResponse = getWithExpiry(key);
   if (cachedResponse) {
     return cachedResponse;
@@ -52,6 +54,7 @@ async function cachedFetch(
     if (response === fallback_data) {
       return response;
     }
+
     setWithExpiry(key, response, hours * 1000 * 60 * 60);
     return response;
   }
@@ -59,15 +62,12 @@ async function cachedFetch(
 
 async function ovewriteCachedFetch(
   url,
-  hours = 24,
-  fallback_data = {},
+  fallback_data = [],
   method = 'GET',
   body = {},
-  key = ''
+  hours = 24
 ) {
-  if (key === '') {
-    key = url;
-  }
+  const key = newKey(url, body);
   const response = await regularFetch(url, fallback_data, method, body);
   if (response === fallback_data) {
     return response;
@@ -78,7 +78,7 @@ async function ovewriteCachedFetch(
 
 async function regularFetch(
   url,
-  fallback_data = {},
+  fallback_data = [],
   method = 'GET',
   body = {}
 ) {
@@ -93,7 +93,9 @@ async function regularFetch(
   }
   if (method === 'POST') {
     const response = await wretch(url)
-      .post(body)
+      .addon(FormDataAddon)
+      .formData(body)
+      .post()
       .json()
       .catch(() => {
         return fallback_data;
@@ -107,7 +109,8 @@ async function ApiWithMessage(
   runningMessage,
   successMessage,
   method = 'GET',
-  body = {}
+  body = {},
+  contentType = 'application/json'
 ) {
   const hide = message.loading(runningMessage, 10);
   if (method === 'GET') {
@@ -121,10 +124,18 @@ async function ApiWithMessage(
         hide();
         message.error('Something went wrong :(');
       });
+    return response;
   }
   if (method === 'POST') {
-    const response = await wretch(url)
-      .post(body)
+    let w = wretch(url);
+    if (contentType === 'application/json') {
+      w = w.post(body);
+    }
+    if (contentType === 'multipart/form-data') {
+      w = w.addon(FormDataAddon).formData(body).post();
+    }
+
+    const response = await w
       .json(() => {
         hide();
         message.success(successMessage);
@@ -133,6 +144,7 @@ async function ApiWithMessage(
         hide();
         message.error('Something went wrong :(');
       });
+    return response;
   }
 }
 

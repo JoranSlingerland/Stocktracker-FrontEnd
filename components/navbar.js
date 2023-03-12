@@ -11,36 +11,21 @@ import {
 } from '@ant-design/icons';
 import { Menu, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { ApiWithMessage } from '../utils/api-utils';
+import { ApiWithMessage, regularFetch } from '../utils/api-utils';
 
 export default function App() {
-  const [userInfo, setUserInfo] = useState();
+  const [userInfo, setUserInfo] = useState(null);
   const [current, setCurrent] = useState('portfolio');
 
   useEffect(() => {
     setCurrent(window.location.pathname);
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      setUserInfo(await getUserInfo());
-    })();
+    getUserInfo();
   }, []);
 
   async function getUserInfo() {
-    try {
-      const response = await fetch('/.auth/me');
-      const payload = await response.json();
-      const { clientPrincipal } = payload;
-      return clientPrincipal;
-    } catch (error) {
-      console.error('No profile could be found');
-      return undefined;
-    }
-  }
-
-  async function handleClick(url, runningMessage, successMessage) {
-    ApiWithMessage(url, runningMessage, successMessage);
+    await regularFetch('/.auth/me', undefined).then((data) => {
+      setUserInfo(data);
+    });
   }
 
   const items = [
@@ -77,8 +62,14 @@ export default function App() {
     {
       key: 'SubMenu',
       icon: <UserOutlined />,
-      label: userInfo && userInfo.userDetails,
-      className: 'float-right',
+      label: (
+        <p className="hidden sm:inline-block">
+          {userInfo &&
+            userInfo.clientPrincipal &&
+            userInfo.clientPrincipal.userDetails}
+        </p>
+      ),
+      className: 'float-right hidden sm:inline-block',
       disabled: !userInfo,
       children: [
         {
@@ -88,10 +79,17 @@ export default function App() {
             <Tooltip title="Will refresh the last 7 days">
               <a
                 onClick={() =>
-                  handleClick(
-                    `/api/orchestrators/stocktracker_orchestrator/7`,
+                  ApiWithMessage(
+                    `/api/orchestrator/start`,
                     'Calling Orchestrator',
-                    'Orchestration called, This will take a bit'
+                    'Orchestration called, This will take a bit',
+                    'POST',
+                    {
+                      userId: userInfo.clientPrincipal.userId,
+                      functionName: 'stocktracker_orchestrator',
+                      daysToUpdate: 7,
+                    },
+                    'multipart/form-data'
                   )
                 }
               >

@@ -1,10 +1,10 @@
 // pages\authenticated\portfolio.js
 
-import { Tabs, Collapse } from 'antd';
+import { Tabs, Collapse, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import PieChart from '../../components/PrimeFacePieChart';
 import AntdTable from '../../components/antdTable';
-import { cachedFetch } from '../../utils/api-utils.js';
+import { cachedFetch, regularFetch } from '../../utils/api-utils.js';
 import {
   formatCurrency,
   formatCurrencyWithColors,
@@ -12,6 +12,8 @@ import {
   formatNumber,
   formatImageAndText,
 } from '../../utils/formatting.js';
+
+const { Title } = Typography;
 
 const { Panel } = Collapse;
 
@@ -111,8 +113,81 @@ const fallbackObject = {
   color: [],
 };
 
+async function fetchUnRealizedData(userInfo) {
+  const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
+    userId: userInfo.clientPrincipal.userId,
+    containerName: 'single_day',
+    fullyRealized: false,
+  });
+  return { data: data, loading: false };
+}
+
+async function fetchRealizedData(userInfo) {
+  const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
+    userId: userInfo.clientPrincipal.userId,
+    containerName: 'single_day',
+    fullyRealized: true,
+    partialRealized: true,
+    andOr: 'or',
+  });
+  return { data: data, loading: false };
+}
+
+async function fetchStockPieData(userInfo) {
+  const data = await cachedFetch(
+    `/api/data/get_pie_data`,
+    fallbackObject,
+    'POST',
+    {
+      userId: userInfo.clientPrincipal.userId,
+      dataType: 'stocks',
+    }
+  );
+  return { data: data, loading: false };
+}
+
+async function fetchCurrencyPieData(userInfo) {
+  const data = await cachedFetch(
+    `/api/data/get_pie_data`,
+    fallbackObject,
+    'POST',
+    {
+      userId: userInfo.clientPrincipal.userId,
+      dataType: 'currency',
+    }
+  );
+  return { data: data, loading: false };
+}
+
+async function fetchSectorPieData(userInfo) {
+  const data = await cachedFetch(
+    `/api/data/get_pie_data`,
+    fallbackObject,
+    'POST',
+    {
+      userId: userInfo.clientPrincipal.userId,
+      dataType: 'sector',
+    }
+  );
+  return { data: data, loading: false };
+}
+
+async function fetchCountryPieData(userInfo) {
+  const data = await cachedFetch(
+    `/api/data/get_pie_data`,
+    fallbackObject,
+    'POST',
+    {
+      userId: userInfo.clientPrincipal.userId,
+      dataType: 'country',
+    }
+  );
+  return { data: data, loading: false };
+}
+
 export default function Home() {
   // Const setup
+  const [userInfo, setUserInfo] = useState(null);
   const [UnRealizedData, setUnRealizedData] = useState([null]);
   const [UnRealizedDataisLoading, setUnRealizedDataisLoading] = useState(true);
   const [RealizedData, setRealizedData] = useState(null);
@@ -128,81 +203,45 @@ export default function Home() {
   const [CountryPieDataisLoading, setCountryPieDataisLoading] = useState(true);
 
   //  Fetch data
-  async function fetchUnRealizedData() {
-    cachedFetch(
-      `/api/get_table_data_basic/single_day`,
-      24,
-      [],
-      'POST',
-      {
-        fully_realized: false,
-      },
-      '/api/get_table_data_basic/single_day?fully_realized=false'
-    ).then((data) => {
-      setUnRealizedData(data);
-      setUnRealizedDataisLoading(false);
+  async function getUserInfo() {
+    await regularFetch('/.auth/me', undefined).then((data) => {
+      setUserInfo(data);
     });
-  }
-
-  async function fetchRealizedData() {
-    cachedFetch(
-      `/api/get_table_data_basic/single_day`,
-      24,
-      [],
-      'POST',
-      {
-        fully_realized: true,
-        partial_realized: true,
-        andor: 'or',
-      },
-      '/api/get_table_data_basic/single_day?fully_realized=true?partial_realized=true?andor=or'
-    ).then((data) => {
-      setRealizedData(data);
-      setRealizedDataisLoading(false);
-    });
-  }
-
-  async function fetchStockPieData() {
-    cachedFetch(`/api/get_pie_data/stocks`, 24, fallbackObject).then((data) => {
-      setStockPieData(data);
-      setStockPieDataisLoading(false);
-    });
-  }
-
-  async function fetchCurrencyPieData() {
-    cachedFetch(`/api/get_pie_data/currency`, 24, fallbackObject).then(
-      (data) => {
-        setCurrencyPieData(data);
-        setCurrencyPieDataisLoading(false);
-      }
-    );
-  }
-
-  async function fetchSectorPieData() {
-    cachedFetch(`/api/get_pie_data/sector`, 24, fallbackObject).then((data) => {
-      setSectorPieData(data);
-      setSectorPieDataisLoading(false);
-    });
-  }
-
-  async function fetchCountryPieData() {
-    cachedFetch(`/api/get_pie_data/country`, 24, fallbackObject).then(
-      (data) => {
-        setCountryPieData(data);
-        setCountryPieDataisLoading(false);
-      }
-    );
   }
 
   // Fetch data on page load
   useEffect(() => {
-    fetchUnRealizedData();
-    fetchRealizedData();
-    fetchStockPieData();
-    fetchCurrencyPieData();
-    fetchSectorPieData();
-    fetchCountryPieData();
+    getUserInfo();
   }, []);
+
+  useEffect(() => {
+    if (userInfo) {
+      fetchUnRealizedData(userInfo).then(({ data, loading }) => {
+        setUnRealizedData(data);
+        setUnRealizedDataisLoading(loading);
+      });
+      fetchRealizedData(userInfo).then(({ data, loading }) => {
+        setRealizedData(data);
+        setRealizedDataisLoading(loading);
+      });
+      fetchStockPieData(userInfo).then(({ data, loading }) => {
+        setStockPieData(data);
+        setStockPieDataisLoading(loading);
+      });
+      fetchCurrencyPieData(userInfo).then(({ data, loading }) => {
+        setCurrencyPieData(data);
+        setCurrencyPieDataisLoading(loading);
+      });
+      fetchSectorPieData(userInfo).then(({ data, loading }) => {
+        setSectorPieData(data);
+        setSectorPieDataisLoading(loading);
+      });
+      fetchCountryPieData(userInfo).then(({ data, loading }) => {
+        setCountryPieData(data);
+        setCountryPieDataisLoading(loading);
+      });
+    }
+  }, [userInfo]);
 
   // Tabs setup
   const items = [
@@ -241,9 +280,9 @@ export default function Home() {
     <div>
       {/* Titel */}
       <div>
-        <h1 className="flex items-center justify-center p-5 text-3xl py">
+        <Title className="flex items-center justify-center pt-5" level={1}>
           Portfolio
-        </h1>
+        </Title>
       </div>
       {/* Tabs */}
       <div>
