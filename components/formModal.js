@@ -276,7 +276,7 @@ export default function AddXForm({ form, parentCallback }) {
         };
       }
       const response = ApiWithMessage(
-        `/api/add_item_to_input`,
+        `/api/add/add_item_to_input`,
         'Creating new items',
         'Items Created',
         'POST',

@@ -104,7 +104,7 @@ export default function Home() {
   }
 
   async function fetchTransactionsData() {
-    cachedFetch(`/api/get_table_data_basic`, [], 'POST', {
+    cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
       userId: userInfo.clientPrincipal.userId,
       containerName: 'input_transactions',
     }).then((data) => {
@@ -114,7 +114,7 @@ export default function Home() {
   }
 
   async function fetchInputInvestedData() {
-    cachedFetch(`/api/get_table_data_basic`, [], 'POST', {
+    cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
       userId: userInfo.clientPrincipal.userId,
       containerName: 'input_invested',
     }).then((data) => {
@@ -137,7 +137,7 @@ export default function Home() {
 
   // Callbacks
   async function callback_transactions() {
-    ovewriteCachedFetch(`/api/get_table_data_basic`, [], 'POST', {
+    ovewriteCachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
       userId: userInfo.clientPrincipal.userId,
       containerName: 'input_transactions',
     }).then((data) => {
@@ -146,7 +146,7 @@ export default function Home() {
   }
 
   async function callback_invested() {
-    ovewriteCachedFetch(`/api/get_table_data_basic`, [], 'POST', {
+    ovewriteCachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
       userId: userInfo.clientPrincipal.userId,
       containerName: 'input_invested',
     }).then((data) => {

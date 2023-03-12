@@ -138,7 +138,7 @@ export default function Home() {
   }
 
   async function fetchUnRealizedData() {
-    cachedFetch(`/api/get_table_data_basic`, [], 'POST', {
+    cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
       userId: userInfo.clientPrincipal.userId,
       containerName: 'single_day',
       fullyRealized: false,
@@ -149,7 +149,7 @@ export default function Home() {
   }
 
   async function fetchRealizedData() {
-    cachedFetch(`/api/get_table_data_basic`, [], 'POST', {
+    cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
       userId: userInfo.clientPrincipal.userId,
       containerName: 'single_day',
       fullyRealized: true,
@@ -162,7 +162,7 @@ export default function Home() {
   }
 
   async function fetchStockPieData() {
-    cachedFetch(`/api/get_pie_data`, fallbackObject, 'POST', {
+    cachedFetch(`/api/data/get_pie_data`, fallbackObject, 'POST', {
       userId: userInfo.clientPrincipal.userId,
       dataType: 'stocks',
     }).then((data) => {
@@ -172,7 +172,7 @@ export default function Home() {
   }
 
   async function fetchCurrencyPieData() {
-    cachedFetch(`/api/get_pie_data`, fallbackObject, 'POST', {
+    cachedFetch(`/api/data/get_pie_data`, fallbackObject, 'POST', {
       userId: userInfo.clientPrincipal.userId,
       dataType: 'currency',
     }).then((data) => {
@@ -182,7 +182,7 @@ export default function Home() {
   }
 
   async function fetchSectorPieData() {
-    cachedFetch(`/api/get_pie_data`, fallbackObject, 'POST', {
+    cachedFetch(`/api/data/get_pie_data`, fallbackObject, 'POST', {
       userId: userInfo.clientPrincipal.userId,
       dataType: 'sector',
     }).then((data) => {
@@ -192,7 +192,7 @@ export default function Home() {
   }
 
   async function fetchCountryPieData() {
-    cachedFetch(`/api/get_pie_data`, fallbackObject, 'POST', {
+    cachedFetch(`/api/data/get_pie_data`, fallbackObject, 'POST', {
       userId: userInfo.clientPrincipal.userId,
       dataType: 'country',
     }).then((data) => {

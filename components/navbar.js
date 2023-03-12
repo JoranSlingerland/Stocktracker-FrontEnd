@@ -14,7 +14,7 @@ import React, { useEffect, useState } from 'react';
 import { ApiWithMessage, regularFetch } from '../utils/api-utils';
 
 export default function App() {
-  const [userInfo, setUserInfo] = useState();
+  const [userInfo, setUserInfo] = useState(null);
   const [current, setCurrent] = useState('portfolio');
 
   useEffect(() => {
@@ -64,7 +64,9 @@ export default function App() {
       icon: <UserOutlined />,
       label: (
         <p className="hidden sm:inline-block">
-          {userInfo && userInfo.clientPrincipal.userDetails}
+          {userInfo &&
+            userInfo.clientPrincipal &&
+            userInfo.clientPrincipal.userDetails}
         </p>
       ),
       className: 'float-right hidden sm:inline-block',
@@ -78,7 +80,7 @@ export default function App() {
               <a
                 onClick={() =>
                   ApiWithMessage(
-                    `/api/orchestrators/start`,
+                    `/api/orchestrator/start`,
                     'Calling Orchestrator',
                     'Orchestration called, This will take a bit',
                     'POST',

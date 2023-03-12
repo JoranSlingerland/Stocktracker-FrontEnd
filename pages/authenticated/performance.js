@@ -147,7 +147,7 @@ export default function performance() {
 
   async function fetchTotalGainsData() {
     cachedFetch(
-      `/api/get_linechart_data`,
+      `/api/data/get_linechart_data`,
       totalGainsDataFallBackObject,
       'POST',
       {
@@ -163,7 +163,7 @@ export default function performance() {
 
   async function fetchDataline() {
     cachedFetch(
-      `/api/get_linechart_data`,
+      `/api/data/get_linechart_data`,
       valueGrowthDataFallBackObject,
       'POST',
       {
@@ -178,7 +178,7 @@ export default function performance() {
   }
 
   async function fetchDividendData() {
-    cachedFetch(`/api/get_barchart_data`, [], 'POST', {
+    cachedFetch(`/api/data/get_barchart_data`, [], 'POST', {
       userId: userInfo.clientPrincipal.userId,
       dataType: 'dividend',
       dataToGet: date,
@@ -189,7 +189,7 @@ export default function performance() {
   }
 
   async function fetchTopBar() {
-    cachedFetch(`/api/get_topbar_data`, topBarDataFallBackObject, 'POST', {
+    cachedFetch(`/api/data/get_topbar_data`, topBarDataFallBackObject, 'POST', {
       userId: userInfo.clientPrincipal.userId,
       dataToGet: date,
     }).then((data) => {
@@ -199,7 +199,7 @@ export default function performance() {
   }
 
   async function fetchTransactionCostData() {
-    cachedFetch(`/api/get_barchart_data`, [], 'POST', {
+    cachedFetch(`/api/data/get_barchart_data`, [], 'POST', {
       userId: userInfo.clientPrincipal.userId,
       dataType: 'transaction_cost',
       dataToGet: date,
@@ -210,7 +210,7 @@ export default function performance() {
   }
 
   async function fetchTable() {
-    cachedFetch(`/api/get_table_data_performance`, [], 'POST', {
+    cachedFetch(`/api/data/get_table_data_performance`, [], 'POST', {
       userId: userInfo.clientPrincipal.userId,
       dataToGet: date,
     }).then((data) => {

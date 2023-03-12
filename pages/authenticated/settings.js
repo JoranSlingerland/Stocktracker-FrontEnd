@@ -36,7 +36,7 @@ export default function Home() {
   }
 
   async function fetchOrchestratorList() {
-    regularFetch(`/api/orchestartors/list`, [], 'POST', {
+    regularFetch(`/api/orchestrator/list`, [], 'POST', {
       userId: userInfo.clientPrincipal.userId,
       days: 7,
     }).then((data) => {
@@ -95,7 +95,9 @@ export default function Home() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      fetchOrchestratorList();
+      if (userInfo) {
+        fetchOrchestratorList();
+      }
     }, 60000);
     return () => clearInterval(interval);
   }, []);
@@ -164,7 +166,7 @@ export default function Home() {
             title="Are you sure you want to terminate this orchestrator?"
             onConfirm={() => {
               handleClickOrchestratorAction(
-                '/api/orchestartors/terminate',
+                '/api/orchestrator/terminate',
                 'Terminating orchestrator',
                 'Orchestrator terminated',
                 {
@@ -196,7 +198,7 @@ export default function Home() {
             title="Are you sure you want to purge this orchestrator?"
             onConfirm={() => {
               handleClickOrchestratorAction(
-                '/api/orchestartors/purge',
+                '/api/orchestrator/purge',
                 'Purging orchestrator',
                 'Orchestrator purged',
                 {
@@ -237,7 +239,7 @@ export default function Home() {
                 <Button
                   onClick={() =>
                     handleClickOrchestratorAction(
-                      `/api/orchestrators/start`,
+                      `/api/orchestrator/start`,
                       'Calling Orchestrator',
                       'Orchestration called, This will take a while',
                       {
@@ -257,51 +259,6 @@ export default function Home() {
             </div>
             <Divider plain></Divider>
             <div className="grid grid-cols-2 grid-rows-2">
-              <Title level={4}>Create Containers</Title>
-              <div className="row-span-2 text-right">
-                <Button
-                  onClick={() =>
-                    handleClick(
-                      '/api/create_cosmosdb_db_and_container',
-                      'Creating Containers',
-                      'Containers created :)'
-                    )
-                  }
-                  type="primary"
-                  size="large"
-                >
-                  Create
-                </Button>
-              </div>
-              <div>
-                This will create all containers and databases that do not exist
-                yet.
-              </div>
-            </div>
-            <Divider plain></Divider>
-            <div className="grid grid-cols-2 grid-rows-2">
-              <Title level={4}>Delete Containers</Title>
-              <div className="row-span-2 text-right">
-                <Button
-                  onClick={() =>
-                    handleClick(
-                      '/api/delete_cosmosdb_container/output_only',
-                      'Deleting containers',
-                      'Containers deleted :)'
-                    )
-                  }
-                  type="primary"
-                  size="large"
-                >
-                  Delete
-                </Button>
-              </div>
-              <div>
-                This will delete all the containers except the input containers.
-              </div>
-            </div>
-            <Divider plain></Divider>
-            <div className="grid grid-cols-2 grid-rows-2">
               <Title level={4}>Clear local storage</Title>
               <div className="row-span-2 text-right">
                 <Button
@@ -315,41 +272,6 @@ export default function Home() {
               <div>
                 This will clear all cached data in the local storage of the
                 browser.
-              </div>
-            </div>
-          </div>
-          <Divider plain></Divider>
-          <div className="w-full px-2 columns-1">
-            <div className="flex items-center justify-center text-xl">
-              <Title type={'danger'} level={3}>
-                Danger Zone
-              </Title>
-            </div>
-            <div className="grid grid-cols-2 grid-rows-2">
-              <Title level={4}>Delete all</Title>
-              <div className="row-span-2 text-right">
-                <Popconfirm
-                  title="Delete all"
-                  description="Are you sure you want to delete all containers"
-                  okText="Yes"
-                  arrow={false}
-                  icon={false}
-                  okButtonProps={{ danger: true, loading: false }}
-                  onConfirm={() =>
-                    handleClick(
-                      `/api/delete_cosmosdb_container/all`,
-                      'Deleting Containers',
-                      'All Containers deleted :)'
-                    )
-                  }
-                >
-                  <Button danger type="primary" size="large">
-                    Delete
-                  </Button>
-                </Popconfirm>
-              </div>
-              <div>
-                This will delete all containers including the input containers.
               </div>
             </div>
           </div>
@@ -370,6 +292,117 @@ export default function Home() {
         </div>
       ),
     },
+    userInfo &&
+      userInfo.clientPrincipal.userRoles.includes('admin') && {
+        key: '3',
+        title: 'Admin',
+        label: 'Admin',
+        children: (
+          <div className="flex flex-col items-center">
+            <div className="w-full px-2 columns-1">
+              <div className="flex items-center justify-center">
+                <Title level={3}>Container actions</Title>
+              </div>
+              <div className="grid grid-cols-2 grid-rows-2">
+                <Title level={4}>Create Containers</Title>
+                <div className="row-span-2 text-right">
+                  <Button
+                    onClick={() =>
+                      handleClick(
+                        '/api/priveleged/create_cosmosdb_and_container',
+                        'Creating Containers',
+                        'Containers created :)'
+                      )
+                    }
+                    type="primary"
+                    size="large"
+                  >
+                    Create
+                  </Button>
+                </div>
+                <div>
+                  This will create all containers and databases that do not
+                  exist yet.
+                </div>
+              </div>
+              <Divider plain></Divider>
+              <div className="w-full px-2 columns-1">
+                <div className="flex flex-col items-center justify-center text-xl">
+                  <Title type={'danger'} level={3}>
+                    Danger Zone
+                  </Title>
+                  <Text type={'danger'}>
+                    Actions below can cause permanent data loss
+                  </Text>
+                </div>
+                <div className="grid grid-cols-2 grid-rows-2">
+                  <Title level={4}>Delete output containers</Title>
+                  <div className="row-span-2 text-right">
+                    <Popconfirm
+                      title="Delete output containers?"
+                      description="Are you sure you want to delete the output containers"
+                      okText="Yes"
+                      arrow={false}
+                      icon={false}
+                      okButtonProps={{ danger: true, loading: false }}
+                      onConfirm={() =>
+                        handleClickOrchestratorAction(
+                          `/api/priveleged/delete_cosmosdb_container`,
+                          'Deleting Containers',
+                          'All Containers deleted :)',
+                          {
+                            containersToDelete: 'output_only',
+                          }
+                        )
+                      }
+                    >
+                      <Button danger type="primary" size="large">
+                        Delete
+                      </Button>
+                    </Popconfirm>
+                  </div>
+                  <div>
+                    This will delete all the containers except the input
+                    containers.
+                  </div>
+                </div>
+                <Divider plain></Divider>
+                <div className="grid grid-cols-2 grid-rows-2">
+                  <Title level={4}>Delete all containers</Title>
+                  <div className="row-span-2 text-right">
+                    <Popconfirm
+                      title="Delete all"
+                      description="Are you sure you want to delete all containers"
+                      okText="Yes"
+                      arrow={false}
+                      icon={false}
+                      okButtonProps={{ danger: true, loading: false }}
+                      onConfirm={() =>
+                        handleClickOrchestratorAction(
+                          `/api/priveleged/delete_cosmosdb_container`,
+                          'Deleting Containers',
+                          'All Containers deleted :)',
+                          {
+                            containersToDelete: 'all',
+                          }
+                        )
+                      }
+                    >
+                      <Button danger type="primary" size="large">
+                        Delete
+                      </Button>
+                    </Popconfirm>
+                  </div>
+                  <div>
+                    This will delete all containers including the input
+                    containers.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ),
+      },
   ];
 
   return (
