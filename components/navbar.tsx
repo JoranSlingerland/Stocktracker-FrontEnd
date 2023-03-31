@@ -1,5 +1,3 @@
-// components\navbar.js
-
 import {
   AreaChartOutlined,
   HomeOutlined,
@@ -14,7 +12,15 @@ import React, { useEffect, useState } from 'react';
 import { ApiWithMessage, regularFetch } from '../utils/api-utils';
 
 export default function App() {
-  const [userInfo, setUserInfo] = useState(null);
+  const [userInfo, setUserInfo] = useState({
+    clientPrincipal: {
+      userId: '',
+      userRoles: ['anonymous'],
+      claims: [],
+      identityProvider: '',
+      userDetails: '',
+    },
+  });
   const [current, setCurrent] = useState('portfolio');
 
   useEffect(() => {
@@ -27,6 +33,18 @@ export default function App() {
       setUserInfo(data);
     });
   }
+
+  const authenticated = () => {
+    if (
+      userInfo &&
+      userInfo.clientPrincipal &&
+      userInfo.clientPrincipal.userRoles.includes('authenticated')
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   const items = [
     {
@@ -70,7 +88,7 @@ export default function App() {
         </p>
       ),
       className: 'float-right hidden sm:inline-block',
-      disabled: !userInfo,
+      disabled: !authenticated(),
       children: [
         {
           key: 'quick_refresh',

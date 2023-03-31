@@ -1,13 +1,17 @@
-// components\PrimeFacePieChart.js
-
 import { Spin, Checkbox, List, Skeleton } from 'antd';
 import { Chart } from 'primereact/chart';
 import { formatCurrency } from '../utils/formatting';
 import React from 'react';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-export default function PieChart({ data, isloading }) {
-  const myChartRef = React.createRef();
+export default function PieChart({
+  data,
+  isloading,
+}: {
+  data: any;
+  isloading: boolean;
+}): JSX.Element {
+  const myChartRef: any = React.createRef();
 
   const chartData = {
     labels: data['labels'],
@@ -22,29 +26,31 @@ export default function PieChart({ data, isloading }) {
     ],
   };
 
-  const list_data_source = chartData['labels'].map((label, i) => {
-    return {
-      title: label,
-      color: chartData['datasets'][0]['backgroundColor'][i],
-      data: chartData['datasets'][0]['data'][i],
-      key: i,
-    };
-  });
+  const list_data_source = chartData['labels'].map(
+    (label: string, i: number) => {
+      return {
+        title: label,
+        color: chartData['datasets'][0]['backgroundColor'][i],
+        data: chartData['datasets'][0]['data'][i],
+        key: i,
+      };
+    }
+  );
 
-  function find_parent_with_id(target, id) {
+  function find_parent_with_id(target: any, id: string) {
     while (target && target.id !== id) {
       target = target.parentNode;
     }
     return target;
   }
 
-  function find_target_index(target) {
+  function find_target_index(target: any) {
     var parent = target.parentNode;
     var index = Array.prototype.indexOf.call(parent.children, target);
     return index;
   }
 
-  function clickevent(e) {
+  function clickevent(e: { target: any }) {
     var target = e.target;
     target = find_parent_with_id(target, 'legend_li_item');
     var index = find_target_index(target);
@@ -53,7 +59,7 @@ export default function PieChart({ data, isloading }) {
     chart_ctx.update();
   }
 
-  function mouseEnter(e) {
+  function mouseEnter(e: any) {
     var target = e.target;
     target = find_parent_with_id(target, 'legend_li_item');
     var index = find_target_index(target);
@@ -62,7 +68,7 @@ export default function PieChart({ data, isloading }) {
     chart_ctx.update();
   }
 
-  function mouseLeave(e) {
+  function mouseLeave(e: any) {
     var target = e.target;
     target = find_parent_with_id(target, 'legend_li_item');
     const chart_ctx = myChartRef.current.getChart();
@@ -74,7 +80,12 @@ export default function PieChart({ data, isloading }) {
     plugins: {
       datalabels: {
         color: '#fff',
-        formatter: (value, ctx) => {
+        formatter: (
+          value: number,
+          ctx: {
+            chart: { data: { datasets: { data: number[] }[] } };
+          }
+        ) => {
           let sum = 0;
           let dataArr = ctx.chart.data.datasets[0].data;
           dataArr.map((data) => {
@@ -87,14 +98,18 @@ export default function PieChart({ data, isloading }) {
       tooltip: {
         usePointStyle: true,
         callbacks: {
-          label: function (context) {
+          label: function (context: {
+            dataIndex: any;
+            label: any;
+            dataset: { data: { [x: string]: string | number } };
+          }) {
             let index = context.dataIndex;
             let label = context.label;
             label += ': ';
             label += formatCurrency(context.dataset.data[index]);
             return label;
           },
-          labelPointStyle: function (context) {
+          labelPointStyle: function () {
             return {
               pointStyle: 'triangle',
               rotation: 0,
@@ -135,15 +150,16 @@ export default function PieChart({ data, isloading }) {
             className="w-full"
             size="small"
             pagination={{
-              onChange: (page) => {
-                console.log(page);
-              },
               pageSize: 8,
               size: 'small',
               hideOnSinglePage: true,
               className: 'm-0',
             }}
-            renderItem={(item) => (
+            renderItem={(item: {
+              title: string;
+              color: string;
+              data: number | string;
+            }) => (
               <List.Item
                 key="legend_li_item"
                 id="legend_li_item"

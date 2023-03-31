@@ -1,16 +1,23 @@
-// components\Overviewbar.js
-
 import { useRouter } from 'next/router';
 import { Skeleton, Typography, Statistic } from 'antd';
 import { RiseOutlined, FallOutlined } from '@ant-design/icons';
 import { formatCurrency, formatPercentage } from '../utils/formatting';
+import { valueType } from 'antd/es/statistic/utils';
 
 const { Text } = Typography;
 
-export default function tabs({ topBarData, loading, handleTabChange }) {
+export default function tabs({
+  topBarData,
+  loading,
+  handleTabChange,
+}: {
+  topBarData: any;
+  loading: boolean;
+  handleTabChange: (tab: string) => void;
+}): JSX.Element {
   const tab = (useRouter().query.tab || 1).toString();
 
-  const PercentageFormat = (value) => {
+  const PercentageFormat = (value: valueType) => {
     if (value > 0) {
       const data = formatPercentage(value);
       return (

@@ -1,17 +1,16 @@
-// pages\authenticated\portfolio.js
-
 import { Tabs, Collapse, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import PieChart from '../../components/PrimeFacePieChart';
 import AntdTable from '../../components/antdTable';
-import { cachedFetch, regularFetch } from '../../utils/api-utils.js';
+import { cachedFetch, regularFetch } from '../../utils/api-utils';
 import {
   formatCurrency,
   formatCurrencyWithColors,
   formatPercentageWithColors,
   formatNumber,
   formatImageAndText,
-} from '../../utils/formatting.js';
+} from '../../utils/formatting';
+import { UserInfo_Type } from '../../utils/types';
 
 const { Title } = Typography;
 
@@ -22,43 +21,49 @@ const UnRealizedColumns = [
     title: 'symbol',
     dataIndex: 'symbol',
     key: 'symbol',
-    render: (text, record) => formatImageAndText(text, record.meta.logo),
+    render: (text: string, record: { meta: { logo: string } }) =>
+      formatImageAndText(text, record.meta.logo),
   },
   {
     title: 'Name',
     dataIndex: 'meta',
     key: 'meta.name',
-    render: (text) => text.name,
+    render: (text: { name: any }) => text.name,
   },
   {
     title: 'Quantity',
     dataIndex: 'unrealized',
     key: 'unrealized.quantity',
-    render: (text) => formatNumber(text.quantity),
+    render: (text: { quantity: string | number }) =>
+      formatNumber(text.quantity),
   },
   {
     title: 'Total Cost',
     dataIndex: 'unrealized',
     key: 'unrealized.total_cost',
-    render: (text) => formatCurrency(text.total_cost),
+    render: (text: { total_cost: string | number }) =>
+      formatCurrency(text.total_cost),
   },
   {
     title: 'Profit / Loss',
     dataIndex: 'unrealized',
     key: 'unrealized.total_pl',
-    render: (text) => formatCurrencyWithColors(text.total_pl),
+    render: (text: { total_pl: string | number }) =>
+      formatCurrencyWithColors(text.total_pl),
   },
   {
     title: 'Percentage',
     dataIndex: 'unrealized',
     key: 'unrealized.total_pl_percentage',
-    render: (text) => formatPercentageWithColors(text.total_pl_percentage),
+    render: (text: { total_pl_percentage: string | number }) =>
+      formatPercentageWithColors(text.total_pl_percentage),
   },
   {
     title: 'Total Value',
     dataIndex: 'unrealized',
     key: 'unrealized.total_value',
-    render: (text) => formatCurrency(text.total_value),
+    render: (text: { total_value: string | number }) =>
+      formatCurrency(text.total_value),
   },
 ];
 
@@ -67,43 +72,49 @@ const RealizedColumns = [
     title: 'symbol',
     dataIndex: 'symbol',
     key: 'symbol',
-    render: (text, record) => formatImageAndText(text, record.meta.logo),
+    render: (text: string, record: { meta: { logo: string } }) =>
+      formatImageAndText(text, record.meta.logo),
   },
   {
     title: 'Name',
     dataIndex: 'meta',
     key: 'meta.name',
-    render: (text) => text.name,
+    render: (text: { name: any }) => text.name,
   },
   {
     title: 'Quantity',
     dataIndex: 'realized',
     key: 'realized.quantity',
-    render: (text) => formatNumber(text.quantity),
+    render: (text: { quantity: string | number }) =>
+      formatNumber(text.quantity),
   },
   {
     title: 'Total Cost',
     dataIndex: 'realized',
     key: 'realized.buy_price',
-    render: (text) => formatCurrency(text.buy_price),
+    render: (text: { buy_price: string | number }) =>
+      formatCurrency(text.buy_price),
   },
   {
     title: 'Profit / Loss',
     dataIndex: 'realized',
     key: 'realized.total_pl',
-    render: (text) => formatCurrencyWithColors(text.total_pl),
+    render: (text: { total_pl: string | number }) =>
+      formatCurrencyWithColors(text.total_pl),
   },
   {
     title: 'Percentage',
     dataIndex: 'realized',
     key: 'realized.total_pl_percentage',
-    render: (text) => formatPercentageWithColors(text.total_pl_percentage),
+    render: (text: { total_pl_percentage: string | number }) =>
+      formatPercentageWithColors(text.total_pl_percentage),
   },
   {
     title: 'Sell Price',
     dataIndex: 'realized',
     key: 'realized.sell_price',
-    render: (text) => formatCurrency(text.sell_price),
+    render: (text: { sell_price: string | number }) =>
+      formatCurrency(text.sell_price),
   },
 ];
 
@@ -113,7 +124,7 @@ const fallbackObject = {
   color: [],
 };
 
-async function fetchUnRealizedData(userInfo) {
+async function fetchUnRealizedData(userInfo: UserInfo_Type) {
   const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
     userId: userInfo.clientPrincipal.userId,
     containerName: 'single_day',
@@ -122,7 +133,7 @@ async function fetchUnRealizedData(userInfo) {
   return { data: data, loading: false };
 }
 
-async function fetchRealizedData(userInfo) {
+async function fetchRealizedData(userInfo: UserInfo_Type) {
   const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
     userId: userInfo.clientPrincipal.userId,
     containerName: 'single_day',
@@ -133,7 +144,7 @@ async function fetchRealizedData(userInfo) {
   return { data: data, loading: false };
 }
 
-async function fetchStockPieData(userInfo) {
+async function fetchStockPieData(userInfo: UserInfo_Type) {
   const data = await cachedFetch(
     `/api/data/get_pie_data`,
     fallbackObject,
@@ -146,7 +157,7 @@ async function fetchStockPieData(userInfo) {
   return { data: data, loading: false };
 }
 
-async function fetchCurrencyPieData(userInfo) {
+async function fetchCurrencyPieData(userInfo: UserInfo_Type) {
   const data = await cachedFetch(
     `/api/data/get_pie_data`,
     fallbackObject,
@@ -159,7 +170,7 @@ async function fetchCurrencyPieData(userInfo) {
   return { data: data, loading: false };
 }
 
-async function fetchSectorPieData(userInfo) {
+async function fetchSectorPieData(userInfo: UserInfo_Type) {
   const data = await cachedFetch(
     `/api/data/get_pie_data`,
     fallbackObject,
@@ -172,7 +183,7 @@ async function fetchSectorPieData(userInfo) {
   return { data: data, loading: false };
 }
 
-async function fetchCountryPieData(userInfo) {
+async function fetchCountryPieData(userInfo: UserInfo_Type) {
   const data = await cachedFetch(
     `/api/data/get_pie_data`,
     fallbackObject,
@@ -187,7 +198,15 @@ async function fetchCountryPieData(userInfo) {
 
 export default function Home() {
   // Const setup
-  const [userInfo, setUserInfo] = useState(null);
+  const [userInfo, setUserInfo] = useState({
+    clientPrincipal: {
+      userId: '',
+      userRoles: ['anonymous'],
+      claims: [],
+      identityProvider: '',
+      userDetails: '',
+    },
+  });
   const [UnRealizedData, setUnRealizedData] = useState([null]);
   const [UnRealizedDataisLoading, setUnRealizedDataisLoading] = useState(true);
   const [RealizedData, setRealizedData] = useState(null);
@@ -215,7 +234,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (userInfo) {
+    if (userInfo.clientPrincipal.userId !== '') {
       fetchUnRealizedData(userInfo).then(({ data, loading }) => {
         setUnRealizedData(data);
         setUnRealizedDataisLoading(loading);
@@ -300,7 +319,7 @@ export default function Home() {
       {/* Table */}
       <div>
         <Collapse bordered={false} ghost>
-          <Panel className="p-0" header="Realized Stocks">
+          <Panel className="p-0" header="Realized Stocks" key="1">
             <AntdTable
               columns={RealizedColumns}
               data={RealizedData}

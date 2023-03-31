@@ -13,7 +13,15 @@ import { useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { ApiWithMessage, regularFetch } from '../utils/api-utils';
 
-const AddStockForm = ({ open, onCreate, onCancel }) => {
+const AddStockForm = ({
+  open,
+  onCreate,
+  onCancel,
+}: {
+  open: boolean;
+  onCreate: (values: any) => void;
+  onCancel: () => void;
+}): JSX.Element => {
   const [form] = Form.useForm();
   return (
     <Modal
@@ -177,7 +185,15 @@ const AddStockForm = ({ open, onCreate, onCancel }) => {
   );
 };
 
-const AddTransactionForm = ({ open, onCreate, onCancel }) => {
+const AddTransactionForm = ({
+  open,
+  onCreate,
+  onCancel,
+}: {
+  open: boolean;
+  onCreate: (values: any) => void;
+  onCancel: () => void;
+}): JSX.Element => {
   const [form] = Form.useForm();
   return (
     <Modal
@@ -254,16 +270,21 @@ const AddTransactionForm = ({ open, onCreate, onCancel }) => {
   );
 };
 
-export default function AddXForm({ form, parentCallback }) {
+export default function AddXForm({
+  form,
+  parentCallback,
+}: {
+  form: 'addStock' | 'addTransaction';
+  parentCallback: () => void;
+}) {
   const [open, setOpen] = useState(false);
 
-  const onCreate = (values) => {
+  const onCreate = (values: any) => {
     setOpen(false);
     async function postData() {
       const data = await regularFetch('/.auth/me', undefined);
       values['userid'] = data.clientPrincipal.userId;
       let value;
-
       if (form === 'addStock') {
         value = {
           type: 'stock',

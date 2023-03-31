@@ -1,5 +1,3 @@
-// pages\error_pages\[id].js
-
 import { Divider } from 'antd';
 
 export async function getStaticPaths() {
@@ -11,14 +9,13 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps(context) {
+export async function getStaticProps(context: { params: { id: string } }) {
   return {
     props: { errorcode: context.params.id },
   };
 }
 
-export default function DynamicPage(errorcode) {
-  console.log(errorcode.errorcode);
+export default function DynamicPage(errorcode: { errorcode: string }) {
   return (
     <div className="flex items-center justify-center w-full h-screen">
       <h1>{errortext(errorcode)}</h1>
@@ -26,7 +23,7 @@ export default function DynamicPage(errorcode) {
   );
 }
 
-function errortext(errorcode) {
+function errortext(errorcode: { errorcode: string }) {
   if (errorcode.errorcode === '401') {
     return (
       <div>

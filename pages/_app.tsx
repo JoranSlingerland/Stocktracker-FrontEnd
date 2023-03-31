@@ -1,17 +1,12 @@
-// pages/_app.js
-
 import Navbar from '../components/navbar';
 import '../styles/globals.css';
-import { ConfigProvider, theme } from 'antd';
+import { ConfigProvider } from 'antd';
+import type { AppProps } from 'next/app';
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
-      <ConfigProvider
-        theme={{
-          ...theme,
-        }}
-      >
+      <ConfigProvider theme={{}}>
         <div className="min-h-screen">
           <Navbar />
           <div className="flex justify-center px-2 xl:px-0">

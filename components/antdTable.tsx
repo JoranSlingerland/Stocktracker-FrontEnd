@@ -10,8 +10,18 @@ export default function AntdTable({
   columnProps,
   searchText,
   globalSorter,
-}) {
-  const sorterBy = (key) => (a, b) => {
+}: {
+  columns: any;
+  data: any;
+  isLoading: boolean;
+  caption?: JSX.Element;
+  searchEnabled?: boolean;
+  tableProps?: any;
+  columnProps?: any;
+  searchText?: string;
+  globalSorter?: boolean;
+}): JSX.Element {
+  const sorterBy = (key: string) => (a: any, b: any) => {
     const keyList = key.split('.');
     keyList.forEach((key) => {
       a = a[key];
@@ -23,13 +33,13 @@ export default function AntdTable({
     return 0;
   };
 
-  const colDataIndexList = columns.map((col) => col.dataIndex);
+  const colDataIndexList = columns.map((col: any) => col.dataIndex);
 
-  columns = columns.map((col) => {
-    const filterProps = {};
+  columns = columns.map((col: any) => {
+    const filterProps: any = {};
     if (searchEnabled) {
       filterProps.filteredValue = searchText;
-      filterProps.onFilter = (value, record) => {
+      filterProps.onFilter = (value: any, record: any) => {
         // deep copy record
         let searchrecord = JSON.parse(JSON.stringify(record));
         Object.keys(searchrecord).forEach((key) => {
