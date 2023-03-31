@@ -13,6 +13,9 @@ function formatCurrencyWithColors(
   value: number | string,
   maximumFractionDigits = 2
 ) {
+  if (typeof value === 'string') {
+    value = parseFloat(value);
+  }
   if (value > 0) {
     return (
       <Text type="success">{formatCurrency(value, maximumFractionDigits)}</Text>
@@ -37,6 +40,9 @@ function formatPercentageWithColors(
   value: number | string,
   maximumFractionDigits = 2
 ) {
+  if (typeof value === 'string') {
+    value = parseFloat(value);
+  }
   if (value > 0) {
     return (
       <Text type="success">
