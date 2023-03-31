@@ -1,9 +1,7 @@
-// utils\formatting.js
 import { Image, Typography } from 'antd';
-
 const { Text } = Typography;
 
-function formatCurrency(value, maximumFractionDigits = 2) {
+function formatCurrency(value: number | string, maximumFractionDigits = 2) {
   return value.toLocaleString('nl-NL', {
     style: 'currency',
     currency: 'EUR',
@@ -11,7 +9,13 @@ function formatCurrency(value, maximumFractionDigits = 2) {
   });
 }
 
-function formatCurrencyWithColors(value, maximumFractionDigits = 2) {
+function formatCurrencyWithColors(
+  value: number | string,
+  maximumFractionDigits = 2
+) {
+  if (typeof value === 'string') {
+    value = parseFloat(value);
+  }
   if (value > 0) {
     return (
       <Text type="success">{formatCurrency(value, maximumFractionDigits)}</Text>
@@ -25,14 +29,20 @@ function formatCurrencyWithColors(value, maximumFractionDigits = 2) {
   return formatCurrency(value, maximumFractionDigits);
 }
 
-function formatPercentage(value, maximumFractionDigits = 2) {
+function formatPercentage(value: number | string, maximumFractionDigits = 2) {
   return value.toLocaleString('nl-NL', {
     style: 'percent',
     minimumFractionDigits: maximumFractionDigits,
   });
 }
 
-function formatPercentageWithColors(value, maximumFractionDigits = 2) {
+function formatPercentageWithColors(
+  value: number | string,
+  maximumFractionDigits = 2
+) {
+  if (typeof value === 'string') {
+    value = parseFloat(value);
+  }
   if (value > 0) {
     return (
       <Text type="success">
@@ -50,13 +60,13 @@ function formatPercentageWithColors(value, maximumFractionDigits = 2) {
   return formatPercentage(value, maximumFractionDigits);
 }
 
-function formatNumber(value, maximumFractionDigits = 2) {
+function formatNumber(value: number | string, maximumFractionDigits = 2) {
   return value.toLocaleString('nl-NL', {
     maximumFractionDigits: maximumFractionDigits,
   });
 }
 
-function formatImageAndText(text, image) {
+function formatImageAndText(text: string, image: string) {
   return (
     <div className="flex flex-row">
       <Image

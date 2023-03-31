@@ -1,10 +1,14 @@
-// components\PrimeFaceLineGraph.js
-
 import { Spin } from 'antd';
 import { Chart } from 'primereact/chart';
 import { formatCurrency } from '../utils/formatting';
 
-export default function BasicLineGraph({ isloading, data }) {
+export default function BasicLineGraph({
+  isloading,
+  data,
+}: {
+  isloading: boolean;
+  data: any;
+}): JSX.Element {
   let multiAxisOptions = {
     stacked: false,
     maintainAspectRatio: false,
@@ -16,7 +20,10 @@ export default function BasicLineGraph({ isloading, data }) {
     plugins: {
       tooltip: {
         callbacks: {
-          label: function (context) {
+          label: function (context: {
+            dataIndex: any;
+            dataset: { label: any; data: { [x: string]: string | number } };
+          }) {
             let index = context.dataIndex;
             let label = context.dataset.label;
             label += ': ';
@@ -43,7 +50,7 @@ export default function BasicLineGraph({ isloading, data }) {
         display: true,
         position: 'left',
         ticks: {
-          callback: function (value) {
+          callback: function (value: number) {
             if (Math.floor(value) === value) {
               return formatCurrency(value, 0);
             }
@@ -102,4 +109,12 @@ export default function BasicLineGraph({ isloading, data }) {
       </Spin>
     );
   }
+  // return empty chart if no data
+  return (
+    <div>
+      <Spin spinning={isloading}>
+        <Chart type="line" data={{}} options={multiAxisOptions} />
+      </Spin>
+    </div>
+  );
 }

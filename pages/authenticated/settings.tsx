@@ -1,5 +1,3 @@
-// pages\authenticated\settings.js
-
 import {
   Divider,
   Button,
@@ -22,8 +20,8 @@ import AntdTable from '../../components/antdTable';
 
 const { Text, Title } = Typography;
 
-async function fetchOrchestratorList(userInfo) {
-  const data = await regularFetch(`/api/orchestrator/list`, [], 'POST', {
+async function fetchOrchestratorList(userInfo: any) {
+  const data: any = await regularFetch(`/api/orchestrator/list`, [], 'POST', {
     userId: userInfo.clientPrincipal.userId,
     days: 7,
   });
@@ -31,24 +29,32 @@ async function fetchOrchestratorList(userInfo) {
 }
 
 export default function Home() {
-  const [userInfo, setUserInfo] = useState(null);
+  const [userInfo, setUserInfo] = useState({
+    clientPrincipal: {
+      userId: '',
+      userRoles: ['anonymous'],
+      claims: [],
+      identityProvider: '',
+      userDetails: '',
+    },
+  });
   const [orchestratorList, setOrchestratorList] = useState(null);
   const [orchestratorListIsLoading, setOrchestratorListIsLoading] =
     useState(true);
 
   // fetch functions
   async function getUserInfo() {
-    await regularFetch('/.auth/me', undefined).then((data) => {
+    await regularFetch('/.auth/me', undefined).then((data: any) => {
       setUserInfo(data);
     });
   }
 
   // handle click functions
   async function handleClickOrchestratorAction(
-    url,
-    runningMessage,
-    successMessage,
-    body
+    url: string,
+    runningMessage: string,
+    successMessage: string,
+    body: object
   ) {
     if (userInfo === null) {
       await getUserInfo();
@@ -61,13 +67,17 @@ export default function Home() {
       body,
       'multipart/form-data'
     ).then(() => {
-      fetchOrchestratorList();
+      fetchOrchestratorList(userInfo);
     });
   }
 
-  async function handleClick(url, runningMessage, successMessage) {
+  async function handleClick(
+    url: string,
+    runningMessage: string,
+    successMessage: string
+  ) {
     ApiWithMessage(url, runningMessage, successMessage).then(() => {
-      fetchOrchestratorList();
+      fetchOrchestratorList(userInfo);
     });
   }
 
@@ -86,7 +96,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (userInfo) {
+    if (userInfo.clientPrincipal.userId !== '') {
       fetchOrchestratorList(userInfo).then(({ data, loading }) => {
         setOrchestratorList(data);
         setOrchestratorListIsLoading(loading);
@@ -96,7 +106,7 @@ export default function Home() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (userInfo) {
+      if (userInfo.clientPrincipal.userId !== '') {
         fetchOrchestratorList(userInfo).then(({ data, loading }) => {
           setOrchestratorList(data);
           setOrchestratorListIsLoading(loading);
@@ -107,14 +117,14 @@ export default function Home() {
   }, [userInfo]);
 
   // constants
-  const { height, width } = useWindowDimensions();
+  const dimensions = useWindowDimensions();
 
   const orchestratorColumns = [
     {
       title: 'Status',
       dataIndex: 'runtimeStatus',
       key: 'runtimeStatus',
-      render: (text) => {
+      render: (text: string) => {
         if (text === 'Completed') {
           return (
             <Tag icon={<CheckCircleOutlined />} color="success">
@@ -158,13 +168,13 @@ export default function Home() {
       title: 'Instance ID',
       dataIndex: 'instanceId',
       key: 'instanceId',
-      render: (text) => <Text copyable>{text}</Text>,
+      render: (text: string) => <Text copyable>{text}</Text>,
     },
     {
       title: 'Actions',
       dataIndex: 'actions',
       key: 'actions',
-      render: (text, record) => (
+      render: (text: string, record: any) => (
         <div className="">
           <Popconfirm
             title="Are you sure you want to terminate this orchestrator?"
@@ -296,118 +306,120 @@ export default function Home() {
         </div>
       ),
     },
-    userInfo &&
-      userInfo.clientPrincipal.userRoles.includes('admin') && {
-        key: '3',
-        title: 'Admin',
-        label: 'Admin',
-        children: (
-          <div className="flex flex-col items-center">
+  ];
+
+  if (userInfo.clientPrincipal.userRoles.includes('admin')) {
+    items.push({
+      key: '3',
+      title: 'Admin',
+      label: 'Admin',
+      children: (
+        <div className="flex flex-col items-center">
+          <div className="w-full px-2 columns-1">
+            <div className="flex items-center justify-center">
+              <Title level={3}>Container actions</Title>
+            </div>
+            <div className="grid grid-cols-2 grid-rows-2">
+              <Title level={4}>Create Containers</Title>
+              <div className="row-span-2 text-right">
+                <Button
+                  onClick={() =>
+                    handleClick(
+                      '/api/priveleged/create_cosmosdb_and_container',
+                      'Creating Containers',
+                      'Containers created :)'
+                    )
+                  }
+                  type="primary"
+                  size="large"
+                >
+                  Create
+                </Button>
+              </div>
+              <div>
+                This will create all containers and databases that do not exist
+                yet.
+              </div>
+            </div>
+            <Divider plain></Divider>
             <div className="w-full px-2 columns-1">
-              <div className="flex items-center justify-center">
-                <Title level={3}>Container actions</Title>
+              <div className="flex flex-col items-center justify-center text-xl">
+                <Title type={'danger'} level={3}>
+                  Danger Zone
+                </Title>
+                <Text type={'danger'}>
+                  Actions below can cause permanent data loss
+                </Text>
               </div>
               <div className="grid grid-cols-2 grid-rows-2">
-                <Title level={4}>Create Containers</Title>
+                <Title level={4}>Delete output containers</Title>
                 <div className="row-span-2 text-right">
-                  <Button
-                    onClick={() =>
-                      handleClick(
-                        '/api/priveleged/create_cosmosdb_and_container',
-                        'Creating Containers',
-                        'Containers created :)'
+                  <Popconfirm
+                    title="Delete output containers?"
+                    description="Are you sure you want to delete the output containers"
+                    okText="Yes"
+                    arrow={false}
+                    icon={false}
+                    okButtonProps={{ danger: true, loading: false }}
+                    onConfirm={() =>
+                      handleClickOrchestratorAction(
+                        `/api/priveleged/delete_cosmosdb_container`,
+                        'Deleting Containers',
+                        'All Containers deleted :)',
+                        {
+                          containersToDelete: 'output_only',
+                        }
                       )
                     }
-                    type="primary"
-                    size="large"
                   >
-                    Create
-                  </Button>
+                    <Button danger type="primary" size="large">
+                      Delete
+                    </Button>
+                  </Popconfirm>
                 </div>
                 <div>
-                  This will create all containers and databases that do not
-                  exist yet.
+                  This will delete all the containers except the input
+                  containers.
                 </div>
               </div>
               <Divider plain></Divider>
-              <div className="w-full px-2 columns-1">
-                <div className="flex flex-col items-center justify-center text-xl">
-                  <Title type={'danger'} level={3}>
-                    Danger Zone
-                  </Title>
-                  <Text type={'danger'}>
-                    Actions below can cause permanent data loss
-                  </Text>
+              <div className="grid grid-cols-2 grid-rows-2">
+                <Title level={4}>Delete all containers</Title>
+                <div className="row-span-2 text-right">
+                  <Popconfirm
+                    title="Delete all"
+                    description="Are you sure you want to delete all containers"
+                    okText="Yes"
+                    arrow={false}
+                    icon={false}
+                    okButtonProps={{ danger: true, loading: false }}
+                    onConfirm={() =>
+                      handleClickOrchestratorAction(
+                        `/api/priveleged/delete_cosmosdb_container`,
+                        'Deleting Containers',
+                        'All Containers deleted :)',
+                        {
+                          containersToDelete: 'all',
+                        }
+                      )
+                    }
+                  >
+                    <Button danger type="primary" size="large">
+                      Delete
+                    </Button>
+                  </Popconfirm>
                 </div>
-                <div className="grid grid-cols-2 grid-rows-2">
-                  <Title level={4}>Delete output containers</Title>
-                  <div className="row-span-2 text-right">
-                    <Popconfirm
-                      title="Delete output containers?"
-                      description="Are you sure you want to delete the output containers"
-                      okText="Yes"
-                      arrow={false}
-                      icon={false}
-                      okButtonProps={{ danger: true, loading: false }}
-                      onConfirm={() =>
-                        handleClickOrchestratorAction(
-                          `/api/priveleged/delete_cosmosdb_container`,
-                          'Deleting Containers',
-                          'All Containers deleted :)',
-                          {
-                            containersToDelete: 'output_only',
-                          }
-                        )
-                      }
-                    >
-                      <Button danger type="primary" size="large">
-                        Delete
-                      </Button>
-                    </Popconfirm>
-                  </div>
-                  <div>
-                    This will delete all the containers except the input
-                    containers.
-                  </div>
-                </div>
-                <Divider plain></Divider>
-                <div className="grid grid-cols-2 grid-rows-2">
-                  <Title level={4}>Delete all containers</Title>
-                  <div className="row-span-2 text-right">
-                    <Popconfirm
-                      title="Delete all"
-                      description="Are you sure you want to delete all containers"
-                      okText="Yes"
-                      arrow={false}
-                      icon={false}
-                      okButtonProps={{ danger: true, loading: false }}
-                      onConfirm={() =>
-                        handleClickOrchestratorAction(
-                          `/api/priveleged/delete_cosmosdb_container`,
-                          'Deleting Containers',
-                          'All Containers deleted :)',
-                          {
-                            containersToDelete: 'all',
-                          }
-                        )
-                      }
-                    >
-                      <Button danger type="primary" size="large">
-                        Delete
-                      </Button>
-                    </Popconfirm>
-                  </div>
-                  <div>
-                    This will delete all containers including the input
-                    containers.
-                  </div>
+                <div>
+                  This will delete all containers including the input
+                  containers.
                 </div>
               </div>
             </div>
           </div>
-        ),
-      },
-  ];
+        </div>
+      ),
+    });
+  }
 
   return (
     <div>
@@ -422,7 +434,9 @@ export default function Home() {
           type="line"
           defaultActiveKey="1"
           items={items}
-          tabPosition={width === null || width > 768 ? 'left' : 'top'}
+          tabPosition={
+            dimensions.width === null || dimensions.width > 768 ? 'left' : 'top'
+          }
         />
       </div>
     </div>

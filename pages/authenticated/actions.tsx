@@ -1,5 +1,3 @@
-// pages\authenticated\actions.js
-
 import { Divider, Input, Typography } from 'antd';
 import { useState, useEffect } from 'react';
 import AntdTable from '../../components/antdTable';
@@ -7,13 +5,14 @@ import {
   cachedFetch,
   ovewriteCachedFetch,
   regularFetch,
-} from '../../utils/api-utils.js';
+} from '../../utils/api-utils';
 import {
   formatCurrency,
   formatImageAndText,
   formatNumber,
-} from '../../utils/formatting.js';
+} from '../../utils/formatting';
 import AddXForm from '../../components/formModal';
+import { UserInfo_Type } from '../../utils/types';
 
 const { Search } = Input;
 const { Title } = Typography;
@@ -23,7 +22,8 @@ const InputTransactionscolumns = [
     title: 'Symbol',
     dataIndex: 'symbol',
     key: 'symbol',
-    render: (text, record) => formatImageAndText(text, record.meta.logo),
+    render: (text: string, record: { meta: { logo: string } }) =>
+      formatImageAndText(text, record.meta.logo),
   },
   {
     title: 'Transaction Date',
@@ -34,13 +34,13 @@ const InputTransactionscolumns = [
     title: 'Cost',
     dataIndex: 'cost',
     key: 'cost',
-    render: (text) => formatCurrency(text),
+    render: (text: string | number) => formatCurrency(text),
   },
   {
     title: 'Quantity',
     dataIndex: 'quantity',
     key: 'quantity',
-    render: (text) => formatNumber(text),
+    render: (text: string | number) => formatNumber(text),
   },
   {
     title: 'Transaction Type',
@@ -51,7 +51,7 @@ const InputTransactionscolumns = [
     title: 'Transaction Cost',
     dataIndex: 'transaction_cost',
     key: 'transaction_cost',
-    render: (text) => formatCurrency(text),
+    render: (text: string | number) => formatCurrency(text),
   },
   {
     title: 'Currency',
@@ -80,11 +80,11 @@ const InputInvestedscolumns = [
     title: 'Amount',
     dataIndex: 'amount',
     key: 'amount',
-    render: (text) => formatCurrency(text),
+    render: (text: string | number) => formatCurrency(text),
   },
 ];
 
-async function fetchTransactionsData(userInfo) {
+async function fetchTransactionsData(userInfo: UserInfo_Type) {
   const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
     userId: userInfo.clientPrincipal.userId,
     containerName: 'input_transactions',
@@ -92,7 +92,7 @@ async function fetchTransactionsData(userInfo) {
   return { data: data, loading: false };
 }
 
-async function fetchInputInvestedData(userInfo) {
+async function fetchInputInvestedData(userInfo: UserInfo_Type) {
   const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
     userId: userInfo.clientPrincipal.userId,
     containerName: 'input_invested',
@@ -101,16 +101,25 @@ async function fetchInputInvestedData(userInfo) {
 }
 
 export default function Home() {
-  const [userInfo, setUserInfo] = useState(null);
+  const [userInfo, setUserInfo] = useState<UserInfo_Type>({
+    clientPrincipal: {
+      userId: '',
+      userRoles: ['anonymous'],
+      claims: [],
+      identityProvider: '',
+      userDetails: '',
+    },
+  });
   const [InputTransactionsData, setInputTransactionsData] = useState(null);
   const [InputTransactionsDataisLoading, setInputTransactionsDataisLoading] =
     useState(true);
   const [InputTransactionsSearchText, setInputTransactionsSearchText] =
-    useState(null);
+    useState<any>();
   const [InputInvestedData, setInputInvestedData] = useState(null);
   const [InputInvestedDataisLoading, setInputInvestedDataisLoading] =
     useState(true);
-  const [InputInvestedSearchText, setInputInvestedSearchText] = useState(null);
+  const [InputInvestedSearchText, setInputInvestedSearchText] =
+    useState<any>(undefined);
 
   // Fetch data
   async function getUserInfo() {
@@ -125,7 +134,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (userInfo) {
+    if (userInfo.clientPrincipal.userId !== '') {
       fetchTransactionsData(userInfo).then(({ data, loading }) => {
         setInputTransactionsData(data);
         setInputTransactionsDataisLoading(loading);
@@ -177,9 +186,6 @@ export default function Home() {
           tableProps={{
             size: 'small',
             pagination: {
-              onChange: (page) => {
-                console.log(page);
-              },
               pageSize: 12,
               size: 'small',
               hideOnSinglePage: true,
@@ -225,9 +231,6 @@ export default function Home() {
             tableProps={{
               size: 'small',
               pagination: {
-                onChange: (page) => {
-                  console.log(page);
-                },
                 pageSize: 12,
                 size: 'small',
                 hideOnSinglePage: true,

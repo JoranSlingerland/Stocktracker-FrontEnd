@@ -1,19 +1,22 @@
-// pages\authenticated\performance.js
-
 import Overviewbar from '../../components/Overviewbar';
 import React, { useState, useEffect } from 'react';
 import { Divider, Segmented, Typography } from 'antd';
 import { useRouter } from 'next/router';
 import BasicLineGraph from '../../components/PrimeFaceLineGraph';
 import PrimeFaceBarChart from '../../components/PrimeFaceBarChart';
-import { cachedFetch, regularFetch } from '../../utils/api-utils.js';
+import { cachedFetch, regularFetch } from '../../utils/api-utils';
 import AntdTable from '../../components/antdTable';
 import {
   formatCurrency,
   formatCurrencyWithColors,
   formatPercentageWithColors,
   formatImageAndText,
-} from '../../utils/formatting.js';
+} from '../../utils/formatting';
+import { UserInfo_Type } from '../../utils/types';
+import { SegmentedValue } from 'rc-segmented';
+
+type dataToGet = undefined | string | SegmentedValue;
+type tabNumber = undefined | string;
 
 const { Title } = Typography;
 
@@ -22,19 +25,22 @@ const valueGrowthColumns = [
     title: 'symbol',
     dataIndex: 'symbol',
     key: 'symbol',
-    render: (text, record) => formatImageAndText(text, record.meta.logo),
+    render: (text: string, record: { meta: { logo: string } }) =>
+      formatImageAndText(text, record.meta.logo),
   },
   {
     title: 'Profit / Loss',
     dataIndex: 'unrealized',
     key: 'unrealized.total_pl',
-    render: (text) => formatCurrencyWithColors(text.total_pl),
+    render: (text: { total_pl: string | number }) =>
+      formatCurrencyWithColors(text.total_pl),
   },
   {
     title: 'Percentage',
     dataIndex: 'unrealized',
     key: 'unrealized.total_pl_percentage',
-    render: (text) => formatPercentageWithColors(text.total_pl_percentage),
+    render: (text: { total_pl_percentage: string | number }) =>
+      formatPercentageWithColors(text.total_pl_percentage),
   },
 ];
 
@@ -43,13 +49,15 @@ const ReceivedDividedColumns = [
     title: 'symbol',
     dataIndex: 'symbol',
     key: 'symbol',
-    render: (text, record) => formatImageAndText(text, record.meta.logo),
+    render: (text: string, record: { meta: { logo: string } }) =>
+      formatImageAndText(text, record.meta.logo),
   },
   {
     title: 'Dividends',
     dataIndex: 'realized',
     key: 'realized.total_dividends',
-    render: (text) => formatCurrency(text.total_dividends),
+    render: (text: { total_dividends: string | number }) =>
+      formatCurrency(text.total_dividends),
   },
 ];
 
@@ -58,13 +66,15 @@ const TransactionCostColumns = [
     title: 'symbol',
     dataIndex: 'symbol',
     key: 'symbol',
-    render: (text, record) => formatImageAndText(text, record.meta.logo),
+    render: (text: string, record: { meta: { logo: string } }) =>
+      formatImageAndText(text, record.meta.logo),
   },
   {
     title: 'Transaction Costs',
     dataIndex: 'realized',
     key: 'realized.transaction_cost',
-    render: (text) => formatCurrency(text.transaction_cost),
+    render: (text: { transaction_cost: string | number }) =>
+      formatCurrency(text.transaction_cost),
   },
 ];
 
@@ -104,7 +114,7 @@ const valueGrowthDataFallBackObject = {
   ],
 };
 
-async function fetchDividendData(userInfo, date) {
+async function fetchDividendData(userInfo: UserInfo_Type, date: dataToGet) {
   const data = await cachedFetch(`/api/data/get_barchart_data`, [], 'POST', {
     userId: userInfo.clientPrincipal.userId,
     dataType: 'dividend',
@@ -113,7 +123,10 @@ async function fetchDividendData(userInfo, date) {
   return { data: data, loading: false };
 }
 
-async function fetchTransactionCostData(userInfo, date) {
+async function fetchTransactionCostData(
+  userInfo: UserInfo_Type,
+  date: dataToGet
+) {
   const data = await cachedFetch(`/api/data/get_barchart_data`, [], 'POST', {
     userId: userInfo.clientPrincipal.userId,
     dataType: 'transaction_cost',
@@ -122,7 +135,7 @@ async function fetchTransactionCostData(userInfo, date) {
   return { data: data, loading: false };
 }
 
-async function fetchTotalGainsData(userInfo, date) {
+async function fetchTotalGainsData(userInfo: UserInfo_Type, date: dataToGet) {
   const data = await cachedFetch(
     `/api/data/get_linechart_data`,
     totalGainsDataFallBackObject,
@@ -136,7 +149,7 @@ async function fetchTotalGainsData(userInfo, date) {
   return { data: data, loading: false };
 }
 
-async function fetchDataline(userInfo, date) {
+async function fetchDataline(userInfo: UserInfo_Type, date: dataToGet) {
   const data = await cachedFetch(
     `/api/data/get_linechart_data`,
     valueGrowthDataFallBackObject,
@@ -150,7 +163,7 @@ async function fetchDataline(userInfo, date) {
   return { data: data, loading: false };
 }
 
-async function fetchTable(userInfo, date) {
+async function fetchTable(userInfo: UserInfo_Type, date: dataToGet) {
   const data = await cachedFetch(
     `/api/data/get_table_data_performance`,
     [],
@@ -163,7 +176,7 @@ async function fetchTable(userInfo, date) {
   return { data: data, loading: false };
 }
 
-async function fetchTopBar(userInfo, date) {
+async function fetchTopBar(userInfo: UserInfo_Type, date: dataToGet) {
   const data = await cachedFetch(
     `/api/data/get_topbar_data`,
     topBarDataFallBackObject,
@@ -197,15 +210,19 @@ export default function performance() {
   const [topBarloading, settopBarLoading] = useState(true);
   const [SingleDayData, setSingleDayData] = useState(null);
   const [SingleDayDataisLoading, setSingleDayDataisLoading] = useState(true);
-  const [tab, setTab] = useState((useRouter().query.tab || 1).toString());
-  const [date, setDate] = useState(useRouter().query.date || null);
+  const [tab, setTab] = useState<tabNumber>(
+    (useRouter().query.tab || '1').toString()
+  );
+  const [date, setDate] = useState<dataToGet>(
+    useRouter().query.date?.toString || undefined
+  );
 
   useEffect(() => {
     if (!router.isReady) {
       return;
     } else {
-      setTab(router.query.tab.toString());
-      setDate(router.query.date);
+      setTab(router.query.tab?.toString());
+      setDate(router.query.date?.toString());
     }
   }, [router]);
 
@@ -251,7 +268,7 @@ export default function performance() {
   }, [date, userInfo]);
 
   // Refresh data
-  function handleClick(newdate) {
+  function handleClick(newdate: dataToGet) {
     setvalueGrowthDataLoading(true);
     settopBarLoading(true);
     setLoadingDividend(true);
@@ -262,7 +279,7 @@ export default function performance() {
     setDate(newdate);
   }
 
-  function handleTabChange(newTab) {
+  function handleTabChange(newTab: tabNumber) {
     setTab(newTab);
     router.push(`/authenticated/performance?tab=${newTab}&date=${date}`);
   }

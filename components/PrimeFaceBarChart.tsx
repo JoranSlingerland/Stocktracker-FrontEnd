@@ -1,23 +1,35 @@
-// components\PrimeFaceBarChart.js
-
 import { Chart } from 'primereact/chart';
 import { Spin } from 'antd';
 import { formatCurrency } from '../utils/formatting';
 
-export default function PrimeFacePieChart(data, isloading) {
-  const labels = data.data.map(function (index) {
+export default function PrimeFacePieChart({
+  data,
+  isloading,
+}: {
+  data:
+    | [
+        {
+          date: string;
+          category: string;
+          value: number;
+        }
+      ]
+    | any[];
+  isloading: boolean;
+}): JSX.Element {
+  const labels = data.map(function (index) {
     return index.date;
   });
 
-  const uniquelabels = [...new Set(labels)];
+  const uniquelabels = Array.from(new Set(labels));
 
-  const category = data.data.map(function (index) {
+  const category = data.map(function (index) {
     return index.category;
   });
 
-  function filter_json(symbol) {
+  function filter_json(symbol: string) {
     let outputData = [];
-    for (const element of data.data) {
+    for (const element of data) {
       for (let i = 1; i < uniquelabels.length + 1; i++) {
         if (
           element['category'] === symbol &&
@@ -34,9 +46,9 @@ export default function PrimeFacePieChart(data, isloading) {
   }
 
   const barchart_datasets = [];
-  const uniquecategory = [...new Set(category)];
+  const uniquecategory = Array.from(new Set(category));
 
-  function stringToColour(str) {
+  function stringToColour(str: string) {
     var hash = 0;
     for (var i = 0; i < str.length; i++) {
       hash = str.charCodeAt(i) + ((hash << 5) - hash);
@@ -49,8 +61,8 @@ export default function PrimeFacePieChart(data, isloading) {
     return hexToRgbA(colour);
   }
 
-  function hexToRgbA(hex) {
-    var c;
+  function hexToRgbA(hex: string) {
+    var c: any;
     if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
       c = hex.substring(1).split('');
       if (c.length == 3) {
@@ -87,7 +99,7 @@ export default function PrimeFacePieChart(data, isloading) {
     plugins: {
       tooltip: {
         callbacks: {
-          label: function (context) {
+          label: function (context: any) {
             let index = context.dataIndex;
             let label = context.dataset.label;
             label += ': ';
@@ -104,7 +116,7 @@ export default function PrimeFacePieChart(data, isloading) {
       y: {
         stacked: true,
         ticks: {
-          callback: function (value) {
+          callback: function (value: number) {
             if (Math.floor(value) === value) {
               return formatCurrency(value, 0);
             }
@@ -115,7 +127,7 @@ export default function PrimeFacePieChart(data, isloading) {
   };
 
   return (
-    <Spin spinning={data.isloading}>
+    <Spin spinning={isloading}>
       <Chart type="bar" data={stackedData} options={stackedOptions} />
     </Spin>
   );

@@ -1,5 +1,3 @@
-// components\Overviewbar.js
-
 import { useRouter } from 'next/router';
 import { Skeleton, Typography, Statistic } from 'antd';
 import { RiseOutlined, FallOutlined } from '@ant-design/icons';
@@ -7,10 +5,21 @@ import { formatCurrency, formatPercentage } from '../utils/formatting';
 
 const { Text } = Typography;
 
-export default function tabs({ topBarData, loading, handleTabChange }) {
+export default function tabs({
+  topBarData,
+  loading,
+  handleTabChange,
+}: {
+  topBarData: any;
+  loading: boolean;
+  handleTabChange: (tab: string) => void;
+}): JSX.Element {
   const tab = (useRouter().query.tab || 1).toString();
 
-  const PercentageFormat = (value) => {
+  const PercentageFormat = (value: number | string) => {
+    if (typeof value === 'string') {
+      value = parseFloat(value);
+    }
     if (value > 0) {
       const data = formatPercentage(value);
       return (
@@ -46,7 +55,7 @@ export default function tabs({ topBarData, loading, handleTabChange }) {
   };
 
   return (
-    <div className="flex flex-col space-y-5 sm:space-x-5 justify-items-stretch sm:space-y-0 sm:flex-row">
+    <div className="flex flex-col space-y-5 lg:space-x-5 lg:space-y-0 lg:flex-row">
       <div
         className={`${
           tab === '1'

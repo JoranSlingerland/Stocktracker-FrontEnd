@@ -1,8 +1,5 @@
-// pages/login.js
-
 import Link from 'next/link';
-import Image from '../utils/image';
-import mypic from '../public/images/ms-symbollockup_signin_light.png';
+import { Image } from 'antd';
 
 export default function Home() {
   return (
@@ -16,7 +13,12 @@ export default function Home() {
             '/.auth/login/aad?post_login_redirect_uri=/authenticated/portfolio/'
           }
         >
-          <Image src={mypic} alt="mypic" />
+          <Image
+            src="/images/ms-symbollockup_signin_light.png"
+            alt="Microsoft"
+            preview={false}
+            placeholder={false}
+          />
         </Link>
       </div>
     </div>

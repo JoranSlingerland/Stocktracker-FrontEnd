@@ -1,12 +1,10 @@
-// utils\api-utils.js
-
 import { message } from 'antd';
 import wretch from 'wretch';
 import FormDataAddon from 'wretch/addons/formData';
 import hash from 'object-hash';
 
 // Helper functions
-function setWithExpiry(key, value, ttl) {
+function setWithExpiry(key: string, value: any, ttl: number) {
   const now = new Date();
   const item = {
     value: value,
@@ -15,7 +13,7 @@ function setWithExpiry(key, value, ttl) {
   localStorage.setItem(key, JSON.stringify(item));
 }
 
-function getWithExpiry(key) {
+function getWithExpiry(key: string) {
   const itemStr = localStorage.getItem(key);
   if (!itemStr) {
     return null;
@@ -29,7 +27,7 @@ function getWithExpiry(key) {
   return item.value;
 }
 
-function newKey(url, body) {
+function newKey(url: string, body: any) {
   body = JSON.parse(JSON.stringify(body));
   delete body.userId;
   return hash(url + JSON.stringify(body));
@@ -39,8 +37,8 @@ function newKey(url, body) {
 
 // main functions
 async function cachedFetch(
-  url,
-  fallback_data = [],
+  url: string,
+  fallback_data: any = [],
   method = 'GET',
   body = {},
   hours = 24
@@ -61,7 +59,7 @@ async function cachedFetch(
 }
 
 async function ovewriteCachedFetch(
-  url,
+  url: string,
   fallback_data = [],
   method = 'GET',
   body = {},
@@ -77,11 +75,11 @@ async function ovewriteCachedFetch(
 }
 
 async function regularFetch(
-  url,
+  url: string,
   fallback_data = [],
   method = 'GET',
   body = {}
-) {
+): Promise<any> {
   if (method === 'GET') {
     const response = await wretch(url)
       .get()
@@ -105,13 +103,13 @@ async function regularFetch(
 }
 
 async function ApiWithMessage(
-  url,
-  runningMessage,
-  successMessage,
-  method = 'GET',
-  body = {},
-  contentType = 'application/json'
-) {
+  url: string,
+  runningMessage: string,
+  successMessage: string,
+  method: 'GET' | 'POST' = 'GET',
+  body: any = {},
+  contentType: 'application/json' | 'multipart/form-data' = 'application/json'
+): Promise<any> {
   const hide = message.loading(runningMessage, 10);
   if (method === 'GET') {
     const response = await wretch(url)
@@ -127,24 +125,35 @@ async function ApiWithMessage(
     return response;
   }
   if (method === 'POST') {
-    let w = wretch(url);
     if (contentType === 'application/json') {
-      w = w.post(body);
+      const response = await wretch(url)
+        .post(body)
+        .json(() => {
+          hide();
+          message.success(successMessage);
+        })
+        .catch(() => {
+          hide();
+          message.error('Something went wrong :(');
+        });
+      return response;
     }
     if (contentType === 'multipart/form-data') {
-      w = w.addon(FormDataAddon).formData(body).post();
+      // response is a json object
+      const response = await wretch(url)
+        .addon(FormDataAddon)
+        .formData(body)
+        .post()
+        .json(() => {
+          hide();
+          message.success(successMessage);
+        })
+        .catch(() => {
+          hide();
+          message.error('Something went wrong :(');
+        });
+      return response;
     }
-
-    const response = await w
-      .json(() => {
-        hide();
-        message.success(successMessage);
-      })
-      .catch(() => {
-        hide();
-        message.error('Something went wrong :(');
-      });
-    return response;
   }
 }
 
