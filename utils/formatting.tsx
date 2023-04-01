@@ -1,4 +1,4 @@
-import { Image, Typography } from 'antd';
+import { Image, Typography, Space } from 'antd';
 const { Text } = Typography;
 
 function formatCurrency(value: number | string, maximumFractionDigits = 2) {
@@ -71,7 +71,7 @@ function formatImageAndText(text: string, image: string): JSX.Element {
     image = '/images/fallback.png';
   }
   return (
-    <div className="flex flex-row">
+    <Space wrap>
       <Image
         className="pr-1"
         alt="logo"
@@ -84,7 +84,7 @@ function formatImageAndText(text: string, image: string): JSX.Element {
       <Text className="pl-1" strong>
         {text}
       </Text>
-    </div>
+    </Space>
   );
 }
 
