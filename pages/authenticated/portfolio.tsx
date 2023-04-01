@@ -11,17 +11,18 @@ import {
   formatImageAndText,
 } from '../../utils/formatting';
 import { UserInfo_Type } from '../../utils/types';
+import type { ColumnsType } from 'antd/es/table';
 
 const { Title } = Typography;
 
 const { Panel } = Collapse;
 
-const UnRealizedColumns = [
+const UnRealizedColumns: ColumnsType = [
   {
     title: 'symbol',
     dataIndex: 'symbol',
     key: 'symbol',
-    render: (text: string, record: { meta: { logo: string } }) =>
+    render: (text: string, record: any) =>
       formatImageAndText(text, record.meta.logo),
   },
   {
@@ -70,12 +71,12 @@ const UnRealizedColumns = [
   },
 ];
 
-const RealizedColumns = [
+const RealizedColumns: ColumnsType = [
   {
     title: 'symbol',
     dataIndex: 'symbol',
     key: 'symbol',
-    render: (text: string, record: { meta: { logo: string } }) =>
+    render: (text: string, record: any) =>
       formatImageAndText(text, record.meta.logo),
   },
   {

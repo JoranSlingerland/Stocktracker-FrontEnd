@@ -14,18 +14,19 @@ import {
 } from '../../utils/formatting';
 import { UserInfo_Type } from '../../utils/types';
 import { SegmentedValue } from 'rc-segmented';
+import type { ColumnsType } from 'antd/es/table';
 
 type dataToGet = undefined | string | SegmentedValue;
 type tabNumber = undefined | string;
 
 const { Title } = Typography;
 
-const valueGrowthColumns = [
+const valueGrowthColumns: ColumnsType = [
   {
     title: 'symbol',
     dataIndex: 'symbol',
     key: 'symbol',
-    render: (text: string, record: { meta: { logo: string } }) =>
+    render: (text: string, record: any) =>
       formatImageAndText(text, record.meta.logo),
   },
   {
@@ -44,12 +45,12 @@ const valueGrowthColumns = [
   },
 ];
 
-const ReceivedDividedColumns = [
+const ReceivedDividedColumns: ColumnsType = [
   {
     title: 'symbol',
     dataIndex: 'symbol',
     key: 'symbol',
-    render: (text: string, record: { meta: { logo: string } }) =>
+    render: (text: string, record: any) =>
       formatImageAndText(text, record.meta.logo),
   },
   {
@@ -61,12 +62,12 @@ const ReceivedDividedColumns = [
   },
 ];
 
-const TransactionCostColumns = [
+const TransactionCostColumns: ColumnsType = [
   {
     title: 'symbol',
     dataIndex: 'symbol',
     key: 'symbol',
-    render: (text: string, record: { meta: { logo: string } }) =>
+    render: (text: string, record: any) =>
       formatImageAndText(text, record.meta.logo),
   },
   {
