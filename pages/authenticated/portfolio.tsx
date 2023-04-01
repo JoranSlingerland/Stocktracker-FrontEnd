@@ -29,6 +29,7 @@ const UnRealizedColumns = [
     dataIndex: 'meta',
     key: 'meta.name',
     render: (text: { name: any }) => text.name,
+    responsive: ['lg'],
   },
   {
     title: 'Quantity',
@@ -43,6 +44,7 @@ const UnRealizedColumns = [
     key: 'unrealized.total_cost',
     render: (text: { total_cost: string | number }) =>
       formatCurrency(text.total_cost),
+    responsive: ['md'],
   },
   {
     title: 'Profit / Loss',
@@ -57,6 +59,7 @@ const UnRealizedColumns = [
     key: 'unrealized.total_pl_percentage',
     render: (text: { total_pl_percentage: string | number }) =>
       formatPercentageWithColors(text.total_pl_percentage),
+    responsive: ['sm'],
   },
   {
     title: 'Total Value',
@@ -80,6 +83,7 @@ const RealizedColumns = [
     dataIndex: 'meta',
     key: 'meta.name',
     render: (text: { name: any }) => text.name,
+    responsive: ['lg'],
   },
   {
     title: 'Quantity',
@@ -94,6 +98,7 @@ const RealizedColumns = [
     key: 'realized.buy_price',
     render: (text: { buy_price: string | number }) =>
       formatCurrency(text.buy_price),
+    responsive: ['md'],
   },
   {
     title: 'Profit / Loss',
@@ -108,6 +113,7 @@ const RealizedColumns = [
     key: 'realized.total_pl_percentage',
     render: (text: { total_pl_percentage: string | number }) =>
       formatPercentageWithColors(text.total_pl_percentage),
+    responsive: ['sm'],
   },
   {
     title: 'Sell Price',
