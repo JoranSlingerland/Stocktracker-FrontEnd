@@ -134,7 +134,7 @@ const fallbackObject = {
 async function fetchUnRealizedData(userInfo: UserInfo_Type) {
   const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
     userId: userInfo.clientPrincipal.userId,
-    containerName: 'single_day',
+    containerName: 'stocks_held',
     fullyRealized: false,
   });
   return { data: data, loading: false };
@@ -143,7 +143,7 @@ async function fetchUnRealizedData(userInfo: UserInfo_Type) {
 async function fetchRealizedData(userInfo: UserInfo_Type) {
   const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
     userId: userInfo.clientPrincipal.userId,
-    containerName: 'single_day',
+    containerName: 'stocks_held',
     fullyRealized: true,
     partialRealized: true,
     andOr: 'or',
