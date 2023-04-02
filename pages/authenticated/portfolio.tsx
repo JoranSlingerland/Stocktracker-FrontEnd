@@ -11,17 +11,18 @@ import {
   formatImageAndText,
 } from '../../utils/formatting';
 import { UserInfo_Type } from '../../utils/types';
+import type { ColumnsType } from 'antd/es/table';
 
 const { Title } = Typography;
 
 const { Panel } = Collapse;
 
-const UnRealizedColumns = [
+const UnRealizedColumns: ColumnsType = [
   {
     title: 'symbol',
     dataIndex: 'symbol',
     key: 'symbol',
-    render: (text: string, record: { meta: { logo: string } }) =>
+    render: (text: string, record: any) =>
       formatImageAndText(text, record.meta.logo),
   },
   {
@@ -29,6 +30,7 @@ const UnRealizedColumns = [
     dataIndex: 'meta',
     key: 'meta.name',
     render: (text: { name: any }) => text.name,
+    responsive: ['lg'],
   },
   {
     title: 'Quantity',
@@ -43,6 +45,7 @@ const UnRealizedColumns = [
     key: 'unrealized.total_cost',
     render: (text: { total_cost: string | number }) =>
       formatCurrency(text.total_cost),
+    responsive: ['md'],
   },
   {
     title: 'Profit / Loss',
@@ -57,6 +60,7 @@ const UnRealizedColumns = [
     key: 'unrealized.total_pl_percentage',
     render: (text: { total_pl_percentage: string | number }) =>
       formatPercentageWithColors(text.total_pl_percentage),
+    responsive: ['sm'],
   },
   {
     title: 'Total Value',
@@ -67,12 +71,12 @@ const UnRealizedColumns = [
   },
 ];
 
-const RealizedColumns = [
+const RealizedColumns: ColumnsType = [
   {
     title: 'symbol',
     dataIndex: 'symbol',
     key: 'symbol',
-    render: (text: string, record: { meta: { logo: string } }) =>
+    render: (text: string, record: any) =>
       formatImageAndText(text, record.meta.logo),
   },
   {
@@ -80,6 +84,7 @@ const RealizedColumns = [
     dataIndex: 'meta',
     key: 'meta.name',
     render: (text: { name: any }) => text.name,
+    responsive: ['lg'],
   },
   {
     title: 'Quantity',
@@ -94,6 +99,7 @@ const RealizedColumns = [
     key: 'realized.buy_price',
     render: (text: { buy_price: string | number }) =>
       formatCurrency(text.buy_price),
+    responsive: ['md'],
   },
   {
     title: 'Profit / Loss',
@@ -108,6 +114,7 @@ const RealizedColumns = [
     key: 'realized.total_pl_percentage',
     render: (text: { total_pl_percentage: string | number }) =>
       formatPercentageWithColors(text.total_pl_percentage),
+    responsive: ['sm'],
   },
   {
     title: 'Sell Price',
@@ -127,7 +134,7 @@ const fallbackObject = {
 async function fetchUnRealizedData(userInfo: UserInfo_Type) {
   const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
     userId: userInfo.clientPrincipal.userId,
-    containerName: 'single_day',
+    containerName: 'stocks_held',
     fullyRealized: false,
   });
   return { data: data, loading: false };
@@ -136,7 +143,7 @@ async function fetchUnRealizedData(userInfo: UserInfo_Type) {
 async function fetchRealizedData(userInfo: UserInfo_Type) {
   const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
     userId: userInfo.clientPrincipal.userId,
-    containerName: 'single_day',
+    containerName: 'stocks_held',
     fullyRealized: true,
     partialRealized: true,
     andOr: 'or',

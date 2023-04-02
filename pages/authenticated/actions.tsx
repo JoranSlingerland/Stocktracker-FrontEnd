@@ -13,16 +13,17 @@ import {
 } from '../../utils/formatting';
 import AddXForm from '../../components/formModal';
 import { UserInfo_Type } from '../../utils/types';
+import type { ColumnsType } from 'antd/es/table';
 
 const { Search } = Input;
 const { Title } = Typography;
 
-const InputTransactionscolumns = [
+const InputTransactionscolumns: ColumnsType = [
   {
     title: 'Symbol',
     dataIndex: 'symbol',
     key: 'symbol',
-    render: (text: string, record: { meta: { logo: string } }) =>
+    render: (text: string, record: any) =>
       formatImageAndText(text, record.meta.logo),
   },
   {
@@ -65,7 +66,7 @@ const InputTransactionscolumns = [
   },
 ];
 
-const InputInvestedscolumns = [
+const InputInvestedscolumns: ColumnsType = [
   {
     title: 'Transaction Date',
     dataIndex: 'date',

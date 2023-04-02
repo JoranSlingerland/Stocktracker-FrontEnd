@@ -16,8 +16,12 @@ export default function Home() {
           <Image
             src="/images/ms-symbollockup_signin_light.png"
             alt="Microsoft"
+            fallback="/images/fallback.png"
             preview={false}
             placeholder={false}
+            onError={(e) => {
+              console.log(e);
+            }}
           />
         </Link>
       </div>
