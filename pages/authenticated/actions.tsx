@@ -20,54 +20,6 @@ import type { ColumnsType } from 'antd/es/table';
 const { Search } = Input;
 const { Title } = Typography;
 
-const InputTransactionscolumns: ColumnsType = [
-  {
-    title: 'Symbol',
-    dataIndex: 'symbol',
-    key: 'symbol',
-    render: (text: string, record: any) =>
-      formatImageAndText(text, record.meta.logo),
-  },
-  {
-    title: 'Transaction Date',
-    dataIndex: 'date',
-    key: 'date',
-  },
-  {
-    title: 'Cost',
-    dataIndex: 'cost',
-    key: 'cost',
-    render: (text: string | number) => formatCurrency(text),
-  },
-  {
-    title: 'Quantity',
-    dataIndex: 'quantity',
-    key: 'quantity',
-    render: (text: string | number) => formatNumber(text),
-  },
-  {
-    title: 'Transaction Type',
-    dataIndex: 'transaction_type',
-    key: 'transaction_type',
-  },
-  {
-    title: 'Transaction Cost',
-    dataIndex: 'transaction_cost',
-    key: 'transaction_cost',
-    render: (text: string | number) => formatCurrency(text),
-  },
-  {
-    title: 'Currency',
-    dataIndex: 'currency',
-    key: 'currency',
-  },
-  {
-    title: 'Domain',
-    dataIndex: 'domain',
-    key: 'domain',
-  },
-];
-
 async function fetchTransactionsData(userInfo: UserInfo_Type) {
   const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
     userId: userInfo.clientPrincipal.userId,
