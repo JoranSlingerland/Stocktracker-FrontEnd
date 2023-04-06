@@ -112,7 +112,7 @@ export default function Home() {
           setOrchestratorListIsLoading(loading);
         });
       }
-    }, 60000);
+    }, 10000);
     return () => clearInterval(interval);
   }, [userInfo]);
 

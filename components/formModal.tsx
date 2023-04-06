@@ -275,7 +275,9 @@ export default function AddXForm({
   parentCallback,
 }: {
   form: 'addStock' | 'addTransaction';
-  parentCallback: () => void;
+  parentCallback: (
+    container: 'input_invested' | 'input_transactions'
+  ) => Promise<void>;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -307,7 +309,12 @@ export default function AddXForm({
     }
 
     postData().then(() => {
-      parentCallback();
+      if (form === 'addStock') {
+        parentCallback('input_transactions');
+      }
+      if (form === 'addTransaction') {
+        parentCallback('input_invested');
+      }
     });
   };
 

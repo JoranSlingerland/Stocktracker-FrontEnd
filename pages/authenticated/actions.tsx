@@ -1,10 +1,12 @@
-import { Divider, Input, Typography } from 'antd';
+import { Divider, Input, Typography, Button, Popconfirm } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import AntdTable from '../../components/antdTable';
 import {
   cachedFetch,
   ovewriteCachedFetch,
   regularFetch,
+  ApiWithMessage,
 } from '../../utils/api-utils';
 import {
   formatCurrency,
@@ -66,25 +68,6 @@ const InputTransactionscolumns: ColumnsType = [
   },
 ];
 
-const InputInvestedscolumns: ColumnsType = [
-  {
-    title: 'Transaction Date',
-    dataIndex: 'date',
-    key: 'date',
-  },
-  {
-    title: 'Transaction Type',
-    dataIndex: 'transaction_type',
-    key: 'transaction_type',
-  },
-  {
-    title: 'Amount',
-    dataIndex: 'amount',
-    key: 'amount',
-    render: (text: string | number) => formatCurrency(text),
-  },
-];
-
 async function fetchTransactionsData(userInfo: UserInfo_Type) {
   const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
     userId: userInfo.clientPrincipal.userId,
@@ -111,16 +94,136 @@ export default function Home() {
       userDetails: '',
     },
   });
-  const [InputTransactionsData, setInputTransactionsData] = useState(null);
+  const [InputTransactionsData, setInputTransactionsData]: any = useState();
   const [InputTransactionsDataisLoading, setInputTransactionsDataisLoading] =
     useState(true);
   const [InputTransactionsSearchText, setInputTransactionsSearchText] =
     useState<any>();
-  const [InputInvestedData, setInputInvestedData] = useState(null);
+  const [InputInvestedData, setInputInvestedData]: any = useState();
   const [InputInvestedDataisLoading, setInputInvestedDataisLoading] =
     useState(true);
   const [InputInvestedSearchText, setInputInvestedSearchText] =
     useState<any>(undefined);
+
+  // columns
+  const InputInvestedscolumns: ColumnsType = [
+    {
+      title: 'Transaction Date',
+      dataIndex: 'date',
+      key: 'date',
+    },
+    {
+      title: 'Transaction Type',
+      dataIndex: 'transaction_type',
+      key: 'transaction_type',
+    },
+    {
+      title: 'Amount',
+      dataIndex: 'amount',
+      key: 'amount',
+      render: (text: string | number) => formatCurrency(text),
+    },
+    {
+      title: 'Actions',
+      dataIndex: 'actions',
+      key: 'actions',
+      width: 60,
+      sorter: false,
+      render: (text: string, record: any) => (
+        <Popconfirm
+          title="Are you sure you want to delete this item?"
+          onConfirm={() => {
+            deleteData(userInfo, [record.id], 'input_invested');
+          }}
+          okText="Yes"
+          cancelText="No"
+          arrow={false}
+          icon={false}
+        >
+          <Button
+            size="small"
+            type="text"
+            icon={<DeleteOutlined />}
+            danger
+          ></Button>
+        </Popconfirm>
+      ),
+    },
+  ];
+
+  const InputTransactionscolumns: ColumnsType = [
+    {
+      title: 'Symbol',
+      dataIndex: 'symbol',
+      key: 'symbol',
+      render: (text: string, record: any) =>
+        formatImageAndText(text, record.meta.logo),
+    },
+    {
+      title: 'Transaction Date',
+      dataIndex: 'date',
+      key: 'date',
+    },
+    {
+      title: 'Cost',
+      dataIndex: 'cost',
+      key: 'cost',
+      render: (text: string | number) => formatCurrency(text),
+    },
+    {
+      title: 'Quantity',
+      dataIndex: 'quantity',
+      key: 'quantity',
+      render: (text: string | number) => formatNumber(text),
+    },
+    {
+      title: 'Transaction Type',
+      dataIndex: 'transaction_type',
+      key: 'transaction_type',
+    },
+    {
+      title: 'Transaction Cost',
+      dataIndex: 'transaction_cost',
+      key: 'transaction_cost',
+      render: (text: string | number) => formatCurrency(text),
+    },
+    {
+      title: 'Currency',
+      dataIndex: 'currency',
+      key: 'currency',
+    },
+    {
+      title: 'Domain',
+      dataIndex: 'domain',
+      key: 'domain',
+    },
+    {
+      title: 'Actions',
+      dataIndex: 'actions',
+      key: 'actions',
+      width: 60,
+      sorter: false,
+      render: (text: string, record: any) => (
+        <Popconfirm
+          title="Are you sure you want to delete this item?"
+          onConfirm={() => {
+            deleteData(userInfo, [record.id], 'input_transactions');
+          }}
+          okText="Yes"
+          cancelText="No"
+          arrow={false}
+          icon={false}
+        >
+          <Button
+            size="small"
+            type="text"
+            icon={<DeleteOutlined />}
+            danger
+          ></Button>
+        </Popconfirm>
+      ),
+    },
+  ];
 
   // Fetch data
   async function getUserInfo() {
@@ -147,22 +250,48 @@ export default function Home() {
     }
   }, [userInfo]);
 
-  // Callbacks
-  async function callback_transactions() {
-    ovewriteCachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
-      userId: userInfo.clientPrincipal.userId,
-      containerName: 'input_transactions',
-    }).then((data) => {
-      setInputTransactionsData(data);
+  async function deleteData(
+    userInfo: UserInfo_Type,
+    id: string[],
+    container: 'input_invested' | 'input_transactions'
+  ) {
+    await ApiWithMessage(
+      `/api/delete/delete_input_items`,
+      'Deleting item',
+      'Item deleted',
+      'POST',
+      {
+        itemIds: id,
+        container: container,
+        userId: userInfo.clientPrincipal.userId,
+      },
+      'application/json'
+    ).then(() => {
+      if (container === 'input_invested') {
+        const newData = InputInvestedData.filter(
+          (item: any) => !id.includes(item.id)
+        );
+        setInputInvestedData(newData);
+      } else if (container === 'input_transactions') {
+        const newData = InputTransactionsData.filter(
+          (item: any) => !id.includes(item.id)
+        );
+        setInputTransactionsData(newData);
+      }
+      overWriteTableData(container);
     });
   }
 
-  async function callback_invested() {
+  async function overWriteTableData(
+    container: 'input_invested' | 'input_transactions'
+  ): Promise<void> {
     ovewriteCachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
       userId: userInfo.clientPrincipal.userId,
-      containerName: 'input_invested',
+      containerName: container,
     }).then((data) => {
-      setInputInvestedData(data);
+      if (container === 'input_invested') setInputInvestedData(data);
+      else if (container === 'input_transactions')
+        setInputTransactionsData(data);
     });
   }
 
@@ -211,7 +340,7 @@ export default function Home() {
               <div className="mb-1 ml-auto">
                 <AddXForm
                   form={'addStock'}
-                  parentCallback={callback_transactions}
+                  parentCallback={overWriteTableData}
                 />
               </div>
             </div>
@@ -256,7 +385,7 @@ export default function Home() {
                 <div className="ml-auto">
                   <AddXForm
                     form={'addTransaction'}
-                    parentCallback={callback_invested}
+                    parentCallback={overWriteTableData}
                   />
                 </div>
               </div>
