@@ -32,7 +32,7 @@
   "devDependencies": {
     "@types/node": "^18.15.11",
     "@types/object-hash": "^3.0.2",
-    "@types/react": "^18.0.31",
+    "@types/react": "^18.0.34",
     "eslint": "^8.37.0",
     "eslint-config-next": "^13.2.4",
     "eslint-config-prettier": "^8.8.0",
