@@ -4,7 +4,7 @@ import { Divider, Segmented, Typography } from 'antd';
 import { useRouter } from 'next/router';
 import BasicLineGraph from '../../components/PrimeFaceLineGraph';
 import PrimeFaceBarChart from '../../components/PrimeFaceBarChart';
-import { cachedFetch, regularFetch } from '../../utils/api-utils';
+import { cachedFetch } from '../../utils/api-utils';
 import AntdTable from '../../components/antdTable';
 import {
   formatCurrency,
@@ -190,10 +190,9 @@ async function fetchTopBar(userInfo: UserInfo_Type, date: dataToGet) {
   return { data: data, loading: false };
 }
 
-export default function performance() {
+export default function performance({ userInfo }: { userInfo: UserInfo_Type }) {
   // const setup
   const router = useRouter();
-  const [userInfo, setUserInfo] = useState(null);
   const [valueGrowthData, setvalueGrowthData] = useState(
     valueGrowthDataFallBackObject
   );
@@ -227,18 +226,7 @@ export default function performance() {
     }
   }, [router]);
 
-  // Fetch functions
-  async function getUserInfo() {
-    await regularFetch('/.auth/me', undefined).then((data) => {
-      setUserInfo(data);
-    });
-  }
-
   // useEffects
-  useEffect(() => {
-    getUserInfo();
-  }, []);
-
   useEffect(() => {
     if (userInfo && date) {
       fetchDividendData(userInfo, date).then(({ data, loading }) => {

@@ -25,6 +25,7 @@ import {
 } from '../../utils/api-utils';
 import useWindowDimensions from '../../utils/useWindowDimensions';
 import AntdTable from '../../components/antdTable';
+import { UserInfo_Type } from '../../utils/types';
 
 const { Text, Title, Link } = Typography;
 
@@ -36,16 +37,7 @@ async function fetchOrchestratorList(userInfo: any) {
   return { data: data, loading: false };
 }
 
-export default function Home() {
-  const [userInfo, setUserInfo] = useState({
-    clientPrincipal: {
-      userId: '',
-      userRoles: ['anonymous'],
-      claims: [],
-      identityProvider: '',
-      userDetails: '',
-    },
-  });
+export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
   const [orchestratorList, setOrchestratorList] = useState(null);
   const [orchestratorListIsLoading, setOrchestratorListIsLoading] =
     useState(true);
@@ -55,12 +47,6 @@ export default function Home() {
   const [darkMode, setDarkMode] = useState(false);
 
   // fetch functions
-  async function getUserInfo() {
-    await regularFetch('/.auth/me', undefined).then((data: any) => {
-      setUserInfo(data);
-    });
-  }
-
   async function getAccountSettings(userInfo: any) {
     await cachedFetch('/api/data/get_user_data', {}, 'POST', {
       userId: userInfo,
@@ -79,9 +65,6 @@ export default function Home() {
     successMessage: string,
     body: object
   ) {
-    if (userInfo === null) {
-      await getUserInfo();
-    }
     ApiWithMessage(
       url,
       runningMessage,
@@ -138,10 +121,6 @@ export default function Home() {
   }
 
   // useEffects
-  useEffect(() => {
-    getUserInfo();
-  }, []);
-
   useEffect(() => {
     if (userInfo.clientPrincipal.userId !== '') {
       fetchOrchestratorList(userInfo).then(({ data, loading }) => {

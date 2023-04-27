@@ -5,7 +5,6 @@ import AntdTable from '../../components/antdTable';
 import {
   cachedFetch,
   ovewriteCachedFetch,
-  regularFetch,
   ApiWithMessage,
 } from '../../utils/api-utils';
 import {
@@ -36,16 +35,7 @@ async function fetchInputInvestedData(userInfo: UserInfo_Type) {
   return { data: data, loading: false };
 }
 
-export default function Home() {
-  const [userInfo, setUserInfo] = useState<UserInfo_Type>({
-    clientPrincipal: {
-      userId: '',
-      userRoles: ['anonymous'],
-      claims: [],
-      identityProvider: '',
-      userDetails: '',
-    },
-  });
+export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
   const [InputTransactionsData, setInputTransactionsData]: any = useState();
   const [InputTransactionsDataisLoading, setInputTransactionsDataisLoading] =
     useState(true);
@@ -176,18 +166,6 @@ export default function Home() {
       ),
     },
   ];
-
-  // Fetch data
-  async function getUserInfo() {
-    await regularFetch('/.auth/me', undefined).then((data) => {
-      setUserInfo(data);
-    });
-  }
-
-  // Fetch data on mount
-  useEffect(() => {
-    getUserInfo();
-  }, []);
 
   useEffect(() => {
     if (userInfo.clientPrincipal.userId !== '') {
