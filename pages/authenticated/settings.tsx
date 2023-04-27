@@ -282,7 +282,7 @@ export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
                   title={false}
                 ></Skeleton>
               ) : (
-                <Input
+                <Input.Password
                   value={clearBitApiKey}
                   onChange={(e) => {
                     setClearBitApiKey(e.target.value);
@@ -314,7 +314,7 @@ export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
                   title={false}
                 ></Skeleton>
               ) : (
-                <Input
+                <Input.Password
                   value={alphaVantageApiKey}
                   onChange={(e) => {
                     setAlphaVantageApiKey(e.target.value);
