@@ -12,6 +12,6 @@ The project consists of three repositories:
 | -------------------------------------------------------------------------------- | ------------------------------------------- | -------- |
 | [API](https://github.com/JoranSlingerland/StockTracker)                          | This repo which will be used to gather data | Python   |
 | [Frontend](https://github.com/JoranSlingerland/StockTracker-frontend)            | Frontend repo which will create the website | React    |
-| [Infrastructure](https://github.com/JoranSlingerland/StockTrackerInfrastructure) | Code to deploy all resouces to Azure        | Bicep    |
+| [Infrastructure](https://github.com/JoranSlingerland/StockTrackerInfrastructure) | Code to deploy all resources to Azure       | Bicep    |
 
 Please check the API repo for more information.
