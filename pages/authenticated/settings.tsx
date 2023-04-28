@@ -37,7 +37,13 @@ async function fetchOrchestratorList(userInfo: any) {
   return { data: data, loading: false };
 }
 
-export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
+export default function Home({
+  userInfo,
+  setDarkModeCallback,
+}: {
+  userInfo: UserInfo_Type;
+  setDarkModeCallback: (darkmode: boolean) => void;
+}) {
   const [orchestratorList, setOrchestratorList] = useState(null);
   const [orchestratorListIsLoading, setOrchestratorListIsLoading] =
     useState(true);
@@ -97,6 +103,7 @@ export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
   }
 
   async function handleSaveAccountSettings() {
+    setAccountSettingsLoading(true);
     await ApiWithMessage(
       '/api/add/add_user_data',
       'Saving account settings...',
@@ -118,6 +125,7 @@ export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
         setAccountSettingsLoading(false);
       });
     });
+    setAccountSettingsLoading(false);
   }
 
   // useEffects
@@ -342,6 +350,7 @@ export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
                 checked={darkMode}
                 onChange={(checked) => {
                   setDarkMode(checked);
+                  setDarkModeCallback(checked);
                 }}
                 className="mt-2"
                 loading={accountSettingsLoading}

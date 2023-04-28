@@ -33,12 +33,16 @@ function MyApp({ Component, pageProps }: AppProps) {
     });
   }
 
+  function setDarkModeCallback(darkMode: boolean) {
+    setDarkMode(darkMode);
+  }
+
   useEffect(() => {
     getUserInfo();
   }, []);
 
   useEffect(() => {
-    if (userInfo.clientPrincipal.userId) {
+    if (userInfo?.clientPrincipal?.userId) {
       getAccountSettings(userInfo.clientPrincipal.userId);
     }
   }, [userInfo]);
@@ -58,7 +62,11 @@ function MyApp({ Component, pageProps }: AppProps) {
           <Navbar userInfo={userInfo} />
           <div className="flex justify-center px-2 xl:px-0">
             <div className="w-full max-w-7xl">
-              <Component {...pageProps} userInfo={userInfo} />
+              <Component
+                {...pageProps}
+                userInfo={userInfo}
+                setDarkModeCallback={setDarkModeCallback}
+              />
             </div>
           </div>
         </div>
