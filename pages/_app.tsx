@@ -1,5 +1,6 @@
 import Navbar from '../components/navbar';
 import '../styles/globals.css';
+// import 'primereact/resources/themes/md-dark-indigo/theme.css';
 import { ConfigProvider, theme } from 'antd';
 import type { AppProps } from 'next/app';
 import { useEffect, useState } from 'react';
@@ -66,6 +67,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                 {...pageProps}
                 userInfo={userInfo}
                 setDarkModeCallback={setDarkModeCallback}
+                darkMode={darkMode}
               />
             </div>
           </div>

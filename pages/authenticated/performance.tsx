@@ -190,7 +190,13 @@ async function fetchTopBar(userInfo: UserInfo_Type, date: dataToGet) {
   return { data: data, loading: false };
 }
 
-export default function performance({ userInfo }: { userInfo: UserInfo_Type }) {
+export default function performance({
+  userInfo,
+  darkMode,
+}: {
+  userInfo: UserInfo_Type;
+  darkMode: boolean;
+}) {
   // const setup
   const router = useRouter();
   const [valueGrowthData, setvalueGrowthData] = useState(
@@ -326,6 +332,7 @@ export default function performance({ userInfo }: { userInfo: UserInfo_Type }) {
                 <BasicLineGraph
                   data={valueGrowthData}
                   isloading={valueGrowthDataLoading}
+                  darkmode={darkMode}
                 />
                 <Divider />
                 <AntdTable
@@ -373,6 +380,7 @@ export default function performance({ userInfo }: { userInfo: UserInfo_Type }) {
                 <BasicLineGraph
                   data={totalGainsData}
                   isloading={totalGainsDataLoading}
+                  darkmode={darkMode}
                 />
                 <Divider />
                 <AntdTable
