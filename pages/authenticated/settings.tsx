@@ -9,6 +9,7 @@ import {
   Input,
   Switch,
   Skeleton,
+  AutoComplete,
 } from 'antd';
 import {
   CheckCircleOutlined,
@@ -26,6 +27,7 @@ import {
 import useWindowDimensions from '../../utils/useWindowDimensions';
 import AntdTable from '../../components/antdTable';
 import { UserInfo_Type } from '../../utils/types';
+import currencyCodes from '../../shared/currency_codes.json';
 
 const { Text, Title, Link } = Typography;
 
@@ -51,6 +53,7 @@ export default function Home({
   const [clearBitApiKey, setClearBitApiKey] = useState('');
   const [alphaVantageApiKey, setAlphaVantageApiKey] = useState('');
   const [darkMode, setDarkMode] = useState(false);
+  const [currency, setCurrency] = useState('');
 
   // fetch functions
   async function getAccountSettings(userInfo: any) {
@@ -60,6 +63,7 @@ export default function Home({
       setClearBitApiKey(data.clearbit_api_key || '');
       setAlphaVantageApiKey(data.alpha_vantage_api_key || '');
       setDarkMode(data.dark_mode || false);
+      setCurrency(data.currency || '');
       setAccountSettingsLoading(false);
     });
   }
@@ -114,6 +118,7 @@ export default function Home({
         dark_mode: darkMode,
         clearbit_api_key: clearBitApiKey,
         alpha_vantage_api_key: alphaVantageApiKey,
+        currency: currency,
       }
     ).then(() => {
       ovewriteCachedFetch('/api/data/get_user_data', {}, 'POST', {
@@ -122,6 +127,7 @@ export default function Home({
         setClearBitApiKey(data.clearbit_api_key || '');
         setAlphaVantageApiKey(data.alpha_vantage_api_key || '');
         setDarkMode(data.dark_mode || false);
+        setCurrency(data.currency || '');
         setAccountSettingsLoading(false);
       });
     });
@@ -344,6 +350,45 @@ export default function Home({
           </div>
           <Divider />
           <div className="flex flex-col">
+            <Text strong>Currency</Text>
+            <div className="mt-2 w-72 sm:w-96">
+              {accountSettingsLoading ? (
+                <Skeleton
+                  active={true}
+                  paragraph={{ rows: 1 }}
+                  title={false}
+                ></Skeleton>
+              ) : (
+                <AutoComplete
+                  value={currency}
+                  onChange={(value) => {
+                    setCurrency(value);
+                  }}
+                  status={
+                    currencyCodes.find((o) => o.value === currency)
+                      ? ''
+                      : 'error'
+                  }
+                  size="small"
+                  className="w-full"
+                  options={currencyCodes}
+                  filterOption={(inputValue, option) =>
+                    option!.value
+                      .toUpperCase()
+                      .indexOf(inputValue.toUpperCase()) !== -1
+                  }
+                  onSelect={(value) => {
+                    setCurrency(value);
+                  }}
+                />
+              )}
+            </div>
+            <Text className="mt-1" type="secondary">
+              Set your currency
+            </Text>
+          </div>
+          <Divider />
+          <div className="flex flex-col">
             <Text strong>Dark mode</Text>
             <div>
               <Switch
@@ -368,7 +413,12 @@ export default function Home({
                 handleSaveAccountSettings();
               }}
               className="mt-2"
-              disabled={accountSettingsLoading}
+              disabled={
+                accountSettingsLoading ||
+                currencyCodes.find((o) => o.value === currency)
+                  ? false
+                  : true
+              }
             >
               Save
             </Button>
