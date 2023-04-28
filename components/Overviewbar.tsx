@@ -60,7 +60,7 @@ export default function tabs({
         className={`flex flex-col basis-0 flex-grow rounded-full px-4 shadow ${
           tab === '1'
             ? 'bg-white dark:bg-neutral-700'
-            : 'bg-neutral-100 dark:bg-black'
+            : 'bg-neutral-100 dark:bg-neutral-950'
         }`}
         onClick={() => handleTabChange('1')}
       >
@@ -89,7 +89,7 @@ export default function tabs({
         className={`flex flex-col basis-0 flex-grow rounded-full px-4 shadow ${
           tab === '2'
             ? 'bg-white dark:bg-neutral-700'
-            : 'bg-neutral-100 dark:bg-black'
+            : 'bg-neutral-100 dark:bg-neutral-950'
         }`}
         onClick={() => handleTabChange('2')}
       >
@@ -108,7 +108,7 @@ export default function tabs({
         className={`flex flex-col basis-0 flex-grow rounded-full px-4 shadow ${
           tab === '3'
             ? 'bg-white dark:bg-neutral-700'
-            : 'bg-neutral-100 dark:bg-black'
+            : 'bg-neutral-100 dark:bg-neutral-950'
         }`}
         onClick={() => handleTabChange('3')}
       >
@@ -127,7 +127,7 @@ export default function tabs({
         className={`flex flex-col basis-0 flex-grow rounded-full px-4 shadow ${
           tab === '4'
             ? 'bg-white dark:bg-neutral-700'
-            : 'bg-neutral-100 dark:bg-black'
+            : 'bg-neutral-100 dark:bg-neutral-950'
         }`}
         onClick={() => handleTabChange('4')}
       >
