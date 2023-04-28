@@ -112,8 +112,14 @@ export default function PrimeFacePieChart({
     scales: {
       x: {
         stacked: true,
+        grid: {
+          color: 'rgb(120 113 108)',
+        },
       },
       y: {
+        grid: {
+          color: 'rgb(120 113 108)',
+        },
         stacked: true,
         ticks: {
           callback: function (value: number) {

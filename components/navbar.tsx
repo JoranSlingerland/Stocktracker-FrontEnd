@@ -9,41 +9,19 @@ import {
 } from '@ant-design/icons';
 import { Menu, Tooltip } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { ApiWithMessage, regularFetch } from '../utils/api-utils';
+import { ApiWithMessage } from '../utils/api-utils';
+import { UserInfo_Type } from '../utils/types';
 
-export default function App() {
-  const [userInfo, setUserInfo] = useState({
-    clientPrincipal: {
-      userId: '',
-      userRoles: ['anonymous'],
-      claims: [],
-      identityProvider: '',
-      userDetails: '',
-    },
-  });
+export default function App({ userInfo }: { userInfo: UserInfo_Type }) {
   const [current, setCurrent] = useState('portfolio');
-
   useEffect(() => {
     setCurrent(window.location.pathname);
-    getUserInfo();
   }, []);
 
-  async function getUserInfo() {
-    await regularFetch('/.auth/me', undefined).then((data) => {
-      setUserInfo(data);
-    });
-  }
-
   const authenticated = () => {
-    if (
-      userInfo &&
-      userInfo.clientPrincipal &&
-      userInfo.clientPrincipal.userRoles.includes('authenticated')
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    return (
+      userInfo?.clientPrincipal?.userRoles.includes('authenticated') || false
+    );
   };
 
   const items = [
@@ -82,9 +60,7 @@ export default function App() {
       icon: <UserOutlined />,
       label: (
         <p className="hidden sm:inline-block">
-          {userInfo &&
-            userInfo.clientPrincipal &&
-            userInfo.clientPrincipal.userDetails}
+          {userInfo?.clientPrincipal?.userDetails || ''}
         </p>
       ),
       className: 'float-right hidden sm:inline-block',

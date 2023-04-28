@@ -57,10 +57,10 @@ export default function tabs({
   return (
     <div className="flex flex-col space-y-5 lg:space-x-5 lg:space-y-0 lg:flex-row">
       <div
-        className={`${
+        className={`flex flex-col basis-0 flex-grow rounded-full px-4 shadow ${
           tab === '1'
-            ? 'flex flex-col basis-0 flex-grow rounded-full px-4 bg-white shadow'
-            : 'flex flex-col basis-0 flex-grow rounded-full px-4 bg-neutral-100'
+            ? 'bg-white dark:bg-neutral-700'
+            : 'bg-neutral-100 dark:bg-black'
         }`}
         onClick={() => handleTabChange('1')}
       >
@@ -86,10 +86,10 @@ export default function tabs({
         </div>
       </div>
       <div
-        className={`${
+        className={`flex flex-col basis-0 flex-grow rounded-full px-4 shadow ${
           tab === '2'
-            ? 'flex flex-col basis-0 flex-grow rounded-full px-4 bg-white shadow'
-            : 'flex flex-col basis-0 flex-grow rounded-full px-4 bg-neutral-100'
+            ? 'bg-white dark:bg-neutral-700'
+            : 'bg-neutral-100 dark:bg-black'
         }`}
         onClick={() => handleTabChange('2')}
       >
@@ -105,10 +105,10 @@ export default function tabs({
         </div>
       </div>
       <div
-        className={`${
+        className={`flex flex-col basis-0 flex-grow rounded-full px-4 shadow ${
           tab === '3'
-            ? 'flex flex-col basis-0 flex-grow rounded-full px-4 bg-white shadow'
-            : 'flex flex-col basis-0 flex-grow rounded-full px-4 bg-neutral-100'
+            ? 'bg-white dark:bg-neutral-700'
+            : 'bg-neutral-100 dark:bg-black'
         }`}
         onClick={() => handleTabChange('3')}
       >
@@ -124,10 +124,10 @@ export default function tabs({
         </div>
       </div>
       <div
-        className={`${
+        className={`flex flex-col basis-0 flex-grow rounded-full px-4 shadow ${
           tab === '4'
-            ? 'flex flex-col basis-0 flex-grow rounded-full px-4 bg-white shadow'
-            : 'flex flex-col basis-0 flex-grow rounded-full px-4 bg-neutral-100'
+            ? 'bg-white dark:bg-neutral-700'
+            : 'bg-neutral-100 dark:bg-black'
         }`}
         onClick={() => handleTabChange('4')}
       >

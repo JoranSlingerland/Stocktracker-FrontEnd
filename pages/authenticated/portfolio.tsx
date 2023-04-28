@@ -2,7 +2,7 @@ import { Tabs, Collapse, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import PieChart from '../../components/PrimeFacePieChart';
 import AntdTable from '../../components/antdTable';
-import { cachedFetch, regularFetch } from '../../utils/api-utils';
+import { cachedFetch } from '../../utils/api-utils';
 import {
   formatCurrency,
   formatCurrencyWithColors,
@@ -203,17 +203,8 @@ async function fetchCountryPieData(userInfo: UserInfo_Type) {
   return { data: data, loading: false };
 }
 
-export default function Home() {
+export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
   // Const setup
-  const [userInfo, setUserInfo] = useState({
-    clientPrincipal: {
-      userId: '',
-      userRoles: ['anonymous'],
-      claims: [],
-      identityProvider: '',
-      userDetails: '',
-    },
-  });
   const [UnRealizedData, setUnRealizedData] = useState([null]);
   const [UnRealizedDataisLoading, setUnRealizedDataisLoading] = useState(true);
   const [RealizedData, setRealizedData] = useState(null);
@@ -228,18 +219,7 @@ export default function Home() {
   const [CountryPieData, setCountryPieData] = useState(fallbackObject);
   const [CountryPieDataisLoading, setCountryPieDataisLoading] = useState(true);
 
-  //  Fetch data
-  async function getUserInfo() {
-    await regularFetch('/.auth/me', undefined).then((data) => {
-      setUserInfo(data);
-    });
-  }
-
   // Fetch data on page load
-  useEffect(() => {
-    getUserInfo();
-  }, []);
-
   useEffect(() => {
     if (userInfo.clientPrincipal.userId !== '') {
       fetchUnRealizedData(userInfo).then(({ data, loading }) => {

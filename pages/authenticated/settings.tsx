@@ -6,6 +6,9 @@ import {
   Tabs,
   Typography,
   Tag,
+  Input,
+  Switch,
+  Skeleton,
 } from 'antd';
 import {
   CheckCircleOutlined,
@@ -14,11 +17,17 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
-import { ApiWithMessage, regularFetch } from '../../utils/api-utils';
+import {
+  ApiWithMessage,
+  cachedFetch,
+  regularFetch,
+  ovewriteCachedFetch,
+} from '../../utils/api-utils';
 import useWindowDimensions from '../../utils/useWindowDimensions';
 import AntdTable from '../../components/antdTable';
+import { UserInfo_Type } from '../../utils/types';
 
-const { Text, Title } = Typography;
+const { Text, Title, Link } = Typography;
 
 async function fetchOrchestratorList(userInfo: any) {
   const data: any = await regularFetch(`/api/orchestrator/list`, [], 'POST', {
@@ -28,24 +37,30 @@ async function fetchOrchestratorList(userInfo: any) {
   return { data: data, loading: false };
 }
 
-export default function Home() {
-  const [userInfo, setUserInfo] = useState({
-    clientPrincipal: {
-      userId: '',
-      userRoles: ['anonymous'],
-      claims: [],
-      identityProvider: '',
-      userDetails: '',
-    },
-  });
+export default function Home({
+  userInfo,
+  setDarkModeCallback,
+}: {
+  userInfo: UserInfo_Type;
+  setDarkModeCallback: (darkmode: boolean) => void;
+}) {
   const [orchestratorList, setOrchestratorList] = useState(null);
   const [orchestratorListIsLoading, setOrchestratorListIsLoading] =
     useState(true);
+  const [accountSettingsLoading, setAccountSettingsLoading] = useState(true);
+  const [clearBitApiKey, setClearBitApiKey] = useState('');
+  const [alphaVantageApiKey, setAlphaVantageApiKey] = useState('');
+  const [darkMode, setDarkMode] = useState(false);
 
   // fetch functions
-  async function getUserInfo() {
-    await regularFetch('/.auth/me', undefined).then((data: any) => {
-      setUserInfo(data);
+  async function getAccountSettings(userInfo: any) {
+    await cachedFetch('/api/data/get_user_data', {}, 'POST', {
+      userId: userInfo,
+    }).then((data: any) => {
+      setClearBitApiKey(data.clearbit_api_key || '');
+      setAlphaVantageApiKey(data.alpha_vantage_api_key || '');
+      setDarkMode(data.dark_mode || false);
+      setAccountSettingsLoading(false);
     });
   }
 
@@ -56,9 +71,6 @@ export default function Home() {
     successMessage: string,
     body: object
   ) {
-    if (userInfo === null) {
-      await getUserInfo();
-    }
     ApiWithMessage(
       url,
       runningMessage,
@@ -90,17 +102,40 @@ export default function Home() {
     }
   }
 
-  // useEffects
-  useEffect(() => {
-    getUserInfo();
-  }, []);
+  async function handleSaveAccountSettings() {
+    setAccountSettingsLoading(true);
+    await ApiWithMessage(
+      '/api/add/add_user_data',
+      'Saving account settings...',
+      'Account settings saved!',
+      'POST',
+      {
+        id: userInfo.clientPrincipal.userId,
+        dark_mode: darkMode,
+        clearbit_api_key: clearBitApiKey,
+        alpha_vantage_api_key: alphaVantageApiKey,
+      }
+    ).then(() => {
+      ovewriteCachedFetch('/api/data/get_user_data', {}, 'POST', {
+        userId: userInfo.clientPrincipal.userId,
+      }).then((data: any) => {
+        setClearBitApiKey(data.clearbit_api_key || '');
+        setAlphaVantageApiKey(data.alpha_vantage_api_key || '');
+        setDarkMode(data.dark_mode || false);
+        setAccountSettingsLoading(false);
+      });
+    });
+    setAccountSettingsLoading(false);
+  }
 
+  // useEffects
   useEffect(() => {
     if (userInfo.clientPrincipal.userId !== '') {
       fetchOrchestratorList(userInfo).then(({ data, loading }) => {
         setOrchestratorList(data);
         setOrchestratorListIsLoading(loading);
       });
+      getAccountSettings(userInfo.clientPrincipal.userId);
     }
   }, [userInfo]);
 
@@ -112,7 +147,7 @@ export default function Home() {
           setOrchestratorListIsLoading(loading);
         });
       }
-    }, 60000);
+    }, 10000);
     return () => clearInterval(interval);
   }, [userInfo]);
 
@@ -238,6 +273,111 @@ export default function Home() {
   const items = [
     {
       key: '1',
+      Title: 'Account',
+      label: 'Account',
+      children: (
+        <div className="flex flex-col">
+          <div className="flex flex-col items-center">
+            <Title level={3}>Account</Title>
+          </div>
+          <div className="flex flex-col mt-2">
+            <Text strong>Clearbit API Key</Text>
+            <div className="mt-2 w-72 sm:w-96">
+              {accountSettingsLoading ? (
+                <Skeleton
+                  active={true}
+                  paragraph={{ rows: 1 }}
+                  title={false}
+                ></Skeleton>
+              ) : (
+                <Input.Password
+                  value={clearBitApiKey}
+                  onChange={(e) => {
+                    setClearBitApiKey(e.target.value);
+                  }}
+                  size="small"
+                />
+              )}
+            </div>
+
+            <Text className="mt-1" type="secondary">
+              Get your Clearbit API Key at{' '}
+              <Link
+                type="secondary"
+                href="https://clearbit.com"
+                target="_blank"
+              >
+                clearbit.com
+              </Link>
+            </Text>
+          </div>
+          <Divider />
+          <div className="flex flex-col">
+            <Text strong>Alpha Vantage API Key</Text>
+            <div className="mt-2 w-72 sm:w-96">
+              {accountSettingsLoading ? (
+                <Skeleton
+                  active={true}
+                  paragraph={{ rows: 1 }}
+                  title={false}
+                ></Skeleton>
+              ) : (
+                <Input.Password
+                  value={alphaVantageApiKey}
+                  onChange={(e) => {
+                    setAlphaVantageApiKey(e.target.value);
+                  }}
+                  size="small"
+                />
+              )}
+            </div>
+            <Text className="mt-1" type="secondary">
+              Get your Alpha Vantage API Key at{' '}
+              <Link
+                type="secondary"
+                href="https://www.alphavantage.co/support/#api-key"
+                target="_blank"
+              >
+                alphavantage.co
+              </Link>
+            </Text>
+          </div>
+          <Divider />
+          <div className="flex flex-col">
+            <Text strong>Dark mode</Text>
+            <div>
+              <Switch
+                checked={darkMode}
+                onChange={(checked) => {
+                  setDarkMode(checked);
+                  setDarkModeCallback(checked);
+                }}
+                className="mt-2"
+                loading={accountSettingsLoading}
+              />
+            </div>
+            <Text className="mt-1" type="secondary">
+              Toggle dark mode
+            </Text>
+          </div>
+          <Divider />
+          <div className="flex flex-col items-center">
+            <Button
+              type="primary"
+              onClick={() => {
+                handleSaveAccountSettings();
+              }}
+              className="mt-2"
+              disabled={accountSettingsLoading}
+            >
+              Save
+            </Button>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: '2',
       title: 'Actions',
       label: 'Actions',
       children: (
@@ -293,7 +433,7 @@ export default function Home() {
       ),
     },
     {
-      key: '2',
+      key: '3',
       title: 'Orchestrations',
       label: 'Orchestrations',
       children: (
@@ -307,10 +447,9 @@ export default function Home() {
       ),
     },
   ];
-
   if (userInfo.clientPrincipal.userRoles.includes('admin')) {
     items.push({
-      key: '3',
+      key: '4',
       title: 'Admin',
       label: 'Admin',
       children: (

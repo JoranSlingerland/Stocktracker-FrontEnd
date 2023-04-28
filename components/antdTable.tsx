@@ -53,12 +53,17 @@ export default function AntdTable({
         return String(searchrecord).toLowerCase().includes(value.toLowerCase());
       };
     }
+    if (globalSorter) {
+      col.sorter = col.sorter === undefined || col.sorter === true;
+    } else {
+      col.sorter = col.sorter === true;
+    }
 
     return {
       ...col,
       ...columnProps,
       ...filterProps,
-      sorter: col.sorter || globalSorter ? sorterBy(col.key) : false,
+      sorter: col.sorter && sorterBy(col.key),
       showSorterTooltip: false,
     };
   });

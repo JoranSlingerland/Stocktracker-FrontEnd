@@ -5,9 +5,11 @@ import { formatCurrency } from '../utils/formatting';
 export default function BasicLineGraph({
   isloading,
   data,
+  darkmode,
 }: {
   isloading: boolean;
   data: any;
+  darkmode: boolean;
 }): JSX.Element {
   let multiAxisOptions = {
     stacked: false,
@@ -44,6 +46,9 @@ export default function BasicLineGraph({
           autoSkip: true,
           maxTicksLimit: 12,
         },
+        grid: {
+          color: 'rgb(120 113 108)',
+        },
       },
       y: {
         type: 'linear',
@@ -56,6 +61,9 @@ export default function BasicLineGraph({
             }
           },
         },
+        grid: {
+          color: 'rgb(120 113 108)',
+        },
       },
     },
   };
@@ -67,7 +75,7 @@ export default function BasicLineGraph({
         {
           label: data['datasets'][0]['label'],
           fill: false,
-          borderColor: data['datasets'][0]['borderColor'],
+          borderColor: '#0e8505',
           yAxisID: 'y',
           tension: 0.4,
           data: data['datasets'][0]['data'],
@@ -87,7 +95,7 @@ export default function BasicLineGraph({
         {
           label: data['datasets'][0]['label'],
           fill: false,
-          borderColor: data['datasets'][0]['borderColor'],
+          borderColor: '#0e8505',
           yAxisID: 'y',
           tension: 0.4,
           data: data['datasets'][0]['data'],
@@ -95,7 +103,7 @@ export default function BasicLineGraph({
         {
           label: data['datasets'][1]['label'],
           fill: false,
-          borderColor: data['datasets'][1]['borderColor'],
+          borderColor: darkmode ? '#d6d3d1' : '#000000',
           yAxisID: 'y',
           tension: 0.4,
           data: data['datasets'][1]['data'],

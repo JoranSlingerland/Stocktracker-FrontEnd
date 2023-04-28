@@ -60,7 +60,7 @@ async function cachedFetch(
 
 async function ovewriteCachedFetch(
   url: string,
-  fallback_data = [],
+  fallback_data: any = [],
   method = 'GET',
   body = {},
   hours = 24
