@@ -1,32 +1,54 @@
 import { Image, Typography, Space } from 'antd';
 const { Text } = Typography;
 
-function formatCurrency(value: number | string, maximumFractionDigits = 2) {
+function formatCurrency({
+  value,
+  maximumFractionDigits,
+  currency,
+}: {
+  value: number | string;
+  maximumFractionDigits?: number;
+  currency?: string;
+}) {
+  if (currency === undefined || currency === '') {
+    return formatNumber(value, maximumFractionDigits);
+  }
   return value.toLocaleString('nl-NL', {
     style: 'currency',
-    currency: 'EUR',
+    currency: currency.toUpperCase(),
     maximumFractionDigits: maximumFractionDigits,
   });
 }
 
-function formatCurrencyWithColors(
-  value: number | string,
-  maximumFractionDigits = 2
-) {
+function formatCurrencyWithColors({
+  value,
+  maximumFractionDigits = 2,
+  currency,
+}: {
+  value: number | string;
+  maximumFractionDigits?: number;
+  currency?: string;
+}) {
   if (typeof value === 'string') {
     value = parseFloat(value);
   }
+  if (currency === undefined) {
+    var formattedValue = formatCurrency({ value, maximumFractionDigits });
+  } else {
+    var formattedValue = formatCurrency({
+      value,
+      maximumFractionDigits,
+      currency,
+    });
+  }
+
   if (value > 0) {
-    return (
-      <Text type="success">{formatCurrency(value, maximumFractionDigits)}</Text>
-    );
+    return <Text type="success">{formattedValue}</Text>;
   }
   if (value < 0) {
-    return (
-      <Text type="danger">{formatCurrency(value, maximumFractionDigits)}</Text>
-    );
+    return <Text type="danger">{formattedValue}</Text>;
   }
-  return formatCurrency(value, maximumFractionDigits);
+  return formattedValue;
 }
 
 function formatPercentage(value: number | string, maximumFractionDigits = 2) {

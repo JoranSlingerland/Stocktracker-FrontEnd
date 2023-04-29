@@ -10,120 +10,12 @@ import {
   formatNumber,
   formatImageAndText,
 } from '../../utils/formatting';
-import { UserInfo_Type } from '../../utils/types';
+import { UserInfo_Type, UserSettings_Type } from '../../utils/types';
 import type { ColumnsType } from 'antd/es/table';
 
 const { Title } = Typography;
 
 const { Panel } = Collapse;
-
-const UnRealizedColumns: ColumnsType = [
-  {
-    title: 'symbol',
-    dataIndex: 'symbol',
-    key: 'symbol',
-    render: (text: string, record: any) =>
-      formatImageAndText(text, record.meta.logo),
-  },
-  {
-    title: 'Name',
-    dataIndex: 'meta',
-    key: 'meta.name',
-    render: (text: { name: any }) => text.name,
-    responsive: ['lg'],
-  },
-  {
-    title: 'Quantity',
-    dataIndex: 'unrealized',
-    key: 'unrealized.quantity',
-    render: (text: { quantity: string | number }) =>
-      formatNumber(text.quantity),
-  },
-  {
-    title: 'Total Cost',
-    dataIndex: 'unrealized',
-    key: 'unrealized.total_cost',
-    render: (text: { total_cost: string | number }) =>
-      formatCurrency(text.total_cost),
-    responsive: ['md'],
-  },
-  {
-    title: 'Profit / Loss',
-    dataIndex: 'unrealized',
-    key: 'unrealized.total_pl',
-    render: (text: { total_pl: string | number }) =>
-      formatCurrencyWithColors(text.total_pl),
-  },
-  {
-    title: 'Percentage',
-    dataIndex: 'unrealized',
-    key: 'unrealized.total_pl_percentage',
-    render: (text: { total_pl_percentage: string | number }) =>
-      formatPercentageWithColors(text.total_pl_percentage),
-    responsive: ['sm'],
-  },
-  {
-    title: 'Total Value',
-    dataIndex: 'unrealized',
-    key: 'unrealized.total_value',
-    render: (text: { total_value: string | number }) =>
-      formatCurrency(text.total_value),
-  },
-];
-
-const RealizedColumns: ColumnsType = [
-  {
-    title: 'symbol',
-    dataIndex: 'symbol',
-    key: 'symbol',
-    render: (text: string, record: any) =>
-      formatImageAndText(text, record.meta.logo),
-  },
-  {
-    title: 'Name',
-    dataIndex: 'meta',
-    key: 'meta.name',
-    render: (text: { name: any }) => text.name,
-    responsive: ['lg'],
-  },
-  {
-    title: 'Quantity',
-    dataIndex: 'realized',
-    key: 'realized.quantity',
-    render: (text: { quantity: string | number }) =>
-      formatNumber(text.quantity),
-  },
-  {
-    title: 'Total Cost',
-    dataIndex: 'realized',
-    key: 'realized.buy_price',
-    render: (text: { buy_price: string | number }) =>
-      formatCurrency(text.buy_price),
-    responsive: ['md'],
-  },
-  {
-    title: 'Profit / Loss',
-    dataIndex: 'realized',
-    key: 'realized.total_pl',
-    render: (text: { total_pl: string | number }) =>
-      formatCurrencyWithColors(text.total_pl),
-  },
-  {
-    title: 'Percentage',
-    dataIndex: 'realized',
-    key: 'realized.total_pl_percentage',
-    render: (text: { total_pl_percentage: string | number }) =>
-      formatPercentageWithColors(text.total_pl_percentage),
-    responsive: ['sm'],
-  },
-  {
-    title: 'Sell Price',
-    dataIndex: 'realized',
-    key: 'realized.sell_price',
-    render: (text: { sell_price: string | number }) =>
-      formatCurrency(text.sell_price),
-  },
-];
 
 const fallbackObject = {
   labels: [],
@@ -203,7 +95,13 @@ async function fetchCountryPieData(userInfo: UserInfo_Type) {
   return { data: data, loading: false };
 }
 
-export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
+export default function Home({
+  userInfo,
+  userSettings,
+}: {
+  userInfo: UserInfo_Type;
+  userSettings: UserSettings_Type;
+}) {
   // Const setup
   const [UnRealizedData, setUnRealizedData] = useState([null]);
   const [UnRealizedDataisLoading, setUnRealizedDataisLoading] = useState(true);
@@ -255,36 +153,180 @@ export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
       key: '1',
       label: 'Stocks',
       children: (
-        <PieChart data={StockPieData} isloading={StockPieDataisLoading} />
+        <PieChart
+          data={StockPieData}
+          isloading={StockPieDataisLoading}
+          userSettings={userSettings}
+        />
       ),
     },
     {
       key: '2',
       label: 'Sector',
       children: (
-        <PieChart data={SectorPieData} isloading={SectorPieDataisLoading} />
+        <PieChart
+          data={SectorPieData}
+          isloading={SectorPieDataisLoading}
+          userSettings={userSettings}
+        />
       ),
     },
     {
       key: '3',
       label: 'Country',
       children: (
-        <PieChart data={CountryPieData} isloading={CountryPieDataisLoading} />
+        <PieChart
+          data={CountryPieData}
+          isloading={CountryPieDataisLoading}
+          userSettings={userSettings}
+        />
       ),
     },
     {
       key: '4',
       label: 'Currency',
       children: (
-        <PieChart data={CurrencyPieData} isloading={CurrencyPieDataisLoading} />
+        <PieChart
+          data={CurrencyPieData}
+          isloading={CurrencyPieDataisLoading}
+          userSettings={userSettings}
+        />
       ),
+    },
+  ];
+
+  // Columns
+
+  const UnRealizedColumns: ColumnsType = [
+    {
+      title: 'symbol',
+      dataIndex: 'symbol',
+      key: 'symbol',
+      render: (text: string, record: any) =>
+        formatImageAndText(text, record.meta.logo),
+    },
+    {
+      title: 'Name',
+      dataIndex: 'meta',
+      key: 'meta.name',
+      render: (text: { name: any }) => text.name,
+      responsive: ['lg'],
+    },
+    {
+      title: 'Quantity',
+      dataIndex: 'unrealized',
+      key: 'unrealized.quantity',
+      render: (text: { quantity: string | number }) =>
+        formatNumber(text.quantity),
+    },
+    {
+      title: 'Total Cost',
+      dataIndex: 'unrealized',
+      key: 'unrealized.total_cost',
+      render: (text: { total_cost: string | number }) =>
+        formatCurrency({
+          value: text.total_cost,
+          currency: userSettings.currency,
+        }),
+      responsive: ['md'],
+    },
+    {
+      title: 'Profit / Loss',
+      dataIndex: 'unrealized',
+      key: 'unrealized.total_pl',
+      render: (text: { total_pl: string | number }) =>
+        formatCurrencyWithColors({
+          value: text.total_pl,
+          currency: userSettings.currency,
+        }),
+    },
+    {
+      title: 'Percentage',
+      dataIndex: 'unrealized',
+      key: 'unrealized.total_pl_percentage',
+      render: (text: { total_pl_percentage: string | number }) =>
+        formatPercentageWithColors(text.total_pl_percentage),
+      responsive: ['sm'],
+    },
+    {
+      title: 'Total Value',
+      dataIndex: 'unrealized',
+      key: 'unrealized.total_value',
+      render: (text: { total_value: string | number }) =>
+        formatCurrency({
+          value: text.total_value,
+          currency: userSettings.currency,
+        }),
+    },
+  ];
+
+  const RealizedColumns: ColumnsType = [
+    {
+      title: 'symbol',
+      dataIndex: 'symbol',
+      key: 'symbol',
+      render: (text: string, record: any) =>
+        formatImageAndText(text, record.meta.logo),
+    },
+    {
+      title: 'Name',
+      dataIndex: 'meta',
+      key: 'meta.name',
+      render: (text: { name: any }) => text.name,
+      responsive: ['lg'],
+    },
+    {
+      title: 'Quantity',
+      dataIndex: 'realized',
+      key: 'realized.quantity',
+      render: (text: { quantity: string | number }) =>
+        formatNumber(text.quantity),
+    },
+    {
+      title: 'Total Cost',
+      dataIndex: 'realized',
+      key: 'realized.buy_price',
+      render: (text: { buy_price: string | number }) =>
+        formatCurrency({
+          value: text.buy_price,
+          currency: userSettings.currency,
+        }),
+      responsive: ['md'],
+    },
+    {
+      title: 'Profit / Loss',
+      dataIndex: 'realized',
+      key: 'realized.total_pl',
+      render: (text: { total_pl: string | number }) =>
+        formatCurrencyWithColors({
+          value: text.total_pl,
+          currency: userSettings.currency,
+        }),
+    },
+    {
+      title: 'Percentage',
+      dataIndex: 'realized',
+      key: 'realized.total_pl_percentage',
+      render: (text: { total_pl_percentage: string | number }) =>
+        formatPercentageWithColors(text.total_pl_percentage),
+      responsive: ['sm'],
+    },
+    {
+      title: 'Sell Price',
+      dataIndex: 'realized',
+      key: 'realized.sell_price',
+      render: (text: { sell_price: string | number }) =>
+        formatCurrency({
+          value: text.sell_price,
+          currency: userSettings.currency,
+        }),
     },
   ];
 
   // Render
   return (
     <div>
-      {/* Titel */}
+      {/* Title */}
       <div>
         <Title className="flex items-center justify-center pt-5" level={1}>
           Portfolio

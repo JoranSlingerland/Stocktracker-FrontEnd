@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import { Skeleton, Typography, Statistic } from 'antd';
 import { RiseOutlined, FallOutlined } from '@ant-design/icons';
 import { formatCurrency, formatPercentage } from '../utils/formatting';
+import { UserSettings_Type } from '../utils/types';
 
 const { Text } = Typography;
 
@@ -9,10 +10,12 @@ export default function tabs({
   topBarData,
   loading,
   handleTabChange,
+  userSettings,
 }: {
   topBarData: any;
   loading: boolean;
   handleTabChange: (tab: string) => void;
+  userSettings: UserSettings_Type;
 }): JSX.Element {
   const tab = (useRouter().query.tab || 1).toString();
 
@@ -68,7 +71,9 @@ export default function tabs({
           <Skeleton {...skeletonProps_full_width}>
             <Statistic
               value={topBarData.total_value_gain}
-              formatter={(value) => formatCurrency(value)}
+              formatter={(value) =>
+                formatCurrency({ value, currency: userSettings.currency })
+              }
               title={
                 topBarData.total_value_gain > 0 ? 'Value growth' : 'Value loss'
               }
@@ -98,7 +103,9 @@ export default function tabs({
             <Statistic
               value={topBarData.total_dividends}
               title={'Received dividends'}
-              formatter={(value) => formatCurrency(value)}
+              formatter={(value) =>
+                formatCurrency({ value, currency: userSettings.currency })
+              }
               className="ml-1"
             />
           </Skeleton>
@@ -117,7 +124,9 @@ export default function tabs({
             <Statistic
               value={topBarData.transaction_cost}
               title={'Transaction cost'}
-              formatter={(value) => formatCurrency(value)}
+              formatter={(value) =>
+                formatCurrency({ value, currency: userSettings.currency })
+              }
               className="ml-1"
             />
           </Skeleton>
@@ -135,7 +144,9 @@ export default function tabs({
           <Skeleton {...skeletonProps_full_width}>
             <Statistic
               value={topBarData.total_pl}
-              formatter={(value) => formatCurrency(value)}
+              formatter={(value) =>
+                formatCurrency({ value, currency: userSettings.currency })
+              }
               title={topBarData.total_pl > 0 ? 'Gains' : 'Losses'}
               className="ml-1"
             ></Statistic>

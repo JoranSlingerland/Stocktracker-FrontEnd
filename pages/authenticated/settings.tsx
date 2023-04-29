@@ -22,7 +22,7 @@ import {
   ApiWithMessage,
   cachedFetch,
   regularFetch,
-  ovewriteCachedFetch,
+  overwriteCachedFetch,
 } from '../../utils/api-utils';
 import useWindowDimensions from '../../utils/useWindowDimensions';
 import AntdTable from '../../components/antdTable';
@@ -97,7 +97,7 @@ export default function Home({
     });
   }
 
-  function handlelocalstorageclearclick() {
+  function handleLocalStorageClearClick() {
     localStorage.clear();
     if (localStorage.length === 0) {
       message.success('Local storage cleared');
@@ -121,7 +121,7 @@ export default function Home({
         currency: currency,
       }
     ).then(() => {
-      ovewriteCachedFetch('/api/data/get_user_data', {}, 'POST', {
+      overwriteCachedFetch('/api/data/get_user_data', {}, 'POST', {
         userId: userInfo.clientPrincipal.userId,
       }).then((data: any) => {
         setClearBitApiKey(data.clearbit_api_key || '');
@@ -466,7 +466,7 @@ export default function Home({
               <Title level={4}>Clear local storage</Title>
               <div className="row-span-2 text-right">
                 <Button
-                  onClick={() => handlelocalstorageclearclick()}
+                  onClick={() => handleLocalStorageClearClick()}
                   type="primary"
                   size="large"
                 >
@@ -514,7 +514,7 @@ export default function Home({
                 <Button
                   onClick={() =>
                     handleClick(
-                      '/api/priveleged/create_cosmosdb_and_container',
+                      '/api/privileged/create_cosmosdb_and_container',
                       'Creating Containers',
                       'Containers created :)'
                     )
@@ -552,7 +552,7 @@ export default function Home({
                     okButtonProps={{ danger: true, loading: false }}
                     onConfirm={() =>
                       handleClickOrchestratorAction(
-                        `/api/priveleged/delete_cosmosdb_container`,
+                        `/api/privileged/delete_cosmosdb_container`,
                         'Deleting Containers',
                         'All Containers deleted :)',
                         {
@@ -584,7 +584,7 @@ export default function Home({
                     okButtonProps={{ danger: true, loading: false }}
                     onConfirm={() =>
                       handleClickOrchestratorAction(
-                        `/api/priveleged/delete_cosmosdb_container`,
+                        `/api/privileged/delete_cosmosdb_container`,
                         'Deleting Containers',
                         'All Containers deleted :)',
                         {

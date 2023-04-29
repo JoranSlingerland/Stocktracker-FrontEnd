@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import AntdTable from '../../components/antdTable';
 import {
   cachedFetch,
-  ovewriteCachedFetch,
+  overwriteCachedFetch,
   ApiWithMessage,
 } from '../../utils/api-utils';
 import {
@@ -13,7 +13,7 @@ import {
   formatNumber,
 } from '../../utils/formatting';
 import AddXForm from '../../components/formModal';
-import { UserInfo_Type } from '../../utils/types';
+import { UserInfo_Type, UserSettings_Type } from '../../utils/types';
 import type { ColumnsType } from 'antd/es/table';
 
 const { Search } = Input;
@@ -35,7 +35,13 @@ async function fetchInputInvestedData(userInfo: UserInfo_Type) {
   return { data: data, loading: false };
 }
 
-export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
+export default function Home({
+  userInfo,
+  userSettings,
+}: {
+  userInfo: UserInfo_Type;
+  userSettings: UserSettings_Type;
+}) {
   const [InputTransactionsData, setInputTransactionsData]: any = useState();
   const [InputTransactionsDataisLoading, setInputTransactionsDataisLoading] =
     useState(true);
@@ -48,7 +54,7 @@ export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
     useState<any>(undefined);
 
   // columns
-  const InputInvestedscolumns: ColumnsType = [
+  const InputInvestedColumns: ColumnsType = [
     {
       title: 'Transaction Date',
       dataIndex: 'date',
@@ -63,7 +69,8 @@ export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
       title: 'Amount',
       dataIndex: 'amount',
       key: 'amount',
-      render: (text: string | number) => formatCurrency(text),
+      render: (text: string | number) =>
+        formatCurrency({ value: text, currency: userSettings.currency }),
     },
     {
       title: 'Actions',
@@ -93,7 +100,7 @@ export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
     },
   ];
 
-  const InputTransactionscolumns: ColumnsType = [
+  const InputTransactionsColumns: ColumnsType = [
     {
       title: 'Symbol',
       dataIndex: 'symbol',
@@ -110,7 +117,8 @@ export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
       title: 'Cost',
       dataIndex: 'cost',
       key: 'cost',
-      render: (text: string | number) => formatCurrency(text),
+      render: (text: string | number) =>
+        formatCurrency({ value: text, currency: userSettings.currency }),
     },
     {
       title: 'Quantity',
@@ -127,7 +135,8 @@ export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
       title: 'Transaction Cost',
       dataIndex: 'transaction_cost',
       key: 'transaction_cost',
-      render: (text: string | number) => formatCurrency(text),
+      render: (text: string | number) =>
+        formatCurrency({ value: text, currency: userSettings.currency }),
     },
     {
       title: 'Currency',
@@ -215,7 +224,7 @@ export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
   async function overWriteTableData(
     container: 'input_invested' | 'input_transactions'
   ): Promise<void> {
-    ovewriteCachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
+    overwriteCachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
       userId: userInfo.clientPrincipal.userId,
       containerName: container,
     }).then((data) => {
@@ -238,7 +247,7 @@ export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
         </Title>
         <AntdTable
           isLoading={InputTransactionsDataisLoading}
-          columns={InputTransactionscolumns}
+          columns={InputTransactionsColumns}
           data={InputTransactionsData}
           globalSorter={true}
           searchEnabled={true}
@@ -283,7 +292,7 @@ export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
           </Title>
           <AntdTable
             isLoading={InputInvestedDataisLoading}
-            columns={InputInvestedscolumns}
+            columns={InputInvestedColumns}
             data={InputInvestedData}
             globalSorter={true}
             searchEnabled={true}
