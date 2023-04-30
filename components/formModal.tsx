@@ -73,7 +73,7 @@ const AddStockForm = ({
           <DatePicker />
         </Form.Item>
         <Form.Item
-          name="cost"
+          name="cost_per_share"
           label="Cost"
           hasFeedback
           rules={[
