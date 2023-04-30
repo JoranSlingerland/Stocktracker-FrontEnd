@@ -8,10 +8,17 @@ import {
   Tooltip,
   InputNumber,
   DatePicker,
+  Divider,
+  Typography,
+  Select,
 } from 'antd';
 import { useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { ApiWithMessage, regularFetch } from '../utils/api-utils';
+import { formatCurrency } from '../utils/formatting';
+import currencyCodes from '../shared/currency_codes.json';
+
+const { Text, Title } = Typography;
 
 const AddStockForm = ({
   open,
@@ -23,6 +30,8 @@ const AddStockForm = ({
   onCancel: () => void;
 }): JSX.Element => {
   const [form] = Form.useForm();
+  const [totalValue, setTotalValue] = useState(0);
+  const [currency, setCurrency] = useState('');
   return (
     <Modal
       open={open}
@@ -41,6 +50,16 @@ const AddStockForm = ({
       }}
     >
       <Form
+        onFieldsChange={() => {
+          const cost_per_share = form.getFieldValue('cost_per_share');
+          const quantity = form.getFieldValue('quantity');
+          if (cost_per_share === undefined || quantity === undefined) {
+            setTotalValue(0);
+          } else {
+            setTotalValue(cost_per_share * quantity);
+          }
+          setCurrency(form.getFieldValue('currency'));
+        }}
         form={form}
         layout="vertical"
         name="add_stock_form"
@@ -160,7 +179,14 @@ const AddStockForm = ({
             },
           ]}
         >
-          <Input />
+          <Select
+            options={currencyCodes}
+            showSearch={true}
+            filterOption={(inputValue, option) =>
+              option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !==
+              -1
+            }
+          />
         </Form.Item>
         <Form.Item
           name="domain"
@@ -181,6 +207,17 @@ const AddStockForm = ({
           <Input />
         </Form.Item>
       </Form>
+      <Divider />
+      <div className="flex">
+        <div>
+          <Text strong>Total cost</Text>
+        </div>
+        <div className="mr-0 ml-auto">
+          <Title level={5}>
+            {formatCurrency({ value: totalValue, currency: currency })}
+          </Title>
+        </div>
+      </div>
     </Modal>
   );
 };
