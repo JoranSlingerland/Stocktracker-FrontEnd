@@ -4,7 +4,6 @@ import {
   Form,
   Input,
   Modal,
-  Radio,
   Tooltip,
   InputNumber,
   DatePicker,
@@ -15,7 +14,8 @@ import {
 import { useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { ApiWithMessage, regularFetch } from '../utils/api-utils';
-import { formatCurrency } from '../utils/formatting';
+import { formatCurrency, getCurrencySymbol } from '../utils/formatting';
+import { UserSettings_Type } from '../utils/types';
 import currencyCodes from '../shared/currency_codes.json';
 
 const { Text, Title } = Typography;
@@ -24,14 +24,29 @@ const AddStockForm = ({
   open,
   onCreate,
   onCancel,
+  userSettings,
 }: {
   open: boolean;
   onCreate: (values: any) => void;
   onCancel: () => void;
+  userSettings: UserSettings_Type;
 }): JSX.Element => {
   const [form] = Form.useForm();
   const [totalValue, setTotalValue] = useState(0);
-  const [currency, setCurrency] = useState('');
+  const [currency, setCurrency] = useState(userSettings.currency);
+
+  const currencySelector = (
+    <Form.Item name="currency" hasFeedback noStyle required={true}>
+      <Select
+        options={currencyCodes}
+        showSearch={true}
+        filterOption={(inputValue, option) =>
+          option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+        }
+      />
+    </Form.Item>
+  );
+
   return (
     <Modal
       open={open}
@@ -65,6 +80,7 @@ const AddStockForm = ({
         name="add_stock_form"
         initialValues={{
           transaction_type: 'Buy',
+          currency: userSettings.currency,
         }}
       >
         <Form.Item
@@ -89,7 +105,7 @@ const AddStockForm = ({
           hasFeedback
           rules={[{ required: true }]}
         >
-          <DatePicker />
+          <DatePicker className="w-full" />
         </Form.Item>
         <Form.Item
           name="cost_per_share"
@@ -109,7 +125,11 @@ const AddStockForm = ({
             },
           ]}
         >
-          <InputNumber />
+          <InputNumber
+            addonAfter={currencySelector}
+            controls={false}
+            className="w-full"
+          />
         </Form.Item>
         <Form.Item
           name="quantity"
@@ -129,10 +149,11 @@ const AddStockForm = ({
             },
           ]}
         >
-          <InputNumber />
+          <InputNumber className="w-full" controls={false} />
         </Form.Item>
         <Form.Item
           name="transaction_type"
+          label="Transaction Type"
           hasFeedback
           rules={[
             {
@@ -140,10 +161,10 @@ const AddStockForm = ({
             },
           ]}
         >
-          <Radio.Group>
-            <Radio value="Buy">Buy</Radio>
-            <Radio value="Sell">Sell</Radio>
-          </Radio.Group>
+          <Select>
+            <Select.Option value="Buy">Buy</Select.Option>
+            <Select.Option value="Sell">Sell</Select.Option>
+          </Select>
         </Form.Item>
         <Form.Item
           name="transaction_cost"
@@ -163,29 +184,10 @@ const AddStockForm = ({
             },
           ]}
         >
-          <InputNumber />
-        </Form.Item>
-        <Form.Item
-          name="currency"
-          label="Currency"
-          hasFeedback
-          rules={[
-            {
-              required: true,
-            },
-            {
-              pattern: new RegExp('^[A-Z]{3}$'),
-              message: 'Currency must be 3 capital letters',
-            },
-          ]}
-        >
-          <Select
-            options={currencyCodes}
-            showSearch={true}
-            filterOption={(inputValue, option) =>
-              option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !==
-              -1
-            }
+          <InputNumber
+            className="w-full"
+            prefix={getCurrencySymbol(userSettings.currency)}
+            controls={false}
           />
         </Form.Item>
         <Form.Item
@@ -226,10 +228,12 @@ const AddTransactionForm = ({
   open,
   onCreate,
   onCancel,
+  userSettings,
 }: {
   open: boolean;
   onCreate: (values: any) => void;
   onCancel: () => void;
+  userSettings: UserSettings_Type;
 }): JSX.Element => {
   const [form] = Form.useForm();
   return (
@@ -263,7 +267,7 @@ const AddTransactionForm = ({
           hasFeedback
           rules={[{ required: true }]}
         >
-          <DatePicker />
+          <DatePicker className="w-full" />
         </Form.Item>
         <Form.Item
           name="amount"
@@ -286,10 +290,15 @@ const AddTransactionForm = ({
             },
           ]}
         >
-          <InputNumber />
+          <InputNumber
+            className="w-full"
+            prefix={getCurrencySymbol(userSettings.currency)}
+            controls={false}
+          />
         </Form.Item>
         <Form.Item
           name="transaction_type"
+          label="Transaction Type"
           hasFeedback
           rules={[
             {
@@ -297,10 +306,10 @@ const AddTransactionForm = ({
             },
           ]}
         >
-          <Radio.Group>
-            <Radio value="Deposit">Deposit</Radio>
-            <Radio value="Withdrawal">Withdrawal</Radio>
-          </Radio.Group>
+          <Select>
+            <Select.Option value="Deposit">Deposit</Select.Option>
+            <Select.Option value="Withdrawal">Withdrawal</Select.Option>
+          </Select>
         </Form.Item>
       </Form>
     </Modal>
@@ -310,11 +319,13 @@ const AddTransactionForm = ({
 export default function AddXForm({
   form,
   parentCallback,
+  userSettings,
 }: {
   form: 'addStock' | 'addTransaction';
   parentCallback: (
     container: 'input_invested' | 'input_transactions'
   ) => Promise<void>;
+  userSettings: UserSettings_Type;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -373,6 +384,7 @@ export default function AddXForm({
           onCancel={() => {
             setOpen(false);
           }}
+          userSettings={userSettings}
         />
       ) : form === 'addTransaction' ? (
         <AddTransactionForm
@@ -381,6 +393,7 @@ export default function AddXForm({
           onCancel={() => {
             setOpen(false);
           }}
+          userSettings={userSettings}
         />
       ) : null}
     </div>

@@ -20,6 +20,18 @@ function formatCurrency({
   });
 }
 
+function getCurrencySymbol(currency: string | undefined) {
+  if (currency === undefined || currency === '') {
+    return '';
+  }
+  const value = 1;
+  const formattedValue = value.toLocaleString('nl-NL', {
+    style: 'currency',
+    currency: currency.toUpperCase(),
+  });
+  return formattedValue.replace(/[\d\s,.]+/g, '');
+}
+
 function formatCurrencyWithColors({
   value,
   maximumFractionDigits = 2,
@@ -117,4 +129,5 @@ export {
   formatPercentageWithColors,
   formatNumber,
   formatImageAndText,
+  getCurrencySymbol,
 };

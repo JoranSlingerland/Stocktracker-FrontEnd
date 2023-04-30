@@ -136,12 +136,7 @@ export default function Home({
       dataIndex: 'transaction_cost',
       key: 'transaction_cost',
       render: (text: string | number) =>
-        formatCurrency({ value: text, currency: userSettings.currency }),
-    },
-    {
-      title: 'Currency',
-      dataIndex: 'currency',
-      key: 'currency',
+        formatCurrency({ value: text, currency: 'EUR' }),
     },
     {
       title: 'Domain',
@@ -280,6 +275,7 @@ export default function Home({
                 <AddXForm
                   form={'addStock'}
                   parentCallback={overWriteTableData}
+                  userSettings={userSettings}
                 />
               </div>
             </div>
@@ -325,6 +321,7 @@ export default function Home({
                   <AddXForm
                     form={'addTransaction'}
                     parentCallback={overWriteTableData}
+                    userSettings={userSettings}
                   />
                 </div>
               </div>
