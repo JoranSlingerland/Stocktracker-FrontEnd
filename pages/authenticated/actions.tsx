@@ -117,8 +117,8 @@ export default function Home({
       title: 'Cost',
       dataIndex: 'cost_per_share',
       key: 'cost_per_share',
-      render: (text: string | number) =>
-        formatCurrency({ value: text, currency: userSettings.currency }),
+      render: (text: string | number, record: any) =>
+        formatCurrency({ value: text, currency: record.currency }),
     },
     {
       title: 'Quantity',
