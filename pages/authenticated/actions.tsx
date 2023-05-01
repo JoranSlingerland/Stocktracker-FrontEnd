@@ -17,12 +17,15 @@ import { UserInfo_Type, UserSettings_Type } from '../../utils/types';
 import type { ColumnsType } from 'antd/es/table';
 
 const { Search } = Input;
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 async function fetchTransactionsData(userInfo: UserInfo_Type) {
   const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
     userId: userInfo.clientPrincipal.userId,
     containerName: 'input_transactions',
+  });
+  data.forEach((row: any) => {
+    row.total_cost = row.cost_per_share * row.quantity;
   });
   return { data: data, loading: false };
 }
@@ -105,8 +108,11 @@ export default function Home({
       title: 'Name',
       dataIndex: 'symbol',
       key: 'symbol',
-      render: (text: string, record: any) =>
-        formatImageAndText(text, record.meta.name, record.meta.logo),
+      render: (text: string, record: any) => (
+        <div className="min-w-16">
+          {formatImageAndText(text, record.meta.name, record.meta.logo)}
+        </div>
+      ),
     },
     {
       title: 'Transaction Date',
@@ -115,16 +121,27 @@ export default function Home({
     },
     {
       title: 'Cost',
-      dataIndex: 'cost_per_share',
-      key: 'cost_per_share',
-      render: (text: string | number, record: any) =>
-        formatCurrency({ value: text, currency: record.currency }),
-    },
-    {
-      title: 'Quantity',
-      dataIndex: 'quantity',
-      key: 'quantity',
-      render: (text: string | number) => formatNumber(text),
+      dataIndex: 'total_cost',
+      key: 'total_cost',
+      render: (text, record: any) => (
+        <div className="min-w-32">
+          <Text strong>
+            {formatCurrency({
+              value: text,
+              currency: record.currency,
+            })}
+          </Text>
+          <div className="flex space-x-0.5 flex-row">
+            <Text keyboard> x{formatNumber(record.quantity)} </Text>
+            <Text type="secondary">
+              {formatCurrency({
+                value: record.cost_per_share,
+                currency: record.currency,
+              })}
+            </Text>
+          </div>
+        </div>
+      ),
     },
     {
       title: 'Transaction Type',
