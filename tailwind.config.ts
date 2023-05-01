@@ -6,7 +6,12 @@ export default {
     './components/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      minWidth: {
+        '16': '4rem',
+        '32': '8rem',
+      },
+    },
   },
   plugins: [],
   darkMode: 'class',
