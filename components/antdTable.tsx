@@ -42,15 +42,15 @@ export default function AntdTable({
       filterProps.filteredValue = searchText;
       filterProps.onFilter = (value: any, record: any) => {
         // deep copy record
-        let searchrecord = JSON.parse(JSON.stringify(record));
-        Object.keys(searchrecord).forEach((key) => {
+        let searchRecord = JSON.parse(JSON.stringify(record));
+        Object.keys(searchRecord).forEach((key) => {
           if (!colDataIndexList.includes(key)) {
-            delete searchrecord[key];
+            delete searchRecord[key];
           }
         });
 
-        searchrecord = Object.values(searchrecord);
-        return String(searchrecord).toLowerCase().includes(value.toLowerCase());
+        searchRecord = Object.values(searchRecord);
+        return String(searchRecord).toLowerCase().includes(value.toLowerCase());
       };
     }
     if (globalSorter) {

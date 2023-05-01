@@ -17,7 +17,7 @@ import { SegmentedValue } from 'rc-segmented';
 import type { ColumnsType } from 'antd/es/table';
 
 type dataToGet = undefined | string | SegmentedValue;
-type tabNumber = undefined | string;
+type tabNumber = undefined | number;
 
 const { Title } = Typography;
 
@@ -159,7 +159,7 @@ export default function performance({
   const [SingleDayData, setSingleDayData] = useState(null);
   const [SingleDayDataisLoading, setSingleDayDataisLoading] = useState(true);
   const [tab, setTab] = useState<tabNumber>(
-    (useRouter().query.tab || '1').toString()
+    Number(useRouter().query.tab || '1')
   );
   const [date, setDate] = useState<dataToGet>(
     useRouter().query.date?.toString || undefined
@@ -169,7 +169,7 @@ export default function performance({
     if (!router.isReady) {
       return;
     } else {
-      setTab(router.query.tab?.toString());
+      setTab(Number(router.query.tab));
       setDate(router.query.date?.toString());
     }
   }, [router]);
@@ -338,7 +338,7 @@ export default function performance({
       <div>
         <div></div>
         <div>
-          {tab === '1' && (
+          {tab === 1 && (
             <React.Fragment>
               <div>
                 <BasicLineGraph
@@ -356,7 +356,7 @@ export default function performance({
               </div>
             </React.Fragment>
           )}
-          {tab === '2' && (
+          {tab === 2 && (
             <React.Fragment>
               <PrimeFaceBarChart
                 data={dividendData}
@@ -372,7 +372,7 @@ export default function performance({
               />
             </React.Fragment>
           )}
-          {tab === '3' && (
+          {tab === 3 && (
             <React.Fragment>
               <PrimeFaceBarChart
                 data={totalTransactionCostData}
@@ -388,7 +388,7 @@ export default function performance({
               />
             </React.Fragment>
           )}
-          {tab === '4' && (
+          {tab === 4 && (
             <React.Fragment>
               <div>
                 <BasicLineGraph
