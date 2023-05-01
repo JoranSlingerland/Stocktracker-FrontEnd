@@ -100,7 +100,11 @@ function formatNumber(value: number | string, maximumFractionDigits = 2) {
   });
 }
 
-function formatImageAndText(text: string, image: string): JSX.Element {
+function formatImageAndText(
+  symbol: string,
+  name: string,
+  image: string | undefined
+): JSX.Element {
   if (image === undefined) {
     image = '/images/fallback.png';
   }
@@ -115,9 +119,10 @@ function formatImageAndText(text: string, image: string): JSX.Element {
         preview={false}
         placeholder={false}
       />
-      <Text className="pl-1" strong>
-        {text}
-      </Text>
+      <div className="flex flex-col pl-1">
+        <Text strong>{name}</Text>
+        <Text type="secondary">{symbol}</Text>
+      </div>
     </Space>
   );
 }

@@ -225,38 +225,37 @@ export default function performance({
 
   const valueGrowthColumns: ColumnsType = [
     {
-      title: 'symbol',
-      dataIndex: 'symbol',
-      key: 'symbol',
-      render: (text: string, record: any) =>
-        formatImageAndText(text, record.meta.logo),
+      title: 'Name',
+      dataIndex: 'meta',
+      key: 'meta.name',
+      render: (text: any, record: any) =>
+        formatImageAndText(record.symbol, text.name, record.meta.logo),
     },
     {
       title: 'Profit / Loss',
       dataIndex: 'unrealized',
       key: 'unrealized.total_pl',
-      render: (text: { total_pl: string | number }) =>
-        formatCurrencyWithColors({
-          value: text.total_pl,
-          currency: userSettings.currency,
-        }),
-    },
-    {
-      title: 'Percentage',
-      dataIndex: 'unrealized',
-      key: 'unrealized.total_pl_percentage',
-      render: (text: { total_pl_percentage: string | number }) =>
-        formatPercentageWithColors(text.total_pl_percentage),
+      render: (text) => (
+        <div>
+          <div>
+            {formatCurrencyWithColors({
+              value: text.total_pl,
+              currency: userSettings.currency,
+            })}
+          </div>
+          <div>{formatPercentageWithColors(text.total_pl_percentage)}</div>
+        </div>
+      ),
     },
   ];
 
   const ReceivedDividedColumns: ColumnsType = [
     {
-      title: 'symbol',
-      dataIndex: 'symbol',
-      key: 'symbol',
-      render: (text: string, record: any) =>
-        formatImageAndText(text, record.meta.logo),
+      title: 'Name',
+      dataIndex: 'meta',
+      key: 'meta.name',
+      render: (text: any, record: any) =>
+        formatImageAndText(record.symbol, text.name, record.meta.logo),
     },
     {
       title: 'Dividends',
@@ -272,11 +271,11 @@ export default function performance({
 
   const TransactionCostColumns: ColumnsType = [
     {
-      title: 'symbol',
-      dataIndex: 'symbol',
-      key: 'symbol',
-      render: (text: string, record: any) =>
-        formatImageAndText(text, record.meta.logo),
+      title: 'Name',
+      dataIndex: 'meta',
+      key: 'meta.name',
+      render: (text: any, record: any) =>
+        formatImageAndText(record.symbol, text.name, record.meta.logo),
     },
     {
       title: 'Transaction Costs',

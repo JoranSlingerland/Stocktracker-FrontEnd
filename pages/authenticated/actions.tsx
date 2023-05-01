@@ -102,11 +102,11 @@ export default function Home({
 
   const InputTransactionsColumns: ColumnsType = [
     {
-      title: 'Symbol',
+      title: 'Name',
       dataIndex: 'symbol',
       key: 'symbol',
       render: (text: string, record: any) =>
-        formatImageAndText(text, record.meta.logo),
+        formatImageAndText(text, record.meta.name, record.meta.logo),
     },
     {
       title: 'Transaction Date',
