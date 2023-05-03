@@ -1,8 +1,12 @@
 import { Tabs, Collapse, Typography } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer } from 'react';
 import PieChart from '../../components/PrimeFacePieChart';
 import AntdTable from '../../components/antdTable';
-import { cachedFetch } from '../../utils/api-utils';
+import {
+  cachedFetch,
+  apiRequestReducer,
+  initialState,
+} from '../../utils/api-utils';
 import {
   formatCurrency,
   formatCurrencyWithColors,
@@ -29,7 +33,7 @@ async function fetchUnRealizedData(userInfo: UserInfo_Type) {
     containerName: 'stocks_held',
     fullyRealized: false,
   });
-  return { data: data, loading: false };
+  return { data: data };
 }
 
 async function fetchRealizedData(userInfo: UserInfo_Type) {
@@ -40,7 +44,7 @@ async function fetchRealizedData(userInfo: UserInfo_Type) {
     partialRealized: true,
     andOr: 'or',
   });
-  return { data: data, loading: false };
+  return { data: data };
 }
 
 async function fetchStockPieData(userInfo: UserInfo_Type) {
@@ -53,7 +57,7 @@ async function fetchStockPieData(userInfo: UserInfo_Type) {
       dataType: 'stocks',
     }
   );
-  return { data: data, loading: false };
+  return { data: data };
 }
 
 async function fetchCurrencyPieData(userInfo: UserInfo_Type) {
@@ -66,7 +70,7 @@ async function fetchCurrencyPieData(userInfo: UserInfo_Type) {
       dataType: 'currency',
     }
   );
-  return { data: data, loading: false };
+  return { data: data };
 }
 
 async function fetchSectorPieData(userInfo: UserInfo_Type) {
@@ -79,7 +83,7 @@ async function fetchSectorPieData(userInfo: UserInfo_Type) {
       dataType: 'sector',
     }
   );
-  return { data: data, loading: false };
+  return { data: data };
 }
 
 async function fetchCountryPieData(userInfo: UserInfo_Type) {
@@ -92,7 +96,7 @@ async function fetchCountryPieData(userInfo: UserInfo_Type) {
       dataType: 'country',
     }
   );
-  return { data: data, loading: false };
+  return { data: data };
 }
 
 export default function Home({
@@ -103,46 +107,51 @@ export default function Home({
   userSettings: UserSettings_Type;
 }) {
   // Const setup
-  const [UnRealizedData, setUnRealizedData] = useState([null]);
-  const [UnRealizedDataisLoading, setUnRealizedDataisLoading] = useState(true);
-  const [RealizedData, setRealizedData] = useState(null);
-  const [RealizedDataisLoading, setRealizedDataisLoading] = useState(true);
-  const [StockPieData, setStockPieData] = useState(fallbackObject);
-  const [StockPieDataisLoading, setStockPieDataisLoading] = useState(true);
-  const [CurrencyPieData, setCurrencyPieData] = useState(fallbackObject);
-  const [CurrencyPieDataisLoading, setCurrencyPieDataisLoading] =
-    useState(true);
-  const [SectorPieData, setSectorPieData] = useState(fallbackObject);
-  const [SectorPieDataisLoading, setSectorPieDataisLoading] = useState(true);
-  const [CountryPieData, setCountryPieData] = useState(fallbackObject);
-  const [CountryPieDataisLoading, setCountryPieDataisLoading] = useState(true);
+  const [UnRealizedData, unRealizedDataDispatcher] = useReducer(
+    apiRequestReducer,
+    initialState({ isLoading: true })
+  );
+  const [RealizedData, RealizedDataDispatcher] = useReducer(
+    apiRequestReducer,
+    initialState({ isLoading: true })
+  );
+  const [StockPieData, StockPieDataDispatcher] = useReducer(
+    apiRequestReducer,
+    initialState({ fallback_data: fallbackObject, isLoading: true })
+  );
+  const [CurrencyPieData, CurrencyPieDataDispatcher] = useReducer(
+    apiRequestReducer,
+    initialState({ fallback_data: fallbackObject, isLoading: true })
+  );
+  const [SectorPieData, SectorPieDataReducer] = useReducer(
+    apiRequestReducer,
+    initialState({ fallback_data: fallbackObject, isLoading: true })
+  );
+  const [CountryPieData, CountryPieDataReducer] = useReducer(
+    apiRequestReducer,
+    initialState({ fallback_data: fallbackObject, isLoading: true })
+  );
 
   // Fetch data on page load
   useEffect(() => {
     if (userInfo.clientPrincipal.userId !== '') {
-      fetchUnRealizedData(userInfo).then(({ data, loading }) => {
-        setUnRealizedData(data);
-        setUnRealizedDataisLoading(loading);
+      fetchUnRealizedData(userInfo).then(({ data }) => {
+        unRealizedDataDispatcher({ type: 'FETCH_SUCCESS', payload: data });
       });
-      fetchRealizedData(userInfo).then(({ data, loading }) => {
-        setRealizedData(data);
-        setRealizedDataisLoading(loading);
+      fetchRealizedData(userInfo).then(({ data }) => {
+        RealizedDataDispatcher({ type: 'FETCH_SUCCESS', payload: data });
       });
-      fetchStockPieData(userInfo).then(({ data, loading }) => {
-        setStockPieData(data);
-        setStockPieDataisLoading(loading);
+      fetchStockPieData(userInfo).then(({ data }) => {
+        StockPieDataDispatcher({ type: 'FETCH_SUCCESS', payload: data });
       });
-      fetchCurrencyPieData(userInfo).then(({ data, loading }) => {
-        setCurrencyPieData(data);
-        setCurrencyPieDataisLoading(loading);
+      fetchCurrencyPieData(userInfo).then(({ data }) => {
+        CurrencyPieDataDispatcher({ type: 'FETCH_SUCCESS', payload: data });
       });
-      fetchSectorPieData(userInfo).then(({ data, loading }) => {
-        setSectorPieData(data);
-        setSectorPieDataisLoading(loading);
+      fetchSectorPieData(userInfo).then(({ data }) => {
+        SectorPieDataReducer({ type: 'FETCH_SUCCESS', payload: data });
       });
-      fetchCountryPieData(userInfo).then(({ data, loading }) => {
-        setCountryPieData(data);
-        setCountryPieDataisLoading(loading);
+      fetchCountryPieData(userInfo).then(({ data }) => {
+        CountryPieDataReducer({ type: 'FETCH_SUCCESS', payload: data });
       });
     }
   }, [userInfo]);
@@ -154,8 +163,8 @@ export default function Home({
       label: 'Stocks',
       children: (
         <PieChart
-          data={StockPieData}
-          isloading={StockPieDataisLoading}
+          data={StockPieData.data}
+          isloading={StockPieData.isLoading}
           userSettings={userSettings}
         />
       ),
@@ -165,8 +174,8 @@ export default function Home({
       label: 'Sector',
       children: (
         <PieChart
-          data={SectorPieData}
-          isloading={SectorPieDataisLoading}
+          data={SectorPieData.data}
+          isloading={SectorPieData.isLoading}
           userSettings={userSettings}
         />
       ),
@@ -176,8 +185,8 @@ export default function Home({
       label: 'Country',
       children: (
         <PieChart
-          data={CountryPieData}
-          isloading={CountryPieDataisLoading}
+          data={CountryPieData.data}
+          isloading={CountryPieData.isLoading}
           userSettings={userSettings}
         />
       ),
@@ -187,8 +196,8 @@ export default function Home({
       label: 'Currency',
       children: (
         <PieChart
-          data={CurrencyPieData}
-          isloading={CurrencyPieDataisLoading}
+          data={CurrencyPieData.data}
+          isloading={CurrencyPieData.isLoading}
           userSettings={userSettings}
         />
       ),
@@ -374,8 +383,8 @@ export default function Home({
       <div>
         <AntdTable
           columns={UnRealizedColumns}
-          data={UnRealizedData}
-          isLoading={UnRealizedDataisLoading}
+          data={UnRealizedData.data}
+          isLoading={UnRealizedData.isLoading}
           globalSorter={true}
           tableProps={{
             scroll: true,
@@ -388,8 +397,8 @@ export default function Home({
           <Panel className="p-0" header="Realized Stocks" key="1">
             <AntdTable
               columns={RealizedColumns}
-              data={RealizedData}
-              isLoading={RealizedDataisLoading}
+              data={RealizedData.data}
+              isLoading={RealizedData.isLoading}
               globalSorter={true}
               tableProps={{
                 scroll: true,

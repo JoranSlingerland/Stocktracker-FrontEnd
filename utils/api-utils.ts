@@ -157,6 +157,57 @@ async function ApiWithMessage(
   }
 }
 
+const initialState = ({
+  fallback_data,
+  isLoading,
+  isError,
+}: {
+  fallback_data?: any;
+  isLoading?: boolean;
+  isError?: boolean;
+}) => ({
+  isLoading: isLoading || false,
+  isError: isError || false,
+  data: fallback_data,
+});
+
+const apiRequestReducer = (
+  state: any,
+  action: {
+    type: 'FETCH_INIT' | 'FETCH_SUCCESS' | 'FETCH_FAILURE';
+    payload?: any;
+  }
+) => {
+  switch (action.type) {
+    case 'FETCH_INIT':
+      return {
+        ...state,
+        isLoading: true,
+        isError: false,
+      };
+    case 'FETCH_SUCCESS':
+      return {
+        ...state,
+        isLoading: false,
+        isError: false,
+        data: action.payload,
+      };
+    case 'FETCH_FAILURE':
+      return {
+        ...state,
+        isLoading: false,
+        isError: true,
+      };
+  }
+};
+
 // End of main functions
 
-export { cachedFetch, overwriteCachedFetch, regularFetch, ApiWithMessage };
+export {
+  cachedFetch,
+  overwriteCachedFetch,
+  regularFetch,
+  ApiWithMessage,
+  apiRequestReducer,
+  initialState,
+};

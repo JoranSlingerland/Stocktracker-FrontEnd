@@ -1,11 +1,13 @@
 import { Divider, Input, Typography, Button, Popconfirm } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useReducer } from 'react';
 import AntdTable from '../../components/antdTable';
 import {
   cachedFetch,
   overwriteCachedFetch,
   ApiWithMessage,
+  apiRequestReducer,
+  initialState,
 } from '../../utils/api-utils';
 import {
   formatCurrency,
@@ -27,7 +29,7 @@ async function fetchTransactionsData(userInfo: UserInfo_Type) {
   data.forEach((row: any) => {
     row.total_cost = row.cost_per_share * row.quantity;
   });
-  return { data: data, loading: false };
+  return { data: data };
 }
 
 async function fetchInputInvestedData(userInfo: UserInfo_Type) {
@@ -35,7 +37,7 @@ async function fetchInputInvestedData(userInfo: UserInfo_Type) {
     userId: userInfo.clientPrincipal.userId,
     containerName: 'input_invested',
   });
-  return { data: data, loading: false };
+  return { data: data };
 }
 
 export default function Home({
@@ -45,14 +47,16 @@ export default function Home({
   userInfo: UserInfo_Type;
   userSettings: UserSettings_Type;
 }) {
-  const [InputTransactionsData, setInputTransactionsData]: any = useState();
-  const [InputTransactionsDataisLoading, setInputTransactionsDataisLoading] =
-    useState(true);
+  const [InputTransactionsData, InputTransactionsDataDispatcher] = useReducer(
+    apiRequestReducer,
+    initialState({ isLoading: true })
+  );
   const [InputTransactionsSearchText, setInputTransactionsSearchText] =
     useState<any>();
-  const [InputInvestedData, setInputInvestedData]: any = useState();
-  const [InputInvestedDataisLoading, setInputInvestedDataisLoading] =
-    useState(true);
+  const [InputInvestedData, InputInvestedDataDispatcher] = useReducer(
+    apiRequestReducer,
+    initialState({ isLoading: true })
+  );
   const [InputInvestedSearchText, setInputInvestedSearchText] =
     useState<any>(undefined);
 
@@ -190,13 +194,17 @@ export default function Home({
 
   useEffect(() => {
     if (userInfo.clientPrincipal.userId !== '') {
-      fetchTransactionsData(userInfo).then(({ data, loading }) => {
-        setInputTransactionsData(data);
-        setInputTransactionsDataisLoading(loading);
+      fetchTransactionsData(userInfo).then(({ data }) => {
+        InputTransactionsDataDispatcher({
+          type: 'FETCH_SUCCESS',
+          payload: data,
+        });
       });
-      fetchInputInvestedData(userInfo).then(({ data, loading }) => {
-        setInputInvestedData(data);
-        setInputInvestedDataisLoading(loading);
+      fetchInputInvestedData(userInfo).then(({ data }) => {
+        InputInvestedDataDispatcher({
+          type: 'FETCH_SUCCESS',
+          payload: data,
+        });
       });
     }
   }, [userInfo]);
@@ -222,12 +230,18 @@ export default function Home({
         const newData = InputInvestedData.filter(
           (item: any) => !id.includes(item.id)
         );
-        setInputInvestedData(newData);
+        InputInvestedDataDispatcher({
+          type: 'FETCH_SUCCESS',
+          payload: newData,
+        });
       } else if (container === 'input_transactions') {
         const newData = InputTransactionsData.filter(
           (item: any) => !id.includes(item.id)
         );
-        setInputTransactionsData(newData);
+        InputTransactionsDataDispatcher({
+          type: 'FETCH_SUCCESS',
+          payload: newData,
+        });
       }
       overWriteTableData(container);
     });
@@ -240,9 +254,13 @@ export default function Home({
       userId: userInfo.clientPrincipal.userId,
       containerName: container,
     }).then((data) => {
-      if (container === 'input_invested') setInputInvestedData(data);
+      if (container === 'input_invested')
+        InputInvestedDataDispatcher({ type: 'FETCH_SUCCESS', payload: data });
       else if (container === 'input_transactions')
-        setInputTransactionsData(data);
+        InputTransactionsDataDispatcher({
+          type: 'FETCH_SUCCESS',
+          payload: data,
+        });
     });
   }
 
@@ -258,9 +276,9 @@ export default function Home({
           Stock Transactions
         </Title>
         <AntdTable
-          isLoading={InputTransactionsDataisLoading}
+          isLoading={InputTransactionsData.isLoading}
           columns={InputTransactionsColumns}
-          data={InputTransactionsData}
+          data={InputTransactionsData.data}
           globalSorter={true}
           searchEnabled={true}
           searchText={InputTransactionsSearchText}
@@ -304,9 +322,9 @@ export default function Home({
             Money Transactions
           </Title>
           <AntdTable
-            isLoading={InputInvestedDataisLoading}
+            isLoading={InputInvestedData.isLoading}
             columns={InputInvestedColumns}
-            data={InputInvestedData}
+            data={InputInvestedData.data}
             globalSorter={true}
             searchEnabled={true}
             searchText={InputInvestedSearchText}

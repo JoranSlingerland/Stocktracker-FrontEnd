@@ -2,10 +2,47 @@ import Navbar from '../components/navbar';
 import '../styles/globals.css';
 import { ConfigProvider, theme } from 'antd';
 import type { AppProps } from 'next/app';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useReducer } from 'react';
 import { regularFetch, cachedFetch } from '../utils/api-utils';
+import { userSettingsDispatch_Type } from '../utils/types';
 
 const { darkAlgorithm, defaultAlgorithm } = theme;
+
+const userSettingsReducer = (state: any, action: userSettingsDispatch_Type) => {
+  switch (action.type) {
+    case 'setDarkMode':
+      return { ...state, dark_mode: action.payload };
+    case 'setClearbitApiKey':
+      return { ...state, clearbit_api_key: action.payload };
+    case 'setAlphaVantageApiKey':
+      return {
+        ...state,
+        alpha_vantage_api_key: action.payload,
+        isLoading: false,
+      };
+    case 'setCurrency':
+      return { ...state, currency: action.payload };
+    case 'setAll':
+      if (typeof action.payload === 'object') {
+        return { ...state, ...action.payload };
+      }
+      throw new Error('Payload must be an object');
+    case 'setLoading':
+      return { ...state, isLoading: action.payload };
+  }
+};
+
+function setDarkMode(dark_mode: boolean) {
+  localStorage.setItem('dark_mode', JSON.stringify(dark_mode));
+}
+
+function getDarkMode(): boolean {
+  const dark_mode = localStorage.getItem('dark_mode');
+  if (dark_mode) {
+    return JSON.parse(dark_mode);
+  }
+  return false;
+}
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [userInfo, setUserInfo] = useState({
@@ -17,12 +54,12 @@ function MyApp({ Component, pageProps }: AppProps) {
       userDetails: '',
     },
   });
-  const [userSettings, setUserSettings] = useState({
-    id: '',
+  const [userSettings, userSettingsDispatch] = useReducer(userSettingsReducer, {
     dark_mode: false,
     clearbit_api_key: '',
     alpha_vantage_api_key: '',
     currency: '',
+    isLoading: true,
   });
 
   async function getUserInfo() {
@@ -35,16 +72,13 @@ function MyApp({ Component, pageProps }: AppProps) {
     await cachedFetch('/api/data/get_user_data', {}, 'POST', {
       userId: userInfo,
     }).then((data: any) => {
-      setUserSettings(data);
+      userSettingsDispatch({ type: 'setAll', payload: data });
     });
-  }
-
-  function setDarkModeCallback(darkMode: boolean) {
-    setUserSettings({ ...userSettings, dark_mode: darkMode });
   }
 
   useEffect(() => {
     getUserInfo();
+    userSettingsDispatch({ type: 'setDarkMode', payload: getDarkMode() });
   }, []);
 
   useEffect(() => {
@@ -52,6 +86,10 @@ function MyApp({ Component, pageProps }: AppProps) {
       getAccountSettings(userInfo.clientPrincipal.userId);
     }
   }, [userInfo]);
+
+  useEffect(() => {
+    setDarkMode(userSettings.dark_mode);
+  }, [userSettings.dark_mode]);
 
   return (
     <>
@@ -71,7 +109,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               <Component
                 {...pageProps}
                 userInfo={userInfo}
-                setDarkModeCallback={setDarkModeCallback}
+                userSettingsDispatch={userSettingsDispatch}
                 userSettings={userSettings}
               />
             </div>

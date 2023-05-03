@@ -1,10 +1,14 @@
 import Overviewbar from '../../components/Overviewbar';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import { Divider, Segmented, Typography } from 'antd';
 import { useRouter } from 'next/router';
 import BasicLineGraph from '../../components/PrimeFaceLineGraph';
 import PrimeFaceBarChart from '../../components/PrimeFaceBarChart';
-import { cachedFetch } from '../../utils/api-utils';
+import {
+  cachedFetch,
+  apiRequestReducer,
+  initialState,
+} from '../../utils/api-utils';
 import AntdTable from '../../components/antdTable';
 import {
   formatCurrency,
@@ -103,7 +107,7 @@ async function fetchDataline(userInfo: UserInfo_Type, date: dataToGet) {
       dataToGet: date,
     }
   );
-  return { data: data, loading: false };
+  return { data: data };
 }
 
 async function fetchTable(userInfo: UserInfo_Type, date: dataToGet) {
@@ -141,23 +145,28 @@ export default function performance({
 }) {
   // const setup
   const router = useRouter();
-  const [valueGrowthData, setvalueGrowthData] = useState(
-    valueGrowthDataFallBackObject
+  const [valueGrowthData, valueGrowthDataReducer] = useReducer(
+    apiRequestReducer,
+    initialState({ fallback_data: valueGrowthDataFallBackObject })
   );
-  const [valueGrowthDataLoading, setvalueGrowthDataLoading] = useState(true);
-  const [dividendData, setdividendData] = useState([]);
-  const [loadingDividend, setLoadingDividend] = useState(true);
-  const [totalGainsData, settotalGainsData] = useState(
-    totalGainsDataFallBackObject
+  const [dividendData, dividendDataReducer] = useReducer(
+    apiRequestReducer,
+    initialState({ fallback_data: [] })
   );
-  const [totalGainsDataLoading, settotalGainsDataLoading] = useState(true);
-  const [totalTransactionCostData, settotalTransactionCostData] = useState([]);
-  const [totalTransactionCostDataLoading, settotalTransactionCostDataLoading] =
-    useState(true);
-  const [topBarData, settopBarData] = useState(topBarDataFallBackObject);
-  const [topBarloading, settopBarLoading] = useState(true);
-  const [SingleDayData, setSingleDayData] = useState(null);
-  const [SingleDayDataisLoading, setSingleDayDataisLoading] = useState(true);
+  const [totalGainsData, totalGainsDataReducer] = useReducer(
+    apiRequestReducer,
+    initialState({ fallback_data: totalGainsDataFallBackObject })
+  );
+  const [totalTransactionCostData, totalTransactionCostDataReducer] =
+    useReducer(apiRequestReducer, initialState({ fallback_data: [] }));
+  const [topBarData, topBarDataReducer] = useReducer(
+    apiRequestReducer,
+    initialState({ fallback_data: topBarDataFallBackObject })
+  );
+  const [SingleDayData, SingleDayDataReducer] = useReducer(
+    apiRequestReducer,
+    initialState
+  );
   const [tab, setTab] = useState<tabNumber>(
     Number(useRouter().query.tab || '1')
   );
@@ -177,41 +186,53 @@ export default function performance({
   // useEffects
   useEffect(() => {
     if (userInfo?.clientPrincipal?.userId && date) {
+      dividendDataReducer({ type: 'FETCH_INIT' });
       fetchDividendData(userInfo, date).then(({ data, loading }) => {
-        setdividendData(data);
-        setLoadingDividend(loading);
+        dividendDataReducer({
+          type: 'FETCH_SUCCESS',
+          payload: data,
+        });
       });
+      totalTransactionCostDataReducer({ type: 'FETCH_INIT' });
       fetchTransactionCostData(userInfo, date).then(({ data, loading }) => {
-        settotalTransactionCostData(data);
-        settotalTransactionCostDataLoading(loading);
+        totalTransactionCostDataReducer({
+          type: 'FETCH_SUCCESS',
+          payload: data,
+        });
       });
+      totalGainsDataReducer({ type: 'FETCH_INIT' });
       fetchTotalGainsData(userInfo, date).then(({ data, loading }) => {
-        settotalGainsData(data);
-        settotalGainsDataLoading(loading);
+        totalGainsDataReducer({
+          type: 'FETCH_SUCCESS',
+          payload: data,
+        });
       });
-      fetchDataline(userInfo, date).then(({ data, loading }) => {
-        setvalueGrowthData(data);
-        setvalueGrowthDataLoading(loading);
+      valueGrowthDataReducer({ type: 'FETCH_INIT' });
+      fetchDataline(userInfo, date).then(({ data }) => {
+        valueGrowthDataReducer({
+          type: 'FETCH_SUCCESS',
+          payload: data,
+        });
       });
+      SingleDayDataReducer({ type: 'FETCH_INIT' });
       fetchTable(userInfo, date).then(({ data, loading }) => {
-        setSingleDayData(data);
-        setSingleDayDataisLoading(loading);
+        SingleDayDataReducer({
+          type: 'FETCH_SUCCESS',
+          payload: data,
+        });
       });
+      topBarDataReducer({ type: 'FETCH_INIT' });
       fetchTopBar(userInfo, date).then(({ data, loading }) => {
-        settopBarData(data);
-        settopBarLoading(loading);
+        topBarDataReducer({
+          type: 'FETCH_SUCCESS',
+          payload: data,
+        });
       });
     }
   }, [date, userInfo]);
 
   // Refresh data
   function handleClick(newdate: dataToGet) {
-    setvalueGrowthDataLoading(true);
-    settopBarLoading(true);
-    setLoadingDividend(true);
-    settotalTransactionCostDataLoading(true);
-    settotalGainsDataLoading(true);
-    setSingleDayDataisLoading(true);
     router.push(`/authenticated/performance?tab=${tab}&date=${newdate}`);
     setDate(newdate);
   }
@@ -328,8 +349,8 @@ export default function performance({
       </div>
       <div>
         <Overviewbar
-          topBarData={topBarData}
-          loading={topBarloading}
+          topBarData={topBarData.data}
+          loading={topBarData.isLoading}
           handleTabChange={handleTabChange}
           userSettings={userSettings}
         />
@@ -341,15 +362,15 @@ export default function performance({
             <React.Fragment>
               <div>
                 <BasicLineGraph
-                  data={valueGrowthData}
-                  isloading={valueGrowthDataLoading}
+                  data={valueGrowthData.data}
+                  isloading={valueGrowthData.isLoading}
                   userSettings={userSettings}
                 />
                 <Divider />
                 <AntdTable
-                  isLoading={SingleDayDataisLoading}
+                  isLoading={SingleDayData.isLoading}
                   columns={valueGrowthColumns}
-                  data={SingleDayData}
+                  data={SingleDayData.data}
                   globalSorter={true}
                 />
               </div>
@@ -358,15 +379,15 @@ export default function performance({
           {tab === 2 && (
             <React.Fragment>
               <PrimeFaceBarChart
-                data={dividendData}
-                isloading={loadingDividend}
+                data={dividendData.data}
+                isloading={dividendData.isLoading}
                 userSettings={userSettings}
               />
               <Divider />
               <AntdTable
-                isLoading={SingleDayDataisLoading}
+                isLoading={SingleDayData.isLoading}
                 columns={ReceivedDividedColumns}
-                data={SingleDayData}
+                data={SingleDayData.data}
                 globalSorter={true}
               />
             </React.Fragment>
@@ -374,15 +395,15 @@ export default function performance({
           {tab === 3 && (
             <React.Fragment>
               <PrimeFaceBarChart
-                data={totalTransactionCostData}
-                isloading={totalTransactionCostDataLoading}
+                data={totalTransactionCostData.data}
+                isloading={totalTransactionCostData.isLoading}
                 userSettings={userSettings}
               />
               <Divider />
               <AntdTable
-                isLoading={SingleDayDataisLoading}
+                isLoading={SingleDayData.isLoading}
                 columns={TransactionCostColumns}
-                data={SingleDayData}
+                data={SingleDayData.data}
                 globalSorter={true}
               />
             </React.Fragment>
@@ -391,15 +412,15 @@ export default function performance({
             <React.Fragment>
               <div>
                 <BasicLineGraph
-                  data={totalGainsData}
-                  isloading={totalGainsDataLoading}
+                  data={totalGainsData.data}
+                  isloading={totalGainsData.isLoading}
                   userSettings={userSettings}
                 />
                 <Divider />
                 <AntdTable
-                  isLoading={SingleDayDataisLoading}
+                  isLoading={SingleDayData.isLoading}
                   columns={valueGrowthColumns}
-                  data={SingleDayData}
+                  data={SingleDayData.data}
                   globalSorter={true}
                 />
               </div>

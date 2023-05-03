@@ -17,16 +17,21 @@ import {
   ExclamationCircleOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer } from 'react';
 import {
   ApiWithMessage,
-  cachedFetch,
   regularFetch,
   overwriteCachedFetch,
+  apiRequestReducer,
+  initialState,
 } from '../../utils/api-utils';
 import useWindowDimensions from '../../utils/useWindowDimensions';
 import AntdTable from '../../components/antdTable';
-import { UserInfo_Type } from '../../utils/types';
+import {
+  UserInfo_Type,
+  userSettingsDispatch_Type,
+  UserSettings_Type,
+} from '../../utils/types';
 import currencyCodes from '../../shared/currency_codes.json';
 
 const { Text, Title, Link } = Typography;
@@ -36,37 +41,22 @@ async function fetchOrchestratorList(userInfo: any) {
     userId: userInfo.clientPrincipal.userId,
     days: 7,
   });
-  return { data: data, loading: false };
+  return { data: data };
 }
 
 export default function Home({
   userInfo,
-  setDarkModeCallback,
+  userSettings,
+  userSettingsDispatch,
 }: {
   userInfo: UserInfo_Type;
-  setDarkModeCallback: (darkmode: boolean) => void;
+  userSettings: UserSettings_Type;
+  userSettingsDispatch: (action: userSettingsDispatch_Type) => void;
 }) {
-  const [orchestratorList, setOrchestratorList] = useState(null);
-  const [orchestratorListIsLoading, setOrchestratorListIsLoading] =
-    useState(true);
-  const [accountSettingsLoading, setAccountSettingsLoading] = useState(true);
-  const [clearBitApiKey, setClearBitApiKey] = useState('');
-  const [alphaVantageApiKey, setAlphaVantageApiKey] = useState('');
-  const [darkMode, setDarkMode] = useState(false);
-  const [currency, setCurrency] = useState('');
-
-  // fetch functions
-  async function getAccountSettings(userInfo: any) {
-    await cachedFetch('/api/data/get_user_data', {}, 'POST', {
-      userId: userInfo,
-    }).then((data: any) => {
-      setClearBitApiKey(data.clearbit_api_key || '');
-      setAlphaVantageApiKey(data.alpha_vantage_api_key || '');
-      setDarkMode(data.dark_mode || false);
-      setCurrency(data.currency || '');
-      setAccountSettingsLoading(false);
-    });
-  }
+  const [orchestratorList, orchestratorDispatch] = useReducer(
+    apiRequestReducer,
+    initialState({ isLoading: true })
+  );
 
   // handle click functions
   async function handleClickOrchestratorAction(
@@ -107,50 +97,39 @@ export default function Home({
   }
 
   async function handleSaveAccountSettings() {
-    setAccountSettingsLoading(true);
+    userSettingsDispatch({ type: 'setLoading', payload: true });
     await ApiWithMessage(
       '/api/add/add_user_data',
       'Saving account settings...',
       'Account settings saved!',
       'POST',
-      {
-        id: userInfo.clientPrincipal.userId,
-        dark_mode: darkMode,
-        clearbit_api_key: clearBitApiKey,
-        alpha_vantage_api_key: alphaVantageApiKey,
-        currency: currency,
-      }
+      userSettings
     ).then(() => {
       overwriteCachedFetch('/api/data/get_user_data', {}, 'POST', {
         userId: userInfo.clientPrincipal.userId,
       }).then((data: any) => {
-        setClearBitApiKey(data.clearbit_api_key || '');
-        setAlphaVantageApiKey(data.alpha_vantage_api_key || '');
-        setDarkMode(data.dark_mode || false);
-        setCurrency(data.currency || '');
-        setAccountSettingsLoading(false);
+        userSettingsDispatch({
+          type: 'setAll',
+          payload: data,
+        });
       });
     });
-    setAccountSettingsLoading(false);
   }
 
   // useEffects
   useEffect(() => {
     if (userInfo.clientPrincipal.userId !== '') {
-      fetchOrchestratorList(userInfo).then(({ data, loading }) => {
-        setOrchestratorList(data);
-        setOrchestratorListIsLoading(loading);
+      fetchOrchestratorList(userInfo).then(({ data }) => {
+        orchestratorDispatch({ type: 'FETCH_SUCCESS', payload: data });
       });
-      getAccountSettings(userInfo.clientPrincipal.userId);
     }
   }, [userInfo]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       if (userInfo.clientPrincipal.userId !== '') {
-        fetchOrchestratorList(userInfo).then(({ data, loading }) => {
-          setOrchestratorList(data);
-          setOrchestratorListIsLoading(loading);
+        fetchOrchestratorList(userInfo).then(({ data }) => {
+          orchestratorDispatch({ type: 'FETCH_SUCCESS', payload: data });
         });
       }
     }, 10000);
@@ -289,7 +268,7 @@ export default function Home({
           <div className="flex flex-col mt-2">
             <Text strong>Clearbit API Key</Text>
             <div className="mt-2 w-72 sm:w-96">
-              {accountSettingsLoading ? (
+              {userSettings.isLoading ? (
                 <Skeleton
                   active={true}
                   paragraph={{ rows: 1 }}
@@ -297,9 +276,12 @@ export default function Home({
                 ></Skeleton>
               ) : (
                 <Input.Password
-                  value={clearBitApiKey}
+                  value={userSettings.clearbit_api_key}
                   onChange={(e) => {
-                    setClearBitApiKey(e.target.value);
+                    userSettingsDispatch({
+                      type: 'setClearbitApiKey',
+                      payload: e.target.value,
+                    });
                   }}
                   size="small"
                 />
@@ -321,7 +303,7 @@ export default function Home({
           <div className="flex flex-col">
             <Text strong>Alpha Vantage API Key</Text>
             <div className="mt-2 w-72 sm:w-96">
-              {accountSettingsLoading ? (
+              {userSettings.isLoading ? (
                 <Skeleton
                   active={true}
                   paragraph={{ rows: 1 }}
@@ -329,9 +311,12 @@ export default function Home({
                 ></Skeleton>
               ) : (
                 <Input.Password
-                  value={alphaVantageApiKey}
+                  value={userSettings.alpha_vantage_api_key}
                   onChange={(e) => {
-                    setAlphaVantageApiKey(e.target.value);
+                    userSettingsDispatch({
+                      type: 'setAlphaVantageApiKey',
+                      payload: e.target.value,
+                    });
                   }}
                   size="small"
                 />
@@ -352,7 +337,7 @@ export default function Home({
           <div className="flex flex-col">
             <Text strong>Currency</Text>
             <div className="mt-2 w-72 sm:w-96">
-              {accountSettingsLoading ? (
+              {userSettings.isLoading ? (
                 <Skeleton
                   active={true}
                   paragraph={{ rows: 1 }}
@@ -360,12 +345,15 @@ export default function Home({
                 ></Skeleton>
               ) : (
                 <AutoComplete
-                  value={currency}
+                  value={userSettings.currency}
                   onChange={(value) => {
-                    setCurrency(value);
+                    userSettingsDispatch({
+                      type: 'setCurrency',
+                      payload: value,
+                    });
                   }}
                   status={
-                    currencyCodes.find((o) => o.value === currency)
+                    currencyCodes.find((o) => o.value === userSettings.currency)
                       ? ''
                       : 'error'
                   }
@@ -378,7 +366,10 @@ export default function Home({
                       .indexOf(inputValue.toUpperCase()) !== -1
                   }
                   onSelect={(value) => {
-                    setCurrency(value);
+                    userSettingsDispatch({
+                      type: 'setCurrency',
+                      payload: value,
+                    });
                   }}
                 />
               )}
@@ -392,13 +383,15 @@ export default function Home({
             <Text strong>Dark mode</Text>
             <div>
               <Switch
-                checked={darkMode}
+                checked={userSettings.dark_mode}
                 onChange={(checked) => {
-                  setDarkMode(checked);
-                  setDarkModeCallback(checked);
+                  userSettingsDispatch({
+                    type: 'setDarkMode',
+                    payload: checked,
+                  });
                 }}
                 className="mt-2"
-                loading={accountSettingsLoading}
+                loading={userSettings.isLoading}
               />
             </div>
             <Text className="mt-1" type="secondary">
@@ -414,10 +407,9 @@ export default function Home({
               }}
               className="mt-2"
               disabled={
-                accountSettingsLoading ||
-                currencyCodes.find((o) => o.value === currency)
+                currencyCodes.find((o) => o.value === userSettings.currency)
                   ? false
-                  : true
+                  : true || userSettings.isLoading
               }
             >
               Save
@@ -489,9 +481,9 @@ export default function Home({
       children: (
         <div>
           <AntdTable
-            isLoading={orchestratorListIsLoading}
+            isLoading={orchestratorList.isLoading}
             columns={orchestratorColumns}
-            data={orchestratorList}
+            data={orchestratorList.data}
           />
         </div>
       ),
