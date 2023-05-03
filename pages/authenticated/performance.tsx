@@ -12,72 +12,14 @@ import {
   formatPercentageWithColors,
   formatImageAndText,
 } from '../../utils/formatting';
-import { UserInfo_Type } from '../../utils/types';
+import { UserInfo_Type, UserSettings_Type } from '../../utils/types';
 import { SegmentedValue } from 'rc-segmented';
 import type { ColumnsType } from 'antd/es/table';
 
 type dataToGet = undefined | string | SegmentedValue;
-type tabNumber = undefined | string;
+type tabNumber = undefined | number;
 
 const { Title } = Typography;
-
-const valueGrowthColumns: ColumnsType = [
-  {
-    title: 'symbol',
-    dataIndex: 'symbol',
-    key: 'symbol',
-    render: (text: string, record: any) =>
-      formatImageAndText(text, record.meta.logo),
-  },
-  {
-    title: 'Profit / Loss',
-    dataIndex: 'unrealized',
-    key: 'unrealized.total_pl',
-    render: (text: { total_pl: string | number }) =>
-      formatCurrencyWithColors(text.total_pl),
-  },
-  {
-    title: 'Percentage',
-    dataIndex: 'unrealized',
-    key: 'unrealized.total_pl_percentage',
-    render: (text: { total_pl_percentage: string | number }) =>
-      formatPercentageWithColors(text.total_pl_percentage),
-  },
-];
-
-const ReceivedDividedColumns: ColumnsType = [
-  {
-    title: 'symbol',
-    dataIndex: 'symbol',
-    key: 'symbol',
-    render: (text: string, record: any) =>
-      formatImageAndText(text, record.meta.logo),
-  },
-  {
-    title: 'Dividends',
-    dataIndex: 'realized',
-    key: 'realized.total_dividends',
-    render: (text: { total_dividends: string | number }) =>
-      formatCurrency(text.total_dividends),
-  },
-];
-
-const TransactionCostColumns: ColumnsType = [
-  {
-    title: 'symbol',
-    dataIndex: 'symbol',
-    key: 'symbol',
-    render: (text: string, record: any) =>
-      formatImageAndText(text, record.meta.logo),
-  },
-  {
-    title: 'Transaction Costs',
-    dataIndex: 'realized',
-    key: 'realized.transaction_cost',
-    render: (text: { transaction_cost: string | number }) =>
-      formatCurrency(text.transaction_cost),
-  },
-];
 
 const topBarDataFallBackObject = {
   total_value_gain: '',
@@ -192,10 +134,10 @@ async function fetchTopBar(userInfo: UserInfo_Type, date: dataToGet) {
 
 export default function performance({
   userInfo,
-  darkMode,
+  userSettings,
 }: {
   userInfo: UserInfo_Type;
-  darkMode: boolean;
+  userSettings: UserSettings_Type;
 }) {
   // const setup
   const router = useRouter();
@@ -217,7 +159,7 @@ export default function performance({
   const [SingleDayData, setSingleDayData] = useState(null);
   const [SingleDayDataisLoading, setSingleDayDataisLoading] = useState(true);
   const [tab, setTab] = useState<tabNumber>(
-    (useRouter().query.tab || '1').toString()
+    Number(useRouter().query.tab || '1')
   );
   const [date, setDate] = useState<dataToGet>(
     useRouter().query.date?.toString || undefined
@@ -227,14 +169,14 @@ export default function performance({
     if (!router.isReady) {
       return;
     } else {
-      setTab(router.query.tab?.toString());
+      setTab(Number(router.query.tab));
       setDate(router.query.date?.toString());
     }
   }, [router]);
 
   // useEffects
   useEffect(() => {
-    if (userInfo && date) {
+    if (userInfo?.clientPrincipal?.userId && date) {
       fetchDividendData(userInfo, date).then(({ data, loading }) => {
         setdividendData(data);
         setLoadingDividend(loading);
@@ -279,6 +221,74 @@ export default function performance({
     router.push(`/authenticated/performance?tab=${newTab}&date=${date}`);
   }
 
+  // Columns
+
+  const valueGrowthColumns: ColumnsType = [
+    {
+      title: 'Name',
+      dataIndex: 'meta',
+      key: 'meta.name',
+      render: (text: any, record: any) =>
+        formatImageAndText(record.symbol, text.name, record.meta.logo),
+    },
+    {
+      title: 'Profit / Loss',
+      dataIndex: 'unrealized',
+      key: 'unrealized.total_pl',
+      render: (text) => (
+        <div>
+          <div>
+            {formatCurrencyWithColors({
+              value: text.total_pl,
+              currency: userSettings.currency,
+            })}
+          </div>
+          <div>{formatPercentageWithColors(text.total_pl_percentage)}</div>
+        </div>
+      ),
+    },
+  ];
+
+  const ReceivedDividedColumns: ColumnsType = [
+    {
+      title: 'Name',
+      dataIndex: 'meta',
+      key: 'meta.name',
+      render: (text: any, record: any) =>
+        formatImageAndText(record.symbol, text.name, record.meta.logo),
+    },
+    {
+      title: 'Dividends',
+      dataIndex: 'realized',
+      key: 'realized.total_dividends',
+      render: (text: { total_dividends: string | number }) =>
+        formatCurrency({
+          value: text.total_dividends,
+          currency: userSettings.currency,
+        }),
+    },
+  ];
+
+  const TransactionCostColumns: ColumnsType = [
+    {
+      title: 'Name',
+      dataIndex: 'meta',
+      key: 'meta.name',
+      render: (text: any, record: any) =>
+        formatImageAndText(record.symbol, text.name, record.meta.logo),
+    },
+    {
+      title: 'Transaction Costs',
+      dataIndex: 'realized',
+      key: 'realized.transaction_cost',
+      render: (text: { transaction_cost: string | number }) =>
+        formatCurrency({
+          value: text.transaction_cost,
+          currency: userSettings.currency,
+        }),
+    },
+  ];
+
   // Render
   return (
     <div>
@@ -321,18 +331,19 @@ export default function performance({
           topBarData={topBarData}
           loading={topBarloading}
           handleTabChange={handleTabChange}
+          userSettings={userSettings}
         />
       </div>
       <div>
         <div></div>
         <div>
-          {tab === '1' && (
+          {tab === 1 && (
             <React.Fragment>
               <div>
                 <BasicLineGraph
                   data={valueGrowthData}
                   isloading={valueGrowthDataLoading}
-                  darkmode={darkMode}
+                  userSettings={userSettings}
                 />
                 <Divider />
                 <AntdTable
@@ -344,11 +355,12 @@ export default function performance({
               </div>
             </React.Fragment>
           )}
-          {tab === '2' && (
+          {tab === 2 && (
             <React.Fragment>
               <PrimeFaceBarChart
                 data={dividendData}
                 isloading={loadingDividend}
+                userSettings={userSettings}
               />
               <Divider />
               <AntdTable
@@ -359,11 +371,12 @@ export default function performance({
               />
             </React.Fragment>
           )}
-          {tab === '3' && (
+          {tab === 3 && (
             <React.Fragment>
               <PrimeFaceBarChart
                 data={totalTransactionCostData}
                 isloading={totalTransactionCostDataLoading}
+                userSettings={userSettings}
               />
               <Divider />
               <AntdTable
@@ -374,13 +387,13 @@ export default function performance({
               />
             </React.Fragment>
           )}
-          {tab === '4' && (
+          {tab === 4 && (
             <React.Fragment>
               <div>
                 <BasicLineGraph
                   data={totalGainsData}
                   isloading={totalGainsDataLoading}
-                  darkmode={darkMode}
+                  userSettings={userSettings}
                 />
                 <Divider />
                 <AntdTable

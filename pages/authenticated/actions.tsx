@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import AntdTable from '../../components/antdTable';
 import {
   cachedFetch,
-  ovewriteCachedFetch,
+  overwriteCachedFetch,
   ApiWithMessage,
 } from '../../utils/api-utils';
 import {
@@ -13,16 +13,19 @@ import {
   formatNumber,
 } from '../../utils/formatting';
 import AddXForm from '../../components/formModal';
-import { UserInfo_Type } from '../../utils/types';
+import { UserInfo_Type, UserSettings_Type } from '../../utils/types';
 import type { ColumnsType } from 'antd/es/table';
 
 const { Search } = Input;
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 async function fetchTransactionsData(userInfo: UserInfo_Type) {
   const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
     userId: userInfo.clientPrincipal.userId,
     containerName: 'input_transactions',
+  });
+  data.forEach((row: any) => {
+    row.total_cost = row.cost_per_share * row.quantity;
   });
   return { data: data, loading: false };
 }
@@ -35,7 +38,13 @@ async function fetchInputInvestedData(userInfo: UserInfo_Type) {
   return { data: data, loading: false };
 }
 
-export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
+export default function Home({
+  userInfo,
+  userSettings,
+}: {
+  userInfo: UserInfo_Type;
+  userSettings: UserSettings_Type;
+}) {
   const [InputTransactionsData, setInputTransactionsData]: any = useState();
   const [InputTransactionsDataisLoading, setInputTransactionsDataisLoading] =
     useState(true);
@@ -48,7 +57,7 @@ export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
     useState<any>(undefined);
 
   // columns
-  const InputInvestedscolumns: ColumnsType = [
+  const InputInvestedColumns: ColumnsType = [
     {
       title: 'Transaction Date',
       dataIndex: 'date',
@@ -63,7 +72,8 @@ export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
       title: 'Amount',
       dataIndex: 'amount',
       key: 'amount',
-      render: (text: string | number) => formatCurrency(text),
+      render: (text: string | number) =>
+        formatCurrency({ value: text, currency: userSettings.currency }),
     },
     {
       title: 'Actions',
@@ -93,13 +103,16 @@ export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
     },
   ];
 
-  const InputTransactionscolumns: ColumnsType = [
+  const InputTransactionsColumns: ColumnsType = [
     {
-      title: 'Symbol',
+      title: 'Name',
       dataIndex: 'symbol',
       key: 'symbol',
-      render: (text: string, record: any) =>
-        formatImageAndText(text, record.meta.logo),
+      render: (text: string, record: any) => (
+        <div className="min-w-16">
+          {formatImageAndText(text, record.meta.name, record.meta.logo)}
+        </div>
+      ),
     },
     {
       title: 'Transaction Date',
@@ -108,15 +121,27 @@ export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
     },
     {
       title: 'Cost',
-      dataIndex: 'cost',
-      key: 'cost',
-      render: (text: string | number) => formatCurrency(text),
-    },
-    {
-      title: 'Quantity',
-      dataIndex: 'quantity',
-      key: 'quantity',
-      render: (text: string | number) => formatNumber(text),
+      dataIndex: 'total_cost',
+      key: 'total_cost',
+      render: (text, record: any) => (
+        <div className="min-w-32">
+          <Text strong>
+            {formatCurrency({
+              value: text,
+              currency: record.currency,
+            })}
+          </Text>
+          <div className="flex space-x-0.5 flex-row">
+            <Text keyboard> x{formatNumber(record.quantity)} </Text>
+            <Text type="secondary">
+              {formatCurrency({
+                value: record.cost_per_share,
+                currency: record.currency,
+              })}
+            </Text>
+          </div>
+        </div>
+      ),
     },
     {
       title: 'Transaction Type',
@@ -127,12 +152,8 @@ export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
       title: 'Transaction Cost',
       dataIndex: 'transaction_cost',
       key: 'transaction_cost',
-      render: (text: string | number) => formatCurrency(text),
-    },
-    {
-      title: 'Currency',
-      dataIndex: 'currency',
-      key: 'currency',
+      render: (text: string | number) =>
+        formatCurrency({ value: text, currency: 'EUR' }),
     },
     {
       title: 'Domain',
@@ -215,7 +236,7 @@ export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
   async function overWriteTableData(
     container: 'input_invested' | 'input_transactions'
   ): Promise<void> {
-    ovewriteCachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
+    overwriteCachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
       userId: userInfo.clientPrincipal.userId,
       containerName: container,
     }).then((data) => {
@@ -238,7 +259,7 @@ export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
         </Title>
         <AntdTable
           isLoading={InputTransactionsDataisLoading}
-          columns={InputTransactionscolumns}
+          columns={InputTransactionsColumns}
           data={InputTransactionsData}
           globalSorter={true}
           searchEnabled={true}
@@ -271,6 +292,7 @@ export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
                 <AddXForm
                   form={'addStock'}
                   parentCallback={overWriteTableData}
+                  userSettings={userSettings}
                 />
               </div>
             </div>
@@ -283,7 +305,7 @@ export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
           </Title>
           <AntdTable
             isLoading={InputInvestedDataisLoading}
-            columns={InputInvestedscolumns}
+            columns={InputInvestedColumns}
             data={InputInvestedData}
             globalSorter={true}
             searchEnabled={true}
@@ -316,6 +338,7 @@ export default function Home({ userInfo }: { userInfo: UserInfo_Type }) {
                   <AddXForm
                     form={'addTransaction'}
                     parentCallback={overWriteTableData}
+                    userSettings={userSettings}
                   />
                 </div>
               </div>

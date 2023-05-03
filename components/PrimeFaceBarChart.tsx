@@ -1,10 +1,12 @@
 import { Chart } from 'primereact/chart';
 import { Spin } from 'antd';
 import { formatCurrency } from '../utils/formatting';
+import { UserSettings_Type } from '../utils/types';
 
 export default function PrimeFacePieChart({
   data,
   isloading,
+  userSettings,
 }: {
   data:
     | [
@@ -16,12 +18,13 @@ export default function PrimeFacePieChart({
       ]
     | any[];
   isloading: boolean;
+  userSettings: UserSettings_Type;
 }): JSX.Element {
   const labels = data.map(function (index) {
     return index.date;
   });
 
-  const uniquelabels = Array.from(new Set(labels));
+  const uniqueLabels = Array.from(new Set(labels));
 
   const category = data.map(function (index) {
     return index.category;
@@ -30,10 +33,10 @@ export default function PrimeFacePieChart({
   function filter_json(symbol: string) {
     let outputData = [];
     for (const element of data) {
-      for (let i = 1; i < uniquelabels.length + 1; i++) {
+      for (let i = 1; i < uniqueLabels.length + 1; i++) {
         if (
           element['category'] === symbol &&
-          element['date'] === uniquelabels[i - 1]
+          element['date'] === uniqueLabels[i - 1]
         ) {
           outputData.push(element);
         }
@@ -46,7 +49,7 @@ export default function PrimeFacePieChart({
   }
 
   const barchart_datasets = [];
-  const uniquecategory = Array.from(new Set(category));
+  const uniqueCategory = Array.from(new Set(category));
 
   function stringToColour(str: string) {
     var hash = 0;
@@ -76,20 +79,20 @@ export default function PrimeFacePieChart({
     throw new Error('Bad Hex');
   }
 
-  for (let i = 1; i < uniquecategory.length + 1; i++) {
-    const filterd_data = filter_json(uniquecategory[i - 1]);
-    const filterd_data_sum = filterd_data.reduce((a, b) => a + b, 0);
-    if (filterd_data_sum !== 0)
+  for (let i = 1; i < uniqueCategory.length + 1; i++) {
+    const filtered_data = filter_json(uniqueCategory[i - 1]);
+    const filtered_data_sum = filtered_data.reduce((a, b) => a + b, 0);
+    if (filtered_data_sum !== 0)
       barchart_datasets.push({
         type: 'bar',
-        label: uniquecategory[i - 1],
-        data: filterd_data,
-        backgroundColor: stringToColour(uniquecategory[i - 1]),
+        label: uniqueCategory[i - 1],
+        data: filtered_data,
+        backgroundColor: stringToColour(uniqueCategory[i - 1]),
       });
   }
 
   const stackedData = {
-    labels: uniquelabels,
+    labels: uniqueLabels,
     datasets: barchart_datasets,
   };
 
@@ -103,7 +106,10 @@ export default function PrimeFacePieChart({
             let index = context.dataIndex;
             let label = context.dataset.label;
             label += ': ';
-            label += formatCurrency(context.dataset.data[index]);
+            label += formatCurrency({
+              value: context.dataset.data[index],
+              currency: userSettings.currency,
+            });
             return label;
           },
         },
@@ -124,7 +130,11 @@ export default function PrimeFacePieChart({
         ticks: {
           callback: function (value: number) {
             if (Math.floor(value) === value) {
-              return formatCurrency(value, 0);
+              return formatCurrency({
+                value: value,
+                maximumFractionDigits: 0,
+                currency: userSettings.currency,
+              });
             }
           },
         },

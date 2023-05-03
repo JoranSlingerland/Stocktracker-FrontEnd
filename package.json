@@ -12,34 +12,34 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
-    "@azure/msal-browser": "^2.34.0",
-    "@azure/msal-react": "^1.5.3",
+    "@azure/msal-browser": "^2.36.0",
+    "@azure/msal-react": "^1.5.6",
     "@types/react-router-dom": "^5.3.3",
-    "antd": "^5.3.3",
+    "antd": "^5.4.6",
     "autoprefixer": "^10.4.14",
     "chart.js": "^4.2.1",
     "chartjs-plugin-datalabels": "^2.2.0",
     "isomorphic-unfetch": "^4.0.2",
-    "next": "^13.2.4",
+    "next": "^13.3.1",
     "next-pwa": "^5.6.0",
     "postcss": "^8.4.12",
     "primeicons": "^6.0.1",
     "primereact": "^9.2.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "wretch": "^2.5.1"
+    "wretch": "^2.5.2"
   },
   "devDependencies": {
     "@types/node": "^18.15.11",
     "@types/object-hash": "^3.0.2",
-    "@types/react": "^18.0.31",
-    "eslint": "^8.37.0",
-    "eslint-config-next": "^13.2.4",
+    "@types/react": "^18.2.0",
+    "eslint": "^8.39.0",
+    "eslint-config-next": "^13.3.1",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.0.0",
     "prettier": "^2.8.7",
     "serve": "^14.2.0",
-    "tailwindcss": "^3.2.7",
-    "typescript": "^5.0.3"
+    "tailwindcss": "^3.3.2",
+    "typescript": "^5.0.4"
   }
 }

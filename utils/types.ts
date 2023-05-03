@@ -8,4 +8,12 @@ type UserInfo_Type = {
   };
 };
 
-export type { UserInfo_Type };
+type UserSettings_Type = {
+  id: string;
+  dark_mode: boolean;
+  clearbit_api_key: string;
+  alpha_vantage_api_key: string;
+  currency: string;
+};
+
+export type { UserInfo_Type, UserSettings_Type };

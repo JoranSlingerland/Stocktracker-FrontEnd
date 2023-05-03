@@ -1,15 +1,16 @@
 import { Spin } from 'antd';
 import { Chart } from 'primereact/chart';
 import { formatCurrency } from '../utils/formatting';
+import { UserSettings_Type } from '../utils/types';
 
 export default function BasicLineGraph({
   isloading,
   data,
-  darkmode,
+  userSettings,
 }: {
   isloading: boolean;
   data: any;
-  darkmode: boolean;
+  userSettings: UserSettings_Type;
 }): JSX.Element {
   let multiAxisOptions = {
     stacked: false,
@@ -29,7 +30,10 @@ export default function BasicLineGraph({
             let index = context.dataIndex;
             let label = context.dataset.label;
             label += ': ';
-            label += formatCurrency(context.dataset.data[index]);
+            label += formatCurrency({
+              value: context.dataset.data[index],
+              currency: userSettings.currency,
+            });
             return label;
           },
         },
@@ -57,7 +61,11 @@ export default function BasicLineGraph({
         ticks: {
           callback: function (value: number) {
             if (Math.floor(value) === value) {
-              return formatCurrency(value, 0);
+              return formatCurrency({
+                value: value,
+                maximumFractionDigits: 0,
+                currency: userSettings.currency,
+              });
             }
           },
         },
@@ -103,7 +111,7 @@ export default function BasicLineGraph({
         {
           label: data['datasets'][1]['label'],
           fill: false,
-          borderColor: darkmode ? '#d6d3d1' : '#000000',
+          borderColor: userSettings.dark_mode ? '#d6d3d1' : '#000000',
           yAxisID: 'y',
           tension: 0.4,
           data: data['datasets'][1]['data'],

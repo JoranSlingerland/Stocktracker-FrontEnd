@@ -17,11 +17,11 @@
       "allowedRoles": ["authenticated"]
     },
     {
-      "route": "/api/orchestartors/*",
+      "route": "/api/orchestrator/*",
       "allowedRoles": ["authenticated"]
     },
     {
-      "route": "/api/priveleged/*",
+      "route": "/api/privileged/*",
       "allowedRoles": ["admin"]
     },
     {

@@ -3,13 +3,16 @@ import { Chart } from 'primereact/chart';
 import { formatCurrency } from '../utils/formatting';
 import React from 'react';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { UserSettings_Type } from '../utils/types';
 
 export default function PieChart({
   data,
   isloading,
+  userSettings,
 }: {
   data: any;
   isloading: boolean;
+  userSettings: UserSettings_Type;
 }): JSX.Element {
   const myChartRef: any = React.createRef();
 
@@ -50,7 +53,7 @@ export default function PieChart({
     return index;
   }
 
-  function clickevent(e: { target: any }) {
+  function clickEvent(e: { target: any }) {
     var target = e.target;
     target = find_parent_with_id(target, 'legend_li_item');
     var index = find_target_index(target);
@@ -106,7 +109,10 @@ export default function PieChart({
             let index = context.dataIndex;
             let label = context.label;
             label += ': ';
-            label += formatCurrency(context.dataset.data[index]);
+            label += formatCurrency({
+              value: context.dataset.data[index],
+              currency: userSettings.currency,
+            });
             return label;
           },
           labelPointStyle: function () {
@@ -185,12 +191,17 @@ export default function PieChart({
                   }
                   avatar={
                     <Checkbox
-                      onClick={clickevent}
+                      onClick={clickEvent}
                       defaultChecked={true}
                     ></Checkbox>
                   }
                 />
-                <div>{formatCurrency(item.data)}</div>
+                <div>
+                  {formatCurrency({
+                    value: item.data,
+                    currency: userSettings.currency,
+                  })}
+                </div>
               </List.Item>
             )}
           />

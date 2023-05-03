@@ -1,6 +1,5 @@
 import Navbar from '../components/navbar';
 import '../styles/globals.css';
-// import 'primereact/resources/themes/md-dark-indigo/theme.css';
 import { ConfigProvider, theme } from 'antd';
 import type { AppProps } from 'next/app';
 import { useEffect, useState } from 'react';
@@ -18,7 +17,13 @@ function MyApp({ Component, pageProps }: AppProps) {
       userDetails: '',
     },
   });
-  const [darkMode, setDarkMode] = useState(false);
+  const [userSettings, setUserSettings] = useState({
+    id: '',
+    dark_mode: false,
+    clearbit_api_key: '',
+    alpha_vantage_api_key: '',
+    currency: '',
+  });
 
   async function getUserInfo() {
     await regularFetch('/.auth/me', undefined).then((data) => {
@@ -30,12 +35,12 @@ function MyApp({ Component, pageProps }: AppProps) {
     await cachedFetch('/api/data/get_user_data', {}, 'POST', {
       userId: userInfo,
     }).then((data: any) => {
-      setDarkMode(data.dark_mode || false);
+      setUserSettings(data);
     });
   }
 
   function setDarkModeCallback(darkMode: boolean) {
-    setDarkMode(darkMode);
+    setUserSettings({ ...userSettings, dark_mode: darkMode });
   }
 
   useEffect(() => {
@@ -52,12 +57,12 @@ function MyApp({ Component, pageProps }: AppProps) {
     <>
       <ConfigProvider
         theme={{
-          algorithm: darkMode ? darkAlgorithm : defaultAlgorithm,
+          algorithm: userSettings.dark_mode ? darkAlgorithm : defaultAlgorithm,
         }}
       >
         <div
           className={`min-h-screen ${
-            darkMode ? 'dark bg-neutral-900' : 'bg-white'
+            userSettings.dark_mode ? 'dark bg-neutral-900' : 'bg-white'
           }`}
         >
           <Navbar userInfo={userInfo} />
@@ -67,7 +72,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                 {...pageProps}
                 userInfo={userInfo}
                 setDarkModeCallback={setDarkModeCallback}
-                darkMode={darkMode}
+                userSettings={userSettings}
               />
             </div>
           </div>

@@ -1,32 +1,66 @@
 import { Image, Typography, Space } from 'antd';
 const { Text } = Typography;
 
-function formatCurrency(value: number | string, maximumFractionDigits = 2) {
+function formatCurrency({
+  value,
+  maximumFractionDigits,
+  currency,
+}: {
+  value: number | string;
+  maximumFractionDigits?: number;
+  currency?: string;
+}) {
+  if (currency === undefined || currency === '') {
+    return formatNumber(value, maximumFractionDigits);
+  }
   return value.toLocaleString('nl-NL', {
     style: 'currency',
-    currency: 'EUR',
+    currency: currency.toUpperCase(),
     maximumFractionDigits: maximumFractionDigits,
   });
 }
 
-function formatCurrencyWithColors(
-  value: number | string,
-  maximumFractionDigits = 2
-) {
+function getCurrencySymbol(currency: string | undefined) {
+  if (currency === undefined || currency === '') {
+    return '';
+  }
+  const value = 1;
+  const formattedValue = value.toLocaleString('nl-NL', {
+    style: 'currency',
+    currency: currency.toUpperCase(),
+  });
+  return formattedValue.replace(/[\d\s,.]+/g, '');
+}
+
+function formatCurrencyWithColors({
+  value,
+  maximumFractionDigits = 2,
+  currency,
+}: {
+  value: number | string;
+  maximumFractionDigits?: number;
+  currency?: string;
+}) {
   if (typeof value === 'string') {
     value = parseFloat(value);
   }
+  if (currency === undefined) {
+    var formattedValue = formatCurrency({ value, maximumFractionDigits });
+  } else {
+    var formattedValue = formatCurrency({
+      value,
+      maximumFractionDigits,
+      currency,
+    });
+  }
+
   if (value > 0) {
-    return (
-      <Text type="success">{formatCurrency(value, maximumFractionDigits)}</Text>
-    );
+    return <Text type="success">{formattedValue}</Text>;
   }
   if (value < 0) {
-    return (
-      <Text type="danger">{formatCurrency(value, maximumFractionDigits)}</Text>
-    );
+    return <Text type="danger">{formattedValue}</Text>;
   }
-  return formatCurrency(value, maximumFractionDigits);
+  return formattedValue;
 }
 
 function formatPercentage(value: number | string, maximumFractionDigits = 2) {
@@ -66,7 +100,11 @@ function formatNumber(value: number | string, maximumFractionDigits = 2) {
   });
 }
 
-function formatImageAndText(text: string, image: string): JSX.Element {
+function formatImageAndText(
+  symbol: string,
+  name: string,
+  image: string | undefined
+): JSX.Element {
   if (image === undefined) {
     image = '/images/fallback.png';
   }
@@ -81,9 +119,10 @@ function formatImageAndText(text: string, image: string): JSX.Element {
         preview={false}
         placeholder={false}
       />
-      <Text className="pl-1" strong>
-        {text}
-      </Text>
+      <div className="flex flex-col pl-1">
+        <Text strong>{name}</Text>
+        <Text type="secondary">{symbol}</Text>
+      </div>
     </Space>
   );
 }
@@ -95,4 +134,5 @@ export {
   formatPercentageWithColors,
   formatNumber,
   formatImageAndText,
+  getCurrencySymbol,
 };

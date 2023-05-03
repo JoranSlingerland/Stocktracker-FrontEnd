@@ -58,7 +58,7 @@ async function cachedFetch(
   }
 }
 
-async function ovewriteCachedFetch(
+async function overwriteCachedFetch(
   url: string,
   fallback_data: any = [],
   method = 'GET',
@@ -159,4 +159,4 @@ async function ApiWithMessage(
 
 // End of main functions
 
-export { cachedFetch, ovewriteCachedFetch, regularFetch, ApiWithMessage };
+export { cachedFetch, overwriteCachedFetch, regularFetch, ApiWithMessage };
