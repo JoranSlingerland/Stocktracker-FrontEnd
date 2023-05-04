@@ -4,13 +4,10 @@
   "rules": {
     "@next/next/google-font-display": "off",
     "prettier/prettier": [
-      "error",
+      "warning",
       {
         "endOfLine": "auto"
       }
-    ],
-    "react-hooks/rules-of-hooks": "off",
-    "@next/next/no-html-link-for-pages": "off"
-    // "react/jsx-key": "off"
+    ]
   }
 }
