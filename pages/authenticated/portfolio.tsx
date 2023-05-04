@@ -3,7 +3,7 @@ import { useEffect, useReducer } from 'react';
 import PieChart from '../../components/PrimeFacePieChart';
 import AntdTable from '../../components/antdTable';
 import {
-  cachedFetch_2,
+  cachedFetch,
   apiRequestReducer,
   initialState,
 } from '../../utils/api-utils';
@@ -64,7 +64,7 @@ export default function Home({
   useEffect(() => {
     if (userInfo.clientPrincipal.userId !== '') {
       const abortController = new AbortController();
-      cachedFetch_2({
+      cachedFetch({
         url: `/api/data/get_table_data_basic`,
         method: 'POST',
         body: {
@@ -75,7 +75,7 @@ export default function Home({
         dispatcher: unRealizedDataDispatcher,
         controller: abortController,
       });
-      cachedFetch_2({
+      cachedFetch({
         url: `/api/data/get_table_data_basic`,
         method: 'POST',
         body: {
@@ -88,7 +88,7 @@ export default function Home({
         dispatcher: RealizedDataDispatcher,
         controller: abortController,
       });
-      cachedFetch_2({
+      cachedFetch({
         url: `/api/data/get_pie_data`,
         fallback_data: fallbackObject,
         method: 'POST',
@@ -99,7 +99,7 @@ export default function Home({
         dispatcher: StockPieDataDispatcher,
         controller: abortController,
       });
-      cachedFetch_2({
+      cachedFetch({
         url: `/api/data/get_pie_data`,
         fallback_data: fallbackObject,
         method: 'POST',
@@ -110,7 +110,7 @@ export default function Home({
         dispatcher: CurrencyPieDataDispatcher,
         controller: abortController,
       });
-      cachedFetch_2({
+      cachedFetch({
         url: `/api/data/get_pie_data`,
         fallback_data: fallbackObject,
         method: 'POST',
@@ -121,7 +121,7 @@ export default function Home({
         dispatcher: SectorPieDataReducer,
         controller: abortController,
       });
-      cachedFetch_2({
+      cachedFetch({
         url: `/api/data/get_pie_data`,
         fallback_data: fallbackObject,
         method: 'POST',

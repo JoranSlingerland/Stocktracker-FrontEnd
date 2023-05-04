@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import BasicLineGraph from '../../components/PrimeFaceLineGraph';
 import PrimeFaceBarChart from '../../components/PrimeFaceBarChart';
 import {
-  cachedFetch_2,
+  cachedFetch,
   apiRequestReducer,
   initialState,
 } from '../../utils/api-utils';
@@ -121,7 +121,7 @@ export default function performance({
   useEffect(() => {
     if (userInfo?.clientPrincipal?.userId && date) {
       const abortController = new AbortController();
-      cachedFetch_2({
+      cachedFetch({
         url: `/api/data/get_barchart_data`,
         method: 'POST',
         body: {
@@ -133,7 +133,7 @@ export default function performance({
         controller: abortController,
       });
 
-      cachedFetch_2({
+      cachedFetch({
         url: `/api/data/get_barchart_data`,
         method: 'POST',
         body: {
@@ -145,7 +145,7 @@ export default function performance({
         controller: abortController,
       });
 
-      cachedFetch_2({
+      cachedFetch({
         url: `/api/data/get_linechart_data`,
         method: 'POST',
         fallback_data: totalGainsDataFallBackObject,
@@ -158,7 +158,7 @@ export default function performance({
         controller: abortController,
       });
 
-      cachedFetch_2({
+      cachedFetch({
         url: `/api/data/get_linechart_data`,
         method: 'POST',
         fallback_data: valueGrowthDataFallBackObject,
@@ -171,7 +171,7 @@ export default function performance({
         controller: abortController,
       });
 
-      cachedFetch_2({
+      cachedFetch({
         url: `/api/data/get_table_data_performance`,
         method: 'POST',
         body: {
@@ -182,7 +182,7 @@ export default function performance({
         controller: abortController,
       });
 
-      cachedFetch_2({
+      cachedFetch({
         url: `/api/data/get_topbar_data`,
         method: 'POST',
         fallback_data: topBarDataFallBackObject,

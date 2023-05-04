@@ -3,8 +3,8 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { useState, useEffect, useReducer } from 'react';
 import AntdTable from '../../components/antdTable';
 import {
-  cachedFetch_2,
-  overwriteCachedFetch_2,
+  cachedFetch,
+  overwriteCachedFetch,
   ApiWithMessage,
   apiRequestReducer,
   initialState,
@@ -176,7 +176,7 @@ export default function Home({
   useEffect(() => {
     if (userInfo.clientPrincipal.userId !== '') {
       const abortController = new AbortController();
-      cachedFetch_2({
+      cachedFetch({
         url: `/api/data/get_table_data_basic`,
         method: 'POST',
         body: {
@@ -187,7 +187,7 @@ export default function Home({
         dispatcher: InputTransactionsDataDispatcher,
       });
 
-      cachedFetch_2({
+      cachedFetch({
         url: `/api/data/get_table_data_basic`,
         method: 'POST',
         body: {
@@ -249,7 +249,7 @@ export default function Home({
         ? InputInvestedDataDispatcher
         : InputTransactionsDataDispatcher;
 
-    overwriteCachedFetch_2({
+    overwriteCachedFetch({
       url: `/api/data/get_table_data_basic`,
       method: 'POST',
       body: {

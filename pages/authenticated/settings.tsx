@@ -22,8 +22,8 @@ import {
   ApiWithMessage,
   apiRequestReducer,
   initialState,
-  regularFetch_2,
-  overwriteCachedFetch_2,
+  regularFetch,
+  overwriteCachedFetch,
 } from '../../utils/api-utils';
 import useWindowDimensions from '../../utils/useWindowDimensions';
 import AntdTable from '../../components/antdTable';
@@ -42,7 +42,7 @@ async function fetchOrchestratorList(
   controller?: any,
   background?: boolean
 ) {
-  regularFetch_2({
+  regularFetch({
     url: `/api/orchestrator/list`,
     method: 'POST',
     body: {
@@ -116,7 +116,7 @@ export default function Home({
       'POST',
       userSettings
     ).then(() => {
-      overwriteCachedFetch_2({
+      overwriteCachedFetch({
         url: '/api/data/get_user_data',
         fallback_data: {},
         method: 'POST',

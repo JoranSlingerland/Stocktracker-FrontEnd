@@ -37,7 +37,7 @@ function newKey(url: string, body: any) {
 // End of helper functions
 
 // main functions
-async function regularFetch_2({
+async function regularFetch({
   url,
   dispatcher,
   fallback_data = [],
@@ -108,7 +108,7 @@ async function regularFetch_2({
   return { response, error };
 }
 
-async function cachedFetch_2({
+async function cachedFetch({
   url,
   dispatcher,
   fallback_data = [],
@@ -140,7 +140,7 @@ async function cachedFetch_2({
     }
     return { response, error };
   } else {
-    const { response, error } = await regularFetch_2({
+    const { response, error } = await regularFetch({
       url,
       dispatcher,
       fallback_data,
@@ -157,7 +157,7 @@ async function cachedFetch_2({
   }
 }
 
-async function overwriteCachedFetch_2({
+async function overwriteCachedFetch({
   url,
   dispatcher,
   fallback_data = [],
@@ -178,7 +178,7 @@ async function overwriteCachedFetch_2({
 }): Promise<{ response: any; error: boolean }> {
   const key = newKey(url, body);
 
-  const { response, error } = await regularFetch_2({
+  const { response, error } = await regularFetch({
     url,
     dispatcher,
     fallback_data,
@@ -312,7 +312,7 @@ export {
   ApiWithMessage,
   apiRequestReducer,
   initialState,
-  regularFetch_2,
-  cachedFetch_2,
-  overwriteCachedFetch_2,
+  regularFetch,
+  cachedFetch,
+  overwriteCachedFetch,
 };
