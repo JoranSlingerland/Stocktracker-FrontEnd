@@ -1,5 +1,5 @@
 import Overviewbar from '../../components/Overviewbar';
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState, useEffect, useReducer, useMemo } from 'react';
 import { Divider, Segmented, Typography } from 'antd';
 import { useRouter } from 'next/router';
 import BasicLineGraph from '../../components/PrimeFaceLineGraph';
@@ -108,6 +108,51 @@ export default function performance({
     useRouter().query.date?.toString || undefined
   );
 
+  // useMemo
+  const valueGrowthDataMemo = useMemo(() => {
+    return (
+      <BasicLineGraph
+        data={valueGrowthData.data}
+        isloading={valueGrowthData.isLoading}
+        userSettings={userSettings}
+      />
+    );
+  }, [valueGrowthData.data, valueGrowthData.isLoading, userSettings]);
+
+  const totalGainsDataMemo = useMemo(() => {
+    return (
+      <BasicLineGraph
+        data={totalGainsData.data}
+        isloading={totalGainsData.isLoading}
+        userSettings={userSettings}
+      />
+    );
+  }, [totalGainsData.data, totalGainsData.isLoading, userSettings]);
+
+  const dividendDataMemo = useMemo(() => {
+    return (
+      <PrimeFaceBarChart
+        data={dividendData.data}
+        isloading={dividendData.isLoading}
+        userSettings={userSettings}
+      />
+    );
+  }, [dividendData.data, dividendData.isLoading, userSettings]);
+
+  const totalTransactionCostDataMemo = useMemo(() => {
+    return (
+      <PrimeFaceBarChart
+        data={totalTransactionCostData.data}
+        isloading={totalTransactionCostData.isLoading}
+        userSettings={userSettings}
+      />
+    );
+  }, [
+    totalTransactionCostData.data,
+    totalTransactionCostData.isLoading,
+    userSettings,
+  ]);
+
   // useEffects
   useEffect(() => {
     if (!router.isReady) {
@@ -199,19 +244,14 @@ export default function performance({
     }
   }, [date, userInfo]);
 
-  // Refresh data
-  function handleClick(newdate: dataToGet) {
-    router.push(`/authenticated/performance?tab=${tab}&date=${newdate}`);
-    setDate(newdate);
-  }
-
-  function handleTabChange(newTab: tabNumber) {
-    setTab(newTab);
-    router.push(`/authenticated/performance?tab=${newTab}&date=${date}`);
-  }
+  useEffect(() => {
+    if (tab && date) {
+      router.push(`/authenticated/performance?tab=${tab}&date=${date}`);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab, date]);
 
   // Columns
-
   const valueGrowthColumns: ColumnsType = [
     {
       title: 'Name',
@@ -290,28 +330,28 @@ export default function performance({
           <Segmented
             options={[
               {
-                label: <div onClick={() => handleClick('ytd')}>YTD</div>,
+                label: <div onClick={() => setDate('ytd')}>YTD</div>,
                 value: 'ytd',
               },
               {
-                label: <div onClick={() => handleClick('week')}>Week</div>,
+                label: <div onClick={() => setDate('week')}>Week</div>,
                 value: 'week',
               },
               {
-                label: <div onClick={() => handleClick('month')}>Month</div>,
+                label: <div onClick={() => setDate('month')}>Month</div>,
                 value: 'month',
               },
               {
-                label: <div onClick={() => handleClick('year')}>Year</div>,
+                label: <div onClick={() => setDate('year')}>Year</div>,
                 value: 'year',
               },
               {
-                label: <div onClick={() => handleClick('max')}>Max</div>,
+                label: <div onClick={() => setDate('max')}>Max</div>,
                 value: 'max',
               },
             ]}
             value={date}
-            onChange={(e) => handleClick(e)}
+            onChange={(e) => setDate(e)}
           />
         </div>
       </div>
@@ -319,7 +359,7 @@ export default function performance({
         <Overviewbar
           topBarData={topBarData.data}
           loading={topBarData.isLoading}
-          handleTabChange={handleTabChange}
+          handleTabChange={(e) => setTab(e)}
           userSettings={userSettings}
         />
       </div>
@@ -329,11 +369,7 @@ export default function performance({
           {tab === 1 && (
             <React.Fragment>
               <div>
-                <BasicLineGraph
-                  data={valueGrowthData.data}
-                  isloading={valueGrowthData.isLoading}
-                  userSettings={userSettings}
-                />
+                {valueGrowthDataMemo}
                 <Divider />
                 <AntdTable
                   isLoading={SingleDayData.isLoading}
@@ -346,11 +382,7 @@ export default function performance({
           )}
           {tab === 2 && (
             <React.Fragment>
-              <PrimeFaceBarChart
-                data={dividendData.data}
-                isloading={dividendData.isLoading}
-                userSettings={userSettings}
-              />
+              {dividendDataMemo}
               <Divider />
               <AntdTable
                 isLoading={SingleDayData.isLoading}
@@ -362,11 +394,7 @@ export default function performance({
           )}
           {tab === 3 && (
             <React.Fragment>
-              <PrimeFaceBarChart
-                data={totalTransactionCostData.data}
-                isloading={totalTransactionCostData.isLoading}
-                userSettings={userSettings}
-              />
+              {totalTransactionCostDataMemo}
               <Divider />
               <AntdTable
                 isLoading={SingleDayData.isLoading}
@@ -379,11 +407,7 @@ export default function performance({
           {tab === 4 && (
             <React.Fragment>
               <div>
-                <BasicLineGraph
-                  data={totalGainsData.data}
-                  isloading={totalGainsData.isLoading}
-                  userSettings={userSettings}
-                />
+                {totalGainsDataMemo}
                 <Divider />
                 <AntdTable
                   isLoading={SingleDayData.isLoading}
