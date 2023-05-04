@@ -3,7 +3,7 @@ import { useEffect, useReducer } from 'react';
 import PieChart from '../../components/PrimeFacePieChart';
 import AntdTable from '../../components/antdTable';
 import {
-  cachedFetch,
+  cachedFetch_2,
   apiRequestReducer,
   initialState,
 } from '../../utils/api-utils';
@@ -26,78 +26,6 @@ const fallbackObject = {
   data: [],
   color: [],
 };
-
-async function fetchUnRealizedData(userInfo: UserInfo_Type) {
-  const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
-    userId: userInfo.clientPrincipal.userId,
-    containerName: 'stocks_held',
-    fullyRealized: false,
-  });
-  return { data: data };
-}
-
-async function fetchRealizedData(userInfo: UserInfo_Type) {
-  const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
-    userId: userInfo.clientPrincipal.userId,
-    containerName: 'stocks_held',
-    fullyRealized: true,
-    partialRealized: true,
-    andOr: 'or',
-  });
-  return { data: data };
-}
-
-async function fetchStockPieData(userInfo: UserInfo_Type) {
-  const data = await cachedFetch(
-    `/api/data/get_pie_data`,
-    fallbackObject,
-    'POST',
-    {
-      userId: userInfo.clientPrincipal.userId,
-      dataType: 'stocks',
-    }
-  );
-  return { data: data };
-}
-
-async function fetchCurrencyPieData(userInfo: UserInfo_Type) {
-  const data = await cachedFetch(
-    `/api/data/get_pie_data`,
-    fallbackObject,
-    'POST',
-    {
-      userId: userInfo.clientPrincipal.userId,
-      dataType: 'currency',
-    }
-  );
-  return { data: data };
-}
-
-async function fetchSectorPieData(userInfo: UserInfo_Type) {
-  const data = await cachedFetch(
-    `/api/data/get_pie_data`,
-    fallbackObject,
-    'POST',
-    {
-      userId: userInfo.clientPrincipal.userId,
-      dataType: 'sector',
-    }
-  );
-  return { data: data };
-}
-
-async function fetchCountryPieData(userInfo: UserInfo_Type) {
-  const data = await cachedFetch(
-    `/api/data/get_pie_data`,
-    fallbackObject,
-    'POST',
-    {
-      userId: userInfo.clientPrincipal.userId,
-      dataType: 'country',
-    }
-  );
-  return { data: data };
-}
 
 export default function Home({
   userInfo,
@@ -135,24 +63,78 @@ export default function Home({
   // Fetch data on page load
   useEffect(() => {
     if (userInfo.clientPrincipal.userId !== '') {
-      fetchUnRealizedData(userInfo).then(({ data }) => {
-        unRealizedDataDispatcher({ type: 'FETCH_SUCCESS', payload: data });
+      const abortController = new AbortController();
+      cachedFetch_2({
+        url: `/api/data/get_table_data_basic`,
+        method: 'POST',
+        body: {
+          userId: userInfo.clientPrincipal.userId,
+          containerName: 'stocks_held',
+          fullyRealized: false,
+        },
+        dispatcher: unRealizedDataDispatcher,
+        controller: abortController,
       });
-      fetchRealizedData(userInfo).then(({ data }) => {
-        RealizedDataDispatcher({ type: 'FETCH_SUCCESS', payload: data });
+      cachedFetch_2({
+        url: `/api/data/get_table_data_basic`,
+        method: 'POST',
+        body: {
+          userId: userInfo.clientPrincipal.userId,
+          containerName: 'stocks_held',
+          fullyRealized: true,
+          partialRealized: true,
+          andOr: 'or',
+        },
+        dispatcher: RealizedDataDispatcher,
+        controller: abortController,
       });
-      fetchStockPieData(userInfo).then(({ data }) => {
-        StockPieDataDispatcher({ type: 'FETCH_SUCCESS', payload: data });
+      cachedFetch_2({
+        url: `/api/data/get_pie_data`,
+        fallback_data: fallbackObject,
+        method: 'POST',
+        body: {
+          userId: userInfo.clientPrincipal.userId,
+          dataType: 'stocks',
+        },
+        dispatcher: StockPieDataDispatcher,
+        controller: abortController,
       });
-      fetchCurrencyPieData(userInfo).then(({ data }) => {
-        CurrencyPieDataDispatcher({ type: 'FETCH_SUCCESS', payload: data });
+      cachedFetch_2({
+        url: `/api/data/get_pie_data`,
+        fallback_data: fallbackObject,
+        method: 'POST',
+        body: {
+          userId: userInfo.clientPrincipal.userId,
+          dataType: 'currency',
+        },
+        dispatcher: CurrencyPieDataDispatcher,
+        controller: abortController,
       });
-      fetchSectorPieData(userInfo).then(({ data }) => {
-        SectorPieDataReducer({ type: 'FETCH_SUCCESS', payload: data });
+      cachedFetch_2({
+        url: `/api/data/get_pie_data`,
+        fallback_data: fallbackObject,
+        method: 'POST',
+        body: {
+          userId: userInfo.clientPrincipal.userId,
+          dataType: 'sector',
+        },
+        dispatcher: SectorPieDataReducer,
+        controller: abortController,
       });
-      fetchCountryPieData(userInfo).then(({ data }) => {
-        CountryPieDataReducer({ type: 'FETCH_SUCCESS', payload: data });
+      cachedFetch_2({
+        url: `/api/data/get_pie_data`,
+        fallback_data: fallbackObject,
+        method: 'POST',
+        body: {
+          userId: userInfo.clientPrincipal.userId,
+          dataType: 'country',
+        },
+        dispatcher: CountryPieDataReducer,
+        controller: abortController,
       });
+      return () => {
+        abortController.abort();
+      };
     }
   }, [userInfo]);
 
