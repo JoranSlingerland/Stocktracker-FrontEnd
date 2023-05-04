@@ -20,10 +20,10 @@ import {
 import { useEffect, useReducer } from 'react';
 import {
   ApiWithMessage,
-  regularFetch,
-  overwriteCachedFetch,
   apiRequestReducer,
   initialState,
+  regularFetch_2,
+  overwriteCachedFetch_2,
 } from '../../utils/api-utils';
 import useWindowDimensions from '../../utils/useWindowDimensions';
 import AntdTable from '../../components/antdTable';
@@ -36,12 +36,23 @@ import currencyCodes from '../../shared/currency_codes.json';
 
 const { Text, Title, Link } = Typography;
 
-async function fetchOrchestratorList(userInfo: any) {
-  const data: any = await regularFetch(`/api/orchestrator/list`, [], 'POST', {
-    userId: userInfo.clientPrincipal.userId,
-    days: 7,
+async function fetchOrchestratorList(
+  userInfo: any,
+  dispatcher?: any,
+  controller?: any,
+  background?: boolean
+) {
+  regularFetch_2({
+    url: `/api/orchestrator/list`,
+    method: 'POST',
+    body: {
+      userId: userInfo.clientPrincipal.userId,
+      days: 7,
+    },
+    dispatcher: dispatcher,
+    controller: controller,
+    background: background,
   });
-  return { data: data };
 }
 
 export default function Home({
@@ -105,12 +116,17 @@ export default function Home({
       'POST',
       userSettings
     ).then(() => {
-      overwriteCachedFetch('/api/data/get_user_data', {}, 'POST', {
-        userId: userInfo.clientPrincipal.userId,
-      }).then((data: any) => {
+      overwriteCachedFetch_2({
+        url: '/api/data/get_user_data',
+        fallback_data: {},
+        method: 'POST',
+        body: {
+          userId: userInfo.clientPrincipal.userId,
+        },
+      }).then(({ response }) => {
         userSettingsDispatch({
           type: 'setAll',
-          payload: data,
+          payload: response,
         });
       });
     });
@@ -119,18 +135,23 @@ export default function Home({
   // useEffects
   useEffect(() => {
     if (userInfo.clientPrincipal.userId !== '') {
-      fetchOrchestratorList(userInfo).then(({ data }) => {
-        orchestratorDispatch({ type: 'FETCH_SUCCESS', payload: data });
-      });
+      const abortController = new AbortController();
+      fetchOrchestratorList(userInfo, orchestratorDispatch, abortController);
+      return () => abortController.abort();
     }
   }, [userInfo]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       if (userInfo.clientPrincipal.userId !== '') {
-        fetchOrchestratorList(userInfo).then(({ data }) => {
-          orchestratorDispatch({ type: 'FETCH_SUCCESS', payload: data });
-        });
+        const abortController = new AbortController();
+        fetchOrchestratorList(
+          userInfo,
+          orchestratorDispatch,
+          abortController,
+          true
+        );
+        return () => abortController.abort();
       }
     }, 10000);
     return () => clearInterval(interval);

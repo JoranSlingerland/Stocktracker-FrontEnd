@@ -3,7 +3,7 @@ import '../styles/globals.css';
 import { ConfigProvider, theme } from 'antd';
 import type { AppProps } from 'next/app';
 import { useEffect, useState, useReducer } from 'react';
-import { regularFetch, cachedFetch } from '../utils/api-utils';
+import { regularFetch_2, cachedFetch_2 } from '../utils/api-utils';
 import { userSettingsDispatch_Type } from '../utils/types';
 
 const { darkAlgorithm, defaultAlgorithm } = theme;
@@ -63,16 +63,22 @@ function MyApp({ Component, pageProps }: AppProps) {
   });
 
   async function getUserInfo() {
-    await regularFetch('/.auth/me', undefined).then((data) => {
-      setUserInfo(data);
+    await regularFetch_2({ url: '/.auth/me' }).then(({ response }) => {
+      setUserInfo(response);
     });
   }
 
   async function getAccountSettings(userInfo: any) {
-    await cachedFetch('/api/data/get_user_data', {}, 'POST', {
-      userId: userInfo,
-    }).then((data: any) => {
-      userSettingsDispatch({ type: 'setAll', payload: data });
+    await cachedFetch_2({
+      url: '/api/data/get_user_data',
+      fallback_data: {},
+      method: 'POST',
+      body: {
+        userId: userInfo,
+      },
+    }).then(({ response }) => {
+      console.log('response', response);
+      userSettingsDispatch({ type: 'setAll', payload: response });
     });
   }
 
