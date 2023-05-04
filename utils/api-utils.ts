@@ -37,93 +37,6 @@ function newKey(url: string, body: any) {
 // End of helper functions
 
 // main functions
-async function cachedFetch({
-  url,
-  fallback_data = [],
-  method = 'GET',
-  body = {},
-  hours = 24,
-  controller,
-}: {
-  url: string;
-  fallback_data?: any;
-  method?: 'GET' | 'POST';
-  body?: any;
-  hours?: number;
-  controller?: AbortController;
-}) {
-  const key = newKey(url, body);
-  const cachedResponse = getWithExpiry(key);
-
-  if (cachedResponse) {
-    return { data: cachedResponse, error: false };
-  } else {
-    const response = await regularFetch(
-      url,
-      fallback_data,
-      method,
-      body,
-      controller
-    );
-    if (response.error) {
-      return { data: fallback_data, error: true };
-    }
-    setWithExpiry(key, response, hours * 1000 * 60 * 60);
-    return { data: response, error: false };
-  }
-}
-
-async function overwriteCachedFetch(
-  url: string,
-  fallback_data: any = [],
-  method = 'GET',
-  body = {},
-  hours = 24
-) {
-  const key = newKey(url, body);
-  const response = await regularFetch(url, fallback_data, method, body);
-  if (response === fallback_data) {
-    return response;
-  }
-  setWithExpiry(key, response, hours * 1000 * 60 * 60);
-  return response;
-}
-
-async function regularFetch(
-  url: string,
-  fallback_data = [],
-  method = 'GET',
-  body = {},
-  controller?: AbortController
-): Promise<any> {
-  controller = controller || new AbortController();
-
-  if (method === 'GET') {
-    const response = await wretch(url)
-      .addon(AbortAddon())
-      .signal(controller)
-      .get()
-      .json()
-      .catch(() => {
-        return { data: fallback_data, error: true };
-      });
-    return { data: response, error: false };
-  }
-  if (method === 'POST') {
-    const response = await wretch(url)
-      .addon(FormDataAddon)
-      .addon(AbortAddon())
-      .signal(controller)
-      .formData(body)
-      .post()
-      .json()
-      .catch(() => {
-        return { data: fallback_data, error: true };
-      });
-    return { data: response, error: false };
-  }
-}
-
 async function regularFetch_2({
   url,
   dispatcher,
@@ -214,11 +127,17 @@ async function cachedFetch_2({
   controller?: AbortController;
   background?: boolean;
 }): Promise<{ response: any; error: boolean }> {
+  if (dispatcher && !background) {
+    dispatcher({ type: 'FETCH_INIT' });
+  }
+
   const key = newKey(url, body);
   let response = getWithExpiry(key);
   let error = false;
-
   if (response) {
+    if (dispatcher) {
+      dispatcher({ type: 'FETCH_SUCCESS', payload: response });
+    }
     return { response, error };
   } else {
     const { response, error } = await regularFetch_2({
@@ -390,9 +309,6 @@ const apiRequestReducer = (
 // End of main functions
 
 export {
-  cachedFetch,
-  overwriteCachedFetch,
-  regularFetch,
   ApiWithMessage,
   apiRequestReducer,
   initialState,

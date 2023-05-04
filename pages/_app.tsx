@@ -77,7 +77,6 @@ function MyApp({ Component, pageProps }: AppProps) {
         userId: userInfo,
       },
     }).then(({ response }) => {
-      console.log('response', response);
       userSettingsDispatch({ type: 'setAll', payload: response });
     });
   }
