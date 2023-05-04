@@ -3,8 +3,8 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { useState, useEffect, useReducer } from 'react';
 import AntdTable from '../../components/antdTable';
 import {
-  cachedFetch,
-  overwriteCachedFetch,
+  cachedFetch_2,
+  overwriteCachedFetch_2,
   ApiWithMessage,
   apiRequestReducer,
   initialState,
@@ -20,25 +20,6 @@ import type { ColumnsType } from 'antd/es/table';
 
 const { Search } = Input;
 const { Title, Text } = Typography;
-
-async function fetchTransactionsData(userInfo: UserInfo_Type) {
-  const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
-    userId: userInfo.clientPrincipal.userId,
-    containerName: 'input_transactions',
-  });
-  data.forEach((row: any) => {
-    row.total_cost = row.cost_per_share * row.quantity;
-  });
-  return { data: data };
-}
-
-async function fetchInputInvestedData(userInfo: UserInfo_Type) {
-  const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
-    userId: userInfo.clientPrincipal.userId,
-    containerName: 'input_invested',
-  });
-  return { data: data };
-}
 
 export default function Home({
   userInfo,
@@ -194,18 +175,31 @@ export default function Home({
 
   useEffect(() => {
     if (userInfo.clientPrincipal.userId !== '') {
-      fetchTransactionsData(userInfo).then(({ data }) => {
-        InputTransactionsDataDispatcher({
-          type: 'FETCH_SUCCESS',
-          payload: data,
-        });
+      const abortController = new AbortController();
+      cachedFetch_2({
+        url: `/api/data/get_table_data_basic`,
+        method: 'POST',
+        body: {
+          userId: userInfo.clientPrincipal.userId,
+          containerName: 'input_transactions',
+        },
+        controller: abortController,
+        dispatcher: InputTransactionsDataDispatcher,
       });
-      fetchInputInvestedData(userInfo).then(({ data }) => {
-        InputInvestedDataDispatcher({
-          type: 'FETCH_SUCCESS',
-          payload: data,
-        });
+
+      cachedFetch_2({
+        url: `/api/data/get_table_data_basic`,
+        method: 'POST',
+        body: {
+          userId: userInfo.clientPrincipal.userId,
+          containerName: 'input_invested',
+        },
+        controller: abortController,
+        dispatcher: InputInvestedDataDispatcher,
       });
+      return () => {
+        abortController.abort();
+      };
     }
   }, [userInfo]);
 
@@ -250,17 +244,20 @@ export default function Home({
   async function overWriteTableData(
     container: 'input_invested' | 'input_transactions'
   ): Promise<void> {
-    overwriteCachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
-      userId: userInfo.clientPrincipal.userId,
-      containerName: container,
-    }).then((data) => {
-      if (container === 'input_invested')
-        InputInvestedDataDispatcher({ type: 'FETCH_SUCCESS', payload: data });
-      else if (container === 'input_transactions')
-        InputTransactionsDataDispatcher({
-          type: 'FETCH_SUCCESS',
-          payload: data,
-        });
+    const dispatch =
+      container === 'input_invested'
+        ? InputInvestedDataDispatcher
+        : InputTransactionsDataDispatcher;
+
+    overwriteCachedFetch_2({
+      url: `/api/data/get_table_data_basic`,
+      method: 'POST',
+      body: {
+        userId: userInfo.clientPrincipal.userId,
+        containerName: container,
+      },
+      dispatcher: dispatch,
+      background: true,
     });
   }
 
@@ -311,6 +308,7 @@ export default function Home({
                   form={'addStock'}
                   parentCallback={overWriteTableData}
                   userSettings={userSettings}
+                  userInfo={userInfo}
                 />
               </div>
             </div>
@@ -357,6 +355,7 @@ export default function Home({
                     form={'addTransaction'}
                     parentCallback={overWriteTableData}
                     userSettings={userSettings}
+                    userInfo={userInfo}
                   />
                 </div>
               </div>
