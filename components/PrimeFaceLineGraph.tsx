@@ -120,14 +120,16 @@ export default function BasicLineGraph({
     };
 
     return (
-      <Spin spinning={isloading}>
-        <Chart type="line" data={multiAxisData} options={multiAxisOptions} />
-      </Spin>
+      <div className="h-[500px]">
+        <Spin spinning={isloading}>
+          <Chart type="line" data={multiAxisData} options={multiAxisOptions} />
+        </Spin>
+      </div>
     );
   }
   // return empty chart if no data
   return (
-    <div>
+    <div className="h-[500px]">
       <Spin spinning={isloading}>
         <Chart type="line" data={{}} options={multiAxisOptions} />
       </Spin>

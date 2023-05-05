@@ -144,44 +144,52 @@ export default function Home({
       key: '1',
       label: 'Stocks',
       children: (
-        <PieChart
-          data={StockPieData.data}
-          isloading={StockPieData.isLoading}
-          userSettings={userSettings}
-        />
+        <div className="min-h-96">
+          <PieChart
+            data={StockPieData.data}
+            isloading={StockPieData.isLoading}
+            userSettings={userSettings}
+          />
+        </div>
       ),
     },
     {
       key: '2',
       label: 'Sector',
       children: (
-        <PieChart
-          data={SectorPieData.data}
-          isloading={SectorPieData.isLoading}
-          userSettings={userSettings}
-        />
+        <div className="min-h-96">
+          <PieChart
+            data={SectorPieData.data}
+            isloading={SectorPieData.isLoading}
+            userSettings={userSettings}
+          />
+        </div>
       ),
     },
     {
       key: '3',
       label: 'Country',
       children: (
-        <PieChart
-          data={CountryPieData.data}
-          isloading={CountryPieData.isLoading}
-          userSettings={userSettings}
-        />
+        <div className="min-h-96">
+          <PieChart
+            data={CountryPieData.data}
+            isloading={CountryPieData.isLoading}
+            userSettings={userSettings}
+          />
+        </div>
       ),
     },
     {
       key: '4',
       label: 'Currency',
       children: (
-        <PieChart
-          data={CurrencyPieData.data}
-          isloading={CurrencyPieData.isLoading}
-          userSettings={userSettings}
-        />
+        <div className="min-h-96">
+          <PieChart
+            data={CurrencyPieData.data}
+            isloading={CurrencyPieData.isLoading}
+            userSettings={userSettings}
+          />
+        </div>
       ),
     },
   ];

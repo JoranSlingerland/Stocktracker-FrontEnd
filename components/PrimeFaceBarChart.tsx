@@ -96,9 +96,10 @@ export default function PrimeFacePieChart({
     datasets: barchart_datasets,
   };
 
-  let stackedOptions = {
+  const stackedOptions = {
+    responsive: true,
     maintainAspectRatio: false,
-    aspectRatio: 0.8,
+    aspectRatio: 0.6,
     plugins: {
       tooltip: {
         callbacks: {
@@ -143,8 +144,10 @@ export default function PrimeFacePieChart({
   };
 
   return (
-    <Spin spinning={isloading}>
-      <Chart type="bar" data={stackedData} options={stackedOptions} />
-    </Spin>
+    <div className="h-[500px]">
+      <Spin spinning={isloading}>
+        <Chart type="bar" data={stackedData} options={stackedOptions} />
+      </Spin>
+    </div>
   );
 }

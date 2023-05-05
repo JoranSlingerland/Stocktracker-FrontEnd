@@ -56,7 +56,7 @@ export default function tabs({
     };
     return (
       <div
-        className={`flex flex-col basis-0 flex-grow rounded-full px-4 shadow ${
+        className={`flex flex-col basis-0 flex-grow rounded-full px-4 shadow transition-colors ${
           tab === tabNumber
             ? 'bg-white dark:bg-neutral-700'
             : 'bg-neutral-100 dark:bg-neutral-950'
