@@ -7,10 +7,30 @@ import {
   SettingOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Menu, Tooltip } from 'antd';
+import {
+  Menu,
+  Tooltip,
+  Typography,
+  Divider,
+  Select,
+  Statistic,
+  Tabs,
+  Skeleton,
+} from 'antd';
 import React, { useEffect, useState } from 'react';
 import { ApiWithMessage } from '../utils/api-utils';
 import { UserInfo_Type } from '../utils/types';
+import type { MenuProps } from 'antd/es/menu';
+import {
+  formatCurrency,
+  formatPercentageWithColors,
+} from '../utils/formatting';
+
+type MenuItem = Required<MenuProps>['items'][number];
+
+const { Text } = Typography;
+
+const loading = false;
 
 export default function App({ userInfo }: { userInfo: UserInfo_Type }) {
   const [current, setCurrent] = useState('portfolio');
@@ -24,7 +44,135 @@ export default function App({ userInfo }: { userInfo: UserInfo_Type }) {
     );
   };
 
-  const items = [
+  function overViewBarRow(
+    text: string,
+    value: number,
+    percentage: number,
+    loading: boolean
+  ) {
+    return (
+      <div className="flex flex-row pb-2">
+        <div>
+          <Text type={'secondary'}>{text}</Text>
+          <Skeleton
+            active={loading}
+            paragraph={false}
+            title={true}
+            loading={loading}
+            className="w-40"
+          >
+            <Statistic
+              value={value}
+              className="pt-1"
+              valueStyle={{ fontSize: '24px' }}
+              formatter={(value) => formatCurrency({ value, currency: 'EUR' })}
+            />
+          </Skeleton>
+        </div>
+        <Skeleton
+          active={loading}
+          paragraph={false}
+          title={true}
+          loading={loading}
+          className="ml-auto mr-0 mt-auto mb-0 w-20"
+        >
+          <Statistic
+            className="ml-auto mr-0 mt-auto mb-0"
+            value={percentage}
+            formatter={(value) => formatPercentageWithColors(value)}
+            loading={loading}
+          />
+        </Skeleton>
+      </div>
+    );
+  }
+
+  function OverViewBar({ loading }: { loading: boolean }) {
+    return (
+      <div className="w-96 p-2">
+        <div className="flex flex-row">
+          <Text strong>Portfolio Value</Text>
+
+          <Select
+            showArrow={false}
+            className="ml-auto mr-0"
+            defaultValue="max"
+            style={{ width: 80 }}
+            options={[
+              { value: 'max', label: 'Max' },
+              { value: 'year', label: 'Year' },
+              { value: 'month', label: 'Month' },
+              { value: 'week', label: 'Week' },
+              { value: 'ytd', label: 'YTD' },
+            ]}
+          />
+        </div>
+        <Divider className="m-2" />
+        <div>
+          <Skeleton
+            active={loading}
+            paragraph={false}
+            title={true}
+            loading={loading}
+            className="w-40"
+          >
+            <Statistic
+              value={10000}
+              formatter={(value) => formatCurrency({ value, currency: 'EUR' })}
+            />
+          </Skeleton>
+        </div>
+        <Tabs
+          size="small"
+          centered
+          items={[
+            {
+              key: '1',
+              label: 'Total',
+              children: (
+                <div>
+                  {overViewBarRow('Value P/L', 10000, 0.175, loading)}
+                  {overViewBarRow('Forex P/L', 10000, 0.175, loading)}
+                  {overViewBarRow('Dividend', 10000, 0.175, loading)}
+                  {overViewBarRow('Fees', 10000, 0.175, loading)}
+                  <Divider className="m-2" />
+                  {overViewBarRow('Total P/L', 10000, 0.175, loading)}
+                </div>
+              ),
+            },
+            {
+              key: '2',
+              label: 'Unrealized',
+              children: (
+                <div>
+                  {overViewBarRow('Value P/L', 10000, 0.175, loading)}
+                  {overViewBarRow('Forex P/L', 10000, 0.175, loading)}
+                  <Divider className="m-2" />
+                  {overViewBarRow('Total P/L', 10000, 0.175, loading)}
+                </div>
+              ),
+            },
+            {
+              key: '3',
+              label: 'Realized',
+              children: (
+                <div>
+                  {overViewBarRow('Value P/L', 10000, 0.175, loading)}
+                  {overViewBarRow('Forex P/L', 10000, 0.175, loading)}
+                  {overViewBarRow('Dividend', 10000, 0.175, loading)}
+                  {overViewBarRow('Fees', 10000, 0.175, loading)}
+                  <Divider className="m-2" />
+                  {overViewBarRow('Total P/L', 10000, 0.175, loading)}
+                </div>
+              ),
+            },
+          ]}
+        />
+      </div>
+    );
+  }
+
+  const items: MenuItem[] = [
     {
       key: '/authenticated/portfolio/',
       icon: <HomeOutlined />,
@@ -114,6 +262,42 @@ export default function App({ userInfo }: { userInfo: UserInfo_Type }) {
       ],
     },
   ];
+
+  if (authenticated()) {
+    items.push({
+      key: 'overviewBar',
+      disabled: loading,
+      label: (
+        <div className="cursor-default">
+          <Skeleton
+            className="w-40 pt-4"
+            active={loading}
+            paragraph={false}
+            loading={loading}
+          >
+            <Text>{formatCurrency({ value: 10000, currency: 'EUR' })} </Text>{' '}
+            <Divider type="vertical" />
+            <Text>Max {formatPercentageWithColors(0.175)} </Text>
+          </Skeleton>
+        </div>
+      ),
+      className: 'float-right',
+      children: [
+        {
+          key: 'overviewDropdown',
+          label: <OverViewBar loading={false} />,
+          // className: 'w-fit h-fit'
+          style: {
+            width: 'fit-content',
+            height: 'fit-content',
+            margin: 0,
+            padding: 0,
+          },
+          disabled: true,
+        },
+      ],
+    });
+  }
 
   return (
     <div>
