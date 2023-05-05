@@ -2,9 +2,10 @@ import Navbar from '../components/navbar';
 import '../styles/globals.css';
 import { ConfigProvider, theme as antdTheme } from 'antd';
 import type { AppProps } from 'next/app';
-import { useEffect, useState, useReducer, useLayoutEffect } from 'react';
+import { useEffect, useState, useReducer } from 'react';
 import { regularFetch, cachedFetch } from '../utils/api-utils';
-import { userSettingsDispatch_Type } from '../utils/types';
+import { userSettingsDispatch_Type, TimeFramestate } from '../utils/types';
+import useLocalStorageState from '../components/useLocalStorageState';
 
 const { darkAlgorithm, defaultAlgorithm } = antdTheme;
 
@@ -62,6 +63,9 @@ function MyApp({ Component, pageProps }: AppProps) {
     isLoading: true,
   });
 
+  const [timeFrame, setTimeFrame] = useLocalStorageState('timeFrame', 'max');
+  const timeFrameState: TimeFramestate = { timeFrame, setTimeFrame };
+
   async function getUserInfo() {
     await regularFetch({ url: '/.auth/me' }).then(({ response }) => {
       setUserInfo(response);
@@ -83,9 +87,6 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     getUserInfo();
-  }, []);
-
-  useLayoutEffect(() => {
     userSettingsDispatch({ type: 'setDarkMode', payload: getDarkMode() });
   }, []);
 
@@ -111,7 +112,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             userSettings.dark_mode ? 'dark bg-neutral-900' : 'bg-white'
           }`}
         >
-          <Navbar userInfo={userInfo} />
+          <Navbar userInfo={userInfo} timeFrameState={timeFrameState} />
           <div className="flex justify-center px-2 xl:px-0">
             <div className="w-full max-w-7xl">
               <Component
@@ -119,6 +120,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                 userInfo={userInfo}
                 userSettingsDispatch={userSettingsDispatch}
                 userSettings={userSettings}
+                timeFrameState={timeFrameState}
               />
             </div>
           </div>

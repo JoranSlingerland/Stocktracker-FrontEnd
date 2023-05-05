@@ -36,4 +36,16 @@ type userSettingsDispatch_Type = {
       };
 };
 
-export type { UserInfo_Type, UserSettings_Type, userSettingsDispatch_Type };
+interface TimeFramestate {
+  timeFrame: 'max' | 'year' | 'month' | 'week' | 'ytd';
+  setTimeFrame: React.Dispatch<
+    React.SetStateAction<'max' | 'year' | 'month' | 'week' | 'ytd'>
+  >;
+}
+
+export type {
+  UserInfo_Type,
+  UserSettings_Type,
+  userSettingsDispatch_Type,
+  TimeFramestate,
+};

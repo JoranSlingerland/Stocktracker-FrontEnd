@@ -1,7 +1,6 @@
 import Overviewbar from '../../components/Overviewbar';
-import React, { useState, useEffect, useReducer, useMemo } from 'react';
+import React, { useEffect, useReducer, useMemo } from 'react';
 import { Divider, Segmented, Typography } from 'antd';
-import { useRouter } from 'next/router';
 import BasicLineGraph from '../../components/PrimeFaceLineGraph';
 import PrimeFaceBarChart from '../../components/PrimeFaceBarChart';
 import {
@@ -16,12 +15,13 @@ import {
   formatPercentageWithColors,
   formatImageAndText,
 } from '../../utils/formatting';
-import { UserInfo_Type, UserSettings_Type } from '../../utils/types';
-import { SegmentedValue } from 'rc-segmented';
+import {
+  UserInfo_Type,
+  UserSettings_Type,
+  TimeFramestate,
+} from '../../utils/types';
+import useLocalStorageState from '../../components/useLocalStorageState';
 import type { ColumnsType } from 'antd/es/table';
-
-type dataToGet = undefined | string | SegmentedValue;
-type tabNumber = undefined | number;
 
 const { Title } = Typography;
 
@@ -64,12 +64,13 @@ const valueGrowthDataFallBackObject = {
 export default function performance({
   userInfo,
   userSettings,
+  timeFrameState,
 }: {
   userInfo: UserInfo_Type;
   userSettings: UserSettings_Type;
+  timeFrameState: TimeFramestate;
 }) {
   // const setup
-  const router = useRouter();
   const [valueGrowthData, valueGrowthDataReducer] = useReducer(
     apiRequestReducer,
     initialState({
@@ -101,12 +102,8 @@ export default function performance({
     apiRequestReducer,
     initialState({ isLoading: true })
   );
-  const [tab, setTab] = useState<tabNumber>(
-    Number(useRouter().query.tab || undefined)
-  );
-  const [date, setDate] = useState<dataToGet>(
-    useRouter().query.date?.toString || undefined
-  );
+  const [tab, setTab] = useLocalStorageState('performanceTab', 1);
+  const { timeFrame, setTimeFrame } = timeFrameState;
 
   // useMemo
   const valueGrowthDataMemo = useMemo(() => {
@@ -155,7 +152,7 @@ export default function performance({
 
   // useEffects
   useEffect(() => {
-    if (userInfo?.clientPrincipal?.userId && date) {
+    if (userInfo?.clientPrincipal?.userId && timeFrame) {
       const abortController = new AbortController();
       if (tab === 2) {
         cachedFetch({
@@ -164,7 +161,7 @@ export default function performance({
           body: {
             userId: userInfo.clientPrincipal.userId,
             dataType: 'dividend',
-            dataToGet: date,
+            dataToGet: timeFrame,
           },
           dispatcher: dividendDataReducer,
           controller: abortController,
@@ -178,7 +175,7 @@ export default function performance({
           body: {
             userId: userInfo.clientPrincipal.userId,
             dataType: 'transaction_cost',
-            dataToGet: date,
+            dataToGet: timeFrame,
           },
           dispatcher: totalTransactionCostDataReducer,
           controller: abortController,
@@ -193,7 +190,7 @@ export default function performance({
           body: {
             userId: userInfo.clientPrincipal.userId,
             dataType: 'total_gains',
-            dataToGet: date,
+            dataToGet: timeFrame,
           },
           dispatcher: totalGainsDataReducer,
           controller: abortController,
@@ -208,7 +205,7 @@ export default function performance({
           body: {
             userId: userInfo.clientPrincipal.userId,
             dataType: 'invested_and_value',
-            dataToGet: date,
+            dataToGet: timeFrame,
           },
           dispatcher: valueGrowthDataReducer,
           controller: abortController,
@@ -219,7 +216,7 @@ export default function performance({
         abortController.abort();
       };
     }
-  }, [date, userInfo, tab]);
+  }, [timeFrame, userInfo, tab]);
 
   useEffect(() => {
     if (userInfo?.clientPrincipal?.userId) {
@@ -230,7 +227,7 @@ export default function performance({
         method: 'POST',
         body: {
           userId: userInfo.clientPrincipal.userId,
-          dataToGet: date,
+          dataToGet: timeFrame,
         },
         dispatcher: SingleDayDataReducer,
         controller: abortController,
@@ -242,7 +239,7 @@ export default function performance({
         fallback_data: topBarDataFallBackObject,
         body: {
           userId: userInfo.clientPrincipal.userId,
-          dataToGet: date,
+          dataToGet: timeFrame,
         },
         dispatcher: topBarDataReducer,
         controller: abortController,
@@ -252,22 +249,7 @@ export default function performance({
         abortController.abort();
       };
     }
-  }, [date, userInfo]);
-
-  useEffect(() => {
-    if (!tab || !date) return;
-    router.push(`/authenticated/performance?tab=${tab}&date=${date}`);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tab, date]);
-
-  useEffect(() => {
-    if (!router.isReady) {
-      return;
-    } else {
-      setTab(Number(router.query.tab));
-      setDate(router.query.date?.toString());
-    }
-  }, [router]);
+  }, [timeFrame, userInfo]);
 
   // Columns
   const valueGrowthColumns: ColumnsType = [
@@ -348,28 +330,27 @@ export default function performance({
           <Segmented
             options={[
               {
-                label: <div onClick={() => setDate('ytd')}>YTD</div>,
+                label: <div onClick={() => setTimeFrame('ytd')}>YTD</div>,
                 value: 'ytd',
               },
               {
-                label: <div onClick={() => setDate('week')}>Week</div>,
+                label: <div onClick={() => setTimeFrame('week')}>Week</div>,
                 value: 'week',
               },
               {
-                label: <div onClick={() => setDate('month')}>Month</div>,
+                label: <div onClick={() => setTimeFrame('month')}>Month</div>,
                 value: 'month',
               },
               {
-                label: <div onClick={() => setDate('year')}>Year</div>,
+                label: <div onClick={() => setTimeFrame('year')}>Year</div>,
                 value: 'year',
               },
               {
-                label: <div onClick={() => setDate('max')}>Max</div>,
+                label: <div onClick={() => setTimeFrame('max')}>Max</div>,
                 value: 'max',
               },
             ]}
-            value={date}
-            onChange={(e) => setDate(e)}
+            value={timeFrame}
           />
         </div>
       </div>
@@ -377,8 +358,8 @@ export default function performance({
         <Overviewbar
           topBarData={topBarData.data}
           loading={topBarData.isLoading}
-          handleTabChange={(e) => setTab(e)}
           userSettings={userSettings}
+          tabState={{ tab, setTab }}
         />
       </div>
       <div>

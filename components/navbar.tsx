@@ -19,7 +19,7 @@ import {
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { ApiWithMessage } from '../utils/api-utils';
-import { UserInfo_Type } from '../utils/types';
+import { UserInfo_Type, TimeFramestate } from '../utils/types';
 import type { MenuProps } from 'antd/es/menu';
 import {
   formatCurrency,
@@ -32,8 +32,23 @@ const { Text } = Typography;
 
 const loading = false;
 
-export default function App({ userInfo }: { userInfo: UserInfo_Type }) {
+export default function App({
+  userInfo,
+  timeFrameState,
+}: {
+  userInfo: UserInfo_Type;
+  timeFrameState: TimeFramestate;
+}) {
   const [current, setCurrent] = useState('portfolio');
+  const { timeFrame, setTimeFrame } = timeFrameState;
+  const timeFrameMap = {
+    max: 'Max',
+    year: 'Year',
+    month: 'Month',
+    week: 'Week',
+    ytd: 'YTD',
+  };
+
   useEffect(() => {
     setCurrent(window.location.pathname);
   }, []);
@@ -96,7 +111,7 @@ export default function App({ userInfo }: { userInfo: UserInfo_Type }) {
           <Select
             showArrow={false}
             className="ml-auto mr-0"
-            defaultValue="max"
+            defaultValue={timeFrame}
             style={{ width: 80 }}
             options={[
               { value: 'max', label: 'Max' },
@@ -105,6 +120,9 @@ export default function App({ userInfo }: { userInfo: UserInfo_Type }) {
               { value: 'week', label: 'Week' },
               { value: 'ytd', label: 'YTD' },
             ]}
+            onChange={(value) => {
+              setTimeFrame(value);
+            }}
           />
         </div>
         <Divider className="m-2" />
@@ -188,7 +206,7 @@ export default function App({ userInfo }: { userInfo: UserInfo_Type }) {
       icon: <AreaChartOutlined />,
       label: (
         <span>
-          <a href="/authenticated/performance/?tab=1&date=max"></a>
+          <a href="/authenticated/performance/"></a>
           <p className="hidden sm:inline-block">Performance</p>
         </span>
       ),
@@ -277,7 +295,9 @@ export default function App({ userInfo }: { userInfo: UserInfo_Type }) {
           >
             <Text>{formatCurrency({ value: 10000, currency: 'EUR' })} </Text>{' '}
             <Divider type="vertical" />
-            <Text>Max {formatPercentageWithColors(0.175)} </Text>
+            <Text>
+              {timeFrameMap[timeFrame]} {formatPercentageWithColors(0.175)}{' '}
+            </Text>
           </Skeleton>
         </div>
       ),

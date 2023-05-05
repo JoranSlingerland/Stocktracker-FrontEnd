@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 import { Skeleton, Typography, Statistic } from 'antd';
 import { RiseOutlined, FallOutlined } from '@ant-design/icons';
 import { formatCurrency, formatPercentage } from '../utils/formatting';
@@ -9,15 +8,15 @@ const { Text } = Typography;
 export default function tabs({
   topBarData,
   loading,
-  handleTabChange,
   userSettings,
+  tabState,
 }: {
   topBarData: any;
   loading: boolean;
-  handleTabChange: (tab: number) => void;
   userSettings: UserSettings_Type;
+  tabState: any;
 }): JSX.Element {
-  const tab = Number(useRouter().query.tab || 1);
+  const { tab, setTab } = tabState;
   const PercentageFormat = (value: number | string) => {
     if (typeof value === 'string') {
       value = parseFloat(value);
@@ -61,7 +60,7 @@ export default function tabs({
             ? 'bg-white dark:bg-neutral-700'
             : 'bg-neutral-100 dark:bg-neutral-950'
         }`}
-        onClick={() => handleTabChange(tabNumber)}
+        onClick={() => setTab(tabNumber)}
       >
         <div className="flex my-1">
           <Skeleton {...skeletonProps}> {block1}</Skeleton>
