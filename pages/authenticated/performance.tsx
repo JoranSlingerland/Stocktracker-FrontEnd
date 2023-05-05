@@ -61,26 +61,12 @@ const valueGrowthDataFallBackObject = {
   ],
 };
 
-export async function getServerSideProps({ query }: { query: any }) {
-  const { date, tab } = query;
-  return {
-    props: {
-      query_date: date,
-      query_tab: tab,
-    },
-  };
-}
-
 export default function performance({
   userInfo,
   userSettings,
-  query_date,
-  query_tab,
 }: {
   userInfo: UserInfo_Type;
   userSettings: UserSettings_Type;
-  query_date: dataToGet;
-  query_tab: tabNumber;
 }) {
   // const setup
   const router = useRouter();
@@ -115,8 +101,12 @@ export default function performance({
     apiRequestReducer,
     initialState({ isLoading: true })
   );
-  const [tab, setTab] = useState<tabNumber>(query_tab ? Number(query_tab) : 1);
-  const [date, setDate] = useState<dataToGet>(query_date ? query_date : 'max');
+  const [tab, setTab] = useState<tabNumber>(
+    Number(useRouter().query.tab || undefined)
+  );
+  const [date, setDate] = useState<dataToGet>(
+    useRouter().query.date?.toString || undefined
+  );
 
   // useMemo
   const valueGrowthDataMemo = useMemo(() => {
@@ -167,55 +157,73 @@ export default function performance({
   useEffect(() => {
     if (userInfo?.clientPrincipal?.userId && date) {
       const abortController = new AbortController();
-      cachedFetch({
-        url: `/api/data/get_barchart_data`,
-        method: 'POST',
-        body: {
-          userId: userInfo.clientPrincipal.userId,
-          dataType: 'dividend',
-          dataToGet: date,
-        },
-        dispatcher: dividendDataReducer,
-        controller: abortController,
-      });
+      if (tab === 2) {
+        cachedFetch({
+          url: `/api/data/get_barchart_data`,
+          method: 'POST',
+          body: {
+            userId: userInfo.clientPrincipal.userId,
+            dataType: 'dividend',
+            dataToGet: date,
+          },
+          dispatcher: dividendDataReducer,
+          controller: abortController,
+        });
+      }
 
-      cachedFetch({
-        url: `/api/data/get_barchart_data`,
-        method: 'POST',
-        body: {
-          userId: userInfo.clientPrincipal.userId,
-          dataType: 'transaction_cost',
-          dataToGet: date,
-        },
-        dispatcher: totalTransactionCostDataReducer,
-        controller: abortController,
-      });
+      if (tab === 3) {
+        cachedFetch({
+          url: `/api/data/get_barchart_data`,
+          method: 'POST',
+          body: {
+            userId: userInfo.clientPrincipal.userId,
+            dataType: 'transaction_cost',
+            dataToGet: date,
+          },
+          dispatcher: totalTransactionCostDataReducer,
+          controller: abortController,
+        });
+      }
 
-      cachedFetch({
-        url: `/api/data/get_linechart_data`,
-        method: 'POST',
-        fallback_data: totalGainsDataFallBackObject,
-        body: {
-          userId: userInfo.clientPrincipal.userId,
-          dataType: 'total_gains',
-          dataToGet: date,
-        },
-        dispatcher: totalGainsDataReducer,
-        controller: abortController,
-      });
+      if (tab === 4) {
+        cachedFetch({
+          url: `/api/data/get_linechart_data`,
+          method: 'POST',
+          fallback_data: totalGainsDataFallBackObject,
+          body: {
+            userId: userInfo.clientPrincipal.userId,
+            dataType: 'total_gains',
+            dataToGet: date,
+          },
+          dispatcher: totalGainsDataReducer,
+          controller: abortController,
+        });
+      }
 
-      cachedFetch({
-        url: `/api/data/get_linechart_data`,
-        method: 'POST',
-        fallback_data: valueGrowthDataFallBackObject,
-        body: {
-          userId: userInfo.clientPrincipal.userId,
-          dataType: 'invested_and_value',
-          dataToGet: date,
-        },
-        dispatcher: valueGrowthDataReducer,
-        controller: abortController,
-      });
+      if (tab === 1) {
+        cachedFetch({
+          url: `/api/data/get_linechart_data`,
+          method: 'POST',
+          fallback_data: valueGrowthDataFallBackObject,
+          body: {
+            userId: userInfo.clientPrincipal.userId,
+            dataType: 'invested_and_value',
+            dataToGet: date,
+          },
+          dispatcher: valueGrowthDataReducer,
+          controller: abortController,
+        });
+      }
+
+      return () => {
+        abortController.abort();
+      };
+    }
+  }, [date, userInfo, tab]);
+
+  useEffect(() => {
+    if (userInfo?.clientPrincipal?.userId) {
+      const abortController = new AbortController();
 
       cachedFetch({
         url: `/api/data/get_table_data_performance`,
@@ -239,6 +247,7 @@ export default function performance({
         dispatcher: topBarDataReducer,
         controller: abortController,
       });
+
       return () => {
         abortController.abort();
       };
@@ -246,9 +255,19 @@ export default function performance({
   }, [date, userInfo]);
 
   useEffect(() => {
+    if (!tab || !date) return;
     router.push(`/authenticated/performance?tab=${tab}&date=${date}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab, date]);
+
+  useEffect(() => {
+    if (!router.isReady) {
+      return;
+    } else {
+      setTab(Number(router.query.tab));
+      setDate(router.query.date?.toString());
+    }
+  }, [router]);
 
   // Columns
   const valueGrowthColumns: ColumnsType = [
