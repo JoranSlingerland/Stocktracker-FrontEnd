@@ -61,12 +61,26 @@ const valueGrowthDataFallBackObject = {
   ],
 };
 
+export async function getServerSideProps({ query }: { query: any }) {
+  const { date, tab } = query;
+  return {
+    props: {
+      query_date: date,
+      query_tab: tab,
+    },
+  };
+}
+
 export default function performance({
   userInfo,
   userSettings,
+  query_date,
+  query_tab,
 }: {
   userInfo: UserInfo_Type;
   userSettings: UserSettings_Type;
+  query_date: dataToGet;
+  query_tab: tabNumber;
 }) {
   // const setup
   const router = useRouter();
@@ -101,12 +115,8 @@ export default function performance({
     apiRequestReducer,
     initialState({ isLoading: true })
   );
-  const [tab, setTab] = useState<tabNumber>(
-    Number(useRouter().query.tab || '1')
-  );
-  const [date, setDate] = useState<dataToGet>(
-    useRouter().query.date?.toString || undefined
-  );
+  const [tab, setTab] = useState<tabNumber>(query_tab ? Number(query_tab) : 1);
+  const [date, setDate] = useState<dataToGet>(query_date ? query_date : 'max');
 
   // useMemo
   const valueGrowthDataMemo = useMemo(() => {
@@ -154,15 +164,6 @@ export default function performance({
   ]);
 
   // useEffects
-  useEffect(() => {
-    if (!router.isReady) {
-      return;
-    } else {
-      setTab(Number(router.query.tab));
-      setDate(router.query.date?.toString());
-    }
-  }, [router]);
-
   useEffect(() => {
     if (userInfo?.clientPrincipal?.userId && date) {
       const abortController = new AbortController();
@@ -245,9 +246,7 @@ export default function performance({
   }, [date, userInfo]);
 
   useEffect(() => {
-    if (tab && date) {
-      router.push(`/authenticated/performance?tab=${tab}&date=${date}`);
-    }
+    router.push(`/authenticated/performance?tab=${tab}&date=${date}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab, date]);
 

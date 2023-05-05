@@ -1,12 +1,12 @@
 import Navbar from '../components/navbar';
 import '../styles/globals.css';
-import { ConfigProvider, theme } from 'antd';
+import { ConfigProvider, theme as antdTheme } from 'antd';
 import type { AppProps } from 'next/app';
-import { useEffect, useState, useReducer } from 'react';
+import { useEffect, useState, useReducer, useLayoutEffect } from 'react';
 import { regularFetch, cachedFetch } from '../utils/api-utils';
 import { userSettingsDispatch_Type } from '../utils/types';
 
-const { darkAlgorithm, defaultAlgorithm } = theme;
+const { darkAlgorithm, defaultAlgorithm } = antdTheme;
 
 const userSettingsReducer = (state: any, action: userSettingsDispatch_Type) => {
   switch (action.type) {
@@ -83,6 +83,9 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     getUserInfo();
+  }, []);
+
+  useLayoutEffect(() => {
     userSettingsDispatch({ type: 'setDarkMode', payload: getDarkMode() });
   }, []);
 

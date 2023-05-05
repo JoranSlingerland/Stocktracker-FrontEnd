@@ -2,12 +2,12 @@
   "extends": ["next/core-web-vitals", "next", "prettier"],
   "plugins": ["prettier"],
   "rules": {
-    "@next/next/google-font-display": "off",
     "prettier/prettier": [
-      "warning",
+      "warn",
       {
         "endOfLine": "auto"
       }
-    ]
+    ],
+    "react-hooks/rules-of-hooks": "off"
   }
 }
