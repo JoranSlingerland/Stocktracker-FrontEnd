@@ -33,6 +33,7 @@ import {
   UserSettings_Type,
 } from '../../components/types/types';
 import currencyCodes from '../../shared/currency_codes.json';
+import useLocalStorageState from '../../components/hooks/useLocalStorageState';
 
 const { Text, Title, Link } = Typography;
 
@@ -68,6 +69,7 @@ export default function Home({
     apiRequestReducer,
     initialState({ isLoading: true })
   );
+  const [tab, setTab] = useLocalStorageState('settingsTab', '1');
 
   // handle click functions
   async function handleClickOrchestratorAction(
@@ -83,19 +85,7 @@ export default function Home({
       'POST',
       body,
       'multipart/form-data'
-    ).then(() => {
-      fetchOrchestratorList(userInfo);
-    });
-  }
-
-  async function handleClick(
-    url: string,
-    runningMessage: string,
-    successMessage: string
-  ) {
-    ApiWithMessage(url, runningMessage, successMessage).then(() => {
-      fetchOrchestratorList(userInfo);
-    });
+    );
   }
 
   function handleLocalStorageClearClick() {
@@ -134,16 +124,16 @@ export default function Home({
 
   // useEffects
   useEffect(() => {
-    if (userInfo.clientPrincipal.userId !== '') {
+    if (userInfo.clientPrincipal.userId !== '' && tab === '3') {
       const abortController = new AbortController();
       fetchOrchestratorList(userInfo, orchestratorDispatch, abortController);
       return () => abortController.abort();
     }
-  }, [userInfo]);
+  }, [userInfo, tab]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (userInfo.clientPrincipal.userId !== '') {
+      if (userInfo.clientPrincipal.userId !== '' && tab === '3') {
         const abortController = new AbortController();
         fetchOrchestratorList(
           userInfo,
@@ -155,7 +145,7 @@ export default function Home({
       }
     }, 10000);
     return () => clearInterval(interval);
-  }, [userInfo]);
+  }, [userInfo, tab]);
 
   // constants
   const dimensions = useWindowDimensions();
@@ -526,7 +516,7 @@ export default function Home({
               <div className="row-span-2 text-right">
                 <Button
                   onClick={() =>
-                    handleClick(
+                    ApiWithMessage(
                       '/api/privileged/create_cosmosdb_and_container',
                       'Creating Containers',
                       'Containers created :)'
@@ -634,7 +624,8 @@ export default function Home({
       <div>
         <Tabs
           type="line"
-          defaultActiveKey="1"
+          activeKey={tab}
+          onChange={(key) => setTab(key)}
           items={items}
           tabPosition={
             dimensions.width === null || dimensions.width > 768 ? 'left' : 'top'

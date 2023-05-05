@@ -16,6 +16,7 @@ import {
 } from '../../components/utils/formatting';
 import { UserInfo_Type, UserSettings_Type } from '../../components/types/types';
 import type { ColumnsType } from 'antd/es/table';
+import useLocalStorageState from '../../components/hooks/useLocalStorageState';
 
 const { Title, Text } = Typography;
 
@@ -59,8 +60,70 @@ export default function Home({
     apiRequestReducer,
     initialState({ fallback_data: fallbackObject, isLoading: true })
   );
+  const [tab, setTab] = useLocalStorageState('portfolioTab', '1');
 
-  // Fetch data on page load
+  // UseEffect setup
+  useEffect(() => {
+    if (userInfo.clientPrincipal.userId !== '') {
+      const abortController = new AbortController();
+      if (tab === '1') {
+        cachedFetch({
+          url: `/api/data/get_pie_data`,
+          fallback_data: fallbackObject,
+          method: 'POST',
+          body: {
+            userId: userInfo.clientPrincipal.userId,
+            dataType: 'stocks',
+          },
+          dispatcher: StockPieDataDispatcher,
+          controller: abortController,
+        });
+      }
+      if (tab === '2') {
+        cachedFetch({
+          url: `/api/data/get_pie_data`,
+          fallback_data: fallbackObject,
+          method: 'POST',
+          body: {
+            userId: userInfo.clientPrincipal.userId,
+            dataType: 'sector',
+          },
+          dispatcher: SectorPieDataReducer,
+          controller: abortController,
+        });
+      }
+      if (tab === '3') {
+        cachedFetch({
+          url: `/api/data/get_pie_data`,
+          fallback_data: fallbackObject,
+          method: 'POST',
+          body: {
+            userId: userInfo.clientPrincipal.userId,
+            dataType: 'country',
+          },
+          dispatcher: CountryPieDataReducer,
+          controller: abortController,
+        });
+      }
+      if (tab === '4') {
+        cachedFetch({
+          url: `/api/data/get_pie_data`,
+          fallback_data: fallbackObject,
+          method: 'POST',
+          body: {
+            userId: userInfo.clientPrincipal.userId,
+            dataType: 'currency',
+          },
+          dispatcher: CurrencyPieDataDispatcher,
+          controller: abortController,
+        });
+      }
+      return () => {
+        abortController.abort();
+      };
+    }
+  }, [userInfo, tab]);
+
   useEffect(() => {
     if (userInfo.clientPrincipal.userId !== '') {
       const abortController = new AbortController();
@@ -86,50 +149,6 @@ export default function Home({
           andOr: 'or',
         },
         dispatcher: RealizedDataDispatcher,
-        controller: abortController,
-      });
-      cachedFetch({
-        url: `/api/data/get_pie_data`,
-        fallback_data: fallbackObject,
-        method: 'POST',
-        body: {
-          userId: userInfo.clientPrincipal.userId,
-          dataType: 'stocks',
-        },
-        dispatcher: StockPieDataDispatcher,
-        controller: abortController,
-      });
-      cachedFetch({
-        url: `/api/data/get_pie_data`,
-        fallback_data: fallbackObject,
-        method: 'POST',
-        body: {
-          userId: userInfo.clientPrincipal.userId,
-          dataType: 'currency',
-        },
-        dispatcher: CurrencyPieDataDispatcher,
-        controller: abortController,
-      });
-      cachedFetch({
-        url: `/api/data/get_pie_data`,
-        fallback_data: fallbackObject,
-        method: 'POST',
-        body: {
-          userId: userInfo.clientPrincipal.userId,
-          dataType: 'sector',
-        },
-        dispatcher: SectorPieDataReducer,
-        controller: abortController,
-      });
-      cachedFetch({
-        url: `/api/data/get_pie_data`,
-        fallback_data: fallbackObject,
-        method: 'POST',
-        body: {
-          userId: userInfo.clientPrincipal.userId,
-          dataType: 'country',
-        },
-        dispatcher: CountryPieDataReducer,
         controller: abortController,
       });
       return () => {
@@ -194,7 +213,7 @@ export default function Home({
     },
   ];
 
-  // Columns
+  // Columns setup
 
   const UnRealizedColumns: ColumnsType = [
     {
@@ -367,7 +386,14 @@ export default function Home({
       </div>
       {/* Tabs */}
       <div>
-        <Tabs type="line" defaultActiveKey="1" items={items} />
+        <Tabs
+          type="line"
+          activeKey={tab}
+          onChange={(activeKey) => {
+            setTab(activeKey);
+          }}
+          items={items}
+        />
       </div>
       {/* Table */}
       <div>
