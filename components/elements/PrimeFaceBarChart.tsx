@@ -1,7 +1,7 @@
 import { Chart } from 'primereact/chart';
 import { Spin } from 'antd';
 import { formatCurrency } from '../utils/formatting';
-import { UserSettings_Type } from '../utils/types';
+import { UserSettings_Type } from '../types/types';
 
 export default function PrimeFacePieChart({
   data,

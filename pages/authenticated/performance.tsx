@@ -1,26 +1,26 @@
-import Overviewbar from '../../components/Overviewbar';
+import Overviewbar from '../../components/modules/Overviewbar';
 import React, { useEffect, useReducer, useMemo } from 'react';
 import { Divider, Segmented, Typography } from 'antd';
-import BasicLineGraph from '../../components/PrimeFaceLineGraph';
-import PrimeFaceBarChart from '../../components/PrimeFaceBarChart';
+import BasicLineGraph from '../../components/elements/PrimeFaceLineGraph';
+import PrimeFaceBarChart from '../../components/elements/PrimeFaceBarChart';
 import {
   cachedFetch,
   apiRequestReducer,
   initialState,
-} from '../../utils/api-utils';
-import AntdTable from '../../components/antdTable';
+} from '../../components/utils/api-utils';
+import AntdTable from '../../components/elements/antdTable';
 import {
   formatCurrency,
   formatCurrencyWithColors,
   formatPercentageWithColors,
   formatImageAndText,
-} from '../../utils/formatting';
+} from '../../components/utils/formatting';
 import {
   UserInfo_Type,
   UserSettings_Type,
   TimeFramestate,
-} from '../../utils/types';
-import useLocalStorageState from '../../components/useLocalStorageState';
+} from '../../components/types/types';
+import useLocalStorageState from '../../components/hooks/useLocalStorageState';
 import type { ColumnsType } from 'antd/es/table';
 
 const { Title } = Typography;

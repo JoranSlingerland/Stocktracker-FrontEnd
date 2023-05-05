@@ -1,20 +1,20 @@
 import { Tabs, Collapse, Typography } from 'antd';
 import { useEffect, useReducer } from 'react';
-import PieChart from '../../components/PrimeFacePieChart';
-import AntdTable from '../../components/antdTable';
+import PieChart from '../../components/elements/PrimeFacePieChart';
+import AntdTable from '../../components/elements/antdTable';
 import {
   cachedFetch,
   apiRequestReducer,
   initialState,
-} from '../../utils/api-utils';
+} from '../../components/utils/api-utils';
 import {
   formatCurrency,
   formatCurrencyWithColors,
   formatPercentageWithColors,
   formatNumber,
   formatImageAndText,
-} from '../../utils/formatting';
-import { UserInfo_Type, UserSettings_Type } from '../../utils/types';
+} from '../../components/utils/formatting';
+import { UserInfo_Type, UserSettings_Type } from '../../components/types/types';
 import type { ColumnsType } from 'antd/es/table';
 
 const { Title, Text } = Typography;

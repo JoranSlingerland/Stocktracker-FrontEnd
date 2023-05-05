@@ -1,21 +1,21 @@
 import { Divider, Input, Typography, Button, Popconfirm } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useState, useEffect, useReducer } from 'react';
-import AntdTable from '../../components/antdTable';
+import AntdTable from '../../components/elements/antdTable';
 import {
   cachedFetch,
   overwriteCachedFetch,
   ApiWithMessage,
   apiRequestReducer,
   initialState,
-} from '../../utils/api-utils';
+} from '../../components/utils/api-utils';
 import {
   formatCurrency,
   formatImageAndText,
   formatNumber,
-} from '../../utils/formatting';
-import AddXForm from '../../components/formModal';
-import { UserInfo_Type, UserSettings_Type } from '../../utils/types';
+} from '../../components/utils/formatting';
+import AddXForm from '../../components/modules/formModal';
+import { UserInfo_Type, UserSettings_Type } from '../../components/types/types';
 import type { ColumnsType } from 'antd/es/table';
 
 const { Search } = Input;

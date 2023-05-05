@@ -19,7 +19,7 @@ import {
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { ApiWithMessage } from '../utils/api-utils';
-import { UserInfo_Type, TimeFramestate } from '../utils/types';
+import { UserInfo_Type, TimeFramestate } from '../types/types';
 import type { MenuProps } from 'antd/es/menu';
 import {
   formatCurrency,

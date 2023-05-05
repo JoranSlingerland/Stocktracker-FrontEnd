@@ -24,14 +24,14 @@ import {
   initialState,
   regularFetch,
   overwriteCachedFetch,
-} from '../../utils/api-utils';
-import useWindowDimensions from '../../utils/useWindowDimensions';
-import AntdTable from '../../components/antdTable';
+} from '../../components/utils/api-utils';
+import useWindowDimensions from '../../components/hooks/useWindowDimensions';
+import AntdTable from '../../components/elements/antdTable';
 import {
   UserInfo_Type,
   userSettingsDispatch_Type,
   UserSettings_Type,
-} from '../../utils/types';
+} from '../../components/types/types';
 import currencyCodes from '../../shared/currency_codes.json';
 
 const { Text, Title, Link } = Typography;

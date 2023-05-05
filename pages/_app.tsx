@@ -1,11 +1,14 @@
-import Navbar from '../components/navbar';
+import Navbar from '../components/modules/navbar';
 import '../styles/globals.css';
 import { ConfigProvider, theme as antdTheme } from 'antd';
 import type { AppProps } from 'next/app';
 import { useEffect, useState, useReducer } from 'react';
-import { regularFetch, cachedFetch } from '../utils/api-utils';
-import { userSettingsDispatch_Type, TimeFramestate } from '../utils/types';
-import useLocalStorageState from '../components/useLocalStorageState';
+import { regularFetch, cachedFetch } from '../components/utils/api-utils';
+import {
+  userSettingsDispatch_Type,
+  TimeFramestate,
+} from '../components/types/types';
+import useLocalStorageState from '../components/hooks/useLocalStorageState';
 
 const { darkAlgorithm, defaultAlgorithm } = antdTheme;
 

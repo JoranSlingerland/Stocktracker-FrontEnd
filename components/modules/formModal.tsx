@@ -15,8 +15,8 @@ import { useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { ApiWithMessage } from '../utils/api-utils';
 import { formatCurrency, getCurrencySymbol } from '../utils/formatting';
-import { UserSettings_Type, UserInfo_Type } from '../utils/types';
-import currencyCodes from '../shared/currency_codes.json';
+import { UserSettings_Type, UserInfo_Type } from '../types/types';
+import currencyCodes from '../../shared/currency_codes.json';
 
 const { Text, Title } = Typography;
 

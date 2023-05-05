@@ -1,7 +1,7 @@
 import { Skeleton, Typography, Statistic } from 'antd';
 import { RiseOutlined, FallOutlined } from '@ant-design/icons';
 import { formatCurrency, formatPercentage } from '../utils/formatting';
-import { UserSettings_Type } from '../utils/types';
+import { UserSettings_Type } from '../types/types';
 
 const { Text } = Typography;
 

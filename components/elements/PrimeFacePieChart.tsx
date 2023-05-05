@@ -3,7 +3,7 @@ import { Chart } from 'primereact/chart';
 import { formatCurrency } from '../utils/formatting';
 import React from 'react';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { UserSettings_Type } from '../utils/types';
+import { UserSettings_Type } from '../types/types';
 
 export default function PieChart({
   data,
