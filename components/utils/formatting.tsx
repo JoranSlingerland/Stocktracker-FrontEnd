@@ -1,4 +1,4 @@
-import { Image, Typography, Space } from 'antd';
+import { Image, Typography } from 'antd';
 const { Text } = Typography;
 
 function formatCurrency({

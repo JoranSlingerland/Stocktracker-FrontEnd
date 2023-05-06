@@ -58,6 +58,22 @@ export default function BasicLineGraph({
         type: 'linear',
         display: true,
         position: 'left',
+        max: function (context: any) {
+          let max = 10;
+          let customMax = false;
+          for (let i = 0; i < context.chart.data.datasets.length; i++) {
+            for (let j = 0; j < context.chart.data.datasets[i].data.length; j++)
+              if (context.chart.data.datasets[i].data[j] > max) {
+                max = context.chart.data.datasets[i].data[j] * 1.1;
+                customMax = true;
+              }
+          }
+          if (customMax) {
+            return max;
+          } else {
+            return 10;
+          }
+        },
         ticks: {
           callback: function (value: number) {
             if (Math.floor(value) === value) {

@@ -266,6 +266,18 @@ export default function Home({
     },
   ];
 
+  const buttonRow = (
+    title: string,
+    description: string,
+    button: JSX.Element
+  ) => (
+    <div className="grid grid-cols-2 grid-rows-2">
+      <Title level={4}>{title}</Title>
+      <div className="row-span-2 ml-auto mr-0">{button}</div>
+      <Text>{description}</Text>
+    </div>
+  );
+
   const items = [
     {
       key: '1',
@@ -435,52 +447,44 @@ export default function Home({
       label: 'Actions',
       children: (
         <div className="flex flex-col items-center">
-          {/* Safe changes */}
           <div className="w-full px-2 columns-1">
             <div className="flex items-center justify-center">
               <Title level={3}>Safe changes</Title>
             </div>
-            <div className="grid grid-cols-2 grid-rows-2">
-              <Title level={4}>Refresh data</Title>
-              <div className="row-span-2 text-right">
-                <Button
-                  onClick={() =>
-                    handleClickOrchestratorAction(
-                      `/api/orchestrator/start`,
-                      'Calling Orchestrator',
-                      'Orchestration called, This will take a while',
-                      {
-                        userId: userInfo.clientPrincipal.userId,
-                        functionName: 'stocktracker_orchestrator',
-                        daysToUpdate: 'all',
-                      }
-                    )
-                  }
-                  type="primary"
-                  size="large"
-                >
-                  Refresh
-                </Button>
-              </div>
-              <div>This will Refresh all the data from scratch.</div>
-            </div>
+            {buttonRow(
+              'Refresh data',
+              'This will Refresh all the data from scratch.',
+              <Button
+                onClick={() =>
+                  handleClickOrchestratorAction(
+                    `/api/orchestrator/start`,
+                    'Calling Orchestrator',
+                    'Orchestration called, This will take a while',
+                    {
+                      userId: userInfo.clientPrincipal.userId,
+                      functionName: 'stocktracker_orchestrator',
+                      daysToUpdate: 'all',
+                    }
+                  )
+                }
+                type="primary"
+                size="large"
+              >
+                Refresh
+              </Button>
+            )}
             <Divider plain></Divider>
-            <div className="grid grid-cols-2 grid-rows-2">
-              <Title level={4}>Clear local storage</Title>
-              <div className="row-span-2 text-right">
-                <Button
-                  onClick={() => handleLocalStorageClearClick()}
-                  type="primary"
-                  size="large"
-                >
-                  Clear
-                </Button>
-              </div>
-              <div>
-                This will clear all cached data in the local storage of the
-                browser.
-              </div>
-            </div>
+            {buttonRow(
+              'Clear local storage',
+              'This will clear all cached data in the local storage of the browser.',
+              <Button
+                onClick={() => handleLocalStorageClearClick()}
+                type="primary"
+                size="large"
+              >
+                Clear
+              </Button>
+            )}
           </div>
         </div>
       ),
@@ -511,28 +515,23 @@ export default function Home({
             <div className="flex items-center justify-center">
               <Title level={3}>Container actions</Title>
             </div>
-            <div className="grid grid-cols-2 grid-rows-2">
-              <Title level={4}>Create Containers</Title>
-              <div className="row-span-2 text-right">
-                <Button
-                  onClick={() =>
-                    ApiWithMessage(
-                      '/api/privileged/create_cosmosdb_and_container',
-                      'Creating Containers',
-                      'Containers created :)'
-                    )
-                  }
-                  type="primary"
-                  size="large"
-                >
-                  Create
-                </Button>
-              </div>
-              <div>
-                This will create all containers and databases that do not exist
-                yet.
-              </div>
-            </div>
+            {buttonRow(
+              'Create Containers',
+              'This will create all containers and databases that do not exist yet.',
+              <Button
+                onClick={() =>
+                  ApiWithMessage(
+                    '/api/privileged/create_cosmosdb_and_container',
+                    'Creating Containers',
+                    'Containers created :)'
+                  )
+                }
+                type="primary"
+                size="large"
+              >
+                Create
+              </Button>
+            )}
             <Divider plain></Divider>
             <div className="w-full px-2 columns-1">
               <div className="flex flex-col items-center justify-center text-xl">
@@ -543,69 +542,59 @@ export default function Home({
                   Actions below can cause permanent data loss
                 </Text>
               </div>
-              <div className="grid grid-cols-2 grid-rows-2">
-                <Title level={4}>Delete output containers</Title>
-                <div className="row-span-2 text-right">
-                  <Popconfirm
-                    title="Delete output containers?"
-                    description="Are you sure you want to delete the output containers"
-                    okText="Yes"
-                    arrow={false}
-                    icon={false}
-                    okButtonProps={{ danger: true, loading: false }}
-                    onConfirm={() =>
-                      handleClickOrchestratorAction(
-                        `/api/privileged/delete_cosmosdb_container`,
-                        'Deleting Containers',
-                        'All Containers deleted :)',
-                        {
-                          containersToDelete: 'output_only',
-                        }
-                      )
-                    }
-                  >
-                    <Button danger type="primary" size="large">
-                      Delete
-                    </Button>
-                  </Popconfirm>
-                </div>
-                <div>
-                  This will delete all the containers except the input
-                  containers.
-                </div>
-              </div>
+              {buttonRow(
+                'Delete output containers',
+                'This will delete all the containers except the input containers.',
+                <Popconfirm
+                  title="Delete output containers?"
+                  description="Are you sure you want to delete the output containers"
+                  okText="Yes"
+                  arrow={false}
+                  icon={false}
+                  okButtonProps={{ danger: true, loading: false }}
+                  onConfirm={() =>
+                    handleClickOrchestratorAction(
+                      `/api/privileged/delete_cosmosdb_container`,
+                      'Deleting Containers',
+                      'All Containers deleted :)',
+                      {
+                        containersToDelete: 'output_only',
+                      }
+                    )
+                  }
+                >
+                  <Button danger type="primary" size="large">
+                    Delete
+                  </Button>
+                </Popconfirm>
+              )}
               <Divider plain></Divider>
-              <div className="grid grid-cols-2 grid-rows-2">
-                <Title level={4}>Delete all containers</Title>
-                <div className="row-span-2 text-right">
-                  <Popconfirm
-                    title="Delete all"
-                    description="Are you sure you want to delete all containers"
-                    okText="Yes"
-                    arrow={false}
-                    icon={false}
-                    okButtonProps={{ danger: true, loading: false }}
-                    onConfirm={() =>
-                      handleClickOrchestratorAction(
-                        `/api/privileged/delete_cosmosdb_container`,
-                        'Deleting Containers',
-                        'All Containers deleted :)',
-                        {
-                          containersToDelete: 'all',
-                        }
-                      )
-                    }
-                  >
-                    <Button danger type="primary" size="large">
-                      Delete
-                    </Button>
-                  </Popconfirm>
-                </div>
-                <div>
-                  This will delete all containers including the input
-                  containers.
-                </div>
-              </div>
+              {buttonRow(
+                'Delete all containers',
+                'This will delete all containers including the input containers.',
+                <Popconfirm
+                  title="Delete all"
+                  description="Are you sure you want to delete all containers"
+                  okText="Yes"
+                  arrow={false}
+                  icon={false}
+                  okButtonProps={{ danger: true, loading: false }}
+                  onConfirm={() =>
+                    handleClickOrchestratorAction(
+                      `/api/privileged/delete_cosmosdb_container`,
+                      'Deleting Containers',
+                      'All Containers deleted :)',
+                      {
+                        containersToDelete: 'all',
+                      }
+                    )
+                  }
+                >
+                  <Button danger type="primary" size="large">
+                    Delete
+                  </Button>
+                </Popconfirm>
+              )}
             </div>
           </div>
         </div>

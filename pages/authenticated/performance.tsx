@@ -322,10 +322,10 @@ export default function performance({
   return (
     <div>
       {/* Title */}
-      <div className="flex">
-        <div className="flex pt-2">
-          <Title level={1}>Performance</Title>
-        </div>
+      <div className="flex shrink-0 flex-row pt-2">
+        <Title className="min-w-[220px] mr-2" level={1}>
+          Performance
+        </Title>
         <div className="pt-3 ml-auto mr-0 overflow-auto">
           <Segmented
             options={[

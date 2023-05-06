@@ -66,7 +66,7 @@ export default function App({
     loading: boolean
   ) {
     return (
-      <div className="flex flex-row pb-2">
+      <div className="flex flex-row">
         <div>
           <Text type={'secondary'}>{text}</Text>
           <Skeleton
@@ -104,7 +104,7 @@ export default function App({
 
   function OverViewBar({ loading }: { loading: boolean }) {
     return (
-      <div className="w-96 p-2">
+      <div className="w-96 p-2 cursor-default">
         <div className="flex flex-row">
           <Text strong>Portfolio Value</Text>
 
@@ -306,7 +306,6 @@ export default function App({
         {
           key: 'overviewDropdown',
           label: <OverViewBar loading={false} />,
-          // className: 'w-fit h-fit'
           style: {
             width: 'fit-content',
             height: 'fit-content',

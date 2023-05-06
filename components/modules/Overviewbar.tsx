@@ -73,7 +73,7 @@ export default function tabs({
   }
 
   return (
-    <div className="flex flex-col space-y-5 lg:space-x-5 lg:space-y-0 lg:flex-row">
+    <div className="grid grid-cols-1 grid-rows-4 gap-4 p-2 sm:grid-rows-2 sm:grid-cols-2 lg:grid-rows-1 lg:grid-cols-4">
       {createCard(
         1,
         100,
