@@ -61,6 +61,10 @@ export default function Home({
     initialState({ fallback_data: fallbackObject, isLoading: true })
   );
   const [tab, setTab] = useLocalStorageState('portfolioTab', '1');
+  const [CollapseKey, setCollapseKey] = useLocalStorageState(
+    'portfolioCollapse',
+    '0'
+  );
 
   // UseEffect setup
   useEffect(() => {
@@ -138,6 +142,15 @@ export default function Home({
         dispatcher: unRealizedDataDispatcher,
         controller: abortController,
       });
+      return () => {
+        abortController.abort();
+      };
+    }
+  }, [userInfo]);
+
+  useEffect(() => {
+    if (userInfo.clientPrincipal.userId !== '' && CollapseKey === '1') {
+      const abortController = new AbortController();
       cachedFetch({
         url: `/api/data/get_table_data_basic`,
         method: 'POST',
@@ -155,7 +168,7 @@ export default function Home({
         abortController.abort();
       };
     }
-  }, [userInfo]);
+  }, [userInfo, CollapseKey]);
 
   // Tabs setup
   const items = [
@@ -221,19 +234,16 @@ export default function Home({
       dataIndex: 'meta',
       key: 'meta.name',
       fixed: 'left',
-      width: 120,
-      render: (text: any, record: any) => (
-        <div className="min-w-16">
-          {formatImageAndText(record.symbol, text.name, record.meta.logo)}
-        </div>
-      ),
+      render: (text: any, record: any) =>
+        formatImageAndText(record.symbol, text.name, record.meta.logo),
     },
     {
-      title: 'Total Cost',
+      title: 'Cost',
       dataIndex: 'unrealized',
       key: 'unrealized.total_cost',
+      responsive: ['md'],
       render: (text: { total_cost: string | number }, record: any) => (
-        <div className="min-w-32">
+        <div>
           <Text strong>
             {formatCurrency({
               value: text.total_cost,
@@ -253,11 +263,11 @@ export default function Home({
       ),
     },
     {
-      title: 'Total Value',
+      title: 'Value',
       dataIndex: 'unrealized',
       key: 'unrealized.total_value',
       render: (text: { total_value: string | number }, record: any) => (
-        <div className="min-w-32">
+        <div>
           <Text strong>
             {formatCurrency({
               value: text.total_value,
@@ -277,11 +287,11 @@ export default function Home({
       ),
     },
     {
-      title: 'Profit / Loss',
+      title: 'P/L',
       dataIndex: 'unrealized',
       key: 'unrealized.total_pl',
       render: (text) => (
-        <div className="min-w-32">
+        <div>
           <div>
             {formatCurrencyWithColors({
               value: text.total_pl,
@@ -300,19 +310,16 @@ export default function Home({
       dataIndex: 'meta',
       key: 'meta.name',
       fixed: 'left',
-      width: 200,
-      render: (text, record: any) => (
-        <div className="min-w-16">
-          {formatImageAndText(record.symbol, text.name, record.meta.logo)}
-        </div>
-      ),
+      render: (text, record: any) =>
+        formatImageAndText(record.symbol, text.name, record.meta.logo),
     },
     {
-      title: 'Total Cost',
+      title: 'Cost',
       dataIndex: 'realized',
       key: 'realized.buy_price',
+      responsive: ['md'],
       render: (text) => (
-        <div className="min-w-32">
+        <div>
           <Text strong>
             {formatCurrency({
               value: text.buy_price,
@@ -332,11 +339,11 @@ export default function Home({
       ),
     },
     {
-      title: 'Realized Price',
+      title: 'Realized',
       dataIndex: 'realized',
       key: 'realized.sell_price',
       render: (text) => (
-        <div className="min-w-32">
+        <div>
           <Text strong>
             {formatCurrency({
               value: text.sell_price,
@@ -358,11 +365,11 @@ export default function Home({
       ),
     },
     {
-      title: 'Profit / Loss',
+      title: 'P/L',
       dataIndex: 'realized',
       key: 'realized.total_pl',
       render: (text) => (
-        <div className="min-w-32">
+        <div>
           <div>
             {formatCurrencyWithColors({
               value: text.total_pl,
@@ -409,7 +416,14 @@ export default function Home({
       </div>
       {/* Table */}
       <div>
-        <Collapse bordered={false} ghost>
+        <Collapse
+          activeKey={CollapseKey}
+          onChange={() => {
+            setCollapseKey(CollapseKey === '1' ? '0' : '1');
+          }}
+          bordered={false}
+          ghost
+        >
           <Panel className="p-0" header="Realized Stocks" key="1">
             <AntdTable
               columns={RealizedColumns}
