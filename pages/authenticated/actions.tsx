@@ -8,7 +8,7 @@ import {
   ApiWithMessage,
   apiRequestReducer,
   initialState,
-} from '../../components/utils/api-utils';
+} from '../../components/utils/api';
 import {
   formatCurrency,
   formatImageAndText,

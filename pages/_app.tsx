@@ -3,7 +3,7 @@ import '../styles/globals.css';
 import { ConfigProvider, theme as antdTheme } from 'antd';
 import type { AppProps } from 'next/app';
 import { useEffect, useState, useReducer } from 'react';
-import { regularFetch, cachedFetch } from '../components/utils/api-utils';
+import { regularFetch, cachedFetch } from '../components/utils/api';
 import {
   userSettingsDispatch_Type,
   TimeFramestate,

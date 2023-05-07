@@ -1,4 +1,5 @@
 import { Image, Typography } from 'antd';
+import { RiseOutlined, FallOutlined } from '@ant-design/icons';
 const { Text } = Typography;
 
 function formatCurrency({
@@ -36,10 +37,14 @@ function formatCurrencyWithColors({
   value,
   maximumFractionDigits = 2,
   currency,
+  className = '',
+  addIcon = false,
 }: {
   value: number | string;
   maximumFractionDigits?: number;
   currency?: string;
+  className?: string;
+  addIcon?: boolean;
 }) {
   if (typeof value === 'string') {
     value = parseFloat(value);
@@ -55,12 +60,20 @@ function formatCurrencyWithColors({
   }
 
   if (value > 0) {
-    return <Text type="success">{formattedValue}</Text>;
+    return (
+      <Text className={className} type="success">
+        {addIcon ? <RiseOutlined /> : undefined} {formattedValue}
+      </Text>
+    );
   }
   if (value < 0) {
-    return <Text type="danger">{formattedValue}</Text>;
+    return (
+      <Text className={className} type="danger">
+        {addIcon ? <FallOutlined /> : undefined} {formattedValue}
+      </Text>
+    );
   }
-  return formattedValue;
+  return <Text className={className}> formattedValue </Text>;
 }
 
 function formatPercentage(value: number | string, maximumFractionDigits = 2) {
@@ -70,28 +83,38 @@ function formatPercentage(value: number | string, maximumFractionDigits = 2) {
   });
 }
 
-function formatPercentageWithColors(
-  value: number | string,
-  maximumFractionDigits = 2
-) {
+function formatPercentageWithColors({
+  value,
+  maximumFractionDigits = 2,
+  className = '',
+  addIcon = false,
+}: {
+  value: number | string;
+  maximumFractionDigits?: number;
+  className?: string;
+  addIcon?: boolean;
+}) {
   if (typeof value === 'string') {
     value = parseFloat(value);
   }
+
+  const formattedValue = formatPercentage(value, maximumFractionDigits);
+
   if (value > 0) {
     return (
-      <Text type="success">
-        {formatPercentage(value, maximumFractionDigits)}
+      <Text className={className} type="success">
+        {addIcon ? <RiseOutlined /> : undefined} {formattedValue}
       </Text>
     );
   }
   if (value < 0) {
     return (
-      <Text type="danger">
-        {formatPercentage(value, maximumFractionDigits)}
+      <Text className={className} type="danger">
+        {addIcon ? <FallOutlined /> : undefined} {formattedValue}
       </Text>
     );
   }
-  return formatPercentage(value, maximumFractionDigits);
+  return <Text className={className}>{formattedValue}</Text>;
 }
 
 function formatNumber(value: number | string, maximumFractionDigits = 2) {

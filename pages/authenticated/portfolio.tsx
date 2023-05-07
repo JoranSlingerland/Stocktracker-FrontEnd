@@ -6,7 +6,7 @@ import {
   cachedFetch,
   apiRequestReducer,
   initialState,
-} from '../../components/utils/api-utils';
+} from '../../components/utils/api';
 import {
   formatCurrency,
   formatCurrencyWithColors,
@@ -298,7 +298,9 @@ export default function Home({
               currency: userSettings.currency,
             })}
           </div>
-          <div>{formatPercentageWithColors(text.total_pl_percentage)}</div>
+          <div>
+            {formatPercentageWithColors({ value: text.total_pl_percentage })}
+          </div>
         </div>
       ),
     },
@@ -376,7 +378,9 @@ export default function Home({
               currency: userSettings.currency,
             })}
           </div>
-          <div>{formatPercentageWithColors(text.total_pl_percentage)}</div>
+          <div>
+            {formatPercentageWithColors({ value: text.total_pl_percentage })}
+          </div>
         </div>
       ),
     },

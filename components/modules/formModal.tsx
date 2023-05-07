@@ -13,7 +13,7 @@ import {
 } from 'antd';
 import { useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import { ApiWithMessage } from '../utils/api-utils';
+import { ApiWithMessage } from '../utils/api';
 import { formatCurrency, getCurrencySymbol } from '../utils/formatting';
 import { UserSettings_Type, UserInfo_Type } from '../types/types';
 import currencyCodes from '../../shared/currency_codes.json';

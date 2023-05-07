@@ -7,7 +7,7 @@ import {
   cachedFetch,
   apiRequestReducer,
   initialState,
-} from '../../components/utils/api-utils';
+} from '../../components/utils/api';
 import AntdTable from '../../components/elements/antdTable';
 import {
   formatCurrency,
@@ -272,7 +272,9 @@ export default function performance({
               currency: userSettings.currency,
             })}
           </div>
-          <div>{formatPercentageWithColors(text.total_pl_percentage)}</div>
+          <div>
+            {formatPercentageWithColors({ value: text.total_pl_percentage })}
+          </div>
         </div>
       ),
     },

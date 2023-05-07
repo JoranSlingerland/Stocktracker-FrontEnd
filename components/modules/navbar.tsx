@@ -18,7 +18,7 @@ import {
   Skeleton,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { ApiWithMessage } from '../utils/api-utils';
+import { ApiWithMessage } from '../utils/api';
 import { UserInfo_Type, TimeFramestate } from '../types/types';
 import type { MenuProps } from 'antd/es/menu';
 import {
@@ -94,7 +94,13 @@ export default function App({
           <Statistic
             className="ml-auto mr-0 mt-auto mb-0"
             value={percentage}
-            formatter={(value) => formatPercentageWithColors(value)}
+            formatter={(value) =>
+              formatPercentageWithColors({
+                value,
+                className: 'text-lg',
+                addIcon: true,
+              })
+            }
             loading={loading}
           />
         </Skeleton>
@@ -296,7 +302,8 @@ export default function App({
             <Text>{formatCurrency({ value: 10000, currency: 'EUR' })} </Text>{' '}
             <Divider type="vertical" />
             <Text>
-              {timeFrameMap[timeFrame]} {formatPercentageWithColors(0.175)}{' '}
+              {timeFrameMap[timeFrame]}{' '}
+              {formatPercentageWithColors({ value: 0.175 })}{' '}
             </Text>
           </Skeleton>
         </div>

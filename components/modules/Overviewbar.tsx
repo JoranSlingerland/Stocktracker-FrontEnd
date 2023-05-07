@@ -1,9 +1,9 @@
-import { Skeleton, Typography, Statistic } from 'antd';
-import { RiseOutlined, FallOutlined } from '@ant-design/icons';
-import { formatCurrency, formatPercentage } from '../utils/formatting';
+import { Skeleton, Statistic } from 'antd';
+import {
+  formatCurrency,
+  formatPercentageWithColors,
+} from '../utils/formatting';
 import { UserSettings_Type } from '../types/types';
-
-const { Text } = Typography;
 
 export default function tabs({
   topBarData,
@@ -17,29 +17,6 @@ export default function tabs({
   tabState: any;
 }): JSX.Element {
   const { tab, setTab } = tabState;
-  const PercentageFormat = (value: number | string) => {
-    if (typeof value === 'string') {
-      value = parseFloat(value);
-    }
-    if (value > 0) {
-      const data = formatPercentage(value);
-      return (
-        <Text strong type="success">
-          <RiseOutlined /> {data}
-        </Text>
-      );
-    } else if (value < 0) {
-      const data = formatPercentage(value);
-      return (
-        <Text strong type="danger">
-          <FallOutlined /> {data}
-        </Text>
-      );
-    } else {
-      const data = formatPercentage(value);
-      return data;
-    }
-  };
 
   function createCard(
     tabNumber: number,
@@ -89,7 +66,13 @@ export default function tabs({
         ></Statistic>,
         <Statistic
           value={topBarData.total_value_gain_percentage}
-          formatter={(value) => PercentageFormat(value)}
+          formatter={(value) =>
+            formatPercentageWithColors({
+              value,
+              addIcon: true,
+              className: 'text-xl',
+            })
+          }
         />
       )}
       {createCard(
@@ -129,7 +112,13 @@ export default function tabs({
         ></Statistic>,
         <Statistic
           value={topBarData.total_pl_percentage}
-          formatter={(value) => PercentageFormat(value)}
+          formatter={(value) =>
+            formatPercentageWithColors({
+              value,
+              addIcon: true,
+              className: 'text-xl',
+            })
+          }
         />
       )}
     </div>

@@ -24,7 +24,7 @@ import {
   initialState,
   regularFetch,
   overwriteCachedFetch,
-} from '../../components/utils/api-utils';
+} from '../../components/utils/api';
 import useWindowDimensions from '../../components/hooks/useWindowDimensions';
 import AntdTable from '../../components/elements/antdTable';
 import {
