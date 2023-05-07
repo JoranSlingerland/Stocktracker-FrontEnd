@@ -12,7 +12,47 @@ export default function BasicLineGraph({
   data: any;
   userSettings: UserSettings_Type;
 }): JSX.Element {
+  const totalDuration = 500;
+  let delayBetweenPoints = totalDuration / data['labels'].length;
+
+  const previousY = (ctx: any) =>
+    ctx.index === 0
+      ? ctx.chart.scales.y.getPixelForValue(100)
+      : ctx.chart
+          .getDatasetMeta(ctx.datasetIndex)
+          .data[ctx.index - 1].getProps(['y'], true).y;
+
+  const animation = {
+    x: {
+      type: 'number',
+      easing: 'linear',
+      duration: delayBetweenPoints,
+      from: NaN,
+      delay(ctx: any) {
+        if (ctx.type !== 'data' || ctx.xStarted) {
+          return 0;
+        }
+        ctx.xStarted = true;
+        return ctx.index * delayBetweenPoints;
+      },
+    },
+    y: {
+      type: 'number',
+      easing: 'linear',
+      duration: delayBetweenPoints,
+      from: previousY,
+      delay(ctx: any) {
+        if (ctx.type !== 'data' || ctx.yStarted) {
+          return 0;
+        }
+        ctx.yStarted = true;
+        return ctx.index * delayBetweenPoints;
+      },
+    },
+  };
+
   let multiAxisOptions = {
+    animation,
     stacked: false,
     maintainAspectRatio: false,
     aspectRatio: 0.6,
@@ -92,6 +132,15 @@ export default function BasicLineGraph({
     },
   };
 
+  if (isloading) {
+    return (
+      <div className="h-[500px]">
+        <Spin spinning={isloading}>
+          <Chart type="line" data={{}} options={multiAxisOptions} />
+        </Spin>
+      </div>
+    );
+  }
   if (data['datasets'].length == 1) {
     let multiAxisData = {
       labels: data['labels'],
@@ -107,9 +156,7 @@ export default function BasicLineGraph({
       ],
     };
     return (
-      <Spin spinning={isloading}>
-        <Chart type="line" data={multiAxisData} options={multiAxisOptions} />
-      </Spin>
+      <Chart type="line" data={multiAxisData} options={multiAxisOptions} />
     );
   }
   if (data['datasets'].length == 2) {
@@ -137,18 +184,14 @@ export default function BasicLineGraph({
 
     return (
       <div className="h-[500px]">
-        <Spin spinning={isloading}>
-          <Chart type="line" data={multiAxisData} options={multiAxisOptions} />
-        </Spin>
+        <Chart type="line" data={multiAxisData} options={multiAxisOptions} />
       </div>
     );
   }
   // return empty chart if no data
   return (
     <div className="h-[500px]">
-      <Spin spinning={isloading}>
-        <Chart type="line" data={{}} options={multiAxisOptions} />
-      </Spin>
+      <Chart type="line" data={{}} options={multiAxisOptions} />
     </div>
   );
 }

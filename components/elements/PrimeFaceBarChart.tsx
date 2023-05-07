@@ -159,6 +159,15 @@ export default function PrimeFacePieChart({
     },
   };
 
+  if (isloading)
+    return (
+      <div className="h-[500px]">
+        <Spin spinning={isloading}>
+          <Chart type="bar" data={{}} options={stackedOptions} />
+        </Spin>
+      </div>
+    );
+
   return (
     <div className="h-[500px]">
       <Spin spinning={isloading}>
