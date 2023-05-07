@@ -154,6 +154,21 @@ export default function performance({
   useEffect(() => {
     if (userInfo?.clientPrincipal?.userId && timeFrame) {
       const abortController = new AbortController();
+      if (tab === 1) {
+        cachedFetch({
+          url: `/api/data/get_linechart_data`,
+          method: 'POST',
+          fallback_data: valueGrowthDataFallBackObject,
+          body: {
+            userId: userInfo.clientPrincipal.userId,
+            dataType: 'invested_and_value',
+            dataToGet: timeFrame,
+          },
+          dispatcher: valueGrowthDataReducer,
+          controller: abortController,
+        });
+      }
+
       if (tab === 2) {
         cachedFetch({
           url: `/api/data/get_barchart_data`,
@@ -193,21 +208,6 @@ export default function performance({
             dataToGet: timeFrame,
           },
           dispatcher: totalGainsDataReducer,
-          controller: abortController,
-        });
-      }
-
-      if (tab === 1) {
-        cachedFetch({
-          url: `/api/data/get_linechart_data`,
-          method: 'POST',
-          fallback_data: valueGrowthDataFallBackObject,
-          body: {
-            userId: userInfo.clientPrincipal.userId,
-            dataType: 'invested_and_value',
-            dataToGet: timeFrame,
-          },
-          dispatcher: valueGrowthDataReducer,
           controller: abortController,
         });
       }

@@ -65,7 +65,6 @@ function MyApp({ Component, pageProps }: AppProps) {
     currency: '',
     isLoading: true,
   });
-
   const [timeFrame, setTimeFrame] = useLocalStorageState('timeFrame', 'max');
   const timeFrameState: TimeFramestate = { timeFrame, setTimeFrame };
 
