@@ -25,15 +25,6 @@ import type { ColumnsType } from 'antd/es/table';
 
 const { Title } = Typography;
 
-const topBarDataFallBackObject = {
-  total_value_gain: '',
-  total_value_gain_percentage: '',
-  total_pl: '',
-  total_pl_percentage: '',
-  total_dividends: '',
-  transaction_cost: '',
-};
-
 const totalGainsDataFallBackObject = {
   labels: [],
   datasets: [
@@ -66,11 +57,13 @@ export default function performance({
   userSettings,
   timeFrameState,
   timeFrameDates,
+  totalPerformanceData,
 }: {
   userInfo: UserInfo_Type;
   userSettings: UserSettings_Type;
   timeFrameState: TimeFramestate;
   timeFrameDates: { start_date: string; end_date: string };
+  totalPerformanceData: any;
 }) {
   // const setup
   const [valueGrowthData, valueGrowthDataReducer] = useReducer(
@@ -96,10 +89,6 @@ export default function performance({
       apiRequestReducer,
       initialState({ fallback_data: [], isLoading: true })
     );
-  const [topBarData, topBarDataReducer] = useReducer(
-    apiRequestReducer,
-    initialState({ fallback_data: topBarDataFallBackObject, isLoading: true })
-  );
   const [SingleDayData, SingleDayDataReducer] = useReducer(
     apiRequestReducer,
     initialState({ isLoading: true })
@@ -156,20 +145,6 @@ export default function performance({
   useEffect(() => {
     if (userInfo?.clientPrincipal?.userId && timeFrame) {
       const abortController = new AbortController();
-      if (tab === 1) {
-        cachedFetch({
-          url: `/api/data/get_linechart_data`,
-          method: 'POST',
-          fallback_data: valueGrowthDataFallBackObject,
-          body: {
-            userId: userInfo.clientPrincipal.userId,
-            dataType: 'invested_and_value',
-            dataToGet: timeFrame,
-          },
-          dispatcher: valueGrowthDataReducer,
-          controller: abortController,
-        });
-      }
 
       if (tab === 2) {
         cachedFetch({
@@ -225,14 +200,15 @@ export default function performance({
       const abortController = new AbortController();
 
       cachedFetch({
-        url: `/api/data/get_topbar_data`,
+        url: `/api/data/get_linechart_data`,
         method: 'POST',
-        fallback_data: topBarDataFallBackObject,
+        fallback_data: valueGrowthDataFallBackObject,
         body: {
           userId: userInfo.clientPrincipal.userId,
+          dataType: 'invested_and_value',
           dataToGet: timeFrame,
         },
-        dispatcher: topBarDataReducer,
+        dispatcher: valueGrowthDataReducer,
         controller: abortController,
       });
 
@@ -387,8 +363,9 @@ export default function performance({
       </div>
       <div>
         <Overviewbar
-          topBarData={topBarData.data}
-          loading={topBarData.isLoading}
+          totalPerformanceData={totalPerformanceData.data}
+          valueGrowthData={valueGrowthData.data}
+          loading={totalPerformanceData.isLoading || valueGrowthData.isLoading}
           userSettings={userSettings}
           tabState={{ tab, setTab }}
         />
