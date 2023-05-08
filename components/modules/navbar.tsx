@@ -388,16 +388,16 @@ export default function App({
               {formatCurrency({
                 value: totalPerformanceData.data[0].unrealized.total_value,
                 currency: userSettings.currency,
-              })}{' '}
-            </Text>{' '}
+              })}
+            </Text>
             <Divider type="vertical" />
+            <Text className="mr-2">{timeFrameMap[timeFrame]} </Text>
             <Text>
-              {timeFrameMap[timeFrame]}{' '}
               {formatPercentageWithColors({
                 value:
                   totalPerformanceData.data[0].unrealized.value_pl_percentage,
                 addIcon: true,
-              })}{' '}
+              })}
             </Text>
           </Skeleton>
         </div>
