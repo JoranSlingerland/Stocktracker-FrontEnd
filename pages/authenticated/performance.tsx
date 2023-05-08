@@ -143,118 +143,127 @@ export default function performance({
 
   // useEffects
   useEffect(() => {
-    if (userInfo?.clientPrincipal?.userId && timeFrame) {
-      const abortController = new AbortController();
-
-      if (tab === 2) {
-        cachedFetch({
-          url: `/api/data/get_barchart_data`,
-          method: 'POST',
-          body: {
-            userId: userInfo.clientPrincipal.userId,
-            dataType: 'dividend',
-            dataToGet: timeFrame,
-          },
-          dispatcher: dividendDataReducer,
-          controller: abortController,
-        });
-      }
-
-      if (tab === 3) {
-        cachedFetch({
-          url: `/api/data/get_barchart_data`,
-          method: 'POST',
-          body: {
-            userId: userInfo.clientPrincipal.userId,
-            dataType: 'transaction_cost',
-            dataToGet: timeFrame,
-          },
-          dispatcher: totalTransactionCostDataReducer,
-          controller: abortController,
-        });
-      }
-
-      if (tab === 4) {
-        cachedFetch({
-          url: `/api/data/get_linechart_data`,
-          method: 'POST',
-          fallback_data: totalGainsDataFallBackObject,
-          body: {
-            userId: userInfo.clientPrincipal.userId,
-            dataType: 'total_gains',
-            dataToGet: timeFrame,
-          },
-          dispatcher: totalGainsDataReducer,
-          controller: abortController,
-        });
-      }
-
-      return () => {
-        abortController.abort();
-      };
+    if (!userInfo?.clientPrincipal?.userId || !timeFrame) {
+      return;
     }
+    const abortController = new AbortController();
+
+    if (tab === 2) {
+      cachedFetch({
+        url: `/api/data/get_barchart_data`,
+        method: 'POST',
+        body: {
+          userId: userInfo.clientPrincipal.userId,
+          dataType: 'dividend',
+          dataToGet: timeFrame,
+        },
+        dispatcher: dividendDataReducer,
+        controller: abortController,
+      });
+    }
+
+    if (tab === 3) {
+      cachedFetch({
+        url: `/api/data/get_barchart_data`,
+        method: 'POST',
+        body: {
+          userId: userInfo.clientPrincipal.userId,
+          dataType: 'transaction_cost',
+          dataToGet: timeFrame,
+        },
+        dispatcher: totalTransactionCostDataReducer,
+        controller: abortController,
+      });
+    }
+
+    return () => {
+      abortController.abort();
+    };
   }, [timeFrame, userInfo, tab]);
 
   useEffect(() => {
-    if (userInfo?.clientPrincipal?.userId) {
-      const abortController = new AbortController();
+    if (!userInfo?.clientPrincipal?.userId) {
+      return;
+    }
 
+    const { start_date, end_date } = timeFrameDates;
+    const body: any = {
+      userId: userInfo.clientPrincipal.userId,
+      dataType: 'total_gains',
+    };
+    if (end_date === 'max' && start_date === 'max') {
+      body.allData = true;
+    } else if (end_date && start_date) {
+      body.startDate = start_date;
+      body.endDate = end_date;
+    } else {
+      return;
+    }
+
+    const abortController = new AbortController();
+    if (tab === 4) {
       cachedFetch({
-        url: `/api/data/get_linechart_data`,
+        url: '/api/data/get_linechart_data',
         method: 'POST',
-        fallback_data: valueGrowthDataFallBackObject,
-        body: {
-          userId: userInfo.clientPrincipal.userId,
-          dataType: 'invested_and_value',
-          dataToGet: timeFrame,
-        },
-        dispatcher: valueGrowthDataReducer,
+        fallback_data: totalGainsDataFallBackObject,
+        body,
+        dispatcher: totalGainsDataReducer,
         controller: abortController,
       });
-
-      return () => {
-        abortController.abort();
-      };
     }
-  }, [timeFrame, userInfo]);
+
+    return () => {
+      abortController.abort();
+    };
+  }, [userInfo, timeFrameDates, tab]);
 
   useEffect(() => {
-    if (userInfo?.clientPrincipal?.userId !== '') {
-      const abortController = new AbortController();
-      if (
-        timeFrameDates.end_date == 'max' &&
-        timeFrameDates.start_date == 'max'
-      ) {
-        cachedFetch({
-          url: '/api/data/get_table_data_performance',
-          method: 'POST',
-          body: {
-            userId: userInfo.clientPrincipal.userId,
-            allData: true,
-            containerName: 'stocks_held',
-          },
-          dispatcher: SingleDayDataReducer,
-          controller: abortController,
-        });
-      } else if (timeFrameDates.end_date && timeFrameDates.start_date) {
-        cachedFetch({
-          url: '/api/data/get_table_data_performance',
-          method: 'POST',
-          body: {
-            userId: userInfo.clientPrincipal.userId,
-            startDate: timeFrameDates.start_date,
-            endDate: timeFrameDates.end_date,
-            containerName: 'stocks_held',
-          },
-          dispatcher: SingleDayDataReducer,
-          controller: abortController,
-        });
-      }
-      return () => {
-        abortController.abort();
-      };
+    if (!userInfo?.clientPrincipal?.userId) {
+      return;
     }
-  }, [userInfo, timeFrameDates.end_date, timeFrameDates.start_date]);
+
+    const { start_date, end_date } = timeFrameDates;
+    const body: any = {
+      userId: userInfo.clientPrincipal.userId,
+      containerName: 'stocks_held',
+    };
+    if (end_date === 'max' && start_date === 'max') {
+      body.allData = true;
+    } else if (end_date && start_date) {
+      body.startDate = start_date;
+      body.endDate = end_date;
+    } else {
+      return;
+    }
+
+    const abortController = new AbortController();
+    cachedFetch({
+      url: '/api/data/get_table_data_performance',
+      method: 'POST',
+      body: {
+        ...body,
+        containerName: 'stocks_held',
+      },
+      dispatcher: SingleDayDataReducer,
+      controller: abortController,
+    });
+
+    cachedFetch({
+      url: `/api/data/get_linechart_data`,
+      method: 'POST',
+      fallback_data: valueGrowthDataFallBackObject,
+      body: {
+        ...body,
+        dataType: 'invested_and_value',
+      },
+      dispatcher: valueGrowthDataReducer,
+      controller: abortController,
+    });
+
+    return () => {
+      abortController.abort();
+    };
+  }, [userInfo, timeFrameDates]);
 
   // Columns
   const valueGrowthColumns: ColumnsType = [

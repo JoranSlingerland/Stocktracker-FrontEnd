@@ -121,44 +121,40 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [timeFrame]);
 
   useEffect(() => {
-    if (userInfo?.clientPrincipal?.userId !== '') {
-      const abortController = new AbortController();
-      if (
-        timeFrameDates.end_date == 'max' &&
-        timeFrameDates.start_date == 'max'
-      ) {
-        cachedFetch({
-          url: '/api/data/get_table_data_performance',
-          fallback_data: [totalsData],
-          method: 'POST',
-          body: {
-            userId: userInfo.clientPrincipal.userId,
-            allData: true,
-            containerName: 'totals',
-          },
-          dispatcher: totalPerformanceDataDispatch,
-          controller: abortController,
-        });
-      } else if (timeFrameDates.end_date && timeFrameDates.start_date) {
-        cachedFetch({
-          url: '/api/data/get_table_data_performance',
-          fallback_data: [totalsData],
-          method: 'POST',
-          body: {
-            userId: userInfo.clientPrincipal.userId,
-            startDate: timeFrameDates.start_date,
-            endDate: timeFrameDates.end_date,
-            containerName: 'totals',
-          },
-          dispatcher: totalPerformanceDataDispatch,
-          controller: abortController,
-        });
-      }
-      return () => {
-        abortController.abort();
-      };
+    if (!userInfo?.clientPrincipal?.userId) {
+      return;
     }
-  }, [userInfo, timeFrameDates.end_date, timeFrameDates.start_date]);
+
+    const { start_date, end_date } = timeFrameDates;
+    const body: any = {
+      userId: userInfo.clientPrincipal.userId,
+      containerName: 'totals',
+    };
+
+    if (end_date === 'max' && start_date === 'max') {
+      body.allData = true;
+    } else if (end_date && start_date) {
+      body.startDate = start_date;
+      body.endDate = end_date;
+    } else {
+      return;
+    }
+
+    const abortController = new AbortController();
+
+    cachedFetch({
+      url: '/api/data/get_table_data_performance',
+      fallback_data: [totalsData],
+      method: 'POST',
+      body,
+      dispatcher: totalPerformanceDataDispatch,
+      controller: abortController,
+    });
+
+    return () => {
+      abortController.abort();
+    };
+  }, [userInfo, timeFrameDates]);
 
   const props = {
     userInfo,
