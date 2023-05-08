@@ -65,10 +65,12 @@ export default function performance({
   userInfo,
   userSettings,
   timeFrameState,
+  timeFrameDates,
 }: {
   userInfo: UserInfo_Type;
   userSettings: UserSettings_Type;
   timeFrameState: TimeFramestate;
+  timeFrameDates: { start_date: string; end_date: string };
 }) {
   // const setup
   const [valueGrowthData, valueGrowthDataReducer] = useReducer(
@@ -223,17 +225,6 @@ export default function performance({
       const abortController = new AbortController();
 
       cachedFetch({
-        url: `/api/data/get_table_data_performance`,
-        method: 'POST',
-        body: {
-          userId: userInfo.clientPrincipal.userId,
-          dataToGet: timeFrame,
-        },
-        dispatcher: SingleDayDataReducer,
-        controller: abortController,
-      });
-
-      cachedFetch({
         url: `/api/data/get_topbar_data`,
         method: 'POST',
         fallback_data: topBarDataFallBackObject,
@@ -250,6 +241,44 @@ export default function performance({
       };
     }
   }, [timeFrame, userInfo]);
+
+  useEffect(() => {
+    if (userInfo?.clientPrincipal?.userId !== '') {
+      const abortController = new AbortController();
+      if (
+        timeFrameDates.end_date == 'max' &&
+        timeFrameDates.start_date == 'max'
+      ) {
+        cachedFetch({
+          url: '/api/data/get_table_data_performance',
+          method: 'POST',
+          body: {
+            userId: userInfo.clientPrincipal.userId,
+            allData: true,
+            containerName: 'stocks_held',
+          },
+          dispatcher: SingleDayDataReducer,
+          controller: abortController,
+        });
+      } else if (timeFrameDates.end_date && timeFrameDates.start_date) {
+        cachedFetch({
+          url: '/api/data/get_table_data_performance',
+          method: 'POST',
+          body: {
+            userId: userInfo.clientPrincipal.userId,
+            startDate: timeFrameDates.start_date,
+            endDate: timeFrameDates.end_date,
+            containerName: 'stocks_held',
+          },
+          dispatcher: SingleDayDataReducer,
+          controller: abortController,
+        });
+      }
+      return () => {
+        abortController.abort();
+      };
+    }
+  }, [userInfo, timeFrameDates.end_date, timeFrameDates.start_date]);
 
   // Columns
   const valueGrowthColumns: ColumnsType = [
