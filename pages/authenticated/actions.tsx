@@ -2,11 +2,7 @@ import { Divider, Input, Typography, Button, Popconfirm } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useState, useEffect, useReducer } from 'react';
 import AntdTable from '../../components/elements/antdTable';
-import {
-  ApiWithMessage,
-  apiRequestReducer,
-  initialState,
-} from '../../components/utils/api';
+import { apiRequestReducer, initialState } from '../../components/utils/api';
 import {
   formatCurrency,
   formatImageAndText,
@@ -16,6 +12,7 @@ import AddXForm from '../../components/modules/formModal';
 import { UserInfo_Type, UserSettings_Type } from '../../components/types/types';
 import type { ColumnsType } from 'antd/es/table';
 import getTableDataBasic from '../../components/services/data/getTableDataBasic';
+import { deleteInputItems } from '../../components/services/delete';
 
 const { Search } = Input;
 const { Title, Text } = Typography;
@@ -204,20 +201,15 @@ export default function Home({
     id: string[],
     container: 'input_invested' | 'input_transactions'
   ) {
-    await ApiWithMessage(
-      `/api/delete/delete_input_items`,
-      'Deleting item',
-      'Item deleted',
-      'POST',
-      {
+    await deleteInputItems({
+      body: {
         itemIds: id,
         container: container,
         userId: userInfo.clientPrincipal.userId,
       },
-      'application/json'
-    ).then(() => {
+    }).then(() => {
       if (container === 'input_invested') {
-        const newData = InputInvestedData.filter(
+        const newData = InputInvestedData.data.filter(
           (item: any) => !id.includes(item.id)
         );
         InputInvestedDataDispatcher({
@@ -225,7 +217,7 @@ export default function Home({
           payload: newData,
         });
       } else if (container === 'input_transactions') {
-        const newData = InputTransactionsData.filter(
+        const newData = InputTransactionsData.data.filter(
           (item: any) => !id.includes(item.id)
         );
         InputTransactionsDataDispatcher({
