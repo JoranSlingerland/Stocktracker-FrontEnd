@@ -28,7 +28,7 @@ import {
 } from '../../components/types/types';
 import { currencyCodes } from '../../components/constants/currencyCodes';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
-import getUserData from '../../components/services/data/getUserData';
+import { getUserData } from '../../components/services/data';
 import {
   startOrchestrator,
   fetchOrchestratorList,

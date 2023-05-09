@@ -15,8 +15,10 @@ import {
 import useLocalStorageState from '../components/hooks/useLocalStorageState';
 import { dataToGetSwitch } from '../components/utils/dateTimeHelpers';
 import { totalsData } from '../components/constants/placeholders';
-import getUserData from '../components/services/data/getUserData';
-import getTableDataPerformance from '../components/services/data/getTableDataPerformance';
+import {
+  getUserData,
+  getTableDataPerformance,
+} from '../components/services/data';
 
 const { darkAlgorithm, defaultAlgorithm } = antdTheme;
 

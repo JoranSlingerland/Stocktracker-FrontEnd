@@ -18,9 +18,11 @@ import {
 } from '../../components/types/types';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
 import type { ColumnsType } from 'antd/es/table';
-import getBarchartData from '../../components/services/data/getBarchartData';
-import getLineChartData from '../../components/services/data/getLineChartData';
-import getTableDataPerformance from '../../components/services/data/getTableDataPerformance';
+import {
+  getBarchartData,
+  getLineChartData,
+  getTableDataPerformance,
+} from '../../components/services/data';
 
 const { Title } = Typography;
 

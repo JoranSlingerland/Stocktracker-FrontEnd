@@ -11,7 +11,7 @@ import {
 import AddXForm from '../../components/modules/formModal';
 import { UserInfo_Type, UserSettings_Type } from '../../components/types/types';
 import type { ColumnsType } from 'antd/es/table';
-import getTableDataBasic from '../../components/services/data/getTableDataBasic';
+import { getTableDataBasic } from '../../components/services/data';
 import { deleteInputItems } from '../../components/services/delete';
 
 const { Search } = Input;

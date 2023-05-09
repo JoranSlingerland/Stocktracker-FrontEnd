@@ -13,8 +13,7 @@ import {
 import { UserInfo_Type, UserSettings_Type } from '../../components/types/types';
 import type { ColumnsType } from 'antd/es/table';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
-import getPieData from '../../components/services/data/getPieData';
-import getTableDataBasic from '../../components/services/data/getTableDataBasic';
+import { getPieData, getTableDataBasic } from '../../components/services/data';
 
 const { Title, Text } = Typography;
 
