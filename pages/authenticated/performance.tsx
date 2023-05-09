@@ -143,45 +143,6 @@ export default function performance({
 
   // useEffects
   useEffect(() => {
-    if (!userInfo?.clientPrincipal?.userId || !timeFrame) {
-      return;
-    }
-    const abortController = new AbortController();
-
-    if (tab === 2) {
-      cachedFetch({
-        url: `/api/data/get_barchart_data`,
-        method: 'POST',
-        body: {
-          userId: userInfo.clientPrincipal.userId,
-          dataType: 'dividend',
-          dataToGet: timeFrame,
-        },
-        dispatcher: dividendDataReducer,
-        controller: abortController,
-      });
-    }
-
-    if (tab === 3) {
-      cachedFetch({
-        url: `/api/data/get_barchart_data`,
-        method: 'POST',
-        body: {
-          userId: userInfo.clientPrincipal.userId,
-          dataType: 'transaction_cost',
-          dataToGet: timeFrame,
-        },
-        dispatcher: totalTransactionCostDataReducer,
-        controller: abortController,
-      });
-    }
-
-    return () => {
-      abortController.abort();
-    };
-  }, [timeFrame, userInfo, tab]);
-
-  useEffect(() => {
     if (!userInfo?.clientPrincipal?.userId) {
       return;
     }
@@ -189,7 +150,6 @@ export default function performance({
     const { start_date, end_date } = timeFrameDates;
     const body: any = {
       userId: userInfo.clientPrincipal.userId,
-      dataType: 'total_gains',
     };
     if (end_date === 'max' && start_date === 'max') {
       body.allData = true;
@@ -201,12 +161,42 @@ export default function performance({
     }
 
     const abortController = new AbortController();
+
+    if (tab === 2) {
+      cachedFetch({
+        url: `/api/data/get_barchart_data`,
+        method: 'POST',
+        body: {
+          ...body,
+          dataType: 'dividend',
+        },
+        dispatcher: dividendDataReducer,
+        controller: abortController,
+      });
+    }
+
+    if (tab === 3) {
+      cachedFetch({
+        url: `/api/data/get_barchart_data`,
+        method: 'POST',
+        body: {
+          ...body,
+          dataType: 'transaction_cost',
+        },
+        dispatcher: totalTransactionCostDataReducer,
+        controller: abortController,
+      });
+    }
+
     if (tab === 4) {
       cachedFetch({
         url: '/api/data/get_linechart_data',
         method: 'POST',
         fallback_data: totalGainsDataFallBackObject,
-        body,
+        body: {
+          ...body,
+          dataType: 'total_gains',
+        },
         dispatcher: totalGainsDataReducer,
         controller: abortController,
       });
