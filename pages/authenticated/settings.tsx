@@ -22,7 +22,6 @@ import {
   ApiWithMessage,
   apiRequestReducer,
   initialState,
-  regularFetch,
 } from '../../components/utils/api';
 import useWindowDimensions from '../../components/hooks/useWindowDimensions';
 import AntdTable from '../../components/elements/antdTable';
@@ -34,27 +33,14 @@ import {
 import { currencyCodes } from '../../components/constants/currencyCodes';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
 import getUserData from '../../components/services/data/getUserData';
+import {
+  startOrchestrator,
+  fetchOrchestratorList,
+  purgeOrchestrator,
+  terminateOrchestrator,
+} from '../../components/services/orchestrator';
 
 const { Text, Title, Link } = Typography;
-
-async function fetchOrchestratorList(
-  userInfo: any,
-  dispatcher?: any,
-  controller?: any,
-  background?: boolean
-) {
-  regularFetch({
-    url: `/api/orchestrator/list`,
-    method: 'POST',
-    body: {
-      userId: userInfo.clientPrincipal.userId,
-      days: 7,
-    },
-    dispatcher: dispatcher,
-    controller: controller,
-    background: background,
-  });
-}
 
 export default function Home({
   userInfo,
@@ -122,7 +108,11 @@ export default function Home({
   useEffect(() => {
     if (userInfo.clientPrincipal.userId !== '' && tab === '3') {
       const abortController = new AbortController();
-      fetchOrchestratorList(userInfo, orchestratorDispatch, abortController);
+      fetchOrchestratorList({
+        body: { userId: userInfo.clientPrincipal.userId, days: 7 },
+        dispatcher: orchestratorDispatch,
+        abortController,
+      });
       return () => abortController.abort();
     }
   }, [userInfo, tab]);
@@ -131,12 +121,12 @@ export default function Home({
     const interval = setInterval(() => {
       if (userInfo.clientPrincipal.userId !== '' && tab === '3') {
         const abortController = new AbortController();
-        fetchOrchestratorList(
-          userInfo,
-          orchestratorDispatch,
+        fetchOrchestratorList({
+          body: { userId: userInfo.clientPrincipal.userId, days: 7 },
+          dispatcher: orchestratorDispatch,
           abortController,
-          true
-        );
+          background: true,
+        });
         return () => abortController.abort();
       }
     }, 10000);
@@ -206,15 +196,12 @@ export default function Home({
           <Popconfirm
             title="Are you sure you want to terminate this orchestrator?"
             onConfirm={() => {
-              handleClickOrchestratorAction(
-                '/api/orchestrator/terminate',
-                'Terminating orchestrator',
-                'Orchestrator terminated',
-                {
+              terminateOrchestrator({
+                body: {
                   instanceId: record.instanceId,
                   userId: userInfo.clientPrincipal.userId,
-                }
-              );
+                },
+              });
             }}
             okText="Yes"
             cancelText="No"
@@ -238,15 +225,12 @@ export default function Home({
           <Popconfirm
             title="Are you sure you want to purge this orchestrator?"
             onConfirm={() => {
-              handleClickOrchestratorAction(
-                '/api/orchestrator/purge',
-                'Purging orchestrator',
-                'Orchestrator purged',
-                {
-                  instanceId: record.instanceId,
+              purgeOrchestrator({
+                body: {
                   userId: userInfo.clientPrincipal.userId,
-                }
-              );
+                  instanceId: record.instanceId,
+                },
+              });
             }}
             okText="Yes"
             cancelText="No"
@@ -452,16 +436,13 @@ export default function Home({
               'This will Refresh all the data from scratch.',
               <Button
                 onClick={() =>
-                  handleClickOrchestratorAction(
-                    `/api/orchestrator/start`,
-                    'Calling Orchestrator',
-                    'Orchestration called, This will take a while',
-                    {
+                  startOrchestrator({
+                    body: {
                       userId: userInfo.clientPrincipal.userId,
                       functionName: 'stocktracker_orchestrator',
                       daysToUpdate: 'all',
-                    }
-                  )
+                    },
+                  })
                 }
                 type="primary"
                 size="large"

@@ -18,7 +18,6 @@ import {
   Skeleton,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { ApiWithMessage } from '../utils/api';
 import {
   UserInfo_Type,
   TimeFramestate,
@@ -30,6 +29,7 @@ import {
   formatPercentageWithColors,
 } from '../utils/formatting';
 import useLocalStorageState from '../hooks/useLocalStorageState';
+import { startOrchestrator } from '../services/orchestrator';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -330,18 +330,13 @@ export default function App({
             <Tooltip title="Will refresh the last 7 days">
               <a
                 onClick={() =>
-                  ApiWithMessage(
-                    `/api/orchestrator/start`,
-                    'Calling Orchestrator',
-                    'Orchestration called, This will take a bit',
-                    'POST',
-                    {
+                  startOrchestrator({
+                    body: {
                       userId: userInfo.clientPrincipal.userId,
                       functionName: 'stocktracker_orchestrator',
                       daysToUpdate: 7,
                     },
-                    'multipart/form-data'
-                  )
+                  })
                 }
               >
                 Quick refresh
