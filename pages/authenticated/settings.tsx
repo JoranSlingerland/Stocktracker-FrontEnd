@@ -32,7 +32,7 @@ import {
   userSettingsDispatch_Type,
   UserSettings_Type,
 } from '../../components/types/types';
-import currencyCodes from '../../shared/currency_codes.json';
+import { currencyCodes } from '../../components/constants/currencyCodes';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
 
 const { Text, Title, Link } = Typography;

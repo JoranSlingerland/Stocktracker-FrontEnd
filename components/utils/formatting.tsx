@@ -1,5 +1,6 @@
 import { Image, Typography } from 'antd';
 import { RiseOutlined, FallOutlined } from '@ant-design/icons';
+import { currencyCodes } from '../constants/currencyCodes';
 const { Text } = Typography;
 
 function formatCurrency({
@@ -14,6 +15,15 @@ function formatCurrency({
   if (currency === undefined || currency === '') {
     return formatNumber(value, maximumFractionDigits);
   }
+
+  if (
+    !currencyCodes.find(
+      (obj) => obj.value.toLowerCase() == currency.toLowerCase()
+    )
+  ) {
+    return formatNumber(value, maximumFractionDigits);
+  }
+
   return value.toLocaleString('nl-NL', {
     style: 'currency',
     currency: currency.toUpperCase(),
@@ -49,8 +59,15 @@ function formatCurrencyWithColors({
   if (typeof value === 'string') {
     value = parseFloat(value);
   }
+
   if (currency === undefined) {
     var formattedValue = formatCurrency({ value, maximumFractionDigits });
+  } else if (
+    !currencyCodes.find(
+      (obj) => obj.value.toLowerCase() == currency.toLowerCase()
+    )
+  ) {
+    var formattedValue = formatNumber(value, maximumFractionDigits);
   } else {
     var formattedValue = formatCurrency({
       value,
