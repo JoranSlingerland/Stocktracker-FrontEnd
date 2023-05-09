@@ -13,10 +13,10 @@ import {
 } from 'antd';
 import { useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import { ApiWithMessage } from '../utils/api';
 import { formatCurrency, getCurrencySymbol } from '../utils/formatting';
 import { UserSettings_Type, UserInfo_Type } from '../types/types';
 import { currencyCodes } from '../constants/currencyCodes';
+import { addItemToInput } from '../services/add';
 
 const { Text, Title } = Typography;
 
@@ -347,13 +347,7 @@ export default function AddXForm({
           items: [values],
         };
       }
-      const response = ApiWithMessage(
-        `/api/add/add_item_to_input`,
-        'Creating new items',
-        'Items Created',
-        'POST',
-        value
-      );
+      const response = addItemToInput({ body: value });
       return response;
     }
 

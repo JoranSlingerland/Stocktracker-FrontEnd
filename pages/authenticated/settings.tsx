@@ -18,11 +18,7 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 import { useEffect, useReducer } from 'react';
-import {
-  ApiWithMessage,
-  apiRequestReducer,
-  initialState,
-} from '../../components/utils/api';
+import { apiRequestReducer, initialState } from '../../components/utils/api';
 import useWindowDimensions from '../../components/hooks/useWindowDimensions';
 import AntdTable from '../../components/elements/antdTable';
 import {
@@ -43,6 +39,7 @@ import {
   createCosmosDbAndContainer,
   deleteCosmosDbContainer,
 } from '../../components/services/privileged';
+import { addUserData } from '../../components/services/add';
 
 const { Text, Title, Link } = Typography;
 
@@ -73,13 +70,9 @@ export default function Home({
 
   async function handleSaveAccountSettings() {
     userSettingsDispatch({ type: 'setLoading', payload: true });
-    await ApiWithMessage(
-      '/api/add/add_user_data',
-      'Saving account settings...',
-      'Account settings saved!',
-      'POST',
-      userSettings
-    ).then(() => {
+    await addUserData({
+      body: userSettings,
+    }).then(() => {
       getUserData({
         body: { userId: userInfo.clientPrincipal.userId },
         overWrite: true,
