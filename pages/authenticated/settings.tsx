@@ -39,6 +39,10 @@ import {
   purgeOrchestrator,
   terminateOrchestrator,
 } from '../../components/services/orchestrator';
+import {
+  createCosmosDbAndContainer,
+  deleteCosmosDbContainer,
+} from '../../components/services/privileged';
 
 const { Text, Title, Link } = Typography;
 
@@ -58,22 +62,6 @@ export default function Home({
   const [tab, setTab] = useLocalStorageState('settingsTab', '1');
 
   // handle click functions
-  async function handleClickOrchestratorAction(
-    url: string,
-    runningMessage: string,
-    successMessage: string,
-    body: object
-  ) {
-    ApiWithMessage(
-      url,
-      runningMessage,
-      successMessage,
-      'POST',
-      body,
-      'multipart/form-data'
-    );
-  }
-
   function handleLocalStorageClearClick() {
     localStorage.clear();
     if (localStorage.length === 0) {
@@ -496,13 +484,7 @@ export default function Home({
               'Create Containers',
               'This will create all containers and databases that do not exist yet.',
               <Button
-                onClick={() =>
-                  ApiWithMessage(
-                    '/api/privileged/create_cosmosdb_and_container',
-                    'Creating Containers',
-                    'Containers created :)'
-                  )
-                }
+                onClick={() => createCosmosDbAndContainer()}
                 type="primary"
                 size="large"
               >
@@ -530,14 +512,11 @@ export default function Home({
                   icon={false}
                   okButtonProps={{ danger: true, loading: false }}
                   onConfirm={() =>
-                    handleClickOrchestratorAction(
-                      `/api/privileged/delete_cosmosdb_container`,
-                      'Deleting Containers',
-                      'All Containers deleted :)',
-                      {
+                    deleteCosmosDbContainer({
+                      body: {
                         containersToDelete: 'output_only',
-                      }
-                    )
+                      },
+                    })
                   }
                 >
                   <Button danger type="primary" size="large">
@@ -557,14 +536,11 @@ export default function Home({
                   icon={false}
                   okButtonProps={{ danger: true, loading: false }}
                   onConfirm={() =>
-                    handleClickOrchestratorAction(
-                      `/api/privileged/delete_cosmosdb_container`,
-                      'Deleting Containers',
-                      'All Containers deleted :)',
-                      {
+                    deleteCosmosDbContainer({
+                      body: {
                         containersToDelete: 'all',
-                      }
-                    )
+                      },
+                    })
                   }
                 >
                   <Button danger type="primary" size="large">
