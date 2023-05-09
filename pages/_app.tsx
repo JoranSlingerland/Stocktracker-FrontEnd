@@ -5,7 +5,6 @@ import type { AppProps } from 'next/app';
 import { useEffect, useState, useReducer } from 'react';
 import {
   regularFetch,
-  cachedFetch,
   apiRequestReducer,
   initialState,
 } from '../components/utils/api';
@@ -16,6 +15,8 @@ import {
 import useLocalStorageState from '../components/hooks/useLocalStorageState';
 import { dataToGetSwitch } from '../components/utils/dateTimeHelpers';
 import { totalsData } from '../components/constants/placeholders';
+import getUserData from '../components/services/data/getUserData';
+import getTableDataPerformance from '../components/services/data/getTableDataPerformance';
 
 const { darkAlgorithm, defaultAlgorithm } = antdTheme;
 
@@ -88,15 +89,8 @@ function MyApp({ Component, pageProps }: AppProps) {
     });
   }
 
-  async function getAccountSettings(userInfo: any) {
-    await cachedFetch({
-      url: '/api/data/get_user_data',
-      fallback_data: {},
-      method: 'POST',
-      body: {
-        userId: userInfo,
-      },
-    }).then(({ response }) => {
+  async function getAccountSettings(userInfo: string) {
+    getUserData({ body: { userId: userInfo } }).then(({ response }) => {
       userSettingsDispatch({ type: 'setAll', payload: response });
     });
   }
@@ -142,13 +136,11 @@ function MyApp({ Component, pageProps }: AppProps) {
 
     const abortController = new AbortController();
 
-    cachedFetch({
-      url: '/api/data/get_table_data_performance',
-      fallback_data: [totalsData],
-      method: 'POST',
-      body,
+    getTableDataPerformance({
       dispatcher: totalPerformanceDataDispatch,
-      controller: abortController,
+      body,
+      abortController,
+      fallback_data: [totalsData],
     });
 
     return () => {

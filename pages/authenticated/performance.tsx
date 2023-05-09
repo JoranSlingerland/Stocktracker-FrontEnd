@@ -3,11 +3,7 @@ import React, { useEffect, useReducer, useMemo } from 'react';
 import { Divider, Segmented, Typography } from 'antd';
 import BasicLineGraph from '../../components/elements/PrimeFaceLineGraph';
 import PrimeFaceBarChart from '../../components/elements/PrimeFaceBarChart';
-import {
-  cachedFetch,
-  apiRequestReducer,
-  initialState,
-} from '../../components/utils/api';
+import { apiRequestReducer, initialState } from '../../components/utils/api';
 import AntdTable from '../../components/elements/antdTable';
 import {
   formatCurrency,
@@ -22,6 +18,9 @@ import {
 } from '../../components/types/types';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
 import type { ColumnsType } from 'antd/es/table';
+import getBarchartData from '../../components/services/data/getBarchartData';
+import getLineChartData from '../../components/services/data/getLineChartData';
+import getTableDataPerformance from '../../components/services/data/getTableDataPerformance';
 
 const { Title } = Typography;
 
@@ -163,42 +162,36 @@ export default function performance({
     const abortController = new AbortController();
 
     if (tab === 2) {
-      cachedFetch({
-        url: `/api/data/get_barchart_data`,
-        method: 'POST',
+      getBarchartData({
+        dispatcher: dividendDataReducer,
+        abortController,
         body: {
           ...body,
           dataType: 'dividend',
         },
-        dispatcher: dividendDataReducer,
-        controller: abortController,
       });
     }
 
     if (tab === 3) {
-      cachedFetch({
-        url: `/api/data/get_barchart_data`,
-        method: 'POST',
+      getBarchartData({
+        dispatcher: totalTransactionCostDataReducer,
+        abortController,
         body: {
           ...body,
           dataType: 'transaction_cost',
         },
-        dispatcher: totalTransactionCostDataReducer,
-        controller: abortController,
       });
     }
 
     if (tab === 4) {
-      cachedFetch({
-        url: '/api/data/get_linechart_data',
-        method: 'POST',
-        fallback_data: totalGainsDataFallBackObject,
+      getLineChartData({
+        dispatcher: totalGainsDataReducer,
+        abortController,
         body: {
           ...body,
           dataType: 'total_gains',
         },
-        dispatcher: totalGainsDataReducer,
-        controller: abortController,
+        fallback_data: totalGainsDataFallBackObject,
       });
     }
 
@@ -227,27 +220,23 @@ export default function performance({
     }
 
     const abortController = new AbortController();
-    cachedFetch({
-      url: '/api/data/get_table_data_performance',
-      method: 'POST',
+    getTableDataPerformance({
+      dispatcher: SingleDayDataReducer,
+      abortController,
       body: {
         ...body,
-        containerName: 'stocks_held',
+        dataType: 'stocks_held',
       },
-      dispatcher: SingleDayDataReducer,
-      controller: abortController,
     });
 
-    cachedFetch({
-      url: `/api/data/get_linechart_data`,
-      method: 'POST',
-      fallback_data: valueGrowthDataFallBackObject,
+    getLineChartData({
+      dispatcher: valueGrowthDataReducer,
+      abortController,
       body: {
         ...body,
         dataType: 'invested_and_value',
       },
-      dispatcher: valueGrowthDataReducer,
-      controller: abortController,
+      fallback_data: valueGrowthDataFallBackObject,
     });
 
     return () => {

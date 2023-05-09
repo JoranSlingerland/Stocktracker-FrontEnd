@@ -2,11 +2,7 @@ import { Tabs, Collapse, Typography } from 'antd';
 import { useEffect, useReducer } from 'react';
 import PieChart from '../../components/elements/PrimeFacePieChart';
 import AntdTable from '../../components/elements/antdTable';
-import {
-  cachedFetch,
-  apiRequestReducer,
-  initialState,
-} from '../../components/utils/api';
+import { apiRequestReducer, initialState } from '../../components/utils/api';
 import {
   formatCurrency,
   formatCurrencyWithColors,
@@ -17,6 +13,8 @@ import {
 import { UserInfo_Type, UserSettings_Type } from '../../components/types/types';
 import type { ColumnsType } from 'antd/es/table';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
+import getPieData from '../../components/services/data/getPieData';
+import getTableDataBasic from '../../components/services/data/getTableDataBasic';
 
 const { Title, Text } = Typography;
 
@@ -71,55 +69,44 @@ export default function Home({
     if (userInfo.clientPrincipal.userId !== '') {
       const abortController = new AbortController();
       if (tab === '1') {
-        cachedFetch({
-          url: `/api/data/get_pie_data`,
-          fallback_data: fallbackObject,
-          method: 'POST',
+        getPieData({
           body: {
             userId: userInfo.clientPrincipal.userId,
             dataType: 'stocks',
           },
           dispatcher: StockPieDataDispatcher,
-          controller: abortController,
+          abortController,
         });
       }
       if (tab === '2') {
-        cachedFetch({
-          url: `/api/data/get_pie_data`,
-          fallback_data: fallbackObject,
-          method: 'POST',
+        getPieData({
           body: {
             userId: userInfo.clientPrincipal.userId,
             dataType: 'sector',
           },
           dispatcher: SectorPieDataReducer,
-          controller: abortController,
+          abortController,
         });
       }
       if (tab === '3') {
-        cachedFetch({
-          url: `/api/data/get_pie_data`,
-          fallback_data: fallbackObject,
-          method: 'POST',
+        getPieData({
           body: {
             userId: userInfo.clientPrincipal.userId,
             dataType: 'country',
           },
+
           dispatcher: CountryPieDataReducer,
-          controller: abortController,
+          abortController,
         });
       }
       if (tab === '4') {
-        cachedFetch({
-          url: `/api/data/get_pie_data`,
-          fallback_data: fallbackObject,
-          method: 'POST',
+        getPieData({
           body: {
             userId: userInfo.clientPrincipal.userId,
             dataType: 'currency',
           },
           dispatcher: CurrencyPieDataDispatcher,
-          controller: abortController,
+          abortController,
         });
       }
       return () => {
@@ -131,17 +118,17 @@ export default function Home({
   useEffect(() => {
     if (userInfo.clientPrincipal.userId !== '') {
       const abortController = new AbortController();
-      cachedFetch({
-        url: `/api/data/get_table_data_basic`,
-        method: 'POST',
+
+      getTableDataBasic({
+        dispatcher: unRealizedDataDispatcher,
+        abortController,
         body: {
+          fullyRealized: false,
           userId: userInfo.clientPrincipal.userId,
           containerName: 'stocks_held',
-          fullyRealized: false,
         },
-        dispatcher: unRealizedDataDispatcher,
-        controller: abortController,
       });
+
       return () => {
         abortController.abort();
       };
@@ -151,19 +138,19 @@ export default function Home({
   useEffect(() => {
     if (userInfo.clientPrincipal.userId !== '' && CollapseKey === '1') {
       const abortController = new AbortController();
-      cachedFetch({
-        url: `/api/data/get_table_data_basic`,
-        method: 'POST',
+
+      getTableDataBasic({
+        dispatcher: RealizedDataDispatcher,
+        abortController,
         body: {
           userId: userInfo.clientPrincipal.userId,
-          containerName: 'stocks_held',
           fullyRealized: true,
           partialRealized: true,
           andOr: 'or',
+          containerName: 'stocks_held',
         },
-        dispatcher: RealizedDataDispatcher,
-        controller: abortController,
       });
+
       return () => {
         abortController.abort();
       };

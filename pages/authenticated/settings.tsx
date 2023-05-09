@@ -23,7 +23,6 @@ import {
   apiRequestReducer,
   initialState,
   regularFetch,
-  overwriteCachedFetch,
 } from '../../components/utils/api';
 import useWindowDimensions from '../../components/hooks/useWindowDimensions';
 import AntdTable from '../../components/elements/antdTable';
@@ -34,6 +33,7 @@ import {
 } from '../../components/types/types';
 import { currencyCodes } from '../../components/constants/currencyCodes';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
+import getUserData from '../../components/services/data/getUserData';
 
 const { Text, Title, Link } = Typography;
 
@@ -106,13 +106,9 @@ export default function Home({
       'POST',
       userSettings
     ).then(() => {
-      overwriteCachedFetch({
-        url: '/api/data/get_user_data',
-        fallback_data: {},
-        method: 'POST',
-        body: {
-          userId: userInfo.clientPrincipal.userId,
-        },
+      getUserData({
+        body: { userId: userInfo.clientPrincipal.userId },
+        overWrite: true,
       }).then(({ response }) => {
         userSettingsDispatch({
           type: 'setAll',

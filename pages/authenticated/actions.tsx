@@ -3,8 +3,6 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { useState, useEffect, useReducer } from 'react';
 import AntdTable from '../../components/elements/antdTable';
 import {
-  cachedFetch,
-  overwriteCachedFetch,
   ApiWithMessage,
   apiRequestReducer,
   initialState,
@@ -17,6 +15,7 @@ import {
 import AddXForm from '../../components/modules/formModal';
 import { UserInfo_Type, UserSettings_Type } from '../../components/types/types';
 import type { ColumnsType } from 'antd/es/table';
+import getTableDataBasic from '../../components/services/data/getTableDataBasic';
 
 const { Search } = Input;
 const { Title, Text } = Typography;
@@ -176,25 +175,22 @@ export default function Home({
   useEffect(() => {
     if (userInfo.clientPrincipal.userId !== '') {
       const abortController = new AbortController();
-      cachedFetch({
-        url: `/api/data/get_table_data_basic`,
-        method: 'POST',
+
+      getTableDataBasic({
         body: {
           userId: userInfo.clientPrincipal.userId,
           containerName: 'input_transactions',
         },
-        controller: abortController,
+        abortController,
         dispatcher: InputTransactionsDataDispatcher,
       });
 
-      cachedFetch({
-        url: `/api/data/get_table_data_basic`,
-        method: 'POST',
+      getTableDataBasic({
         body: {
           userId: userInfo.clientPrincipal.userId,
           containerName: 'input_invested',
         },
-        controller: abortController,
+        abortController,
         dispatcher: InputInvestedDataDispatcher,
       });
       return () => {
@@ -249,15 +245,14 @@ export default function Home({
         ? InputInvestedDataDispatcher
         : InputTransactionsDataDispatcher;
 
-    overwriteCachedFetch({
-      url: `/api/data/get_table_data_basic`,
-      method: 'POST',
+    getTableDataBasic({
       body: {
         userId: userInfo.clientPrincipal.userId,
         containerName: container,
       },
+      abortController: new AbortController(),
       dispatcher: dispatch,
-      background: true,
+      overWrite: true,
     });
   }
 
