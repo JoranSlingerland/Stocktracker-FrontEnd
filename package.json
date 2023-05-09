@@ -17,7 +17,7 @@
     "@types/react-router-dom": "^5.3.3",
     "antd": "^5.4.7",
     "autoprefixer": "^10.4.14",
-    "chart.js": "^4.2.1",
+    "chart.js": "^4.3.0",
     "chartjs-plugin-datalabels": "^2.2.0",
     "isomorphic-unfetch": "^4.0.2",
     "next": "^13.4.1",
