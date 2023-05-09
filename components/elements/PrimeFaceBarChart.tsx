@@ -1,7 +1,7 @@
 import { Chart } from 'primereact/chart';
 import { Spin } from 'antd';
 import { formatCurrency } from '../utils/formatting';
-import { UserSettings_Type } from '../utils/types';
+import { UserSettings_Type } from '../types/types';
 
 export default function PrimeFacePieChart({
   data,
@@ -96,9 +96,10 @@ export default function PrimeFacePieChart({
     datasets: barchart_datasets,
   };
 
-  let stackedOptions = {
+  const stackedOptions = {
+    responsive: true,
     maintainAspectRatio: false,
-    aspectRatio: 0.8,
+    aspectRatio: 0.6,
     plugins: {
       tooltip: {
         callbacks: {
@@ -127,6 +128,22 @@ export default function PrimeFacePieChart({
           color: 'rgb(120 113 108)',
         },
         stacked: true,
+        max: function (context: any) {
+          let max = 10;
+          let customMax = false;
+          for (let i = 0; i < context.chart.data.datasets.length; i++) {
+            for (let j = 0; j < context.chart.data.datasets[i].data.length; j++)
+              if (context.chart.data.datasets[i].data[j] > max) {
+                max = context.chart.data.datasets[i].data[j] * 1.1;
+                customMax = true;
+              }
+          }
+          if (customMax) {
+            return max;
+          } else {
+            return 10;
+          }
+        },
         ticks: {
           callback: function (value: number) {
             if (Math.floor(value) === value) {
@@ -142,9 +159,20 @@ export default function PrimeFacePieChart({
     },
   };
 
+  if (isloading)
+    return (
+      <div className="h-[500px]">
+        <Spin spinning={isloading}>
+          <Chart type="bar" data={{}} options={stackedOptions} />
+        </Spin>
+      </div>
+    );
+
   return (
-    <Spin spinning={isloading}>
-      <Chart type="bar" data={stackedData} options={stackedOptions} />
-    </Spin>
+    <div className="h-[500px]">
+      <Spin spinning={isloading}>
+        <Chart type="bar" data={stackedData} options={stackedOptions} />
+      </Spin>
+    </div>
   );
 }

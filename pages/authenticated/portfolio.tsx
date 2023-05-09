@@ -1,17 +1,19 @@
 import { Tabs, Collapse, Typography } from 'antd';
-import { useEffect, useState } from 'react';
-import PieChart from '../../components/PrimeFacePieChart';
-import AntdTable from '../../components/antdTable';
-import { cachedFetch } from '../../utils/api-utils';
+import { useEffect, useReducer } from 'react';
+import PieChart from '../../components/elements/PrimeFacePieChart';
+import AntdTable from '../../components/elements/antdTable';
+import { apiRequestReducer, initialState } from '../../components/utils/api';
 import {
   formatCurrency,
   formatCurrencyWithColors,
   formatPercentageWithColors,
   formatNumber,
   formatImageAndText,
-} from '../../utils/formatting';
-import { UserInfo_Type, UserSettings_Type } from '../../utils/types';
+} from '../../components/utils/formatting';
+import { UserInfo_Type, UserSettings_Type } from '../../components/types/types';
 import type { ColumnsType } from 'antd/es/table';
+import useLocalStorageState from '../../components/hooks/useLocalStorageState';
+import { getPieData, getTableDataBasic } from '../../components/services/data';
 
 const { Title, Text } = Typography;
 
@@ -23,78 +25,6 @@ const fallbackObject = {
   color: [],
 };
 
-async function fetchUnRealizedData(userInfo: UserInfo_Type) {
-  const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
-    userId: userInfo.clientPrincipal.userId,
-    containerName: 'stocks_held',
-    fullyRealized: false,
-  });
-  return { data: data, loading: false };
-}
-
-async function fetchRealizedData(userInfo: UserInfo_Type) {
-  const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
-    userId: userInfo.clientPrincipal.userId,
-    containerName: 'stocks_held',
-    fullyRealized: true,
-    partialRealized: true,
-    andOr: 'or',
-  });
-  return { data: data, loading: false };
-}
-
-async function fetchStockPieData(userInfo: UserInfo_Type) {
-  const data = await cachedFetch(
-    `/api/data/get_pie_data`,
-    fallbackObject,
-    'POST',
-    {
-      userId: userInfo.clientPrincipal.userId,
-      dataType: 'stocks',
-    }
-  );
-  return { data: data, loading: false };
-}
-
-async function fetchCurrencyPieData(userInfo: UserInfo_Type) {
-  const data = await cachedFetch(
-    `/api/data/get_pie_data`,
-    fallbackObject,
-    'POST',
-    {
-      userId: userInfo.clientPrincipal.userId,
-      dataType: 'currency',
-    }
-  );
-  return { data: data, loading: false };
-}
-
-async function fetchSectorPieData(userInfo: UserInfo_Type) {
-  const data = await cachedFetch(
-    `/api/data/get_pie_data`,
-    fallbackObject,
-    'POST',
-    {
-      userId: userInfo.clientPrincipal.userId,
-      dataType: 'sector',
-    }
-  );
-  return { data: data, loading: false };
-}
-
-async function fetchCountryPieData(userInfo: UserInfo_Type) {
-  const data = await cachedFetch(
-    `/api/data/get_pie_data`,
-    fallbackObject,
-    'POST',
-    {
-      userId: userInfo.clientPrincipal.userId,
-      dataType: 'country',
-    }
-  );
-  return { data: data, loading: false };
-}
-
 export default function Home({
   userInfo,
   userSettings,
@@ -103,49 +33,128 @@ export default function Home({
   userSettings: UserSettings_Type;
 }) {
   // Const setup
-  const [UnRealizedData, setUnRealizedData] = useState([null]);
-  const [UnRealizedDataisLoading, setUnRealizedDataisLoading] = useState(true);
-  const [RealizedData, setRealizedData] = useState(null);
-  const [RealizedDataisLoading, setRealizedDataisLoading] = useState(true);
-  const [StockPieData, setStockPieData] = useState(fallbackObject);
-  const [StockPieDataisLoading, setStockPieDataisLoading] = useState(true);
-  const [CurrencyPieData, setCurrencyPieData] = useState(fallbackObject);
-  const [CurrencyPieDataisLoading, setCurrencyPieDataisLoading] =
-    useState(true);
-  const [SectorPieData, setSectorPieData] = useState(fallbackObject);
-  const [SectorPieDataisLoading, setSectorPieDataisLoading] = useState(true);
-  const [CountryPieData, setCountryPieData] = useState(fallbackObject);
-  const [CountryPieDataisLoading, setCountryPieDataisLoading] = useState(true);
+  const [UnRealizedData, unRealizedDataDispatcher] = useReducer(
+    apiRequestReducer,
+    initialState({ isLoading: true })
+  );
+  const [RealizedData, RealizedDataDispatcher] = useReducer(
+    apiRequestReducer,
+    initialState({ isLoading: true })
+  );
+  const [StockPieData, StockPieDataDispatcher] = useReducer(
+    apiRequestReducer,
+    initialState({ fallback_data: fallbackObject, isLoading: true })
+  );
+  const [CurrencyPieData, CurrencyPieDataDispatcher] = useReducer(
+    apiRequestReducer,
+    initialState({ fallback_data: fallbackObject, isLoading: true })
+  );
+  const [SectorPieData, SectorPieDataReducer] = useReducer(
+    apiRequestReducer,
+    initialState({ fallback_data: fallbackObject, isLoading: true })
+  );
+  const [CountryPieData, CountryPieDataReducer] = useReducer(
+    apiRequestReducer,
+    initialState({ fallback_data: fallbackObject, isLoading: true })
+  );
+  const [tab, setTab] = useLocalStorageState('portfolioTab', '1');
+  const [CollapseKey, setCollapseKey] = useLocalStorageState(
+    'portfolioCollapse',
+    '0'
+  );
 
-  // Fetch data on page load
+  // UseEffect setup
   useEffect(() => {
     if (userInfo.clientPrincipal.userId !== '') {
-      fetchUnRealizedData(userInfo).then(({ data, loading }) => {
-        setUnRealizedData(data);
-        setUnRealizedDataisLoading(loading);
+      const abortController = new AbortController();
+      if (tab === '1') {
+        getPieData({
+          body: {
+            userId: userInfo.clientPrincipal.userId,
+            dataType: 'stocks',
+          },
+          dispatcher: StockPieDataDispatcher,
+          abortController,
+        });
+      }
+      if (tab === '2') {
+        getPieData({
+          body: {
+            userId: userInfo.clientPrincipal.userId,
+            dataType: 'sector',
+          },
+          dispatcher: SectorPieDataReducer,
+          abortController,
+        });
+      }
+      if (tab === '3') {
+        getPieData({
+          body: {
+            userId: userInfo.clientPrincipal.userId,
+            dataType: 'country',
+          },
+
+          dispatcher: CountryPieDataReducer,
+          abortController,
+        });
+      }
+      if (tab === '4') {
+        getPieData({
+          body: {
+            userId: userInfo.clientPrincipal.userId,
+            dataType: 'currency',
+          },
+          dispatcher: CurrencyPieDataDispatcher,
+          abortController,
+        });
+      }
+      return () => {
+        abortController.abort();
+      };
+    }
+  }, [userInfo, tab]);
+
+  useEffect(() => {
+    if (userInfo.clientPrincipal.userId !== '') {
+      const abortController = new AbortController();
+
+      getTableDataBasic({
+        dispatcher: unRealizedDataDispatcher,
+        abortController,
+        body: {
+          fullyRealized: false,
+          userId: userInfo.clientPrincipal.userId,
+          containerName: 'stocks_held',
+        },
       });
-      fetchRealizedData(userInfo).then(({ data, loading }) => {
-        setRealizedData(data);
-        setRealizedDataisLoading(loading);
-      });
-      fetchStockPieData(userInfo).then(({ data, loading }) => {
-        setStockPieData(data);
-        setStockPieDataisLoading(loading);
-      });
-      fetchCurrencyPieData(userInfo).then(({ data, loading }) => {
-        setCurrencyPieData(data);
-        setCurrencyPieDataisLoading(loading);
-      });
-      fetchSectorPieData(userInfo).then(({ data, loading }) => {
-        setSectorPieData(data);
-        setSectorPieDataisLoading(loading);
-      });
-      fetchCountryPieData(userInfo).then(({ data, loading }) => {
-        setCountryPieData(data);
-        setCountryPieDataisLoading(loading);
-      });
+
+      return () => {
+        abortController.abort();
+      };
     }
   }, [userInfo]);
+
+  useEffect(() => {
+    if (userInfo.clientPrincipal.userId !== '' && CollapseKey === '1') {
+      const abortController = new AbortController();
+
+      getTableDataBasic({
+        dispatcher: RealizedDataDispatcher,
+        abortController,
+        body: {
+          userId: userInfo.clientPrincipal.userId,
+          fullyRealized: true,
+          partialRealized: true,
+          andOr: 'or',
+          containerName: 'stocks_held',
+        },
+      });
+
+      return () => {
+        abortController.abort();
+      };
+    }
+  }, [userInfo, CollapseKey]);
 
   // Tabs setup
   const items = [
@@ -153,49 +162,57 @@ export default function Home({
       key: '1',
       label: 'Stocks',
       children: (
-        <PieChart
-          data={StockPieData}
-          isloading={StockPieDataisLoading}
-          userSettings={userSettings}
-        />
+        <div className="min-h-96">
+          <PieChart
+            data={StockPieData.data}
+            isloading={StockPieData.isLoading}
+            userSettings={userSettings}
+          />
+        </div>
       ),
     },
     {
       key: '2',
       label: 'Sector',
       children: (
-        <PieChart
-          data={SectorPieData}
-          isloading={SectorPieDataisLoading}
-          userSettings={userSettings}
-        />
+        <div className="min-h-96">
+          <PieChart
+            data={SectorPieData.data}
+            isloading={SectorPieData.isLoading}
+            userSettings={userSettings}
+          />
+        </div>
       ),
     },
     {
       key: '3',
       label: 'Country',
       children: (
-        <PieChart
-          data={CountryPieData}
-          isloading={CountryPieDataisLoading}
-          userSettings={userSettings}
-        />
+        <div className="min-h-96">
+          <PieChart
+            data={CountryPieData.data}
+            isloading={CountryPieData.isLoading}
+            userSettings={userSettings}
+          />
+        </div>
       ),
     },
     {
       key: '4',
       label: 'Currency',
       children: (
-        <PieChart
-          data={CurrencyPieData}
-          isloading={CurrencyPieDataisLoading}
-          userSettings={userSettings}
-        />
+        <div className="min-h-96">
+          <PieChart
+            data={CurrencyPieData.data}
+            isloading={CurrencyPieData.isLoading}
+            userSettings={userSettings}
+          />
+        </div>
       ),
     },
   ];
 
-  // Columns
+  // Columns setup
 
   const UnRealizedColumns: ColumnsType = [
     {
@@ -203,19 +220,16 @@ export default function Home({
       dataIndex: 'meta',
       key: 'meta.name',
       fixed: 'left',
-      width: 120,
-      render: (text: any, record: any) => (
-        <div className="min-w-16">
-          {formatImageAndText(record.symbol, text.name, record.meta.logo)}
-        </div>
-      ),
+      render: (text: any, record: any) =>
+        formatImageAndText(record.symbol, text.name, record.meta.logo),
     },
     {
-      title: 'Total Cost',
+      title: 'Cost',
       dataIndex: 'unrealized',
       key: 'unrealized.total_cost',
+      responsive: ['md'],
       render: (text: { total_cost: string | number }, record: any) => (
-        <div className="min-w-32">
+        <div>
           <Text strong>
             {formatCurrency({
               value: text.total_cost,
@@ -235,11 +249,11 @@ export default function Home({
       ),
     },
     {
-      title: 'Total Value',
+      title: 'Value',
       dataIndex: 'unrealized',
       key: 'unrealized.total_value',
       render: (text: { total_value: string | number }, record: any) => (
-        <div className="min-w-32">
+        <div>
           <Text strong>
             {formatCurrency({
               value: text.total_value,
@@ -259,18 +273,20 @@ export default function Home({
       ),
     },
     {
-      title: 'Profit / Loss',
+      title: 'P/L',
       dataIndex: 'unrealized',
       key: 'unrealized.total_pl',
       render: (text) => (
-        <div className="min-w-32">
+        <div>
           <div>
             {formatCurrencyWithColors({
               value: text.total_pl,
               currency: userSettings.currency,
             })}
           </div>
-          <div>{formatPercentageWithColors(text.total_pl_percentage)}</div>
+          <div>
+            {formatPercentageWithColors({ value: text.total_pl_percentage })}
+          </div>
         </div>
       ),
     },
@@ -282,19 +298,16 @@ export default function Home({
       dataIndex: 'meta',
       key: 'meta.name',
       fixed: 'left',
-      width: 200,
-      render: (text, record: any) => (
-        <div className="min-w-16">
-          {formatImageAndText(record.symbol, text.name, record.meta.logo)}
-        </div>
-      ),
+      render: (text, record: any) =>
+        formatImageAndText(record.symbol, text.name, record.meta.logo),
     },
     {
-      title: 'Total Cost',
+      title: 'Cost',
       dataIndex: 'realized',
       key: 'realized.buy_price',
+      responsive: ['md'],
       render: (text) => (
-        <div className="min-w-32">
+        <div>
           <Text strong>
             {formatCurrency({
               value: text.buy_price,
@@ -314,11 +327,11 @@ export default function Home({
       ),
     },
     {
-      title: 'Realized Price',
+      title: 'Realized',
       dataIndex: 'realized',
       key: 'realized.sell_price',
       render: (text) => (
-        <div className="min-w-32">
+        <div>
           <Text strong>
             {formatCurrency({
               value: text.sell_price,
@@ -340,18 +353,20 @@ export default function Home({
       ),
     },
     {
-      title: 'Profit / Loss',
+      title: 'P/L',
       dataIndex: 'realized',
       key: 'realized.total_pl',
       render: (text) => (
-        <div className="min-w-32">
+        <div>
           <div>
             {formatCurrencyWithColors({
               value: text.total_pl,
               currency: userSettings.currency,
             })}
           </div>
-          <div>{formatPercentageWithColors(text.total_pl_percentage)}</div>
+          <div>
+            {formatPercentageWithColors({ value: text.total_pl_percentage })}
+          </div>
         </div>
       ),
     },
@@ -368,14 +383,21 @@ export default function Home({
       </div>
       {/* Tabs */}
       <div>
-        <Tabs type="line" defaultActiveKey="1" items={items} />
+        <Tabs
+          type="line"
+          activeKey={tab}
+          onChange={(activeKey) => {
+            setTab(activeKey);
+          }}
+          items={items}
+        />
       </div>
       {/* Table */}
       <div>
         <AntdTable
           columns={UnRealizedColumns}
-          data={UnRealizedData}
-          isLoading={UnRealizedDataisLoading}
+          data={UnRealizedData.data}
+          isLoading={UnRealizedData.isLoading}
           globalSorter={true}
           tableProps={{
             scroll: true,
@@ -384,12 +406,19 @@ export default function Home({
       </div>
       {/* Table */}
       <div>
-        <Collapse bordered={false} ghost>
+        <Collapse
+          activeKey={CollapseKey}
+          onChange={() => {
+            setCollapseKey(CollapseKey === '1' ? '0' : '1');
+          }}
+          bordered={false}
+          ghost
+        >
           <Panel className="p-0" header="Realized Stocks" key="1">
             <AntdTable
               columns={RealizedColumns}
-              data={RealizedData}
-              isLoading={RealizedDataisLoading}
+              data={RealizedData.data}
+              isLoading={RealizedData.isLoading}
               globalSorter={true}
               tableProps={{
                 scroll: true,

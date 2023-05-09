@@ -1,42 +1,21 @@
 import { Divider, Input, Typography, Button, Popconfirm } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
-import { useState, useEffect } from 'react';
-import AntdTable from '../../components/antdTable';
-import {
-  cachedFetch,
-  overwriteCachedFetch,
-  ApiWithMessage,
-} from '../../utils/api-utils';
+import { useState, useEffect, useReducer } from 'react';
+import AntdTable from '../../components/elements/antdTable';
+import { apiRequestReducer, initialState } from '../../components/utils/api';
 import {
   formatCurrency,
   formatImageAndText,
   formatNumber,
-} from '../../utils/formatting';
-import AddXForm from '../../components/formModal';
-import { UserInfo_Type, UserSettings_Type } from '../../utils/types';
+} from '../../components/utils/formatting';
+import AddXForm from '../../components/modules/formModal';
+import { UserInfo_Type, UserSettings_Type } from '../../components/types/types';
 import type { ColumnsType } from 'antd/es/table';
+import { getTableDataBasic } from '../../components/services/data';
+import { deleteInputItems } from '../../components/services/delete';
 
 const { Search } = Input;
 const { Title, Text } = Typography;
-
-async function fetchTransactionsData(userInfo: UserInfo_Type) {
-  const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
-    userId: userInfo.clientPrincipal.userId,
-    containerName: 'input_transactions',
-  });
-  data.forEach((row: any) => {
-    row.total_cost = row.cost_per_share * row.quantity;
-  });
-  return { data: data, loading: false };
-}
-
-async function fetchInputInvestedData(userInfo: UserInfo_Type) {
-  const data = await cachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
-    userId: userInfo.clientPrincipal.userId,
-    containerName: 'input_invested',
-  });
-  return { data: data, loading: false };
-}
 
 export default function Home({
   userInfo,
@@ -45,14 +24,16 @@ export default function Home({
   userInfo: UserInfo_Type;
   userSettings: UserSettings_Type;
 }) {
-  const [InputTransactionsData, setInputTransactionsData]: any = useState();
-  const [InputTransactionsDataisLoading, setInputTransactionsDataisLoading] =
-    useState(true);
+  const [InputTransactionsData, InputTransactionsDataDispatcher] = useReducer(
+    apiRequestReducer,
+    initialState({ isLoading: true })
+  );
   const [InputTransactionsSearchText, setInputTransactionsSearchText] =
     useState<any>();
-  const [InputInvestedData, setInputInvestedData]: any = useState();
-  const [InputInvestedDataisLoading, setInputInvestedDataisLoading] =
-    useState(true);
+  const [InputInvestedData, InputInvestedDataDispatcher] = useReducer(
+    apiRequestReducer,
+    initialState({ isLoading: true })
+  );
   const [InputInvestedSearchText, setInputInvestedSearchText] =
     useState<any>(undefined);
 
@@ -190,14 +171,28 @@ export default function Home({
 
   useEffect(() => {
     if (userInfo.clientPrincipal.userId !== '') {
-      fetchTransactionsData(userInfo).then(({ data, loading }) => {
-        setInputTransactionsData(data);
-        setInputTransactionsDataisLoading(loading);
+      const abortController = new AbortController();
+
+      getTableDataBasic({
+        body: {
+          userId: userInfo.clientPrincipal.userId,
+          containerName: 'input_transactions',
+        },
+        abortController,
+        dispatcher: InputTransactionsDataDispatcher,
       });
-      fetchInputInvestedData(userInfo).then(({ data, loading }) => {
-        setInputInvestedData(data);
-        setInputInvestedDataisLoading(loading);
+
+      getTableDataBasic({
+        body: {
+          userId: userInfo.clientPrincipal.userId,
+          containerName: 'input_invested',
+        },
+        abortController,
+        dispatcher: InputInvestedDataDispatcher,
       });
+      return () => {
+        abortController.abort();
+      };
     }
   }, [userInfo]);
 
@@ -206,28 +201,29 @@ export default function Home({
     id: string[],
     container: 'input_invested' | 'input_transactions'
   ) {
-    await ApiWithMessage(
-      `/api/delete/delete_input_items`,
-      'Deleting item',
-      'Item deleted',
-      'POST',
-      {
+    await deleteInputItems({
+      body: {
         itemIds: id,
         container: container,
         userId: userInfo.clientPrincipal.userId,
       },
-      'application/json'
-    ).then(() => {
+    }).then(() => {
       if (container === 'input_invested') {
-        const newData = InputInvestedData.filter(
+        const newData = InputInvestedData.data.filter(
           (item: any) => !id.includes(item.id)
         );
-        setInputInvestedData(newData);
+        InputInvestedDataDispatcher({
+          type: 'FETCH_SUCCESS',
+          payload: newData,
+        });
       } else if (container === 'input_transactions') {
-        const newData = InputTransactionsData.filter(
+        const newData = InputTransactionsData.data.filter(
           (item: any) => !id.includes(item.id)
         );
-        setInputTransactionsData(newData);
+        InputTransactionsDataDispatcher({
+          type: 'FETCH_SUCCESS',
+          payload: newData,
+        });
       }
       overWriteTableData(container);
     });
@@ -236,13 +232,19 @@ export default function Home({
   async function overWriteTableData(
     container: 'input_invested' | 'input_transactions'
   ): Promise<void> {
-    overwriteCachedFetch(`/api/data/get_table_data_basic`, [], 'POST', {
-      userId: userInfo.clientPrincipal.userId,
-      containerName: container,
-    }).then((data) => {
-      if (container === 'input_invested') setInputInvestedData(data);
-      else if (container === 'input_transactions')
-        setInputTransactionsData(data);
+    const dispatch =
+      container === 'input_invested'
+        ? InputInvestedDataDispatcher
+        : InputTransactionsDataDispatcher;
+
+    getTableDataBasic({
+      body: {
+        userId: userInfo.clientPrincipal.userId,
+        containerName: container,
+      },
+      abortController: new AbortController(),
+      dispatcher: dispatch,
+      overWrite: true,
     });
   }
 
@@ -258,9 +260,9 @@ export default function Home({
           Stock Transactions
         </Title>
         <AntdTable
-          isLoading={InputTransactionsDataisLoading}
+          isLoading={InputTransactionsData.isLoading}
           columns={InputTransactionsColumns}
-          data={InputTransactionsData}
+          data={InputTransactionsData.data}
           globalSorter={true}
           searchEnabled={true}
           searchText={InputTransactionsSearchText}
@@ -293,6 +295,7 @@ export default function Home({
                   form={'addStock'}
                   parentCallback={overWriteTableData}
                   userSettings={userSettings}
+                  userInfo={userInfo}
                 />
               </div>
             </div>
@@ -304,9 +307,9 @@ export default function Home({
             Money Transactions
           </Title>
           <AntdTable
-            isLoading={InputInvestedDataisLoading}
+            isLoading={InputInvestedData.isLoading}
             columns={InputInvestedColumns}
-            data={InputInvestedData}
+            data={InputInvestedData.data}
             globalSorter={true}
             searchEnabled={true}
             searchText={InputInvestedSearchText}
@@ -339,6 +342,7 @@ export default function Home({
                     form={'addTransaction'}
                     parentCallback={overWriteTableData}
                     userSettings={userSettings}
+                    userInfo={userInfo}
                   />
                 </div>
               </div>

@@ -1,46 +1,31 @@
-import { useRouter } from 'next/router';
-import { Skeleton, Typography, Statistic } from 'antd';
-import { RiseOutlined, FallOutlined } from '@ant-design/icons';
-import { formatCurrency, formatPercentage } from '../utils/formatting';
-import { UserSettings_Type } from '../utils/types';
-
-const { Text } = Typography;
+import { Skeleton, Statistic } from 'antd';
+import {
+  formatCurrency,
+  formatPercentageWithColors,
+} from '../utils/formatting';
+import { UserSettings_Type } from '../types/types';
 
 export default function tabs({
-  topBarData,
+  totalPerformanceData,
+  valueGrowthData,
   loading,
-  handleTabChange,
   userSettings,
+  tabState,
 }: {
-  topBarData: any;
+  totalPerformanceData: any;
+  valueGrowthData: any;
   loading: boolean;
-  handleTabChange: (tab: number) => void;
   userSettings: UserSettings_Type;
+  tabState: any;
 }): JSX.Element {
-  const tab = Number(useRouter().query.tab || 1);
-  const PercentageFormat = (value: number | string) => {
-    if (typeof value === 'string') {
-      value = parseFloat(value);
-    }
-    if (value > 0) {
-      const data = formatPercentage(value);
-      return (
-        <Text strong type="success">
-          <RiseOutlined /> {data}
-        </Text>
-      );
-    } else if (value < 0) {
-      const data = formatPercentage(value);
-      return (
-        <Text strong type="danger">
-          <FallOutlined /> {data}
-        </Text>
-      );
-    } else {
-      const data = formatPercentage(value);
-      return data;
-    }
-  };
+  const { tab, setTab } = tabState;
+  const firstData = valueGrowthData.datasets[0].data[0];
+  const lastData =
+    valueGrowthData.datasets[0].data[
+      valueGrowthData.datasets[0].data.length - 1
+    ];
+  const valueGrowth = lastData - firstData;
+  const valueGrowthPercentage = firstData == 0 ? 0 : valueGrowth / firstData;
 
   function createCard(
     tabNumber: number,
@@ -56,12 +41,12 @@ export default function tabs({
     };
     return (
       <div
-        className={`flex flex-col basis-0 flex-grow rounded-full px-4 shadow ${
+        className={`flex flex-col basis-0 flex-grow rounded-full px-4 shadow transition-colors ${
           tab === tabNumber
             ? 'bg-white dark:bg-neutral-700'
             : 'bg-neutral-100 dark:bg-neutral-950'
         }`}
-        onClick={() => handleTabChange(tabNumber)}
+        onClick={() => setTab(tabNumber)}
       >
         <div className="flex my-1">
           <Skeleton {...skeletonProps}> {block1}</Skeleton>
@@ -74,30 +59,34 @@ export default function tabs({
   }
 
   return (
-    <div className="flex flex-col space-y-5 lg:space-x-5 lg:space-y-0 lg:flex-row">
+    <div className="grid grid-cols-1 grid-rows-4 gap-4 p-2 sm:grid-rows-2 sm:grid-cols-2 lg:grid-rows-1 lg:grid-cols-4">
       {createCard(
         1,
         100,
         <Statistic
-          value={topBarData.total_value_gain}
+          value={valueGrowth}
           formatter={(value) =>
             formatCurrency({ value, currency: userSettings.currency })
           }
-          title={
-            topBarData.total_value_gain > 0 ? 'Value growth' : 'Value loss'
-          }
+          title={valueGrowth > 0 ? 'Value growth' : 'Value loss'}
           className="ml-1"
         ></Statistic>,
         <Statistic
-          value={topBarData.total_value_gain_percentage}
-          formatter={(value) => PercentageFormat(value)}
+          value={valueGrowthPercentage}
+          formatter={(value) =>
+            formatPercentageWithColors({
+              value,
+              addIcon: true,
+              className: 'text-xl',
+            })
+          }
         />
       )}
       {createCard(
         2,
         60,
         <Statistic
-          value={topBarData.total_dividends}
+          value={totalPerformanceData[0].realized.dividends}
           title={'Received dividends'}
           formatter={(value) =>
             formatCurrency({ value, currency: userSettings.currency })
@@ -109,7 +98,7 @@ export default function tabs({
         3,
         60,
         <Statistic
-          value={topBarData.transaction_cost}
+          value={totalPerformanceData[0].realized.transaction_cost}
           title={'Transaction cost'}
           formatter={(value) =>
             formatCurrency({ value, currency: userSettings.currency })
@@ -121,16 +110,24 @@ export default function tabs({
         4,
         100,
         <Statistic
-          value={topBarData.total_pl}
+          value={totalPerformanceData[0].unrealized.total_pl}
           formatter={(value) =>
             formatCurrency({ value, currency: userSettings.currency })
           }
-          title={topBarData.total_pl > 0 ? 'Gains' : 'Losses'}
+          title={
+            totalPerformanceData[0].unrealized.total_pl > 0 ? 'Gains' : 'Losses'
+          }
           className="ml-1"
         ></Statistic>,
         <Statistic
-          value={topBarData.total_pl_percentage}
-          formatter={(value) => PercentageFormat(value)}
+          value={totalPerformanceData[0].unrealized.total_pl_percentage}
+          formatter={(value) =>
+            formatPercentageWithColors({
+              value,
+              addIcon: true,
+              className: 'text-xl',
+            })
+          }
         />
       )}
     </div>

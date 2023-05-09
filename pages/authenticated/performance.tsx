@@ -1,34 +1,30 @@
-import Overviewbar from '../../components/Overviewbar';
-import React, { useState, useEffect } from 'react';
+import Overviewbar from '../../components/modules/Overviewbar';
+import React, { useEffect, useReducer, useMemo } from 'react';
 import { Divider, Segmented, Typography } from 'antd';
-import { useRouter } from 'next/router';
-import BasicLineGraph from '../../components/PrimeFaceLineGraph';
-import PrimeFaceBarChart from '../../components/PrimeFaceBarChart';
-import { cachedFetch } from '../../utils/api-utils';
-import AntdTable from '../../components/antdTable';
+import BasicLineGraph from '../../components/elements/PrimeFaceLineGraph';
+import PrimeFaceBarChart from '../../components/elements/PrimeFaceBarChart';
+import { apiRequestReducer, initialState } from '../../components/utils/api';
+import AntdTable from '../../components/elements/antdTable';
 import {
   formatCurrency,
   formatCurrencyWithColors,
   formatPercentageWithColors,
   formatImageAndText,
-} from '../../utils/formatting';
-import { UserInfo_Type, UserSettings_Type } from '../../utils/types';
-import { SegmentedValue } from 'rc-segmented';
+} from '../../components/utils/formatting';
+import {
+  UserInfo_Type,
+  UserSettings_Type,
+  TimeFramestate,
+} from '../../components/types/types';
+import useLocalStorageState from '../../components/hooks/useLocalStorageState';
 import type { ColumnsType } from 'antd/es/table';
-
-type dataToGet = undefined | string | SegmentedValue;
-type tabNumber = undefined | number;
+import {
+  getBarchartData,
+  getLineChartData,
+  getTableDataPerformance,
+} from '../../components/services/data';
 
 const { Title } = Typography;
-
-const topBarDataFallBackObject = {
-  total_value_gain: '',
-  total_value_gain_percentage: '',
-  total_pl: '',
-  total_pl_percentage: '',
-  total_dividends: '',
-  transaction_cost: '',
-};
 
 const totalGainsDataFallBackObject = {
   labels: [],
@@ -57,172 +53,200 @@ const valueGrowthDataFallBackObject = {
   ],
 };
 
-async function fetchDividendData(userInfo: UserInfo_Type, date: dataToGet) {
-  const data = await cachedFetch(`/api/data/get_barchart_data`, [], 'POST', {
-    userId: userInfo.clientPrincipal.userId,
-    dataType: 'dividend',
-    dataToGet: date,
-  });
-  return { data: data, loading: false };
-}
-
-async function fetchTransactionCostData(
-  userInfo: UserInfo_Type,
-  date: dataToGet
-) {
-  const data = await cachedFetch(`/api/data/get_barchart_data`, [], 'POST', {
-    userId: userInfo.clientPrincipal.userId,
-    dataType: 'transaction_cost',
-    dataToGet: date,
-  });
-  return { data: data, loading: false };
-}
-
-async function fetchTotalGainsData(userInfo: UserInfo_Type, date: dataToGet) {
-  const data = await cachedFetch(
-    `/api/data/get_linechart_data`,
-    totalGainsDataFallBackObject,
-    'POST',
-    {
-      userId: userInfo.clientPrincipal.userId,
-      dataType: 'total_gains',
-      dataToGet: date,
-    }
-  );
-  return { data: data, loading: false };
-}
-
-async function fetchDataline(userInfo: UserInfo_Type, date: dataToGet) {
-  const data = await cachedFetch(
-    `/api/data/get_linechart_data`,
-    valueGrowthDataFallBackObject,
-    'POST',
-    {
-      userId: userInfo.clientPrincipal.userId,
-      dataType: 'invested_and_value',
-      dataToGet: date,
-    }
-  );
-  return { data: data, loading: false };
-}
-
-async function fetchTable(userInfo: UserInfo_Type, date: dataToGet) {
-  const data = await cachedFetch(
-    `/api/data/get_table_data_performance`,
-    [],
-    'POST',
-    {
-      userId: userInfo.clientPrincipal.userId,
-      dataToGet: date,
-    }
-  );
-  return { data: data, loading: false };
-}
-
-async function fetchTopBar(userInfo: UserInfo_Type, date: dataToGet) {
-  const data = await cachedFetch(
-    `/api/data/get_topbar_data`,
-    topBarDataFallBackObject,
-    'POST',
-    {
-      userId: userInfo.clientPrincipal.userId,
-      dataToGet: date,
-    }
-  );
-  return { data: data, loading: false };
-}
-
 export default function performance({
   userInfo,
   userSettings,
+  timeFrameState,
+  timeFrameDates,
+  totalPerformanceData,
 }: {
   userInfo: UserInfo_Type;
   userSettings: UserSettings_Type;
+  timeFrameState: TimeFramestate;
+  timeFrameDates: { start_date: string; end_date: string };
+  totalPerformanceData: any;
 }) {
   // const setup
-  const router = useRouter();
-  const [valueGrowthData, setvalueGrowthData] = useState(
-    valueGrowthDataFallBackObject
+  const [valueGrowthData, valueGrowthDataReducer] = useReducer(
+    apiRequestReducer,
+    initialState({
+      fallback_data: valueGrowthDataFallBackObject,
+      isLoading: true,
+    })
   );
-  const [valueGrowthDataLoading, setvalueGrowthDataLoading] = useState(true);
-  const [dividendData, setdividendData] = useState([]);
-  const [loadingDividend, setLoadingDividend] = useState(true);
-  const [totalGainsData, settotalGainsData] = useState(
-    totalGainsDataFallBackObject
+  const [dividendData, dividendDataReducer] = useReducer(
+    apiRequestReducer,
+    initialState({ fallback_data: [], isLoading: true })
   );
-  const [totalGainsDataLoading, settotalGainsDataLoading] = useState(true);
-  const [totalTransactionCostData, settotalTransactionCostData] = useState([]);
-  const [totalTransactionCostDataLoading, settotalTransactionCostDataLoading] =
-    useState(true);
-  const [topBarData, settopBarData] = useState(topBarDataFallBackObject);
-  const [topBarloading, settopBarLoading] = useState(true);
-  const [SingleDayData, setSingleDayData] = useState(null);
-  const [SingleDayDataisLoading, setSingleDayDataisLoading] = useState(true);
-  const [tab, setTab] = useState<tabNumber>(
-    Number(useRouter().query.tab || '1')
+  const [totalGainsData, totalGainsDataReducer] = useReducer(
+    apiRequestReducer,
+    initialState({
+      fallback_data: totalGainsDataFallBackObject,
+      isLoading: true,
+    })
   );
-  const [date, setDate] = useState<dataToGet>(
-    useRouter().query.date?.toString || undefined
+  const [totalTransactionCostData, totalTransactionCostDataReducer] =
+    useReducer(
+      apiRequestReducer,
+      initialState({ fallback_data: [], isLoading: true })
+    );
+  const [SingleDayData, SingleDayDataReducer] = useReducer(
+    apiRequestReducer,
+    initialState({ isLoading: true })
   );
+  const [tab, setTab] = useLocalStorageState('performanceTab', 1);
+  const { timeFrame, setTimeFrame } = timeFrameState;
 
-  useEffect(() => {
-    if (!router.isReady) {
-      return;
-    } else {
-      setTab(Number(router.query.tab));
-      setDate(router.query.date?.toString());
-    }
-  }, [router]);
+  // useMemo
+  const valueGrowthDataMemo = useMemo(() => {
+    return (
+      <BasicLineGraph
+        data={valueGrowthData.data}
+        isloading={valueGrowthData.isLoading}
+        userSettings={userSettings}
+      />
+    );
+  }, [valueGrowthData.data, valueGrowthData.isLoading, userSettings]);
+
+  const totalGainsDataMemo = useMemo(() => {
+    return (
+      <BasicLineGraph
+        data={totalGainsData.data}
+        isloading={totalGainsData.isLoading}
+        userSettings={userSettings}
+      />
+    );
+  }, [totalGainsData.data, totalGainsData.isLoading, userSettings]);
+
+  const dividendDataMemo = useMemo(() => {
+    return (
+      <PrimeFaceBarChart
+        data={dividendData.data}
+        isloading={dividendData.isLoading}
+        userSettings={userSettings}
+      />
+    );
+  }, [dividendData.data, dividendData.isLoading, userSettings]);
+
+  const totalTransactionCostDataMemo = useMemo(() => {
+    return (
+      <PrimeFaceBarChart
+        data={totalTransactionCostData.data}
+        isloading={totalTransactionCostData.isLoading}
+        userSettings={userSettings}
+      />
+    );
+  }, [
+    totalTransactionCostData.data,
+    totalTransactionCostData.isLoading,
+    userSettings,
+  ]);
 
   // useEffects
   useEffect(() => {
-    if (userInfo?.clientPrincipal?.userId && date) {
-      fetchDividendData(userInfo, date).then(({ data, loading }) => {
-        setdividendData(data);
-        setLoadingDividend(loading);
-      });
-      fetchTransactionCostData(userInfo, date).then(({ data, loading }) => {
-        settotalTransactionCostData(data);
-        settotalTransactionCostDataLoading(loading);
-      });
-      fetchTotalGainsData(userInfo, date).then(({ data, loading }) => {
-        settotalGainsData(data);
-        settotalGainsDataLoading(loading);
-      });
-      fetchDataline(userInfo, date).then(({ data, loading }) => {
-        setvalueGrowthData(data);
-        setvalueGrowthDataLoading(loading);
-      });
-      fetchTable(userInfo, date).then(({ data, loading }) => {
-        setSingleDayData(data);
-        setSingleDayDataisLoading(loading);
-      });
-      fetchTopBar(userInfo, date).then(({ data, loading }) => {
-        settopBarData(data);
-        settopBarLoading(loading);
+    if (!userInfo?.clientPrincipal?.userId) {
+      return;
+    }
+
+    const { start_date, end_date } = timeFrameDates;
+    const body: any = {
+      userId: userInfo.clientPrincipal.userId,
+    };
+    if (end_date === 'max' && start_date === 'max') {
+      body.allData = true;
+    } else if (end_date && start_date) {
+      body.startDate = start_date;
+      body.endDate = end_date;
+    } else {
+      return;
+    }
+
+    const abortController = new AbortController();
+
+    if (tab === 2) {
+      getBarchartData({
+        dispatcher: dividendDataReducer,
+        abortController,
+        body: {
+          ...body,
+          dataType: 'dividend',
+        },
       });
     }
-  }, [date, userInfo]);
 
-  // Refresh data
-  function handleClick(newdate: dataToGet) {
-    setvalueGrowthDataLoading(true);
-    settopBarLoading(true);
-    setLoadingDividend(true);
-    settotalTransactionCostDataLoading(true);
-    settotalGainsDataLoading(true);
-    setSingleDayDataisLoading(true);
-    router.push(`/authenticated/performance?tab=${tab}&date=${newdate}`);
-    setDate(newdate);
-  }
+    if (tab === 3) {
+      getBarchartData({
+        dispatcher: totalTransactionCostDataReducer,
+        abortController,
+        body: {
+          ...body,
+          dataType: 'transaction_cost',
+        },
+      });
+    }
 
-  function handleTabChange(newTab: tabNumber) {
-    setTab(newTab);
-    router.push(`/authenticated/performance?tab=${newTab}&date=${date}`);
-  }
+    if (tab === 4) {
+      getLineChartData({
+        dispatcher: totalGainsDataReducer,
+        abortController,
+        body: {
+          ...body,
+          dataType: 'total_gains',
+        },
+        fallback_data: totalGainsDataFallBackObject,
+      });
+    }
+
+    return () => {
+      abortController.abort();
+    };
+  }, [userInfo, timeFrameDates, tab]);
+
+  useEffect(() => {
+    if (!userInfo?.clientPrincipal?.userId) {
+      return;
+    }
+
+    const { start_date, end_date } = timeFrameDates;
+    const body: any = {
+      userId: userInfo.clientPrincipal.userId,
+      containerName: 'stocks_held',
+    };
+    if (end_date === 'max' && start_date === 'max') {
+      body.allData = true;
+    } else if (end_date && start_date) {
+      body.startDate = start_date;
+      body.endDate = end_date;
+    } else {
+      return;
+    }
+
+    const abortController = new AbortController();
+    getTableDataPerformance({
+      dispatcher: SingleDayDataReducer,
+      abortController,
+      body: {
+        ...body,
+        dataType: 'stocks_held',
+      },
+    });
+
+    getLineChartData({
+      dispatcher: valueGrowthDataReducer,
+      abortController,
+      body: {
+        ...body,
+        dataType: 'invested_and_value',
+      },
+      fallback_data: valueGrowthDataFallBackObject,
+    });
+
+    return () => {
+      abortController.abort();
+    };
+  }, [userInfo, timeFrameDates]);
 
   // Columns
-
   const valueGrowthColumns: ColumnsType = [
     {
       title: 'Name',
@@ -243,7 +267,9 @@ export default function performance({
               currency: userSettings.currency,
             })}
           </div>
-          <div>{formatPercentageWithColors(text.total_pl_percentage)}</div>
+          <div>
+            {formatPercentageWithColors({ value: text.total_pl_percentage })}
+          </div>
         </div>
       ),
     },
@@ -293,45 +319,45 @@ export default function performance({
   return (
     <div>
       {/* Title */}
-      <div className="flex">
-        <div className="flex pt-2">
-          <Title level={1}>Performance</Title>
-        </div>
+      <div className="flex shrink-0 flex-row pt-2">
+        <Title className="min-w-[220px] mr-2" level={1}>
+          Performance
+        </Title>
         <div className="pt-3 ml-auto mr-0 overflow-auto">
           <Segmented
             options={[
               {
-                label: <div onClick={() => handleClick('ytd')}>YTD</div>,
+                label: <div onClick={() => setTimeFrame('ytd')}>YTD</div>,
                 value: 'ytd',
               },
               {
-                label: <div onClick={() => handleClick('week')}>Week</div>,
+                label: <div onClick={() => setTimeFrame('week')}>Week</div>,
                 value: 'week',
               },
               {
-                label: <div onClick={() => handleClick('month')}>Month</div>,
+                label: <div onClick={() => setTimeFrame('month')}>Month</div>,
                 value: 'month',
               },
               {
-                label: <div onClick={() => handleClick('year')}>Year</div>,
+                label: <div onClick={() => setTimeFrame('year')}>Year</div>,
                 value: 'year',
               },
               {
-                label: <div onClick={() => handleClick('max')}>Max</div>,
+                label: <div onClick={() => setTimeFrame('max')}>Max</div>,
                 value: 'max',
               },
             ]}
-            value={date}
-            onChange={(e) => handleClick(e)}
+            value={timeFrame}
           />
         </div>
       </div>
       <div>
         <Overviewbar
-          topBarData={topBarData}
-          loading={topBarloading}
-          handleTabChange={handleTabChange}
+          totalPerformanceData={totalPerformanceData.data}
+          valueGrowthData={valueGrowthData.data}
+          loading={totalPerformanceData.isLoading || valueGrowthData.isLoading}
           userSettings={userSettings}
+          tabState={{ tab, setTab }}
         />
       </div>
       <div>
@@ -340,16 +366,12 @@ export default function performance({
           {tab === 1 && (
             <React.Fragment>
               <div>
-                <BasicLineGraph
-                  data={valueGrowthData}
-                  isloading={valueGrowthDataLoading}
-                  userSettings={userSettings}
-                />
+                {valueGrowthDataMemo}
                 <Divider />
                 <AntdTable
-                  isLoading={SingleDayDataisLoading}
+                  isLoading={SingleDayData.isLoading}
                   columns={valueGrowthColumns}
-                  data={SingleDayData}
+                  data={SingleDayData.data}
                   globalSorter={true}
                 />
               </div>
@@ -357,32 +379,24 @@ export default function performance({
           )}
           {tab === 2 && (
             <React.Fragment>
-              <PrimeFaceBarChart
-                data={dividendData}
-                isloading={loadingDividend}
-                userSettings={userSettings}
-              />
+              {dividendDataMemo}
               <Divider />
               <AntdTable
-                isLoading={SingleDayDataisLoading}
+                isLoading={SingleDayData.isLoading}
                 columns={ReceivedDividedColumns}
-                data={SingleDayData}
+                data={SingleDayData.data}
                 globalSorter={true}
               />
             </React.Fragment>
           )}
           {tab === 3 && (
             <React.Fragment>
-              <PrimeFaceBarChart
-                data={totalTransactionCostData}
-                isloading={totalTransactionCostDataLoading}
-                userSettings={userSettings}
-              />
+              {totalTransactionCostDataMemo}
               <Divider />
               <AntdTable
-                isLoading={SingleDayDataisLoading}
+                isLoading={SingleDayData.isLoading}
                 columns={TransactionCostColumns}
-                data={SingleDayData}
+                data={SingleDayData.data}
                 globalSorter={true}
               />
             </React.Fragment>
@@ -390,16 +404,12 @@ export default function performance({
           {tab === 4 && (
             <React.Fragment>
               <div>
-                <BasicLineGraph
-                  data={totalGainsData}
-                  isloading={totalGainsDataLoading}
-                  userSettings={userSettings}
-                />
+                {totalGainsDataMemo}
                 <Divider />
                 <AntdTable
-                  isLoading={SingleDayDataisLoading}
+                  isLoading={SingleDayData.isLoading}
                   columns={valueGrowthColumns}
-                  data={SingleDayData}
+                  data={SingleDayData.data}
                   globalSorter={true}
                 />
               </div>

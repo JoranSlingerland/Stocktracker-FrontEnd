@@ -17,86 +17,48 @@ import {
   ExclamationCircleOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer } from 'react';
+import { apiRequestReducer, initialState } from '../../components/utils/api';
+import useWindowDimensions from '../../components/hooks/useWindowDimensions';
+import AntdTable from '../../components/elements/antdTable';
 import {
-  ApiWithMessage,
-  cachedFetch,
-  regularFetch,
-  overwriteCachedFetch,
-} from '../../utils/api-utils';
-import useWindowDimensions from '../../utils/useWindowDimensions';
-import AntdTable from '../../components/antdTable';
-import { UserInfo_Type } from '../../utils/types';
-import currencyCodes from '../../shared/currency_codes.json';
+  UserInfo_Type,
+  userSettingsDispatch_Type,
+  UserSettings_Type,
+} from '../../components/types/types';
+import { currencyCodes } from '../../components/constants/currencyCodes';
+import useLocalStorageState from '../../components/hooks/useLocalStorageState';
+import { getUserData } from '../../components/services/data';
+import {
+  startOrchestrator,
+  fetchOrchestratorList,
+  purgeOrchestrator,
+  terminateOrchestrator,
+} from '../../components/services/orchestrator';
+import {
+  createCosmosDbAndContainer,
+  deleteCosmosDbContainer,
+} from '../../components/services/privileged';
+import { addUserData } from '../../components/services/add';
 
 const { Text, Title, Link } = Typography;
 
-async function fetchOrchestratorList(userInfo: any) {
-  const data: any = await regularFetch(`/api/orchestrator/list`, [], 'POST', {
-    userId: userInfo.clientPrincipal.userId,
-    days: 7,
-  });
-  return { data: data, loading: false };
-}
-
 export default function Home({
   userInfo,
-  setDarkModeCallback,
+  userSettings,
+  userSettingsDispatch,
 }: {
   userInfo: UserInfo_Type;
-  setDarkModeCallback: (darkmode: boolean) => void;
+  userSettings: UserSettings_Type;
+  userSettingsDispatch: (action: userSettingsDispatch_Type) => void;
 }) {
-  const [orchestratorList, setOrchestratorList] = useState(null);
-  const [orchestratorListIsLoading, setOrchestratorListIsLoading] =
-    useState(true);
-  const [accountSettingsLoading, setAccountSettingsLoading] = useState(true);
-  const [clearBitApiKey, setClearBitApiKey] = useState('');
-  const [alphaVantageApiKey, setAlphaVantageApiKey] = useState('');
-  const [darkMode, setDarkMode] = useState(false);
-  const [currency, setCurrency] = useState('');
-
-  // fetch functions
-  async function getAccountSettings(userInfo: any) {
-    await cachedFetch('/api/data/get_user_data', {}, 'POST', {
-      userId: userInfo,
-    }).then((data: any) => {
-      setClearBitApiKey(data.clearbit_api_key || '');
-      setAlphaVantageApiKey(data.alpha_vantage_api_key || '');
-      setDarkMode(data.dark_mode || false);
-      setCurrency(data.currency || '');
-      setAccountSettingsLoading(false);
-    });
-  }
+  const [orchestratorList, orchestratorDispatch] = useReducer(
+    apiRequestReducer,
+    initialState({ isLoading: true })
+  );
+  const [tab, setTab] = useLocalStorageState('settingsTab', '1');
 
   // handle click functions
-  async function handleClickOrchestratorAction(
-    url: string,
-    runningMessage: string,
-    successMessage: string,
-    body: object
-  ) {
-    ApiWithMessage(
-      url,
-      runningMessage,
-      successMessage,
-      'POST',
-      body,
-      'multipart/form-data'
-    ).then(() => {
-      fetchOrchestratorList(userInfo);
-    });
-  }
-
-  async function handleClick(
-    url: string,
-    runningMessage: string,
-    successMessage: string
-  ) {
-    ApiWithMessage(url, runningMessage, successMessage).then(() => {
-      fetchOrchestratorList(userInfo);
-    });
-  }
-
   function handleLocalStorageClearClick() {
     localStorage.clear();
     if (localStorage.length === 0) {
@@ -107,55 +69,50 @@ export default function Home({
   }
 
   async function handleSaveAccountSettings() {
-    setAccountSettingsLoading(true);
-    await ApiWithMessage(
-      '/api/add/add_user_data',
-      'Saving account settings...',
-      'Account settings saved!',
-      'POST',
-      {
-        id: userInfo.clientPrincipal.userId,
-        dark_mode: darkMode,
-        clearbit_api_key: clearBitApiKey,
-        alpha_vantage_api_key: alphaVantageApiKey,
-        currency: currency,
-      }
-    ).then(() => {
-      overwriteCachedFetch('/api/data/get_user_data', {}, 'POST', {
-        userId: userInfo.clientPrincipal.userId,
-      }).then((data: any) => {
-        setClearBitApiKey(data.clearbit_api_key || '');
-        setAlphaVantageApiKey(data.alpha_vantage_api_key || '');
-        setDarkMode(data.dark_mode || false);
-        setCurrency(data.currency || '');
-        setAccountSettingsLoading(false);
+    userSettingsDispatch({ type: 'setLoading', payload: true });
+    await addUserData({
+      body: userSettings,
+    }).then(() => {
+      getUserData({
+        body: { userId: userInfo.clientPrincipal.userId },
+        overWrite: true,
+      }).then(({ response }) => {
+        userSettingsDispatch({
+          type: 'setAll',
+          payload: response,
+        });
       });
     });
-    setAccountSettingsLoading(false);
   }
 
   // useEffects
   useEffect(() => {
-    if (userInfo.clientPrincipal.userId !== '') {
-      fetchOrchestratorList(userInfo).then(({ data, loading }) => {
-        setOrchestratorList(data);
-        setOrchestratorListIsLoading(loading);
+    if (userInfo.clientPrincipal.userId !== '' && tab === '3') {
+      const abortController = new AbortController();
+      fetchOrchestratorList({
+        body: { userId: userInfo.clientPrincipal.userId, days: 7 },
+        dispatcher: orchestratorDispatch,
+        abortController,
       });
-      getAccountSettings(userInfo.clientPrincipal.userId);
+      return () => abortController.abort();
     }
-  }, [userInfo]);
+  }, [userInfo, tab]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (userInfo.clientPrincipal.userId !== '') {
-        fetchOrchestratorList(userInfo).then(({ data, loading }) => {
-          setOrchestratorList(data);
-          setOrchestratorListIsLoading(loading);
+      if (userInfo.clientPrincipal.userId !== '' && tab === '3') {
+        const abortController = new AbortController();
+        fetchOrchestratorList({
+          body: { userId: userInfo.clientPrincipal.userId, days: 7 },
+          dispatcher: orchestratorDispatch,
+          abortController,
+          background: true,
         });
+        return () => abortController.abort();
       }
     }, 10000);
     return () => clearInterval(interval);
-  }, [userInfo]);
+  }, [userInfo, tab]);
 
   // constants
   const dimensions = useWindowDimensions();
@@ -220,15 +177,12 @@ export default function Home({
           <Popconfirm
             title="Are you sure you want to terminate this orchestrator?"
             onConfirm={() => {
-              handleClickOrchestratorAction(
-                '/api/orchestrator/terminate',
-                'Terminating orchestrator',
-                'Orchestrator terminated',
-                {
+              terminateOrchestrator({
+                body: {
                   instanceId: record.instanceId,
                   userId: userInfo.clientPrincipal.userId,
-                }
-              );
+                },
+              });
             }}
             okText="Yes"
             cancelText="No"
@@ -252,15 +206,12 @@ export default function Home({
           <Popconfirm
             title="Are you sure you want to purge this orchestrator?"
             onConfirm={() => {
-              handleClickOrchestratorAction(
-                '/api/orchestrator/purge',
-                'Purging orchestrator',
-                'Orchestrator purged',
-                {
-                  instanceId: record.instanceId,
+              purgeOrchestrator({
+                body: {
                   userId: userInfo.clientPrincipal.userId,
-                }
-              );
+                  instanceId: record.instanceId,
+                },
+              });
             }}
             okText="Yes"
             cancelText="No"
@@ -276,6 +227,18 @@ export default function Home({
     },
   ];
 
+  const buttonRow = (
+    title: string,
+    description: string,
+    button: JSX.Element
+  ) => (
+    <div className="grid grid-cols-2 grid-rows-2">
+      <Title level={4}>{title}</Title>
+      <div className="row-span-2 ml-auto mr-0">{button}</div>
+      <Text>{description}</Text>
+    </div>
+  );
+
   const items = [
     {
       key: '1',
@@ -289,7 +252,7 @@ export default function Home({
           <div className="flex flex-col mt-2">
             <Text strong>Clearbit API Key</Text>
             <div className="mt-2 w-72 sm:w-96">
-              {accountSettingsLoading ? (
+              {userSettings.isLoading ? (
                 <Skeleton
                   active={true}
                   paragraph={{ rows: 1 }}
@@ -297,9 +260,12 @@ export default function Home({
                 ></Skeleton>
               ) : (
                 <Input.Password
-                  value={clearBitApiKey}
+                  value={userSettings.clearbit_api_key}
                   onChange={(e) => {
-                    setClearBitApiKey(e.target.value);
+                    userSettingsDispatch({
+                      type: 'setClearbitApiKey',
+                      payload: e.target.value,
+                    });
                   }}
                   size="small"
                 />
@@ -321,7 +287,7 @@ export default function Home({
           <div className="flex flex-col">
             <Text strong>Alpha Vantage API Key</Text>
             <div className="mt-2 w-72 sm:w-96">
-              {accountSettingsLoading ? (
+              {userSettings.isLoading ? (
                 <Skeleton
                   active={true}
                   paragraph={{ rows: 1 }}
@@ -329,9 +295,12 @@ export default function Home({
                 ></Skeleton>
               ) : (
                 <Input.Password
-                  value={alphaVantageApiKey}
+                  value={userSettings.alpha_vantage_api_key}
                   onChange={(e) => {
-                    setAlphaVantageApiKey(e.target.value);
+                    userSettingsDispatch({
+                      type: 'setAlphaVantageApiKey',
+                      payload: e.target.value,
+                    });
                   }}
                   size="small"
                 />
@@ -352,7 +321,7 @@ export default function Home({
           <div className="flex flex-col">
             <Text strong>Currency</Text>
             <div className="mt-2 w-72 sm:w-96">
-              {accountSettingsLoading ? (
+              {userSettings.isLoading ? (
                 <Skeleton
                   active={true}
                   paragraph={{ rows: 1 }}
@@ -360,12 +329,15 @@ export default function Home({
                 ></Skeleton>
               ) : (
                 <AutoComplete
-                  value={currency}
+                  value={userSettings.currency}
                   onChange={(value) => {
-                    setCurrency(value);
+                    userSettingsDispatch({
+                      type: 'setCurrency',
+                      payload: value,
+                    });
                   }}
                   status={
-                    currencyCodes.find((o) => o.value === currency)
+                    currencyCodes.find((o) => o.value === userSettings.currency)
                       ? ''
                       : 'error'
                   }
@@ -378,7 +350,10 @@ export default function Home({
                       .indexOf(inputValue.toUpperCase()) !== -1
                   }
                   onSelect={(value) => {
-                    setCurrency(value);
+                    userSettingsDispatch({
+                      type: 'setCurrency',
+                      payload: value,
+                    });
                   }}
                 />
               )}
@@ -392,13 +367,15 @@ export default function Home({
             <Text strong>Dark mode</Text>
             <div>
               <Switch
-                checked={darkMode}
+                checked={userSettings.dark_mode}
                 onChange={(checked) => {
-                  setDarkMode(checked);
-                  setDarkModeCallback(checked);
+                  userSettingsDispatch({
+                    type: 'setDarkMode',
+                    payload: checked,
+                  });
                 }}
                 className="mt-2"
-                loading={accountSettingsLoading}
+                loading={userSettings.isLoading}
               />
             </div>
             <Text className="mt-1" type="secondary">
@@ -414,10 +391,9 @@ export default function Home({
               }}
               className="mt-2"
               disabled={
-                accountSettingsLoading ||
-                currencyCodes.find((o) => o.value === currency)
+                currencyCodes.find((o) => o.value === userSettings.currency)
                   ? false
-                  : true
+                  : true || userSettings.isLoading
               }
             >
               Save
@@ -432,52 +408,41 @@ export default function Home({
       label: 'Actions',
       children: (
         <div className="flex flex-col items-center">
-          {/* Safe changes */}
           <div className="w-full px-2 columns-1">
             <div className="flex items-center justify-center">
               <Title level={3}>Safe changes</Title>
             </div>
-            <div className="grid grid-cols-2 grid-rows-2">
-              <Title level={4}>Refresh data</Title>
-              <div className="row-span-2 text-right">
-                <Button
-                  onClick={() =>
-                    handleClickOrchestratorAction(
-                      `/api/orchestrator/start`,
-                      'Calling Orchestrator',
-                      'Orchestration called, This will take a while',
-                      {
-                        userId: userInfo.clientPrincipal.userId,
-                        functionName: 'stocktracker_orchestrator',
-                        daysToUpdate: 'all',
-                      }
-                    )
-                  }
-                  type="primary"
-                  size="large"
-                >
-                  Refresh
-                </Button>
-              </div>
-              <div>This will Refresh all the data from scratch.</div>
-            </div>
+            {buttonRow(
+              'Refresh data',
+              'This will Refresh all the data from scratch.',
+              <Button
+                onClick={() =>
+                  startOrchestrator({
+                    body: {
+                      userId: userInfo.clientPrincipal.userId,
+                      functionName: 'stocktracker_orchestrator',
+                      daysToUpdate: 'all',
+                    },
+                  })
+                }
+                type="primary"
+                size="large"
+              >
+                Refresh
+              </Button>
+            )}
             <Divider plain></Divider>
-            <div className="grid grid-cols-2 grid-rows-2">
-              <Title level={4}>Clear local storage</Title>
-              <div className="row-span-2 text-right">
-                <Button
-                  onClick={() => handleLocalStorageClearClick()}
-                  type="primary"
-                  size="large"
-                >
-                  Clear
-                </Button>
-              </div>
-              <div>
-                This will clear all cached data in the local storage of the
-                browser.
-              </div>
-            </div>
+            {buttonRow(
+              'Clear local storage',
+              'This will clear all cached data in the local storage of the browser.',
+              <Button
+                onClick={() => handleLocalStorageClearClick()}
+                type="primary"
+                size="large"
+              >
+                Clear
+              </Button>
+            )}
           </div>
         </div>
       ),
@@ -489,9 +454,9 @@ export default function Home({
       children: (
         <div>
           <AntdTable
-            isLoading={orchestratorListIsLoading}
+            isLoading={orchestratorList.isLoading}
             columns={orchestratorColumns}
-            data={orchestratorList}
+            data={orchestratorList.data}
           />
         </div>
       ),
@@ -508,28 +473,17 @@ export default function Home({
             <div className="flex items-center justify-center">
               <Title level={3}>Container actions</Title>
             </div>
-            <div className="grid grid-cols-2 grid-rows-2">
-              <Title level={4}>Create Containers</Title>
-              <div className="row-span-2 text-right">
-                <Button
-                  onClick={() =>
-                    handleClick(
-                      '/api/privileged/create_cosmosdb_and_container',
-                      'Creating Containers',
-                      'Containers created :)'
-                    )
-                  }
-                  type="primary"
-                  size="large"
-                >
-                  Create
-                </Button>
-              </div>
-              <div>
-                This will create all containers and databases that do not exist
-                yet.
-              </div>
-            </div>
+            {buttonRow(
+              'Create Containers',
+              'This will create all containers and databases that do not exist yet.',
+              <Button
+                onClick={() => createCosmosDbAndContainer()}
+                type="primary"
+                size="large"
+              >
+                Create
+              </Button>
+            )}
             <Divider plain></Divider>
             <div className="w-full px-2 columns-1">
               <div className="flex flex-col items-center justify-center text-xl">
@@ -540,69 +494,53 @@ export default function Home({
                   Actions below can cause permanent data loss
                 </Text>
               </div>
-              <div className="grid grid-cols-2 grid-rows-2">
-                <Title level={4}>Delete output containers</Title>
-                <div className="row-span-2 text-right">
-                  <Popconfirm
-                    title="Delete output containers?"
-                    description="Are you sure you want to delete the output containers"
-                    okText="Yes"
-                    arrow={false}
-                    icon={false}
-                    okButtonProps={{ danger: true, loading: false }}
-                    onConfirm={() =>
-                      handleClickOrchestratorAction(
-                        `/api/privileged/delete_cosmosdb_container`,
-                        'Deleting Containers',
-                        'All Containers deleted :)',
-                        {
-                          containersToDelete: 'output_only',
-                        }
-                      )
-                    }
-                  >
-                    <Button danger type="primary" size="large">
-                      Delete
-                    </Button>
-                  </Popconfirm>
-                </div>
-                <div>
-                  This will delete all the containers except the input
-                  containers.
-                </div>
-              </div>
+              {buttonRow(
+                'Delete output containers',
+                'This will delete all the containers except the input containers.',
+                <Popconfirm
+                  title="Delete output containers?"
+                  description="Are you sure you want to delete the output containers"
+                  okText="Yes"
+                  arrow={false}
+                  icon={false}
+                  okButtonProps={{ danger: true, loading: false }}
+                  onConfirm={() =>
+                    deleteCosmosDbContainer({
+                      body: {
+                        containersToDelete: 'output_only',
+                      },
+                    })
+                  }
+                >
+                  <Button danger type="primary" size="large">
+                    Delete
+                  </Button>
+                </Popconfirm>
+              )}
               <Divider plain></Divider>
-              <div className="grid grid-cols-2 grid-rows-2">
-                <Title level={4}>Delete all containers</Title>
-                <div className="row-span-2 text-right">
-                  <Popconfirm
-                    title="Delete all"
-                    description="Are you sure you want to delete all containers"
-                    okText="Yes"
-                    arrow={false}
-                    icon={false}
-                    okButtonProps={{ danger: true, loading: false }}
-                    onConfirm={() =>
-                      handleClickOrchestratorAction(
-                        `/api/privileged/delete_cosmosdb_container`,
-                        'Deleting Containers',
-                        'All Containers deleted :)',
-                        {
-                          containersToDelete: 'all',
-                        }
-                      )
-                    }
-                  >
-                    <Button danger type="primary" size="large">
-                      Delete
-                    </Button>
-                  </Popconfirm>
-                </div>
-                <div>
-                  This will delete all containers including the input
-                  containers.
-                </div>
-              </div>
+              {buttonRow(
+                'Delete all containers',
+                'This will delete all containers including the input containers.',
+                <Popconfirm
+                  title="Delete all"
+                  description="Are you sure you want to delete all containers"
+                  okText="Yes"
+                  arrow={false}
+                  icon={false}
+                  okButtonProps={{ danger: true, loading: false }}
+                  onConfirm={() =>
+                    deleteCosmosDbContainer({
+                      body: {
+                        containersToDelete: 'all',
+                      },
+                    })
+                  }
+                >
+                  <Button danger type="primary" size="large">
+                    Delete
+                  </Button>
+                </Popconfirm>
+              )}
             </div>
           </div>
         </div>
@@ -621,7 +559,8 @@ export default function Home({
       <div>
         <Tabs
           type="line"
-          defaultActiveKey="1"
+          activeKey={tab}
+          onChange={(key) => setTab(key)}
           items={items}
           tabPosition={
             dimensions.width === null || dimensions.width > 768 ? 'left' : 'top'

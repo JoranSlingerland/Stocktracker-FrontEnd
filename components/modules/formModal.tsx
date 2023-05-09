@@ -13,10 +13,10 @@ import {
 } from 'antd';
 import { useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import { ApiWithMessage, regularFetch } from '../utils/api-utils';
 import { formatCurrency, getCurrencySymbol } from '../utils/formatting';
-import { UserSettings_Type } from '../utils/types';
-import currencyCodes from '../shared/currency_codes.json';
+import { UserSettings_Type, UserInfo_Type } from '../types/types';
+import { currencyCodes } from '../constants/currencyCodes';
+import { addItemToInput } from '../services/add';
 
 const { Text, Title } = Typography;
 
@@ -320,20 +320,21 @@ export default function AddXForm({
   form,
   parentCallback,
   userSettings,
+  userInfo,
 }: {
   form: 'addStock' | 'addTransaction';
   parentCallback: (
     container: 'input_invested' | 'input_transactions'
   ) => Promise<void>;
   userSettings: UserSettings_Type;
+  userInfo: UserInfo_Type;
 }) {
   const [open, setOpen] = useState(false);
 
   const onCreate = (values: any) => {
     setOpen(false);
     async function postData() {
-      const data = await regularFetch('/.auth/me', undefined);
-      values['userid'] = data.clientPrincipal.userId;
+      values['userid'] = userInfo.clientPrincipal.userId;
       let value;
       if (form === 'addStock') {
         value = {
@@ -346,13 +347,7 @@ export default function AddXForm({
           items: [values],
         };
       }
-      const response = ApiWithMessage(
-        `/api/add/add_item_to_input`,
-        'Creating new items',
-        'Items Created',
-        'POST',
-        value
-      );
+      const response = addItemToInput({ body: value });
       return response;
     }
 

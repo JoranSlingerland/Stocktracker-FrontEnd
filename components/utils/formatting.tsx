@@ -1,4 +1,6 @@
-import { Image, Typography, Space } from 'antd';
+import { Image, Typography } from 'antd';
+import { RiseOutlined, FallOutlined } from '@ant-design/icons';
+import { currencyCodes } from '../constants/currencyCodes';
 const { Text } = Typography;
 
 function formatCurrency({
@@ -13,6 +15,15 @@ function formatCurrency({
   if (currency === undefined || currency === '') {
     return formatNumber(value, maximumFractionDigits);
   }
+
+  if (
+    !currencyCodes.find(
+      (obj) => obj.value.toLowerCase() == currency.toLowerCase()
+    )
+  ) {
+    return formatNumber(value, maximumFractionDigits);
+  }
+
   return value.toLocaleString('nl-NL', {
     style: 'currency',
     currency: currency.toUpperCase(),
@@ -36,16 +47,27 @@ function formatCurrencyWithColors({
   value,
   maximumFractionDigits = 2,
   currency,
+  className = '',
+  addIcon = false,
 }: {
   value: number | string;
   maximumFractionDigits?: number;
   currency?: string;
+  className?: string;
+  addIcon?: boolean;
 }) {
   if (typeof value === 'string') {
     value = parseFloat(value);
   }
+
   if (currency === undefined) {
     var formattedValue = formatCurrency({ value, maximumFractionDigits });
+  } else if (
+    !currencyCodes.find(
+      (obj) => obj.value.toLowerCase() == currency.toLowerCase()
+    )
+  ) {
+    var formattedValue = formatNumber(value, maximumFractionDigits);
   } else {
     var formattedValue = formatCurrency({
       value,
@@ -55,12 +77,20 @@ function formatCurrencyWithColors({
   }
 
   if (value > 0) {
-    return <Text type="success">{formattedValue}</Text>;
+    return (
+      <Text className={className} type="success">
+        {addIcon ? <RiseOutlined /> : undefined} {formattedValue}
+      </Text>
+    );
   }
   if (value < 0) {
-    return <Text type="danger">{formattedValue}</Text>;
+    return (
+      <Text className={className} type="danger">
+        {addIcon ? <FallOutlined /> : undefined} {formattedValue}
+      </Text>
+    );
   }
-  return formattedValue;
+  return <Text className={className}> formattedValue </Text>;
 }
 
 function formatPercentage(value: number | string, maximumFractionDigits = 2) {
@@ -70,28 +100,38 @@ function formatPercentage(value: number | string, maximumFractionDigits = 2) {
   });
 }
 
-function formatPercentageWithColors(
-  value: number | string,
-  maximumFractionDigits = 2
-) {
+function formatPercentageWithColors({
+  value,
+  maximumFractionDigits = 2,
+  className = '',
+  addIcon = false,
+}: {
+  value: number | string;
+  maximumFractionDigits?: number;
+  className?: string;
+  addIcon?: boolean;
+}) {
   if (typeof value === 'string') {
     value = parseFloat(value);
   }
+
+  const formattedValue = formatPercentage(value, maximumFractionDigits);
+
   if (value > 0) {
     return (
-      <Text type="success">
-        {formatPercentage(value, maximumFractionDigits)}
+      <Text className={className} type="success">
+        {addIcon ? <RiseOutlined /> : undefined} {formattedValue}
       </Text>
     );
   }
   if (value < 0) {
     return (
-      <Text type="danger">
-        {formatPercentage(value, maximumFractionDigits)}
+      <Text className={className} type="danger">
+        {addIcon ? <FallOutlined /> : undefined} {formattedValue}
       </Text>
     );
   }
-  return formatPercentage(value, maximumFractionDigits);
+  return <Text className={className}>{formattedValue}</Text>;
 }
 
 function formatNumber(value: number | string, maximumFractionDigits = 2) {
@@ -109,7 +149,7 @@ function formatImageAndText(
     image = '/images/fallback.png';
   }
   return (
-    <Space wrap>
+    <div className="flex flex-col md:flex-row">
       <Image
         className="pr-1"
         alt="logo"
@@ -119,11 +159,13 @@ function formatImageAndText(
         preview={false}
         placeholder={false}
       />
-      <div className="flex flex-col pl-1">
-        <Text strong>{name}</Text>
+      <div className="flex flex-col md:pl-1">
+        <Text className="hidden md:inline " strong>
+          {name}
+        </Text>
         <Text type="secondary">{symbol}</Text>
       </div>
-    </Space>
+    </div>
   );
 }
 
