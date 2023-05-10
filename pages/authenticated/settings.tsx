@@ -74,7 +74,6 @@ export default function Home({
       body: userSettings,
     }).then(() => {
       getUserData({
-        body: { userId: userInfo.clientPrincipal.userId },
         overWrite: true,
       }).then(({ response }) => {
         userSettingsDispatch({

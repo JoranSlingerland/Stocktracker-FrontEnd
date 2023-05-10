@@ -92,7 +92,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   }
 
   async function getAccountSettings(userInfo: string) {
-    getUserData({ body: { userId: userInfo } }).then(({ response }) => {
+    getUserData({}).then(({ response }) => {
       userSettingsDispatch({ type: 'setAll', payload: response });
     });
   }
