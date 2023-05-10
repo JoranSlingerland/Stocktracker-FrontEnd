@@ -14,7 +14,7 @@ import {
 import { useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { formatCurrency, getCurrencySymbol } from '../utils/formatting';
-import { UserSettings_Type, UserInfo_Type } from '../types/types';
+import { UserSettings_Type } from '../types/types';
 import { currencyCodes } from '../constants/currencyCodes';
 import { addItemToInput } from '../services/add';
 
@@ -320,21 +320,18 @@ export default function AddXForm({
   form,
   parentCallback,
   userSettings,
-  userInfo,
 }: {
   form: 'addStock' | 'addTransaction';
   parentCallback: (
     container: 'input_invested' | 'input_transactions'
   ) => Promise<void>;
   userSettings: UserSettings_Type;
-  userInfo: UserInfo_Type;
 }) {
   const [open, setOpen] = useState(false);
 
   const onCreate = (values: any) => {
     setOpen(false);
     async function postData() {
-      values['userid'] = userInfo.clientPrincipal.userId;
       let value;
       if (form === 'addStock') {
         value = {

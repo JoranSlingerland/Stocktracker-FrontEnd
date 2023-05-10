@@ -4,7 +4,6 @@ function startOrchestrator({
   body,
 }: {
   body: {
-    userId: string;
     functionName: 'stocktracker_orchestrator';
     daysToUpdate: number | 'all';
   };
@@ -25,7 +24,7 @@ function fetchOrchestratorList({
   abortController,
   background,
 }: {
-  body: { userId: string; days: number | 'all' };
+  body: { days: number | 'all' };
   dispatcher?: any;
   abortController?: AbortController;
   background?: boolean;
@@ -44,7 +43,6 @@ function purgeOrchestrator({
   body,
 }: {
   body: {
-    userId: string;
     instanceId: string;
   };
 }) {
@@ -62,7 +60,6 @@ function terminateOrchestrator({
   body,
 }: {
   body: {
-    userId: string;
     instanceId: string;
   };
 }) {

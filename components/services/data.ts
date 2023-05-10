@@ -8,7 +8,6 @@ function getBarchartData({
   dispatcher: any;
   abortController: AbortController;
   body: {
-    userId: string;
     allData: boolean;
     startDate?: string;
     endDate?: string;
@@ -33,7 +32,6 @@ function getLineChartData({
   dispatcher: any;
   abortController: AbortController;
   body: {
-    userId: string;
     allData: boolean;
     startDate?: string;
     endDate?: string;
@@ -59,7 +57,6 @@ function getPieData({
   dispatcher: any;
   abortController: AbortController;
   body: {
-    userId: string;
     dataType: 'stocks' | 'country' | 'sector' | 'currency';
   };
 }) {
@@ -88,7 +85,6 @@ function getTableDataBasic({
   dispatcher: any;
   abortController: AbortController;
   body: {
-    userId: string;
     containerName:
       | 'totals'
       | 'stocks_held'
@@ -129,7 +125,6 @@ function getTableDataPerformance({
   dispatcher: any;
   abortController: AbortController;
   body: {
-    userId: string;
     allData: boolean;
     startDate?: string;
     endDate?: string;
@@ -147,21 +142,12 @@ function getTableDataPerformance({
   });
 }
 
-async function getUserData({
-  body,
-  overWrite,
-}: {
-  body: {
-    userId: string;
-  };
-  overWrite?: boolean;
-}) {
+async function getUserData({ overWrite }: { overWrite?: boolean }) {
   if (overWrite) {
     return await overwriteCachedFetch({
       url: `/api/data/get_user_data`,
       method: 'POST',
       fallback_data: {},
-      body,
     }).then((data) => {
       return data;
     });
@@ -170,7 +156,6 @@ async function getUserData({
       url: `/api/data/get_user_data`,
       method: 'POST',
       fallback_data: {},
-      body,
     }).then((data) => {
       return data;
     });

@@ -74,7 +74,6 @@ export default function Home({
       body: userSettings,
     }).then(() => {
       getUserData({
-        body: { userId: userInfo.clientPrincipal.userId },
         overWrite: true,
       }).then(({ response }) => {
         userSettingsDispatch({
@@ -87,23 +86,23 @@ export default function Home({
 
   // useEffects
   useEffect(() => {
-    if (userInfo.clientPrincipal.userId !== '' && tab === '3') {
+    if (tab === '3') {
       const abortController = new AbortController();
       fetchOrchestratorList({
-        body: { userId: userInfo.clientPrincipal.userId, days: 7 },
+        body: { days: 7 },
         dispatcher: orchestratorDispatch,
         abortController,
       });
       return () => abortController.abort();
     }
-  }, [userInfo, tab]);
+  }, [tab]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (userInfo.clientPrincipal.userId !== '' && tab === '3') {
+      if (tab === '3') {
         const abortController = new AbortController();
         fetchOrchestratorList({
-          body: { userId: userInfo.clientPrincipal.userId, days: 7 },
+          body: { days: 7 },
           dispatcher: orchestratorDispatch,
           abortController,
           background: true,
@@ -112,7 +111,7 @@ export default function Home({
       }
     }, 10000);
     return () => clearInterval(interval);
-  }, [userInfo, tab]);
+  }, [tab]);
 
   // constants
   const dimensions = useWindowDimensions();
@@ -180,7 +179,6 @@ export default function Home({
               terminateOrchestrator({
                 body: {
                   instanceId: record.instanceId,
-                  userId: userInfo.clientPrincipal.userId,
                 },
               });
             }}
@@ -208,7 +206,6 @@ export default function Home({
             onConfirm={() => {
               purgeOrchestrator({
                 body: {
-                  userId: userInfo.clientPrincipal.userId,
                   instanceId: record.instanceId,
                 },
               });
@@ -419,7 +416,6 @@ export default function Home({
                 onClick={() =>
                   startOrchestrator({
                     body: {
-                      userId: userInfo.clientPrincipal.userId,
                       functionName: 'stocktracker_orchestrator',
                       daysToUpdate: 'all',
                     },

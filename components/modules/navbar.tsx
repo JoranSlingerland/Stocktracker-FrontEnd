@@ -332,7 +332,6 @@ export default function App({
                 onClick={() =>
                   startOrchestrator({
                     body: {
-                      userId: userInfo.clientPrincipal.userId,
                       functionName: 'stocktracker_orchestrator',
                       daysToUpdate: 7,
                     },

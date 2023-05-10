@@ -12,7 +12,6 @@ import {
   formatImageAndText,
 } from '../../components/utils/formatting';
 import {
-  UserInfo_Type,
   UserSettings_Type,
   TimeFramestate,
 } from '../../components/types/types';
@@ -54,13 +53,11 @@ const valueGrowthDataFallBackObject = {
 };
 
 export default function performance({
-  userInfo,
   userSettings,
   timeFrameState,
   timeFrameDates,
   totalPerformanceData,
 }: {
-  userInfo: UserInfo_Type;
   userSettings: UserSettings_Type;
   timeFrameState: TimeFramestate;
   timeFrameDates: { start_date: string; end_date: string };
@@ -144,14 +141,8 @@ export default function performance({
 
   // useEffects
   useEffect(() => {
-    if (!userInfo?.clientPrincipal?.userId) {
-      return;
-    }
-
     const { start_date, end_date } = timeFrameDates;
-    const body: any = {
-      userId: userInfo.clientPrincipal.userId,
-    };
+    const body: any = {};
     if (end_date === 'max' && start_date === 'max') {
       body.allData = true;
     } else if (end_date && start_date) {
@@ -200,16 +191,11 @@ export default function performance({
     return () => {
       abortController.abort();
     };
-  }, [userInfo, timeFrameDates, tab]);
+  }, [timeFrameDates, tab]);
 
   useEffect(() => {
-    if (!userInfo?.clientPrincipal?.userId) {
-      return;
-    }
-
     const { start_date, end_date } = timeFrameDates;
     const body: any = {
-      userId: userInfo.clientPrincipal.userId,
       containerName: 'stocks_held',
     };
     if (end_date === 'max' && start_date === 'max') {
@@ -244,7 +230,7 @@ export default function performance({
     return () => {
       abortController.abort();
     };
-  }, [userInfo, timeFrameDates]);
+  }, [timeFrameDates]);
 
   // Columns
   const valueGrowthColumns: ColumnsType = [

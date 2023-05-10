@@ -10,7 +10,7 @@ import {
   formatNumber,
   formatImageAndText,
 } from '../../components/utils/formatting';
-import { UserInfo_Type, UserSettings_Type } from '../../components/types/types';
+import { UserSettings_Type } from '../../components/types/types';
 import type { ColumnsType } from 'antd/es/table';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
 import { getPieData, getTableDataBasic } from '../../components/services/data';
@@ -26,10 +26,8 @@ const fallbackObject = {
 };
 
 export default function Home({
-  userInfo,
   userSettings,
 }: {
-  userInfo: UserInfo_Type;
   userSettings: UserSettings_Type;
 }) {
   // Const setup
@@ -65,84 +63,74 @@ export default function Home({
 
   // UseEffect setup
   useEffect(() => {
-    if (userInfo.clientPrincipal.userId !== '') {
-      const abortController = new AbortController();
-      if (tab === '1') {
-        getPieData({
-          body: {
-            userId: userInfo.clientPrincipal.userId,
-            dataType: 'stocks',
-          },
-          dispatcher: StockPieDataDispatcher,
-          abortController,
-        });
-      }
-      if (tab === '2') {
-        getPieData({
-          body: {
-            userId: userInfo.clientPrincipal.userId,
-            dataType: 'sector',
-          },
-          dispatcher: SectorPieDataReducer,
-          abortController,
-        });
-      }
-      if (tab === '3') {
-        getPieData({
-          body: {
-            userId: userInfo.clientPrincipal.userId,
-            dataType: 'country',
-          },
-
-          dispatcher: CountryPieDataReducer,
-          abortController,
-        });
-      }
-      if (tab === '4') {
-        getPieData({
-          body: {
-            userId: userInfo.clientPrincipal.userId,
-            dataType: 'currency',
-          },
-          dispatcher: CurrencyPieDataDispatcher,
-          abortController,
-        });
-      }
-      return () => {
-        abortController.abort();
-      };
-    }
-  }, [userInfo, tab]);
-
-  useEffect(() => {
-    if (userInfo.clientPrincipal.userId !== '') {
-      const abortController = new AbortController();
-
-      getTableDataBasic({
-        dispatcher: unRealizedDataDispatcher,
-        abortController,
+    const abortController = new AbortController();
+    if (tab === '1') {
+      getPieData({
         body: {
-          fullyRealized: false,
-          userId: userInfo.clientPrincipal.userId,
-          containerName: 'stocks_held',
+          dataType: 'stocks',
         },
+        dispatcher: StockPieDataDispatcher,
+        abortController,
       });
-
-      return () => {
-        abortController.abort();
-      };
     }
-  }, [userInfo]);
+    if (tab === '2') {
+      getPieData({
+        body: {
+          dataType: 'sector',
+        },
+        dispatcher: SectorPieDataReducer,
+        abortController,
+      });
+    }
+    if (tab === '3') {
+      getPieData({
+        body: {
+          dataType: 'country',
+        },
+
+        dispatcher: CountryPieDataReducer,
+        abortController,
+      });
+    }
+    if (tab === '4') {
+      getPieData({
+        body: {
+          dataType: 'currency',
+        },
+        dispatcher: CurrencyPieDataDispatcher,
+        abortController,
+      });
+    }
+    return () => {
+      abortController.abort();
+    };
+  }, [tab]);
 
   useEffect(() => {
-    if (userInfo.clientPrincipal.userId !== '' && CollapseKey === '1') {
+    const abortController = new AbortController();
+
+    getTableDataBasic({
+      dispatcher: unRealizedDataDispatcher,
+      abortController,
+      body: {
+        fullyRealized: false,
+        containerName: 'stocks_held',
+      },
+    });
+
+    return () => {
+      abortController.abort();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (CollapseKey === '1') {
       const abortController = new AbortController();
 
       getTableDataBasic({
         dispatcher: RealizedDataDispatcher,
         abortController,
         body: {
-          userId: userInfo.clientPrincipal.userId,
           fullyRealized: true,
           partialRealized: true,
           andOr: 'or',
@@ -154,7 +142,7 @@ export default function Home({
         abortController.abort();
       };
     }
-  }, [userInfo, CollapseKey]);
+  }, [CollapseKey]);
 
   // Tabs setup
   const items = [

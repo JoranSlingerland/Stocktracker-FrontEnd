@@ -91,22 +91,17 @@ function MyApp({ Component, pageProps }: AppProps) {
     });
   }
 
-  async function getAccountSettings(userInfo: string) {
-    getUserData({ body: { userId: userInfo } }).then(({ response }) => {
+  async function getAccountSettings() {
+    getUserData({}).then(({ response }) => {
       userSettingsDispatch({ type: 'setAll', payload: response });
     });
   }
 
   useEffect(() => {
     getUserInfo();
+    getAccountSettings();
     userSettingsDispatch({ type: 'setDarkMode', payload: getDarkMode() });
   }, []);
-
-  useEffect(() => {
-    if (userInfo?.clientPrincipal?.userId) {
-      getAccountSettings(userInfo.clientPrincipal.userId);
-    }
-  }, [userInfo]);
 
   useEffect(() => {
     setDarkMode(userSettings.dark_mode);
@@ -117,13 +112,8 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [timeFrame]);
 
   useEffect(() => {
-    if (!userInfo?.clientPrincipal?.userId) {
-      return;
-    }
-
     const { start_date, end_date } = timeFrameDates;
     const body: any = {
-      userId: userInfo.clientPrincipal.userId,
       containerName: 'totals',
     };
 
@@ -148,7 +138,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     return () => {
       abortController.abort();
     };
-  }, [userInfo, timeFrameDates]);
+  }, [timeFrameDates]);
 
   const props = {
     userInfo,
