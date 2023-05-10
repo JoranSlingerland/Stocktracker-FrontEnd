@@ -371,28 +371,43 @@ export default function App({
       key: 'overviewBar',
       disabled: totalPerformanceData.isLoading,
       label: (
-        <div className="cursor-default">
+        <div className="cursor-default flex">
           <Skeleton
-            className="w-40 pt-4"
+            className="w-20 pt-4"
             active={totalPerformanceData.isLoading}
             paragraph={false}
             loading={totalPerformanceData.isLoading}
           >
-            <Text>
-              {formatCurrency({
-                value: totalPerformanceData.data[0].unrealized.total_value,
-                currency: userSettings.currency,
-              })}
-            </Text>
+            <div>
+              <Text>
+                {formatCurrency({
+                  value: totalPerformanceData.data[0].unrealized.total_value,
+                  currency: userSettings.currency,
+                })}
+              </Text>
+            </div>
+          </Skeleton>
+          <div>
             <Divider type="vertical" />
+          </div>
+          <div>
             <Text className="mr-2">{timeFrameMap[timeFrame]} </Text>
-            <Text>
-              {formatPercentageWithColors({
-                value:
-                  totalPerformanceData.data[0].unrealized.value_pl_percentage,
-                addIcon: true,
-              })}
-            </Text>
+          </div>
+          <Skeleton
+            className="w-12 pt-4"
+            active={totalPerformanceData.isLoading}
+            paragraph={false}
+            loading={totalPerformanceData.isLoading}
+          >
+            <div>
+              <Text>
+                {formatPercentageWithColors({
+                  value:
+                    totalPerformanceData.data[0].unrealized.value_pl_percentage,
+                  addIcon: true,
+                })}
+              </Text>
+            </div>
           </Skeleton>
         </div>
       ),
