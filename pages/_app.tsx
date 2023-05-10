@@ -19,6 +19,7 @@ import {
   getUserData,
   getTableDataPerformance,
 } from '../components/services/data';
+import Footer from '../components/modules/footer';
 
 const { darkAlgorithm, defaultAlgorithm } = antdTheme;
 
@@ -157,7 +158,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         }}
       >
         <div
-          className={`min-h-screen ${
+          className={`min-h-screen flex flex-col ${
             userSettings.dark_mode ? 'dark bg-neutral-900' : 'bg-white'
           }`}
         >
@@ -167,6 +168,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               <Component {...pageProps} {...props} />
             </div>
           </div>
+          <Footer />
         </div>
       </ConfigProvider>
     </>
