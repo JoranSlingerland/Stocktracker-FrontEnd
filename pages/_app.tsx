@@ -91,7 +91,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     });
   }
 
-  async function getAccountSettings(userInfo: string) {
+  async function getAccountSettings() {
     getUserData({}).then(({ response }) => {
       userSettingsDispatch({ type: 'setAll', payload: response });
     });
@@ -99,14 +99,9 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     getUserInfo();
+    getAccountSettings();
     userSettingsDispatch({ type: 'setDarkMode', payload: getDarkMode() });
   }, []);
-
-  useEffect(() => {
-    if (userInfo?.clientPrincipal?.userId) {
-      getAccountSettings(userInfo.clientPrincipal.userId);
-    }
-  }, [userInfo]);
 
   useEffect(() => {
     setDarkMode(userSettings.dark_mode);
