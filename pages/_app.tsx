@@ -117,13 +117,8 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, [timeFrame]);
 
   useEffect(() => {
-    if (!userInfo?.clientPrincipal?.userId) {
-      return;
-    }
-
     const { start_date, end_date } = timeFrameDates;
     const body: any = {
-      userId: userInfo.clientPrincipal.userId,
       containerName: 'totals',
     };
 
@@ -148,7 +143,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     return () => {
       abortController.abort();
     };
-  }, [userInfo, timeFrameDates]);
+  }, [timeFrameDates]);
 
   const props = {
     userInfo,

@@ -8,7 +8,6 @@ function getBarchartData({
   dispatcher: any;
   abortController: AbortController;
   body: {
-    userId: string;
     allData: boolean;
     startDate?: string;
     endDate?: string;
@@ -33,7 +32,6 @@ function getLineChartData({
   dispatcher: any;
   abortController: AbortController;
   body: {
-    userId: string;
     allData: boolean;
     startDate?: string;
     endDate?: string;
@@ -129,7 +127,6 @@ function getTableDataPerformance({
   dispatcher: any;
   abortController: AbortController;
   body: {
-    userId: string;
     allData: boolean;
     startDate?: string;
     endDate?: string;
