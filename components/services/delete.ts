@@ -6,7 +6,6 @@ async function deleteInputItems({
   body: {
     itemIds: string[];
     container: 'input_invested' | 'input_transactions';
-    userId: string;
   };
 }) {
   return await ApiWithMessage(

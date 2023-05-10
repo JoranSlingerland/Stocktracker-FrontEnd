@@ -57,7 +57,6 @@ function getPieData({
   dispatcher: any;
   abortController: AbortController;
   body: {
-    userId: string;
     dataType: 'stocks' | 'country' | 'sector' | 'currency';
   };
 }) {
@@ -86,7 +85,6 @@ function getTableDataBasic({
   dispatcher: any;
   abortController: AbortController;
   body: {
-    userId: string;
     containerName:
       | 'totals'
       | 'stocks_held'
