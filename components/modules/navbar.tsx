@@ -16,6 +16,7 @@ import {
   Statistic,
   Tabs,
   Skeleton,
+  Drawer,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import {
@@ -30,6 +31,7 @@ import {
 } from '../utils/formatting';
 import useLocalStorageState from '../hooks/useLocalStorageState';
 import { startOrchestrator } from '../services/orchestrator';
+import { MenuOutlined } from '@ant-design/icons';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -62,6 +64,7 @@ export default function App({
       userInfo?.clientPrincipal?.userRoles.includes('authenticated') || false
     );
   };
+  const [drawerVisible, setDrawerVisible] = useState(false);
 
   // useEffect
   useEffect(() => {
@@ -280,15 +283,14 @@ export default function App({
     );
   }
 
-  // Menu items
-  const items: MenuItem[] = [
+  const navItems: MenuItem[] = [
     {
       key: '/authenticated/portfolio/',
       icon: <HomeOutlined />,
       label: (
         <span>
           <a className="" href="/authenticated/portfolio/"></a>
-          <p className="hidden sm:inline-block">Portfolio</p>
+          <p className="inline-block">Portfolio</p>
         </span>
       ),
     },
@@ -298,7 +300,7 @@ export default function App({
       label: (
         <span>
           <a href="/authenticated/performance/"></a>
-          <p className="hidden sm:inline-block">Performance</p>
+          <p className="inline-block">Performance</p>
         </span>
       ),
     },
@@ -308,66 +310,14 @@ export default function App({
       label: (
         <span>
           <a href="/authenticated/actions/"></a>
-          <p className="hidden sm:inline-block">Actions</p>
+          <p className="inline-block">Actions</p>
         </span>
       ),
     },
-    {
-      key: 'SubMenu',
-      icon: <UserOutlined />,
-      label: (
-        <p className="hidden sm:inline-block">
-          {userInfo?.clientPrincipal?.userDetails || ''}
-        </p>
-      ),
-      className: 'float-right hidden sm:inline-block',
-      disabled: !authenticated(),
-      children: [
-        {
-          key: 'quick_refresh',
-          icon: <ReloadOutlined />,
-          label: (
-            <Tooltip title="Will refresh the last 7 days">
-              <a
-                onClick={() =>
-                  startOrchestrator({
-                    body: {
-                      functionName: 'stocktracker_orchestrator',
-                      daysToUpdate: 7,
-                    },
-                  })
-                }
-              >
-                Quick refresh
-              </a>
-            </Tooltip>
-          ),
-        },
-        {
-          key: '/authenticated/settings/',
-          icon: <SettingOutlined />,
-          label: <a href="/authenticated/settings">Settings</a>,
-        },
-        {
-          key: 'logout',
-          icon: <LogoutOutlined />,
-          label: (
-            <a
-              href="/.auth/logout?post_logout_redirect_uri=/"
-              onClick={() => {
-                localStorage.clear();
-              }}
-            >
-              Logout
-            </a>
-          ),
-        },
-      ],
-    },
   ];
 
-  if (authenticated()) {
-    items.push({
+  const overViewBar: MenuItem[] = [
+    {
       key: 'overviewBar',
       disabled: totalPerformanceData.isLoading,
       label: (
@@ -425,17 +375,127 @@ export default function App({
           disabled: true,
         },
       ],
-    });
+    },
+  ];
+
+  const userMenu: MenuItem[] = [
+    {
+      key: 'SubMenu',
+      icon: <UserOutlined />,
+      label: (
+        <p className="hidden sm:inline-block">
+          {userInfo?.clientPrincipal?.userDetails || ''}
+        </p>
+      ),
+      className: 'float-right hidden sm:inline-block',
+      disabled: !authenticated(),
+      children: [
+        {
+          key: 'quick_refresh',
+          icon: <ReloadOutlined />,
+          label: (
+            <Tooltip title="Will refresh the last 7 days">
+              <a
+                onClick={() =>
+                  startOrchestrator({
+                    body: {
+                      functionName: 'stocktracker_orchestrator',
+                      daysToUpdate: 7,
+                    },
+                  })
+                }
+              >
+                Quick refresh
+              </a>
+            </Tooltip>
+          ),
+        },
+        {
+          key: '/authenticated/settings/',
+          icon: <SettingOutlined />,
+          label: <a href="/authenticated/settings">Settings</a>,
+        },
+        {
+          key: 'logout',
+          icon: <LogoutOutlined />,
+          label: (
+            <a
+              href="/.auth/logout?post_logout_redirect_uri=/"
+              onClick={() => {
+                localStorage.clear();
+              }}
+            >
+              Logout
+            </a>
+          ),
+        },
+      ],
+    },
+  ];
+
+  const openMenu: MenuItem[] = [
+    {
+      key: 'openMenu',
+      onClick: () => {
+        setDrawerVisible(true);
+      },
+      icon: <MenuOutlined />,
+    },
+  ];
+
+  // Menu items
+  const topMenuLarge: MenuItem[] = [...userMenu, ...navItems];
+  const topMenuSmall: MenuItem[] = [...userMenu, ...openMenu];
+
+  if (authenticated()) {
+    topMenuLarge.push(...overViewBar);
+    topMenuSmall.push(...overViewBar);
   }
 
   return (
-    <div>
-      <Menu
-        selectedKeys={[current]}
-        mode="horizontal"
-        items={items}
-        className="block"
-      />
-    </div>
+    <>
+      <div>
+        <Menu
+          selectedKeys={[current]}
+          mode="horizontal"
+          items={topMenuLarge}
+          className="hidden sm:block"
+        />
+        <Menu
+          selectedKeys={[current]}
+          mode="horizontal"
+          items={topMenuSmall}
+          className="sm:hidden block"
+        />
+        <Drawer
+          open={drawerVisible}
+          closable={false}
+          placement="left"
+          onClose={() => {
+            setDrawerVisible(false);
+          }}
+          bodyStyle={{ padding: 0, paddingTop: 12 }}
+          width={200}
+          footer={
+            <div className="text-center">
+              <a
+                href="/.auth/logout?post_logout_redirect_uri=/"
+                onClick={() => {
+                  localStorage.clear();
+                }}
+              >
+                Logout
+              </a>
+            </div>
+          }
+        >
+          <Menu
+            items={navItems}
+            selectedKeys={[current]}
+            className="border-0"
+          />
+        </Drawer>
+      </div>
+    </>
   );
 }
