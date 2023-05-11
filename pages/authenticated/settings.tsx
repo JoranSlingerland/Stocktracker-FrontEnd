@@ -281,6 +281,41 @@ export default function Home({
             </Text>
           </div>
           <Divider />
+          <div className="flex flex-col mt-2">
+            <Text strong>Brandfetch API Key</Text>
+            <div className="mt-2 w-72 sm:w-96">
+              {userSettings.isLoading ? (
+                <Skeleton
+                  active={true}
+                  paragraph={{ rows: 1 }}
+                  title={false}
+                ></Skeleton>
+              ) : (
+                <Input.Password
+                  value={userSettings.brandfetch_api_key}
+                  onChange={(e) => {
+                    userSettingsDispatch({
+                      type: 'setBrandfetchApiKey',
+                      payload: e.target.value,
+                    });
+                  }}
+                  size="small"
+                />
+              )}
+            </div>
+
+            <Text className="mt-1" type="secondary">
+              Get your Brandfetch API Key at{' '}
+              <Link
+                type="secondary"
+                href="https://developers.brandfetch.com/"
+                target="_blank"
+              >
+                developers.brandfetch.com
+              </Link>
+            </Text>
+          </div>
+          <Divider />
           <div className="flex flex-col">
             <Text strong>Alpha Vantage API Key</Text>
             <div className="mt-2 w-72 sm:w-96">

@@ -34,8 +34,9 @@ const userSettingsReducer = (state: any, action: userSettingsDispatch_Type) => {
       return {
         ...state,
         alpha_vantage_api_key: action.payload,
-        isLoading: false,
       };
+    case 'setBrandfetchApiKey':
+      return { ...state, brandfetch_api_key: action.payload };
     case 'setCurrency':
       return { ...state, currency: action.payload };
     case 'setAll':

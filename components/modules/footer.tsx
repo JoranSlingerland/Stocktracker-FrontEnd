@@ -58,12 +58,6 @@ export default function Footer({}: {}): JSX.Element {
               <GithubOutlined /> Infrastructure
             </Link>
           </div>
-
-          <div>
-            <Link href="https://clearbit.com" target="_blank" type="secondary">
-              Logos provided by Clearbit
-            </Link>
-          </div>
         </div>
       </div>
     </div>

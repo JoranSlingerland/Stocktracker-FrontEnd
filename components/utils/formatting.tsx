@@ -152,7 +152,7 @@ function formatImageAndText(
     <div className="flex flex-col md:flex-row">
       <Image
         className="pr-1"
-        alt="logo"
+        alt="icon"
         src={image}
         width={35}
         height={35}

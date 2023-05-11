@@ -243,7 +243,7 @@ export default function performance({
       dataIndex: 'meta',
       key: 'meta.name',
       render: (text: any, record: any) =>
-        formatImageAndText(record.symbol, text.name, record.meta.logo),
+        formatImageAndText(record.symbol, text.name, record.meta.icon),
     },
     {
       title: 'Profit / Loss',
@@ -271,7 +271,7 @@ export default function performance({
       dataIndex: 'meta',
       key: 'meta.name',
       render: (text: any, record: any) =>
-        formatImageAndText(record.symbol, text.name, record.meta.logo),
+        formatImageAndText(record.symbol, text.name, record.meta.icon),
     },
     {
       title: 'Dividends',
@@ -291,7 +291,7 @@ export default function performance({
       dataIndex: 'meta',
       key: 'meta.name',
       render: (text: any, record: any) =>
-        formatImageAndText(record.symbol, text.name, record.meta.logo),
+        formatImageAndText(record.symbol, text.name, record.meta.icon),
     },
     {
       title: 'Transaction Costs',
