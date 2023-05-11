@@ -43,6 +43,16 @@ import { addUserData } from '../../components/services/add';
 
 const { Text, Title, Link } = Typography;
 
+// handle click functions
+function handleLocalStorageClearClick() {
+  localStorage.clear();
+  if (localStorage.length === 0) {
+    message.success('Local storage cleared');
+  } else {
+    message.error('Something went wrong :(');
+  }
+}
+
 export default function Home({
   userInfo,
   userSettings,
@@ -57,17 +67,9 @@ export default function Home({
     initialState({ isLoading: true })
   );
   const [tab, setTab] = useLocalStorageState('settingsTab', '1');
+  const dimensions = useWindowDimensions();
 
   // handle click functions
-  function handleLocalStorageClearClick() {
-    localStorage.clear();
-    if (localStorage.length === 0) {
-      message.success('Local storage cleared');
-    } else {
-      message.error('Something went wrong :(');
-    }
-  }
-
   async function handleSaveAccountSettings() {
     userSettingsDispatch({ type: 'setLoading', payload: true });
     await addUserData({
@@ -114,8 +116,6 @@ export default function Home({
   }, [tab]);
 
   // constants
-  const dimensions = useWindowDimensions();
-
   const orchestratorColumns = [
     {
       title: 'Status',
