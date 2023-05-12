@@ -130,7 +130,6 @@ function MyApp({ Component, pageProps }: AppProps) {
     timeFrameDates,
     totalPerformanceData,
   };
-  console.count('rendering _app');
 
   return (
     <>
