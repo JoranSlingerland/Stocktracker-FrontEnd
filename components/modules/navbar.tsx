@@ -35,7 +35,7 @@ import { MenuOutlined } from '@ant-design/icons';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
-const { Text } = Typography;
+const { Text, Link } = Typography;
 
 export default function App({
   userInfo,
@@ -474,18 +474,19 @@ export default function App({
           onClose={() => {
             setDrawerVisible(false);
           }}
-          bodyStyle={{ padding: 0, paddingTop: 12 }}
+          bodyStyle={{ padding: 0, paddingTop: 0 }}
           width={200}
           footer={
             <div className="text-center">
-              <a
+              <Link
+                type="secondary"
                 href="/.auth/logout?post_logout_redirect_uri=/"
                 onClick={() => {
                   localStorage.clear();
                 }}
               >
                 Logout
-              </a>
+              </Link>
             </div>
           }
         >
