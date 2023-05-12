@@ -15,6 +15,10 @@ function formatCurrency({
   if (currency === undefined || currency === '') {
     return formatNumber(value, maximumFractionDigits);
   }
+  if (typeof value === 'string') {
+    value = parseFloat(value);
+  }
+  !value && (value = 0);
 
   if (
     !currencyCodes.find(
@@ -59,6 +63,7 @@ function formatCurrencyWithColors({
   if (typeof value === 'string') {
     value = parseFloat(value);
   }
+  !value && (value = 0);
 
   if (currency === undefined) {
     var formattedValue = formatCurrency({ value, maximumFractionDigits });
@@ -94,6 +99,12 @@ function formatCurrencyWithColors({
 }
 
 function formatPercentage(value: number | string, maximumFractionDigits = 2) {
+  !value && (value = 0);
+
+  if (typeof value === 'string') {
+    value = parseFloat(value);
+  }
+
   return value.toLocaleString('nl-NL', {
     style: 'percent',
     minimumFractionDigits: maximumFractionDigits,
@@ -114,6 +125,7 @@ function formatPercentageWithColors({
   if (typeof value === 'string') {
     value = parseFloat(value);
   }
+  !value && (value = 0);
 
   const formattedValue = formatPercentage(value, maximumFractionDigits);
 
@@ -135,6 +147,11 @@ function formatPercentageWithColors({
 }
 
 function formatNumber(value: number | string, maximumFractionDigits = 2) {
+  if (typeof value === 'string') {
+    value = parseFloat(value);
+  }
+  !value && (value = 0);
+
   return value.toLocaleString('nl-NL', {
     maximumFractionDigits: maximumFractionDigits,
   });
