@@ -93,6 +93,7 @@ function getTableDataBasic({
     fullyRealized?: boolean;
     partialRealized?: boolean;
     andOr?: 'and' | 'or';
+    symbol?: string;
   };
   overWrite?: boolean;
 }) {
