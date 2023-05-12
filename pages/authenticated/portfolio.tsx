@@ -209,7 +209,7 @@ export default function Home({
       key: 'meta.name',
       fixed: 'left',
       render: (text: any, record: any) =>
-        formatImageAndText(record.symbol, text.name, record.meta.logo),
+        formatImageAndText(record.symbol, text.name, record.meta.icon),
     },
     {
       title: 'Cost',
@@ -287,7 +287,7 @@ export default function Home({
       key: 'meta.name',
       fixed: 'left',
       render: (text, record: any) =>
-        formatImageAndText(record.symbol, text.name, record.meta.logo),
+        formatImageAndText(record.symbol, text.name, record.meta.icon),
     },
     {
       title: 'Cost',

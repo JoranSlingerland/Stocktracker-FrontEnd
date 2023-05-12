@@ -141,13 +141,15 @@ export default function performance({
 
   // useEffects
   useEffect(() => {
-    const { start_date, end_date } = timeFrameDates;
     const body: any = {};
-    if (end_date === 'max' && start_date === 'max') {
+    if (
+      timeFrameDates.end_date === 'max' &&
+      timeFrameDates.start_date === 'max'
+    ) {
       body.allData = true;
-    } else if (end_date && start_date) {
-      body.startDate = start_date;
-      body.endDate = end_date;
+    } else if (timeFrameDates.end_date && timeFrameDates.start_date) {
+      body.startDate = timeFrameDates.start_date;
+      body.endDate = timeFrameDates.end_date;
     } else {
       return;
     }
@@ -191,18 +193,20 @@ export default function performance({
     return () => {
       abortController.abort();
     };
-  }, [timeFrameDates, tab]);
+  }, [timeFrameDates.end_date, timeFrameDates.start_date, tab]);
 
   useEffect(() => {
-    const { start_date, end_date } = timeFrameDates;
     const body: any = {
       containerName: 'stocks_held',
     };
-    if (end_date === 'max' && start_date === 'max') {
+    if (
+      timeFrameDates.end_date === 'max' &&
+      timeFrameDates.start_date === 'max'
+    ) {
       body.allData = true;
-    } else if (end_date && start_date) {
-      body.startDate = start_date;
-      body.endDate = end_date;
+    } else if (timeFrameDates.end_date && timeFrameDates.start_date) {
+      body.startDate = timeFrameDates.start_date;
+      body.endDate = timeFrameDates.end_date;
     } else {
       return;
     }
@@ -230,7 +234,7 @@ export default function performance({
     return () => {
       abortController.abort();
     };
-  }, [timeFrameDates]);
+  }, [timeFrameDates.end_date, timeFrameDates.start_date]);
 
   // Columns
   const valueGrowthColumns: ColumnsType = [
@@ -239,7 +243,7 @@ export default function performance({
       dataIndex: 'meta',
       key: 'meta.name',
       render: (text: any, record: any) =>
-        formatImageAndText(record.symbol, text.name, record.meta.logo),
+        formatImageAndText(record.symbol, text.name, record.meta.icon),
     },
     {
       title: 'Profit / Loss',
@@ -267,7 +271,7 @@ export default function performance({
       dataIndex: 'meta',
       key: 'meta.name',
       render: (text: any, record: any) =>
-        formatImageAndText(record.symbol, text.name, record.meta.logo),
+        formatImageAndText(record.symbol, text.name, record.meta.icon),
     },
     {
       title: 'Dividends',
@@ -287,7 +291,7 @@ export default function performance({
       dataIndex: 'meta',
       key: 'meta.name',
       render: (text: any, record: any) =>
-        formatImageAndText(record.symbol, text.name, record.meta.logo),
+        formatImageAndText(record.symbol, text.name, record.meta.icon),
     },
     {
       title: 'Transaction Costs',

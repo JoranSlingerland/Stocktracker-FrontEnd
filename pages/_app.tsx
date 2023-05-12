@@ -19,6 +19,8 @@ import {
   getUserData,
   getTableDataPerformance,
 } from '../components/services/data';
+import Footer from '../components/modules/footer';
+import React from 'react';
 
 const { darkAlgorithm, defaultAlgorithm } = antdTheme;
 
@@ -32,8 +34,9 @@ const userSettingsReducer = (state: any, action: userSettingsDispatch_Type) => {
       return {
         ...state,
         alpha_vantage_api_key: action.payload,
-        isLoading: false,
       };
+    case 'setBrandfetchApiKey':
+      return { ...state, brandfetch_api_key: action.payload };
     case 'setCurrency':
       return { ...state, currency: action.payload };
     case 'setAll':
@@ -46,16 +49,16 @@ const userSettingsReducer = (state: any, action: userSettingsDispatch_Type) => {
   }
 };
 
-function setDarkMode(dark_mode: boolean) {
-  localStorage.setItem('dark_mode', JSON.stringify(dark_mode));
+async function getAccountSettings(userSettingsDispatch: any) {
+  getUserData({}).then(({ response }) => {
+    userSettingsDispatch({ type: 'setAll', payload: response });
+  });
 }
 
-function getDarkMode(): boolean {
-  const dark_mode = localStorage.getItem('dark_mode');
-  if (dark_mode) {
-    return JSON.parse(dark_mode);
-  }
-  return false;
+async function getUserInfo(setUserInfo: any) {
+  await regularFetch({ url: '/.auth/me' }).then(({ response }) => {
+    setUserInfo(response);
+  });
 }
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -77,51 +80,30 @@ function MyApp({ Component, pageProps }: AppProps) {
   });
   const [timeFrame, setTimeFrame] = useLocalStorageState('timeFrame', 'max');
   const timeFrameState: TimeFramestate = { timeFrame, setTimeFrame };
-  const [timeFrameDates, setTimeFrameDates] = useState(
-    dataToGetSwitch(timeFrame)
-  );
+  const timeFrameDates = dataToGetSwitch(timeFrame);
   const [totalPerformanceData, totalPerformanceDataDispatch] = useReducer(
     apiRequestReducer,
     initialState({ fallback_data: [totalsData] })
   );
 
-  async function getUserInfo() {
-    await regularFetch({ url: '/.auth/me' }).then(({ response }) => {
-      setUserInfo(response);
-    });
-  }
-
-  async function getAccountSettings() {
-    getUserData({}).then(({ response }) => {
-      userSettingsDispatch({ type: 'setAll', payload: response });
-    });
-  }
-
   useEffect(() => {
-    getUserInfo();
-    getAccountSettings();
-    userSettingsDispatch({ type: 'setDarkMode', payload: getDarkMode() });
+    getUserInfo(setUserInfo);
+    getAccountSettings(userSettingsDispatch);
   }, []);
 
   useEffect(() => {
-    setDarkMode(userSettings.dark_mode);
-  }, [userSettings.dark_mode]);
-
-  useEffect(() => {
-    setTimeFrameDates(dataToGetSwitch(timeFrame));
-  }, [timeFrame]);
-
-  useEffect(() => {
-    const { start_date, end_date } = timeFrameDates;
     const body: any = {
       containerName: 'totals',
     };
 
-    if (end_date === 'max' && start_date === 'max') {
+    if (
+      timeFrameDates.end_date === 'max' &&
+      timeFrameDates.start_date === 'max'
+    ) {
       body.allData = true;
-    } else if (end_date && start_date) {
-      body.startDate = start_date;
-      body.endDate = end_date;
+    } else if (timeFrameDates.end_date && timeFrameDates.start_date) {
+      body.startDate = timeFrameDates.start_date;
+      body.endDate = timeFrameDates.end_date;
     } else {
       return;
     }
@@ -138,7 +120,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     return () => {
       abortController.abort();
     };
-  }, [timeFrameDates]);
+  }, [timeFrameDates.end_date, timeFrameDates.start_date]);
 
   const props = {
     userInfo,
@@ -157,7 +139,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         }}
       >
         <div
-          className={`min-h-screen ${
+          className={`min-h-screen flex flex-col ${
             userSettings.dark_mode ? 'dark bg-neutral-900' : 'bg-white'
           }`}
         >
@@ -167,6 +149,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               <Component {...pageProps} {...props} />
             </div>
           </div>
+          <Footer />
         </div>
       </ConfigProvider>
     </>

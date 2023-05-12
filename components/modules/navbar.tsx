@@ -16,6 +16,7 @@ import {
   Statistic,
   Tabs,
   Skeleton,
+  Drawer,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import {
@@ -30,6 +31,7 @@ import {
 } from '../utils/formatting';
 import useLocalStorageState from '../hooks/useLocalStorageState';
 import { startOrchestrator } from '../services/orchestrator';
+import { MenuOutlined } from '@ant-design/icons';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -62,6 +64,7 @@ export default function App({
       userInfo?.clientPrincipal?.userRoles.includes('authenticated') || false
     );
   };
+  const [drawerVisible, setDrawerVisible] = useState(false);
 
   // useEffect
   useEffect(() => {
@@ -280,15 +283,14 @@ export default function App({
     );
   }
 
-  // Menu items
-  const items: MenuItem[] = [
+  const navItems: MenuItem[] = [
     {
       key: '/authenticated/portfolio/',
       icon: <HomeOutlined />,
       label: (
         <span>
           <a className="" href="/authenticated/portfolio/"></a>
-          <p className="hidden sm:inline-block">Portfolio</p>
+          <p className="inline-block">Portfolio</p>
         </span>
       ),
     },
@@ -298,7 +300,7 @@ export default function App({
       label: (
         <span>
           <a href="/authenticated/performance/"></a>
-          <p className="hidden sm:inline-block">Performance</p>
+          <p className="inline-block">Performance</p>
         </span>
       ),
     },
@@ -308,10 +310,75 @@ export default function App({
       label: (
         <span>
           <a href="/authenticated/actions/"></a>
-          <p className="hidden sm:inline-block">Actions</p>
+          <p className="inline-block">Actions</p>
         </span>
       ),
     },
+  ];
+
+  const overViewBar: MenuItem[] = [
+    {
+      key: 'overviewBar',
+      disabled: totalPerformanceData.isLoading,
+      label: (
+        <div className="cursor-default flex">
+          <Skeleton
+            className="w-20 pt-4"
+            active={totalPerformanceData.isLoading}
+            paragraph={false}
+            loading={totalPerformanceData.isLoading}
+          >
+            <div>
+              <Text>
+                {formatCurrency({
+                  value: totalPerformanceData.data[0].unrealized.total_value,
+                  currency: userSettings.currency,
+                })}
+              </Text>
+            </div>
+          </Skeleton>
+          <div>
+            <Divider type="vertical" />
+          </div>
+          <div>
+            <Text className="mr-2">{timeFrameMap[timeFrame]} </Text>
+          </div>
+          <Skeleton
+            className="w-12 pt-4"
+            active={totalPerformanceData.isLoading}
+            paragraph={false}
+            loading={totalPerformanceData.isLoading}
+          >
+            <div>
+              <Text>
+                {formatPercentageWithColors({
+                  value:
+                    totalPerformanceData.data[0].unrealized.value_pl_percentage,
+                  addIcon: true,
+                })}
+              </Text>
+            </div>
+          </Skeleton>
+        </div>
+      ),
+      className: 'float-right',
+      children: [
+        {
+          key: 'overviewDropdown',
+          label: <OverViewBar loading={totalPerformanceData.isLoading} />,
+          style: {
+            width: 'fit-content',
+            height: 'fit-content',
+            margin: 0,
+            padding: 0,
+          },
+          disabled: true,
+        },
+      ],
+    },
+  ];
+
+  const userMenu: MenuItem[] = [
     {
       key: 'SubMenu',
       icon: <UserOutlined />,
@@ -366,61 +433,69 @@ export default function App({
     },
   ];
 
+  const openMenu: MenuItem[] = [
+    {
+      key: 'openMenu',
+      onClick: () => {
+        setDrawerVisible(true);
+      },
+      icon: <MenuOutlined />,
+    },
+  ];
+
+  // Menu items
+  const topMenuLarge: MenuItem[] = [...userMenu, ...navItems];
+  const topMenuSmall: MenuItem[] = [...userMenu, ...openMenu];
+
   if (authenticated()) {
-    items.push({
-      key: 'overviewBar',
-      disabled: totalPerformanceData.isLoading,
-      label: (
-        <div className="cursor-default">
-          <Skeleton
-            className="w-40 pt-4"
-            active={totalPerformanceData.isLoading}
-            paragraph={false}
-            loading={totalPerformanceData.isLoading}
-          >
-            <Text>
-              {formatCurrency({
-                value: totalPerformanceData.data[0].unrealized.total_value,
-                currency: userSettings.currency,
-              })}
-            </Text>
-            <Divider type="vertical" />
-            <Text className="mr-2">{timeFrameMap[timeFrame]} </Text>
-            <Text>
-              {formatPercentageWithColors({
-                value:
-                  totalPerformanceData.data[0].unrealized.value_pl_percentage,
-                addIcon: true,
-              })}
-            </Text>
-          </Skeleton>
-        </div>
-      ),
-      className: 'float-right',
-      children: [
-        {
-          key: 'overviewDropdown',
-          label: <OverViewBar loading={totalPerformanceData.isLoading} />,
-          style: {
-            width: 'fit-content',
-            height: 'fit-content',
-            margin: 0,
-            padding: 0,
-          },
-          disabled: true,
-        },
-      ],
-    });
+    topMenuLarge.push(...overViewBar);
+    topMenuSmall.push(...overViewBar);
   }
 
   return (
-    <div>
-      <Menu
-        selectedKeys={[current]}
-        mode="horizontal"
-        items={items}
-        className="block"
-      />
-    </div>
+    <>
+      <div>
+        <Menu
+          selectedKeys={[current]}
+          mode="horizontal"
+          items={topMenuLarge}
+          className="hidden sm:block"
+        />
+        <Menu
+          selectedKeys={[current]}
+          mode="horizontal"
+          items={topMenuSmall}
+          className="sm:hidden block"
+        />
+        <Drawer
+          open={drawerVisible}
+          closable={false}
+          placement="left"
+          onClose={() => {
+            setDrawerVisible(false);
+          }}
+          bodyStyle={{ padding: 0, paddingTop: 12 }}
+          width={200}
+          footer={
+            <div className="text-center">
+              <a
+                href="/.auth/logout?post_logout_redirect_uri=/"
+                onClick={() => {
+                  localStorage.clear();
+                }}
+              >
+                Logout
+              </a>
+            </div>
+          }
+        >
+          <Menu
+            items={navItems}
+            selectedKeys={[current]}
+            className="border-0"
+          />
+        </Drawer>
+      </div>
+    </>
   );
 }

@@ -89,7 +89,7 @@ export default function Home({
       key: 'symbol',
       render: (text: string, record: any) => (
         <div className="min-w-16">
-          {formatImageAndText(text, record.meta.name, record.meta.logo)}
+          {formatImageAndText(text, record.meta.name, record.meta.icon)}
         </div>
       ),
     },

@@ -2,7 +2,7 @@ module.exports = {
   trailingSlash: true,
   images: {
     loader: 'custom',
-    domains: ['logo.uplead.com'],
+    domains: ['asset.brandfetch.io'],
     unoptimized: true,
   },
 };

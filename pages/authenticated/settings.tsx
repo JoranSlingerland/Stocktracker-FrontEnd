@@ -43,6 +43,16 @@ import { addUserData } from '../../components/services/add';
 
 const { Text, Title, Link } = Typography;
 
+// handle click functions
+function handleLocalStorageClearClick() {
+  localStorage.clear();
+  if (localStorage.length === 0) {
+    message.success('Local storage cleared');
+  } else {
+    message.error('Something went wrong :(');
+  }
+}
+
 export default function Home({
   userInfo,
   userSettings,
@@ -57,17 +67,9 @@ export default function Home({
     initialState({ isLoading: true })
   );
   const [tab, setTab] = useLocalStorageState('settingsTab', '1');
+  const dimensions = useWindowDimensions();
 
   // handle click functions
-  function handleLocalStorageClearClick() {
-    localStorage.clear();
-    if (localStorage.length === 0) {
-      message.success('Local storage cleared');
-    } else {
-      message.error('Something went wrong :(');
-    }
-  }
-
   async function handleSaveAccountSettings() {
     userSettingsDispatch({ type: 'setLoading', payload: true });
     await addUserData({
@@ -114,8 +116,6 @@ export default function Home({
   }, [tab]);
 
   // constants
-  const dimensions = useWindowDimensions();
-
   const orchestratorColumns = [
     {
       title: 'Status',
@@ -277,6 +277,41 @@ export default function Home({
                 target="_blank"
               >
                 clearbit.com
+              </Link>
+            </Text>
+          </div>
+          <Divider />
+          <div className="flex flex-col mt-2">
+            <Text strong>Brandfetch API Key</Text>
+            <div className="mt-2 w-72 sm:w-96">
+              {userSettings.isLoading ? (
+                <Skeleton
+                  active={true}
+                  paragraph={{ rows: 1 }}
+                  title={false}
+                ></Skeleton>
+              ) : (
+                <Input.Password
+                  value={userSettings.brandfetch_api_key}
+                  onChange={(e) => {
+                    userSettingsDispatch({
+                      type: 'setBrandfetchApiKey',
+                      payload: e.target.value,
+                    });
+                  }}
+                  size="small"
+                />
+              )}
+            </div>
+
+            <Text className="mt-1" type="secondary">
+              Get your Brandfetch API Key at{' '}
+              <Link
+                type="secondary"
+                href="https://developers.brandfetch.com/"
+                target="_blank"
+              >
+                developers.brandfetch.com
               </Link>
             </Text>
           </div>
