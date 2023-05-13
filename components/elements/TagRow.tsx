@@ -6,6 +6,9 @@ interface TagRowProps {
 }
 
 function TagRow({ items }: TagRowProps) {
+  // remove all undefined values from items
+  items = items.filter((item) => item.value);
+  console.log(items);
   return (
     <div>
       {items.map(({ value, tagProps }) => (

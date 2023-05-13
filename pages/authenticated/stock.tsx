@@ -1,6 +1,14 @@
 import { useRouter } from 'next/router';
 import { useReducer, useEffect, useState } from 'react';
-import { Typography, Divider, Image, Tabs, Descriptions, Card } from 'antd';
+import {
+  Typography,
+  Divider,
+  Image,
+  Tabs,
+  Descriptions,
+  Card,
+  Skeleton,
+} from 'antd';
 import { getTableDataBasic } from '../../components/services/data';
 import { apiRequestReducer, initialState } from '../../components/utils/api';
 import {
@@ -53,12 +61,16 @@ function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
   );
   const [transactionsData, transactionsReducer] = useReducer(
     apiRequestReducer,
-    initialState({ isLoading: true, fallback_data: [] })
+    initialState({ isLoading: true, fallback_data: [{}] })
   );
   const [tab, setTab] = useState('1');
 
   useEffect(() => {
     const abortController = new AbortController();
+
+    if (!stockSymbol) {
+      return;
+    }
 
     getTableDataBasic({
       dispatcher: stockDataDispatcher,
@@ -77,6 +89,10 @@ function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
   useEffect(() => {
     const abortController = new AbortController();
 
+    if (!stockSymbol) {
+      return;
+    }
+
     if (tab === '2') {
       getTableDataBasic({
         dispatcher: transactionsReducer,
@@ -94,6 +110,11 @@ function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
   }, [stockSymbol, tab]);
 
   const transactionsArray = convertTransactionsArray(transactionsData.data);
+  const DescriptionSkeletonProps = {
+    active: true,
+    paragraph: false,
+    title: { width: '80px' },
+  };
   const tabItems: TabsProps['items'] = [
     {
       key: '1',
@@ -105,6 +126,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
               statisticProps={{
                 title: 'Value',
                 value: stockData.data?.[0]?.['unrealized']['total_value'],
+                loading: stockData.isLoading,
                 formatter: (value) =>
                   formatCurrency({
                     value,
@@ -121,6 +143,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
                     ? 'Profit'
                     : 'Loss',
                 value: stockData.data?.[0]?.['unrealized']['total_pl'],
+                loading: stockData.isLoading,
                 formatter: (value) =>
                   formatCurrency({
                     value,
@@ -134,6 +157,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
               statisticProps={{
                 title: 'Dividends',
                 value: stockData.data?.[0]?.['realized']['total_dividends'],
+                loading: stockData.isLoading,
                 formatter: (value) =>
                   formatCurrency({
                     value,
@@ -147,6 +171,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
               statisticProps={{
                 title: 'Cost',
                 value: stockData.data?.[0]?.['realized']['transaction_cost'],
+                loading: stockData.isLoading,
                 formatter: (value) =>
                   formatCurrency({
                     value,
@@ -167,19 +192,34 @@ function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
             className="mt-2"
           >
             <Descriptions.Item label="Shares">
-              {stockData.data?.[0]?.['unrealized']['quantity']}
+              <Skeleton
+                loading={stockData.isLoading}
+                {...DescriptionSkeletonProps}
+              >
+                {stockData.data?.[0]?.['unrealized']['quantity']}
+              </Skeleton>
             </Descriptions.Item>
             <Descriptions.Item label="Average cost">
-              {formatCurrency({
-                value: stockData.data?.[0]?.['unrealized']['cost_per_share'],
-                currency: userSettings.currency,
-              })}
+              <Skeleton
+                loading={stockData.isLoading}
+                {...DescriptionSkeletonProps}
+              >
+                {formatCurrency({
+                  value: stockData.data?.[0]?.['unrealized']['cost_per_share'],
+                  currency: userSettings.currency,
+                })}
+              </Skeleton>
             </Descriptions.Item>
             <Descriptions.Item label="Current price">
-              {formatCurrency({
-                value: stockData.data?.[0]?.['unrealized']['close_value'],
-                currency: userSettings.currency,
-              })}
+              <Skeleton
+                loading={stockData.isLoading}
+                {...DescriptionSkeletonProps}
+              >
+                {formatCurrency({
+                  value: stockData.data?.[0]?.['unrealized']['close_value'],
+                  currency: userSettings.currency,
+                })}
+              </Skeleton>
             </Descriptions.Item>
             <Descriptions.Item
               label={
@@ -189,16 +229,21 @@ function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
               }
               className="flex flex-row items-center"
             >
-              {formatCurrency({
-                value: stockData.data?.[0]?.['unrealized']['forex_pl'],
-                currency: userSettings.currency,
-              })}
-              <Divider type="vertical" />
-              {formatPercentageWithColors({
-                value:
-                  stockData.data?.[0]?.['unrealized']['forex_pl_percentage'],
-                addIcon: true,
-              })}
+              <Skeleton
+                loading={stockData.isLoading}
+                {...DescriptionSkeletonProps}
+              >
+                {formatCurrency({
+                  value: stockData.data?.[0]?.['unrealized']['forex_pl'],
+                  currency: userSettings.currency,
+                })}
+                <Divider type="vertical" />
+                {formatPercentageWithColors({
+                  value:
+                    stockData.data?.[0]?.['unrealized']['forex_pl_percentage'],
+                  addIcon: true,
+                })}
+              </Skeleton>
             </Descriptions.Item>
             <Descriptions.Item
               label={
@@ -207,16 +252,21 @@ function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
                   : 'Value loss'
               }
             >
-              {formatCurrency({
-                value: stockData.data?.[0]?.['unrealized']['value_pl'],
-                currency: userSettings.currency,
-              })}
-              <Divider type="vertical" />
-              {formatPercentageWithColors({
-                value:
-                  stockData.data?.[0]?.['unrealized']['value_pl_percentage'],
-                addIcon: true,
-              })}
+              <Skeleton
+                loading={stockData.isLoading}
+                {...DescriptionSkeletonProps}
+              >
+                {formatCurrency({
+                  value: stockData.data?.[0]?.['unrealized']['value_pl'],
+                  currency: userSettings.currency,
+                })}
+                <Divider type="vertical" />
+                {formatPercentageWithColors({
+                  value:
+                    stockData.data?.[0]?.['unrealized']['value_pl_percentage'],
+                  addIcon: true,
+                })}
+              </Skeleton>
             </Descriptions.Item>
             <Descriptions.Item
               label={
@@ -225,16 +275,21 @@ function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
                   : 'Total loss'
               }
             >
-              {formatCurrency({
-                value: stockData.data?.[0]?.['unrealized']['total_pl'],
-                currency: userSettings.currency,
-              })}
-              <Divider type="vertical" />
-              {formatPercentageWithColors({
-                value:
-                  stockData.data?.[0]?.['unrealized']['total_pl_percentage'],
-                addIcon: true,
-              })}
+              <Skeleton
+                loading={stockData.isLoading}
+                {...DescriptionSkeletonProps}
+              >
+                {formatCurrency({
+                  value: stockData.data?.[0]?.['unrealized']['total_pl'],
+                  currency: userSettings.currency,
+                })}
+                <Divider type="vertical" />
+                {formatPercentageWithColors({
+                  value:
+                    stockData.data?.[0]?.['unrealized']['total_pl_percentage'],
+                  addIcon: true,
+                })}
+              </Skeleton>
             </Descriptions.Item>
           </Descriptions>
           <Divider className="m-0" />
@@ -248,19 +303,36 @@ function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
             className="mt-2 "
           >
             <Descriptions.Item label="Shares">
-              {stockData.data?.[0]?.['realized']['quantity']}
+              <Skeleton
+                loading={stockData.isLoading}
+                {...DescriptionSkeletonProps}
+              >
+                {stockData.data?.[0]?.['realized']['quantity']}
+              </Skeleton>
             </Descriptions.Item>
             <Descriptions.Item label="Average cost">
-              {formatCurrency({
-                value: stockData.data?.[0]?.['realized']['cost_per_share_buy'],
-                currency: userSettings.currency,
-              })}
+              <Skeleton
+                loading={stockData.isLoading}
+                {...DescriptionSkeletonProps}
+              >
+                {formatCurrency({
+                  value:
+                    stockData.data?.[0]?.['realized']['cost_per_share_buy'],
+                  currency: userSettings.currency,
+                })}
+              </Skeleton>
             </Descriptions.Item>
             <Descriptions.Item label="Average sell price">
-              {formatCurrency({
-                value: stockData.data?.[0]?.['realized']['cost_per_share_sell'],
-                currency: userSettings.currency,
-              })}
+              <Skeleton
+                loading={stockData.isLoading}
+                {...DescriptionSkeletonProps}
+              >
+                {formatCurrency({
+                  value:
+                    stockData.data?.[0]?.['realized']['cost_per_share_sell'],
+                  currency: userSettings.currency,
+                })}
+              </Skeleton>
             </Descriptions.Item>
             <Descriptions.Item
               label={
@@ -269,15 +341,26 @@ function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
                   : 'Forex loss'
               }
             >
-              {formatCurrency({
-                value: stockData.data?.[0]?.['realized']['forex_pl'],
-                currency: userSettings.currency,
-              })}
+              <Skeleton
+                loading={stockData.isLoading}
+                {...DescriptionSkeletonProps}
+              >
+                {formatCurrency({
+                  value: stockData.data?.[0]?.['realized']['forex_pl'],
+                  currency: userSettings.currency,
+                })}
+              </Skeleton>
               <Divider type="vertical" />
-              {formatPercentageWithColors({
-                value: stockData.data?.[0]?.['realized']['forex_pl_percentage'],
-                addIcon: true,
-              })}
+              <Skeleton
+                loading={stockData.isLoading}
+                {...DescriptionSkeletonProps}
+              >
+                {formatPercentageWithColors({
+                  value:
+                    stockData.data?.[0]?.['realized']['forex_pl_percentage'],
+                  addIcon: true,
+                })}
+              </Skeleton>
             </Descriptions.Item>
             <Descriptions.Item
               label={
@@ -286,15 +369,21 @@ function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
                   : 'Value loss'
               }
             >
-              {formatCurrency({
-                value: stockData.data?.[0]?.['realized']['value_pl'],
-                currency: userSettings.currency,
-              })}
-              <Divider type="vertical" />
-              {formatPercentageWithColors({
-                value: stockData.data?.[0]?.['realized']['value_pl_percentage'],
-                addIcon: true,
-              })}
+              <Skeleton
+                loading={stockData.isLoading}
+                {...DescriptionSkeletonProps}
+              >
+                {formatCurrency({
+                  value: stockData.data?.[0]?.['realized']['value_pl'],
+                  currency: userSettings.currency,
+                })}
+                <Divider type="vertical" />
+                {formatPercentageWithColors({
+                  value:
+                    stockData.data?.[0]?.['realized']['value_pl_percentage'],
+                  addIcon: true,
+                })}
+              </Skeleton>
             </Descriptions.Item>
             <Descriptions.Item
               label={
@@ -303,15 +392,21 @@ function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
                   : 'Total loss'
               }
             >
-              {formatCurrency({
-                value: stockData.data?.[0]?.['realized']['total_pl'],
-                currency: userSettings.currency,
-              })}
-              <Divider type="vertical" />
-              {formatPercentageWithColors({
-                value: stockData.data?.[0]?.['realized']['total_pl_percentage'],
-                addIcon: true,
-              })}
+              <Skeleton
+                loading={stockData.isLoading}
+                {...DescriptionSkeletonProps}
+              >
+                {formatCurrency({
+                  value: stockData.data?.[0]?.['realized']['total_pl'],
+                  currency: userSettings.currency,
+                })}
+                <Divider type="vertical" />
+                {formatPercentageWithColors({
+                  value:
+                    stockData.data?.[0]?.['realized']['total_pl_percentage'],
+                  addIcon: true,
+                })}
+              </Skeleton>
             </Descriptions.Item>
           </Descriptions>
         </>
@@ -325,16 +420,32 @@ function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
           {transactionsArray.map((month, index) => {
             return (
               <div key={index} className="mt-2">
-                <Title level={4}>{month.month}</Title>
+                <Skeleton
+                  paragraph={false}
+                  title={{ width: '100px' }}
+                  active
+                  loading={transactionsData.isLoading}
+                >
+                  <Title level={4}>{month.month}</Title>
+                </Skeleton>
                 <div className="grid sm:grid-cols-2">
                   {month.values.map((value, index) => {
                     return (
                       <Card
                         key={index}
-                        title={`${value.transaction_type} on ${value.date}`}
+                        title={
+                          <Skeleton
+                            paragraph={false}
+                            active
+                            loading={transactionsData.isLoading}
+                          >
+                            {value.transaction_type} on {value.date}
+                          </Skeleton>
+                        }
                         bordered={false}
                         size="small"
                         className="mt-2 mx-2"
+                        loading={transactionsData.isLoading}
                       >
                         <div className="flex flex-col">
                           <Text type="secondary">{`${
@@ -367,49 +478,90 @@ function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
     },
   ];
 
-  const src = stockData.data?.[0]?.['meta']['icon'] || '/images/fallback.png';
-
   return (
     <div className="mt-2">
       <div className="flex space-x-2">
         <div>
-          <Image src={src} width={80} alt="Logo" preview={false} />
+          {stockData.isLoading ? (
+            <Skeleton.Image active />
+          ) : (
+            <Image
+              src={stockData.data?.[0]?.['meta']['icon']}
+              width={96}
+              alt="Logo"
+              preview={false}
+            />
+          )}
         </div>
-        <div className="flex flex-col ">
-          <Title level={3}>{stockData.data?.[0]?.['meta']['name']}</Title>
-          <Text type="secondary" copyable>
-            {stockData.data?.[0]?.['meta']['symbol']}
-          </Text>
-        </div>
-      </div>
-      <div className="flex flex-row items-center space-x-2">
-        {stockData.data?.[0]?.['meta']['links']?.map((link: any) => {
-          return socialsIcon(link.name, link.url);
-        })}
-        <Divider type="vertical" />
-        <Link
-          type="secondary"
-          target="_blank"
-          href={`https://${stockData.data?.[0]?.['meta']['domain']}`}
+        <Skeleton
+          title={false}
+          paragraph={{
+            rows: 2,
+            width: ['80px', '80px'],
+          }}
+          active
+          loading={stockData.isLoading}
         >
-          {stockData.data?.[0]?.['meta']['domain']}
-        </Link>
+          <div className="flex flex-col">
+            <Title level={3}>{stockData.data?.[0]?.['meta']['name']}</Title>
+            <Text type="secondary" copyable>
+              {stockData.data?.[0]?.['meta']['symbol']}
+            </Text>
+          </div>
+        </Skeleton>
       </div>
-
-      <Text>{stockData.data?.[0]?.['meta']['description']}</Text>
-
+      <Skeleton
+        paragraph={false}
+        title={{ width: '200px' }}
+        loading={stockData.isLoading}
+        active
+        className="mt-2"
+      >
+        <div className="flex flex-row items-center space-x-2">
+          {stockData.data?.[0]?.['meta']['links']?.map((link: any) => {
+            return socialsIcon(link.name, link.url);
+          })}
+          <Divider type="vertical" />
+          <Link
+            type="secondary"
+            target="_blank"
+            href={`https://${stockData.data?.[0]?.['meta']['domain']}`}
+          >
+            {stockData.data?.[0]?.['meta']['domain']}
+          </Link>
+        </div>
+      </Skeleton>
+      <Skeleton
+        title={false}
+        active
+        loading={stockData.isLoading}
+        className="mt-2"
+      >
+        <Text>{stockData.data?.[0]?.['meta']['description']}</Text>
+      </Skeleton>
       <Divider className="m-2" plain></Divider>
-
-      <TagRow
-        items={[
-          { value: stockData.data?.[0]?.['meta']['country'] },
-          { value: stockData.data?.[0]?.['meta']['sector'] },
-          { value: stockData.data?.[0]?.['currency'] },
-          {
-            value: stockData.data?.[0]?.['fully_realized'] ? 'Closed' : 'Open',
-          },
-        ]}
-      />
+      <Skeleton
+        paragraph={false}
+        title={{ width: '200px' }}
+        active
+        loading={stockData.isLoading}
+      >
+        <TagRow
+          items={[
+            { value: stockData.data?.[0]?.['meta']['country'] },
+            { value: stockData.data?.[0]?.['meta']['sector'] },
+            { value: stockData.data?.[0]?.['currency'] },
+            {
+              value:
+                stockData.data?.[0]['fully_realized'] !== undefined
+                  ? stockData.data?.[0]['fully_realized']
+                    ? 'Closed'
+                    : 'Open'
+                  : null,
+            },
+          ]}
+        />
+      </Skeleton>
       <Tabs
         activeKey={tab}
         onChange={(activeKey) => {
