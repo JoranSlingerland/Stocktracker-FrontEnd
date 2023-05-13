@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useReducer, useEffect } from 'react';
-import { Typography, Divider, Image, Tabs, Descriptions } from 'antd';
+import { Typography, Divider, Image, Tabs, Descriptions, Card } from 'antd';
 import { getTableDataBasic } from '../../components/services/data';
 import { apiRequestReducer, initialState } from '../../components/utils/api';
 import {
@@ -17,7 +17,7 @@ import {
 import { UserSettings_Type } from '../../components/types/types';
 import TagRow from '../../components/elements/TagRow';
 import StatCard from '../../components/elements/StatCard';
-import DescriptionItems from '../../components/elements/DescriptionItems';
+import { convertTransactionsArray } from '../../components/utils/misc';
 
 const { Text, Title, Link } = Typography;
 
@@ -53,7 +53,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
   );
   const [transactionsData, transactionsReducer] = useReducer(
     apiRequestReducer,
-    initialState({ isLoading: true })
+    initialState({ isLoading: true, fallback_data: [{}] })
   );
 
   useEffect(() => {
@@ -82,6 +82,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
     };
   }, [stockSymbol]);
 
+  const transactionsArray = convertTransactionsArray(transactionsData.data);
   const tabItems: TabsProps['items'] = [
     {
       key: '1',
@@ -307,8 +308,51 @@ function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
     },
     {
       key: '2',
-      label: 'Transactions',
-      children: <></>,
+      label: 'Actions',
+      children: (
+        <div>
+          {transactionsArray.map((month, index) => {
+            return (
+              <div key={index} className="mt-2">
+                <Title level={4}>{month.month}</Title>
+                <div className="grid sm:grid-cols-2">
+                  {month.values.map((value, index) => {
+                    return (
+                      <Card
+                        key={index}
+                        title={`${value.transaction_type} on ${value.date}`}
+                        bordered={false}
+                        size="small"
+                        className="mt-2 mx-2"
+                      >
+                        <div className="flex flex-col">
+                          <Text type="secondary">{`${
+                            value.quantity
+                          } shares at ${formatCurrency({
+                            value: value.cost_per_share,
+                            currency: value.currency,
+                          })} per share:`}</Text>
+                          <Text>{`${formatCurrency({
+                            value: value.total_cost,
+                            currency: value.currency,
+                          })}`}</Text>
+                          <Divider className="m-1" />
+                          <Text type="secondary">{`transactions costs: ${formatCurrency(
+                            {
+                              value: value.transaction_costs,
+                              currency: userSettings.currency,
+                            }
+                          )}`}</Text>
+                        </div>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ),
     },
   ];
 

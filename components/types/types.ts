@@ -1,4 +1,4 @@
-type UserInfo_Type = {
+interface UserInfo_Type {
   clientPrincipal: {
     userId: string;
     userRoles: string[];
@@ -6,9 +6,9 @@ type UserInfo_Type = {
     identityProvider: string;
     userDetails: string;
   };
-};
+}
 
-type UserSettings_Type = {
+interface UserSettings_Type {
   id: string;
   dark_mode: boolean;
   clearbit_api_key: string;
@@ -16,9 +16,9 @@ type UserSettings_Type = {
   brandfetch_api_key: string;
   currency: string;
   isLoading: boolean;
-};
+}
 
-type userSettingsDispatch_Type = {
+interface userSettingsDispatch_Type {
   type:
     | 'setDarkMode'
     | 'setClearbitApiKey'
@@ -36,7 +36,7 @@ type userSettingsDispatch_Type = {
         alpha_vantage_api_key: string;
         currency: string;
       };
-};
+}
 
 interface TimeFramestate {
   timeFrame: 'max' | 'year' | 'month' | 'week' | 'ytd';
