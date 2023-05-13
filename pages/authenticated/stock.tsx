@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useReducer, useEffect } from 'react';
+import { useReducer, useEffect, useState } from 'react';
 import { Typography, Divider, Image, Tabs, Descriptions, Card } from 'antd';
 import { getTableDataBasic } from '../../components/services/data';
 import { apiRequestReducer, initialState } from '../../components/utils/api';
@@ -53,8 +53,9 @@ function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
   );
   const [transactionsData, transactionsReducer] = useReducer(
     apiRequestReducer,
-    initialState({ isLoading: true, fallback_data: [{}] })
+    initialState({ isLoading: true, fallback_data: [] })
   );
+  const [tab, setTab] = useState('1');
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -68,19 +69,29 @@ function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
       },
     });
 
-    getTableDataBasic({
-      dispatcher: transactionsReducer,
-      abortController,
-      body: {
-        containerName: 'input_transactions',
-        symbol: stockSymbol,
-      },
-    });
-
     return function cancel() {
       abortController.abort();
     };
   }, [stockSymbol]);
+
+  useEffect(() => {
+    const abortController = new AbortController();
+
+    if (tab === '2') {
+      getTableDataBasic({
+        dispatcher: transactionsReducer,
+        abortController,
+        body: {
+          containerName: 'input_transactions',
+          symbol: stockSymbol,
+        },
+      });
+    }
+
+    return function cancel() {
+      abortController.abort();
+    };
+  }, [stockSymbol, tab]);
 
   const transactionsArray = convertTransactionsArray(transactionsData.data);
   const tabItems: TabsProps['items'] = [
@@ -399,7 +410,13 @@ function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
           },
         ]}
       />
-      <Tabs items={tabItems} />
+      <Tabs
+        activeKey={tab}
+        onChange={(activeKey) => {
+          setTab(activeKey);
+        }}
+        items={tabItems}
+      />
     </div>
   );
 }
