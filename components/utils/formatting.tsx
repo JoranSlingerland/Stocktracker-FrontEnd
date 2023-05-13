@@ -1,7 +1,7 @@
 import { Image, Typography } from 'antd';
 import { RiseOutlined, FallOutlined } from '@ant-design/icons';
 import { currencyCodes } from '../constants/currencyCodes';
-const { Text } = Typography;
+const { Text, Link } = Typography;
 
 function formatCurrency({
   value,
@@ -166,22 +166,27 @@ function formatImageAndText(
     image = '/images/fallback.png';
   }
   return (
-    <div className="flex flex-col md:flex-row">
-      <Image
-        className="pr-1"
-        alt="icon"
-        src={image}
-        width={35}
-        height={35}
-        preview={false}
-        placeholder={false}
-      />
-      <div className="flex flex-col md:pl-1">
-        <Text className="hidden md:inline " strong>
-          {name}
-        </Text>
-        <Text type="secondary">{symbol}</Text>
-      </div>
+    <div>
+      <Link
+        className="flex flex-col md:flex-row"
+        href={`/authenticated/stock/?stock=${symbol}`}
+      >
+        <Image
+          className="pr-1"
+          alt="icon"
+          src={image}
+          width={35}
+          height={35}
+          preview={false}
+          placeholder={false}
+        />
+        <div className="flex flex-col md:pl-1">
+          <Text className="hidden md:inline " strong>
+            {name}
+          </Text>
+          <Text type="secondary">{symbol}</Text>
+        </div>
+      </Link>
     </div>
   );
 }
