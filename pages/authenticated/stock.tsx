@@ -1,15 +1,6 @@
 import { useRouter } from 'next/router';
 import { useReducer, useEffect } from 'react';
-import {
-  Typography,
-  Divider,
-  Image,
-  Tag,
-  Tabs,
-  Statistic,
-  Card,
-  Descriptions,
-} from 'antd';
+import { Typography, Divider, Image, Tabs, Descriptions } from 'antd';
 import { getTableDataBasic } from '../../components/services/data';
 import { apiRequestReducer, initialState } from '../../components/utils/api';
 import {
@@ -25,6 +16,8 @@ import {
 } from '../../components/utils/formatting';
 import { UserSettings_Type } from '../../components/types/types';
 import TagRow from '../../components/elements/TagRow';
+import StatCard from '../../components/elements/StatCard';
+import DescriptionItems from '../../components/elements/DescriptionItems';
 
 const { Text, Title, Link } = Typography;
 
@@ -96,46 +89,61 @@ function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
       children: (
         <>
           <div className="grid grid-rows-2 grid-cols-2 md:grid-cols-4 md:grid-rows-1">
-            <Card className="m-2">
-              <Statistic
-                title="Value"
-                value={stockData.data?.[0]?.['unrealized']['total_value']}
-                formatter={(value) =>
-                  formatCurrency({ value, currency: userSettings.currency })
-                }
-              />
-            </Card>
-            <Card className="m-2">
-              <Statistic
-                title={
+            <StatCard
+              statisticProps={{
+                title: 'Value',
+                value: stockData.data?.[0]?.['unrealized']['total_value'],
+                formatter: (value) =>
+                  formatCurrency({
+                    value,
+                    currency: userSettings.currency,
+                  }),
+              }}
+              className="m-2 p-0"
+              size="small"
+            />
+            <StatCard
+              statisticProps={{
+                title:
                   stockData.data?.[0]?.['unrealized']['total_pl'] >= 0
                     ? 'Profit'
-                    : 'Loss'
-                }
-                value={stockData.data?.[0]?.['unrealized']['total_pl']}
-                formatter={(value) =>
-                  formatCurrency({ value, currency: userSettings.currency })
-                }
-              />
-            </Card>
-            <Card className="m-2">
-              <Statistic
-                title="Dividends"
-                value={stockData.data?.[0]?.['realized']['total_dividends']}
-                formatter={(value) =>
-                  formatCurrency({ value, currency: userSettings.currency })
-                }
-              />
-            </Card>
-            <Card className="m-2">
-              <Statistic
-                title="Cost"
-                value={stockData.data?.[0]?.['realized']['transaction_cost']}
-                formatter={(value) =>
-                  formatCurrency({ value, currency: userSettings.currency })
-                }
-              />
-            </Card>
+                    : 'Loss',
+                value: stockData.data?.[0]?.['unrealized']['total_pl'],
+                formatter: (value) =>
+                  formatCurrency({
+                    value,
+                    currency: userSettings.currency,
+                  }),
+              }}
+              className="m-2 p-0"
+              size="small"
+            />
+            <StatCard
+              statisticProps={{
+                title: 'Dividends',
+                value: stockData.data?.[0]?.['realized']['total_dividends'],
+                formatter: (value) =>
+                  formatCurrency({
+                    value,
+                    currency: userSettings.currency,
+                  }),
+              }}
+              className="m-2 p-0"
+              size="small"
+            />
+            <StatCard
+              statisticProps={{
+                title: 'Cost',
+                value: stockData.data?.[0]?.['realized']['transaction_cost'],
+                formatter: (value) =>
+                  formatCurrency({
+                    value,
+                    currency: userSettings.currency,
+                  }),
+              }}
+              className="m-2 p-0"
+              size="small"
+            />
           </div>
           <Descriptions
             title="Open Position"
