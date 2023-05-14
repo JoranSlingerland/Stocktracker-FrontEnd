@@ -6,22 +6,20 @@ import PrimeFaceBarChart from '../../components/elements/PrimeFaceBarChart';
 import { apiRequestReducer, initialState } from '../../components/utils/api';
 import AntdTable from '../../components/elements/antdTable';
 import {
-  formatCurrency,
-  formatCurrencyWithColors,
-  formatPercentageWithColors,
-  formatImageAndText,
-} from '../../components/utils/formatting';
-import {
   UserSettings_Type,
   TimeFramestate,
 } from '../../components/types/types';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
-import type { ColumnsType } from 'antd/es/table';
 import {
   getBarchartData,
   getLineChartData,
   getTableDataPerformance,
 } from '../../components/services/data';
+import {
+  valueGrowthColumns,
+  ReceivedDividedColumns,
+  TransactionCostColumns,
+} from '../../components/elements/Columns';
 
 const { Title } = Typography;
 
@@ -237,73 +235,6 @@ export default function performance({
   }, [timeFrameDates.end_date, timeFrameDates.start_date]);
 
   // Columns
-  const valueGrowthColumns: ColumnsType = [
-    {
-      title: 'Name',
-      dataIndex: 'meta',
-      key: 'meta.name',
-      render: (text: any, record: any) =>
-        formatImageAndText(record.symbol, text.name, record.meta.icon),
-    },
-    {
-      title: 'Profit / Loss',
-      dataIndex: 'unrealized',
-      key: 'unrealized.total_pl',
-      render: (text) => (
-        <div>
-          <div>
-            {formatCurrencyWithColors({
-              value: text.total_pl,
-              currency: userSettings.currency,
-            })}
-          </div>
-          <div>
-            {formatPercentageWithColors({ value: text.total_pl_percentage })}
-          </div>
-        </div>
-      ),
-    },
-  ];
-
-  const ReceivedDividedColumns: ColumnsType = [
-    {
-      title: 'Name',
-      dataIndex: 'meta',
-      key: 'meta.name',
-      render: (text: any, record: any) =>
-        formatImageAndText(record.symbol, text.name, record.meta.icon),
-    },
-    {
-      title: 'Dividends',
-      dataIndex: 'realized',
-      key: 'realized.total_dividends',
-      render: (text: { total_dividends: string | number }) =>
-        formatCurrency({
-          value: text.total_dividends,
-          currency: userSettings.currency,
-        }),
-    },
-  ];
-
-  const TransactionCostColumns: ColumnsType = [
-    {
-      title: 'Name',
-      dataIndex: 'meta',
-      key: 'meta.name',
-      render: (text: any, record: any) =>
-        formatImageAndText(record.symbol, text.name, record.meta.icon),
-    },
-    {
-      title: 'Transaction Costs',
-      dataIndex: 'realized',
-      key: 'realized.transaction_cost',
-      render: (text: { transaction_cost: string | number }) =>
-        formatCurrency({
-          value: text.transaction_cost,
-          currency: userSettings.currency,
-        }),
-    },
-  ];
 
   // Render
   return (
@@ -353,7 +284,7 @@ export default function performance({
           <Divider />
           <AntdTable
             isLoading={SingleDayData.isLoading}
-            columns={valueGrowthColumns}
+            columns={valueGrowthColumns(userSettings.currency)}
             data={SingleDayData.data}
             globalSorter={true}
           />
@@ -365,7 +296,7 @@ export default function performance({
           <Divider />
           <AntdTable
             isLoading={SingleDayData.isLoading}
-            columns={ReceivedDividedColumns}
+            columns={ReceivedDividedColumns(userSettings.currency)}
             data={SingleDayData.data}
             globalSorter={true}
           />
@@ -377,7 +308,7 @@ export default function performance({
           <Divider />
           <AntdTable
             isLoading={SingleDayData.isLoading}
-            columns={TransactionCostColumns}
+            columns={TransactionCostColumns(userSettings.currency)}
             data={SingleDayData.data}
             globalSorter={true}
           />
@@ -389,7 +320,7 @@ export default function performance({
           <Divider />
           <AntdTable
             isLoading={SingleDayData.isLoading}
-            columns={valueGrowthColumns}
+            columns={valueGrowthColumns(userSettings.currency)}
             data={SingleDayData.data}
             globalSorter={true}
           />
