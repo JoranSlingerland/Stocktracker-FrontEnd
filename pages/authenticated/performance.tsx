@@ -307,8 +307,7 @@ export default function performance({
 
   // Render
   return (
-    <div>
-      {/* Title */}
+    <>
       <div className="flex shrink-0 flex-row pt-2">
         <Title className="min-w-[220px] mr-2" level={1}>
           Performance
@@ -341,72 +340,61 @@ export default function performance({
           />
         </div>
       </div>
-      <div>
-        <Overviewbar
-          totalPerformanceData={totalPerformanceData.data}
-          valueGrowthData={valueGrowthData.data}
-          loading={totalPerformanceData.isLoading || valueGrowthData.isLoading}
-          userSettings={userSettings}
-          tabState={{ tab, setTab }}
-        />
-      </div>
-      <div>
-        <div></div>
-        <div>
-          {tab === 1 && (
-            <React.Fragment>
-              <div>
-                {valueGrowthDataMemo}
-                <Divider />
-                <AntdTable
-                  isLoading={SingleDayData.isLoading}
-                  columns={valueGrowthColumns}
-                  data={SingleDayData.data}
-                  globalSorter={true}
-                />
-              </div>
-            </React.Fragment>
-          )}
-          {tab === 2 && (
-            <React.Fragment>
-              {dividendDataMemo}
-              <Divider />
-              <AntdTable
-                isLoading={SingleDayData.isLoading}
-                columns={ReceivedDividedColumns}
-                data={SingleDayData.data}
-                globalSorter={true}
-              />
-            </React.Fragment>
-          )}
-          {tab === 3 && (
-            <React.Fragment>
-              {totalTransactionCostDataMemo}
-              <Divider />
-              <AntdTable
-                isLoading={SingleDayData.isLoading}
-                columns={TransactionCostColumns}
-                data={SingleDayData.data}
-                globalSorter={true}
-              />
-            </React.Fragment>
-          )}
-          {tab === 4 && (
-            <React.Fragment>
-              <div>
-                {totalGainsDataMemo}
-                <Divider />
-                <AntdTable
-                  isLoading={SingleDayData.isLoading}
-                  columns={valueGrowthColumns}
-                  data={SingleDayData.data}
-                  globalSorter={true}
-                />
-              </div>
-            </React.Fragment>
-          )}
-        </div>
-      </div>
-    </div>
+      <Overviewbar
+        totalPerformanceData={totalPerformanceData.data}
+        valueGrowthData={valueGrowthData.data}
+        loading={totalPerformanceData.isLoading || valueGrowthData.isLoading}
+        userSettings={userSettings}
+        tabState={{ tab, setTab }}
+      />
+      {tab === 1 && (
+        <>
+          {valueGrowthDataMemo}
+          <Divider />
+          <AntdTable
+            isLoading={SingleDayData.isLoading}
+            columns={valueGrowthColumns}
+            data={SingleDayData.data}
+            globalSorter={true}
+          />
+        </>
+      )}
+      {tab === 2 && (
+        <>
+          {dividendDataMemo}
+          <Divider />
+          <AntdTable
+            isLoading={SingleDayData.isLoading}
+            columns={ReceivedDividedColumns}
+            data={SingleDayData.data}
+            globalSorter={true}
+          />
+        </>
+      )}
+      {tab === 3 && (
+        <>
+          {totalTransactionCostDataMemo}
+          <Divider />
+          <AntdTable
+            isLoading={SingleDayData.isLoading}
+            columns={TransactionCostColumns}
+            data={SingleDayData.data}
+            globalSorter={true}
+          />
+        </>
+      )}
+      {tab === 4 && (
+        <>
+          {totalGainsDataMemo}
+          <Divider />
+          <AntdTable
+            isLoading={SingleDayData.isLoading}
+            columns={valueGrowthColumns}
+            data={SingleDayData.data}
+            globalSorter={true}
+          />
+        </>
+      )}
+    </>
   );
 }

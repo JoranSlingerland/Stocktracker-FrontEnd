@@ -362,59 +362,47 @@ export default function Home({
 
   // Render
   return (
-    <div>
-      {/* Title */}
-      <div>
-        <Title className="flex items-center justify-center pt-5" level={1}>
-          Portfolio
-        </Title>
-      </div>
-      {/* Tabs */}
-      <div>
-        <Tabs
-          type="line"
-          activeKey={tab}
-          onChange={(activeKey) => {
-            setTab(activeKey);
-          }}
-          items={items}
-        />
-      </div>
-      {/* Table */}
-      <div>
-        <AntdTable
-          columns={UnRealizedColumns}
-          data={UnRealizedData.data}
-          isLoading={UnRealizedData.isLoading}
-          globalSorter={true}
-          tableProps={{
-            scroll: true,
-          }}
-        />
-      </div>
-      {/* Table */}
-      <div>
-        <Collapse
-          activeKey={CollapseKey}
-          onChange={() => {
-            setCollapseKey(CollapseKey === '1' ? '0' : '1');
-          }}
-          bordered={false}
-          ghost
-        >
-          <Panel className="p-0" header="Realized Stocks" key="1">
-            <AntdTable
-              columns={RealizedColumns}
-              data={RealizedData.data}
-              isLoading={RealizedData.isLoading}
-              globalSorter={true}
-              tableProps={{
-                scroll: true,
-              }}
-            />
-          </Panel>
-        </Collapse>
-      </div>
-    </div>
+    <>
+      <Title className="flex items-center justify-center pt-5" level={1}>
+        Portfolio
+      </Title>
+      <Tabs
+        type="line"
+        activeKey={tab}
+        onChange={(activeKey) => {
+          setTab(activeKey);
+        }}
+        items={items}
+      />
+      <AntdTable
+        columns={UnRealizedColumns}
+        data={UnRealizedData.data}
+        isLoading={UnRealizedData.isLoading}
+        globalSorter={true}
+        tableProps={{
+          scroll: true,
+        }}
+      />
+      <Collapse
+        activeKey={CollapseKey}
+        onChange={() => {
+          setCollapseKey(CollapseKey === '1' ? '0' : '1');
+        }}
+        bordered={false}
+        ghost
+      >
+        <Panel className="p-0" header="Realized Stocks" key="1">
+          <AntdTable
+            columns={RealizedColumns}
+            data={RealizedData.data}
+            isLoading={RealizedData.isLoading}
+            globalSorter={true}
+            tableProps={{
+              scroll: true,
+            }}
+          />
+        </Panel>
+      </Collapse>
+    </>
   );
 }

@@ -454,49 +454,43 @@ export default function App({
 
   return (
     <>
-      <div>
-        <Menu
-          selectedKeys={[current]}
-          mode="horizontal"
-          items={topMenuLarge}
-          className="hidden sm:block"
-        />
-        <Menu
-          selectedKeys={[current]}
-          mode="horizontal"
-          items={topMenuSmall}
-          className="sm:hidden block"
-        />
-        <Drawer
-          open={drawerVisible}
-          closable={false}
-          placement="left"
-          onClose={() => {
-            setDrawerVisible(false);
-          }}
-          bodyStyle={{ padding: 0, paddingTop: 0 }}
-          width={200}
-          footer={
-            <div className="text-center">
-              <Link
-                type="secondary"
-                href="/.auth/logout?post_logout_redirect_uri=/"
-                onClick={() => {
-                  localStorage.clear();
-                }}
-              >
-                Logout
-              </Link>
-            </div>
-          }
-        >
-          <Menu
-            items={navItems}
-            selectedKeys={[current]}
-            className="border-0"
-          />
-        </Drawer>
-      </div>
+      <Menu
+        selectedKeys={[current]}
+        mode="horizontal"
+        items={topMenuLarge}
+        className="hidden sm:block"
+      />
+      <Menu
+        selectedKeys={[current]}
+        mode="horizontal"
+        items={topMenuSmall}
+        className="sm:hidden block"
+      />
+      <Drawer
+        open={drawerVisible}
+        closable={false}
+        placement="left"
+        onClose={() => {
+          setDrawerVisible(false);
+        }}
+        bodyStyle={{ padding: 0, paddingTop: 0 }}
+        width={200}
+        footer={
+          <div className="text-center">
+            <Link
+              type="secondary"
+              href="/.auth/logout?post_logout_redirect_uri=/"
+              onClick={() => {
+                localStorage.clear();
+              }}
+            >
+              Logout
+            </Link>
+          </div>
+        }
+      >
+        <Menu items={navItems} selectedKeys={[current]} className="border-0" />
+      </Drawer>
     </>
   );
 }

@@ -580,24 +580,20 @@ export default function Home({
   }
 
   return (
-    <div>
-      <div>
-        <Title className="flex items-center justify-center p-5" level={1}>
-          Settings
-        </Title>
-      </div>
+    <>
+      <Title className="flex items-center justify-center p-5" level={1}>
+        Settings
+      </Title>
       <Divider plain></Divider>
-      <div>
-        <Tabs
-          type="line"
-          activeKey={tab}
-          onChange={(key) => setTab(key)}
-          items={items}
-          tabPosition={
-            dimensions.width === null || dimensions.width > 768 ? 'left' : 'top'
-          }
-        />
-      </div>
-    </div>
+      <Tabs
+        type="line"
+        activeKey={tab}
+        onChange={(key) => setTab(key)}
+        items={items}
+        tabPosition={
+          dimensions.width === null || dimensions.width > 768 ? 'left' : 'top'
+        }
+      />
+    </>
   );
 }

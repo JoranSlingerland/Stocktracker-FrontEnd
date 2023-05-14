@@ -241,104 +241,100 @@ export default function Home({
 
   // Render
   return (
-    <div>
+    <>
       <Title className="flex items-center justify-center p-5" level={1}>
         Actions
       </Title>
       <Divider plain></Divider>
-      <div>
-        <Title className="mb-3" level={2}>
-          Stock Transactions
-        </Title>
-        <AntdTable
-          isLoading={InputTransactionsData.isLoading}
-          columns={InputTransactionsColumns}
-          data={InputTransactionsData.data}
-          globalSorter={true}
-          searchEnabled={true}
-          searchText={InputTransactionsSearchText}
-          tableProps={{
+      <Title className="mb-3" level={2}>
+        Stock Transactions
+      </Title>
+      <AntdTable
+        isLoading={InputTransactionsData.isLoading}
+        columns={InputTransactionsColumns}
+        data={InputTransactionsData.data}
+        globalSorter={true}
+        searchEnabled={true}
+        searchText={InputTransactionsSearchText}
+        tableProps={{
+          size: 'small',
+          pagination: {
+            pageSize: 12,
             size: 'small',
-            pagination: {
-              pageSize: 12,
-              size: 'small',
-              hideOnSinglePage: true,
-              className: 'm-0',
-            },
-          }}
-          caption={
-            <div className="flex mx-1 mb-1">
-              <div>
-                <Search
-                  allowClear
-                  placeholder="Search"
-                  onChange={(e) => {
-                    setInputTransactionsSearchText([e.target.value]);
-                  }}
-                  onSearch={(value) => {
-                    setInputTransactionsSearchText([value]);
-                  }}
-                  className="max-w-xs"
-                />
-              </div>
-              <div className="mb-1 ml-auto">
-                <AddXForm
-                  form={'addStock'}
-                  parentCallback={overWriteTableData}
-                  userSettings={userSettings}
-                />
-              </div>
+            hideOnSinglePage: true,
+            className: 'm-0',
+          },
+        }}
+        caption={
+          <div className="flex mx-1 mb-1">
+            <div>
+              <Search
+                allowClear
+                placeholder="Search"
+                onChange={(e) => {
+                  setInputTransactionsSearchText([e.target.value]);
+                }}
+                onSearch={(value) => {
+                  setInputTransactionsSearchText([value]);
+                }}
+                className="max-w-xs"
+              />
             </div>
-          }
-        />
-        <Divider plain></Divider>
-        <div>
-          <Title className="mb-3" level={2}>
-            Money Transactions
-          </Title>
-          <AntdTable
-            isLoading={InputInvestedData.isLoading}
-            columns={InputInvestedColumns}
-            data={InputInvestedData.data}
-            globalSorter={true}
-            searchEnabled={true}
-            searchText={InputInvestedSearchText}
-            tableProps={{
-              size: 'small',
-              pagination: {
-                pageSize: 12,
-                size: 'small',
-                hideOnSinglePage: true,
-                className: 'm-0',
-              },
-            }}
-            caption={
-              <div className="flex mx-1 mb-1">
-                <div>
-                  <Search
-                    allowClear
-                    placeholder="Search"
-                    onChange={(e) => {
-                      setInputInvestedSearchText([e.target.value]);
-                    }}
-                    onSearch={(value) => {
-                      setInputInvestedSearchText([value]);
-                    }}
-                    className="max-w-xs"
-                  />
-                </div>
-                <div className="ml-auto">
-                  <AddXForm
-                    form={'addTransaction'}
-                    parentCallback={overWriteTableData}
-                    userSettings={userSettings}
-                  />
-                </div>
-              </div>
-            }
-          />
-        </div>
-      </div>
-    </div>
+            <div className="mb-1 ml-auto">
+              <AddXForm
+                form={'addStock'}
+                parentCallback={overWriteTableData}
+                userSettings={userSettings}
+              />
+            </div>
+          </div>
+        }
+      />
+      <Divider plain></Divider>
+      <Title className="mb-3" level={2}>
+        Money Transactions
+      </Title>
+      <AntdTable
+        isLoading={InputInvestedData.isLoading}
+        columns={InputInvestedColumns}
+        data={InputInvestedData.data}
+        globalSorter={true}
+        searchEnabled={true}
+        searchText={InputInvestedSearchText}
+        tableProps={{
+          size: 'small',
+          pagination: {
+            pageSize: 12,
+            size: 'small',
+            hideOnSinglePage: true,
+            className: 'm-0',
+          },
+        }}
+        caption={
+          <div className="flex mx-1 mb-1">
+            <div>
+              <Search
+                allowClear
+                placeholder="Search"
+                onChange={(e) => {
+                  setInputInvestedSearchText([e.target.value]);
+                }}
+                onSearch={(value) => {
+                  setInputInvestedSearchText([value]);
+                }}
+                className="max-w-xs"
+              />
+            </div>
+            <div className="ml-auto">
+              <AddXForm
+                form={'addTransaction'}
+                parentCallback={overWriteTableData}
+                userSettings={userSettings}
+              />
+            </div>
+          </div>
+        }
+      />
+    </>
   );
 }
