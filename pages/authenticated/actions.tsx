@@ -2,7 +2,10 @@ import { Divider, Input, Typography } from 'antd';
 import { useState, useEffect, useReducer } from 'react';
 import AntdTable from '../../components/elements/antdTable';
 import { apiRequestReducer, initialState } from '../../components/utils/api';
-import AddXForm from '../../components/modules/formModal';
+import {
+  TransactionsFormModal,
+  StockFormModal,
+} from '../../components/modules/formModal';
 import { UserSettings_Type } from '../../components/types/types';
 import { getTableDataBasic } from '../../components/services/data';
 import { deleteInputItems } from '../../components/services/delete';
@@ -148,10 +151,9 @@ export default function Home({
               />
             </div>
             <div className="mb-1 ml-auto">
-              <AddXForm
-                form={'addStock'}
-                parentCallback={overWriteTableData}
+              <StockFormModal
                 userSettings={userSettings}
+                parentCallback={() => overWriteTableData('input_transactions')}
               />
             </div>
           </div>
@@ -193,10 +195,9 @@ export default function Home({
               />
             </div>
             <div className="ml-auto">
-              <AddXForm
-                form={'addTransaction'}
-                parentCallback={overWriteTableData}
+              <TransactionsFormModal
                 userSettings={userSettings}
+                parentCallback={() => overWriteTableData('input_invested')}
               />
             </div>
           </div>
