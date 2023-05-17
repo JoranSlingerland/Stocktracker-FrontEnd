@@ -1,4 +1,4 @@
-import { Table, Skeleton, Empty, TableColumnProps, TableProps } from 'antd';
+import { Table, Skeleton, Empty, TableColumnProps } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 
 export default function AntdTable({
@@ -17,7 +17,7 @@ export default function AntdTable({
   isLoading: boolean;
   caption?: JSX.Element;
   searchEnabled?: boolean;
-  tableProps?: TableProps<any>;
+  tableProps?: any;
   columnProps?: TableColumnProps<any>;
   searchText?: string;
   globalSorter?: boolean;
