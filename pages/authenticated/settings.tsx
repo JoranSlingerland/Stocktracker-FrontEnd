@@ -11,14 +11,12 @@ import {
   AutoComplete,
 } from 'antd';
 import { useEffect, useReducer } from 'react';
-import { apiRequestReducer, initialState } from '../../components/utils/api';
 import useWindowDimensions from '../../components/hooks/useWindowDimensions';
 import AntdTable from '../../components/elements/antdTable';
 import { UserInfo_Type } from '../../components/types/types';
 import { currencyCodes } from '../../components/constants/currencyCodes';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
-import { getUserData } from '../../components/services/data';
-import { fetchOrchestratorList } from '../../components/services/orchestrator';
+import { getUserData } from '../../components/services/data/getUserData';
 import { startOrchestrator } from '../../components/services/orchestrator/startOrchestrator';
 import { createCosmosDbAndContainer } from '../../components/services/privileged/createCosmosDbAndContainer';
 import { deleteCosmosDbContainer } from '../../components/services/privileged/deleteCosmosDbContainer';
@@ -28,6 +26,11 @@ import {
   UserSettings,
   userDataActions,
 } from '../../components/services/data/getUserData';
+import {
+  listOrchestrator,
+  listOrchestratorReducer,
+  listOrchestratorInitialState,
+} from '../../components/services/orchestrator/OrchestratorList';
 
 const { Text, Title, Link } = Typography;
 
@@ -51,8 +54,8 @@ export default function Home({
   userSettingsDispatch: (action: userDataActions) => void;
 }) {
   const [orchestratorList, orchestratorDispatch] = useReducer(
-    apiRequestReducer,
-    initialState({ isLoading: true })
+    listOrchestratorReducer,
+    listOrchestratorInitialState({ isLoading: true })
   );
   const [tab, setTab] = useLocalStorageState('settingsTab', '1');
   const dimensions = useWindowDimensions();
@@ -78,7 +81,7 @@ export default function Home({
   useEffect(() => {
     if (tab === '3') {
       const abortController = new AbortController();
-      fetchOrchestratorList({
+      listOrchestrator({
         body: { days: 7 },
         dispatcher: orchestratorDispatch,
         abortController,
@@ -91,7 +94,7 @@ export default function Home({
     const interval = setInterval(() => {
       if (tab === '3') {
         const abortController = new AbortController();
-        fetchOrchestratorList({
+        listOrchestrator({
           body: { days: 7 },
           dispatcher: orchestratorDispatch,
           abortController,

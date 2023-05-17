@@ -67,24 +67,4 @@ function getTableDataPerformance({
   });
 }
 
-async function getUserData({ overWrite }: { overWrite?: boolean }) {
-  if (overWrite) {
-    return await overwriteCachedFetch({
-      url: `/api/data/get_user_data`,
-      method: 'POST',
-      fallback_data: {},
-    }).then((data) => {
-      return data;
-    });
-  } else {
-    return await cachedFetch({
-      url: `/api/data/get_user_data`,
-      method: 'POST',
-      fallback_data: {},
-    }).then((data) => {
-      return data;
-    });
-  }
-}
-
-export { getTableDataBasic, getTableDataPerformance, getUserData };
+export { getTableDataBasic, getTableDataPerformance };
