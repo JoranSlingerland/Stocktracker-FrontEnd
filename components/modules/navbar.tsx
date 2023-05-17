@@ -26,7 +26,7 @@ import {
   formatPercentageWithColors,
 } from '../utils/formatting';
 import useLocalStorageState from '../hooks/useLocalStorageState';
-import { startOrchestrator } from '../services/orchestrator';
+import { startOrchestrator } from '../services/orchestrator/startOrchestrator';
 import { MenuOutlined } from '@ant-design/icons';
 import { UserSettings } from '../services/data/getUserData';
 

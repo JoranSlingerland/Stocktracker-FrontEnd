@@ -7,7 +7,7 @@ import {
   StockFormModal,
 } from '../../components/modules/formModal';
 import { getTableDataBasic } from '../../components/services/data';
-import { deleteInputItems } from '../../components/services/delete';
+import { deleteInputItems } from '../../components/services/delete/deleteInputItems';
 import {
   InputInvestedColumns,
   InputTransactionsColumns,

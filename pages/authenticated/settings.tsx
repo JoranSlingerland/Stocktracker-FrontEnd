@@ -18,14 +18,10 @@ import { UserInfo_Type } from '../../components/types/types';
 import { currencyCodes } from '../../components/constants/currencyCodes';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
 import { getUserData } from '../../components/services/data';
-import {
-  startOrchestrator,
-  fetchOrchestratorList,
-} from '../../components/services/orchestrator';
-import {
-  createCosmosDbAndContainer,
-  deleteCosmosDbContainer,
-} from '../../components/services/privileged';
+import { fetchOrchestratorList } from '../../components/services/orchestrator';
+import { startOrchestrator } from '../../components/services/orchestrator/startOrchestrator';
+import { createCosmosDbAndContainer } from '../../components/services/privileged/createCosmosDbAndContainer';
+import { deleteCosmosDbContainer } from '../../components/services/privileged/deleteCosmosDbContainer';
 import { addUserData } from '../../components/services/add/addUserData';
 import { orchestratorColumns } from '../../components/elements/Columns';
 import {

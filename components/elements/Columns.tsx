@@ -14,10 +14,8 @@ import {
   formatCurrencyWithColors,
   formatPercentageWithColors,
 } from '../utils/formatting';
-import {
-  terminateOrchestrator,
-  purgeOrchestrator,
-} from '../services/orchestrator';
+import { terminateOrchestrator } from '../services/orchestrator/terminateOrchestrator';
+import { purgeOrchestrator } from '../services/orchestrator/purgeOrchestrator';
 
 const { Text } = Typography;
 
