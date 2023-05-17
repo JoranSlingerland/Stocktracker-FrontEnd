@@ -3,16 +3,11 @@ import '../styles/globals.css';
 import { ConfigProvider, theme as antdTheme } from 'antd';
 import type { AppProps } from 'next/app';
 import { useEffect, useState, useReducer } from 'react';
-import {
-  regularFetch,
-  apiRequestReducer,
-  initialState,
-} from '../components/utils/api';
+import { regularFetch } from '../components/utils/api';
 import { TimeFramestate } from '../components/types/types';
 import useLocalStorageState from '../components/hooks/useLocalStorageState';
 import { dataToGetSwitch } from '../components/utils/dateTimeHelpers';
 import { totalsData } from '../components/constants/placeholders';
-import { getTableDataPerformance } from '../components/services/data';
 import Footer from '../components/modules/footer';
 import React from 'react';
 import {
@@ -20,6 +15,11 @@ import {
   userDataInitialState,
   userSettingsReducer,
 } from '../components/services/data/getUserData';
+import {
+  getTableDataPerformanceDataTotalsReducer,
+  getTableDataPerformanceDataTotalsInitialState,
+  getTableDataPerformanceTotals,
+} from '../components/services/data/getTableDataPerformance';
 
 const { darkAlgorithm, defaultAlgorithm } = antdTheme;
 
@@ -53,8 +53,10 @@ function MyApp({ Component, pageProps }: AppProps) {
   const timeFrameState: TimeFramestate = { timeFrame, setTimeFrame };
   const timeFrameDates = dataToGetSwitch(timeFrame);
   const [totalPerformanceData, totalPerformanceDataDispatch] = useReducer(
-    apiRequestReducer,
-    initialState({ fallback_data: [totalsData] })
+    getTableDataPerformanceDataTotalsReducer,
+    getTableDataPerformanceDataTotalsInitialState({
+      isLoading: true,
+    })
   );
 
   useEffect(() => {
@@ -81,7 +83,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
     const abortController = new AbortController();
 
-    getTableDataPerformance({
+    getTableDataPerformanceTotals({
       dispatcher: totalPerformanceDataDispatch,
       body,
       abortController,

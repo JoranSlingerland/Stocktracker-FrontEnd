@@ -3,11 +3,14 @@ import React, { useEffect, useReducer, useMemo } from 'react';
 import { Divider, Segmented, Typography } from 'antd';
 import BasicLineGraph from '../../components/elements/PrimeFaceLineGraph';
 import PrimeFaceBarChart from '../../components/elements/PrimeFaceBarChart';
-import { apiRequestReducer, initialState } from '../../components/utils/api';
 import AntdTable from '../../components/elements/antdTable';
 import { TimeFramestate } from '../../components/types/types';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
-import { getTableDataPerformance } from '../../components/services/data';
+import {
+  getTableDataPerformanceStocksHeld,
+  getTableDataPerformanceDataStocksHeldReducer,
+  getTableDataPerformanceDataStocksHeldInitialState,
+} from '../../components/services/data/getTableDataPerformance';
 import {
   valueGrowthColumns,
   ReceivedDividedColumns,
@@ -90,8 +93,8 @@ export default function performance({
       barChartDataInitialState({ isLoading: true })
     );
   const [SingleDayData, SingleDayDataReducer] = useReducer(
-    apiRequestReducer,
-    initialState({ isLoading: true })
+    getTableDataPerformanceDataStocksHeldReducer,
+    getTableDataPerformanceDataStocksHeldInitialState({ isLoading: true })
   );
   const [tab, setTab] = useLocalStorageState('performanceTab', 1);
   const { timeFrame, setTimeFrame } = timeFrameState;
@@ -214,7 +217,7 @@ export default function performance({
     }
 
     const abortController = new AbortController();
-    getTableDataPerformance({
+    getTableDataPerformanceStocksHeld({
       dispatcher: SingleDayDataReducer,
       abortController,
       body: {
