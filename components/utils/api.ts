@@ -262,13 +262,13 @@ const initialState = ({
   data: fallback_data,
 });
 
-const apiRequestReducer = (
-  state: any,
-  action: {
-    type: 'FETCH_INIT' | 'FETCH_SUCCESS' | 'FETCH_FAILURE' | 'FETCH_ABORT';
-    payload?: any;
-  }
-) => {
+type ApiRequestAction =
+  | { type: 'FETCH_INIT' }
+  | { type: 'FETCH_SUCCESS'; payload: any }
+  | { type: 'FETCH_FAILURE'; payload?: any }
+  | { type: 'FETCH_ABORT' };
+
+const apiRequestReducer = (state: any, action: ApiRequestAction) => {
   switch (action.type) {
     case 'FETCH_INIT':
       return {

@@ -11,7 +11,6 @@ import {
 } from '../../components/types/types';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
 import {
-  getBarchartData,
   getLineChartData,
   getTableDataPerformance,
 } from '../../components/services/data';
@@ -20,6 +19,12 @@ import {
   ReceivedDividedColumns,
   TransactionCostColumns,
 } from '../../components/elements/Columns';
+
+import {
+  getBarchartData,
+  barChartDataInitialState,
+  barChartDataReducer,
+} from '../../components/services/data/getBarchartData';
 
 const { Title } = Typography;
 
@@ -70,8 +75,10 @@ export default function performance({
     })
   );
   const [dividendData, dividendDataReducer] = useReducer(
-    apiRequestReducer,
-    initialState({ fallback_data: [], isLoading: true })
+    barChartDataReducer,
+    barChartDataInitialState({
+      isLoading: true,
+    })
   );
   const [totalGainsData, totalGainsDataReducer] = useReducer(
     apiRequestReducer,
@@ -82,8 +89,8 @@ export default function performance({
   );
   const [totalTransactionCostData, totalTransactionCostDataReducer] =
     useReducer(
-      apiRequestReducer,
-      initialState({ fallback_data: [], isLoading: true })
+      barChartDataReducer,
+      barChartDataInitialState({ isLoading: true })
     );
   const [SingleDayData, SingleDayDataReducer] = useReducer(
     apiRequestReducer,
