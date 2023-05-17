@@ -4,13 +4,14 @@ import { formatCurrency } from '../utils/formatting';
 import React from 'react';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { UserSettings_Type } from '../types/types';
+import { PieChartData } from '../services/data/getPieData';
 
 export default function PieChart({
   data,
   isloading,
   userSettings,
 }: {
-  data: any;
+  data: PieChartData;
   isloading: boolean;
   userSettings: UserSettings_Type;
 }): JSX.Element {

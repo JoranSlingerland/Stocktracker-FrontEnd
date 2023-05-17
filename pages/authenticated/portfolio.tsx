@@ -5,21 +5,19 @@ import AntdTable from '../../components/elements/antdTable';
 import { apiRequestReducer, initialState } from '../../components/utils/api';
 import { UserSettings_Type } from '../../components/types/types';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
-import { getPieData, getTableDataBasic } from '../../components/services/data';
+import { getTableDataBasic } from '../../components/services/data';
 import {
   RealizedColumns,
   UnRealizedColumns,
 } from '../../components/elements/Columns';
+import {
+  getPieData,
+  pieChartDataReducer,
+  pieChartDataInitialState,
+} from '../../components/services/data/getPieData';
 
 const { Title } = Typography;
-
 const { Panel } = Collapse;
-
-const fallbackObject = {
-  labels: [],
-  data: [],
-  color: [],
-};
 
 export default function Home({
   userSettings,
@@ -36,20 +34,20 @@ export default function Home({
     initialState({ isLoading: true })
   );
   const [StockPieData, StockPieDataDispatcher] = useReducer(
-    apiRequestReducer,
-    initialState({ fallback_data: fallbackObject, isLoading: true })
+    pieChartDataReducer,
+    pieChartDataInitialState({ isLoading: true })
   );
   const [CurrencyPieData, CurrencyPieDataDispatcher] = useReducer(
-    apiRequestReducer,
-    initialState({ fallback_data: fallbackObject, isLoading: true })
+    pieChartDataReducer,
+    pieChartDataInitialState({ isLoading: true })
   );
   const [SectorPieData, SectorPieDataReducer] = useReducer(
-    apiRequestReducer,
-    initialState({ fallback_data: fallbackObject, isLoading: true })
+    pieChartDataReducer,
+    pieChartDataInitialState({ isLoading: true })
   );
   const [CountryPieData, CountryPieDataReducer] = useReducer(
-    apiRequestReducer,
-    initialState({ fallback_data: fallbackObject, isLoading: true })
+    pieChartDataReducer,
+    pieChartDataInitialState({ isLoading: true })
   );
   const [tab, setTab] = useLocalStorageState('portfolioTab', '1');
   const [CollapseKey, setCollapseKey] = useLocalStorageState(

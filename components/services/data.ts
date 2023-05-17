@@ -1,32 +1,5 @@
 import { cachedFetch, overwriteCachedFetch } from '../utils/api';
 
-function getPieData({
-  dispatcher,
-  abortController,
-  body,
-}: {
-  dispatcher: any;
-  abortController: AbortController;
-  body: {
-    dataType: 'stocks' | 'country' | 'sector' | 'currency';
-  };
-}) {
-  const fallbackObject = {
-    labels: [],
-    data: [],
-    color: [],
-  };
-
-  cachedFetch({
-    url: `/api/data/get_pie_data`,
-    fallback_data: fallbackObject,
-    method: 'POST',
-    body,
-    dispatcher,
-    controller: abortController,
-  });
-}
-
 function getTableDataBasic({
   dispatcher,
   abortController,
@@ -114,4 +87,4 @@ async function getUserData({ overWrite }: { overWrite?: boolean }) {
   }
 }
 
-export { getPieData, getTableDataBasic, getTableDataPerformance, getUserData };
+export { getTableDataBasic, getTableDataPerformance, getUserData };
