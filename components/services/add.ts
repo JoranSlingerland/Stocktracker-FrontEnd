@@ -1,5 +1,5 @@
 import { ApiWithMessage } from '../utils/api';
-import { UserSettings_Type } from '../types/types';
+import { UserSettings } from './data/getUserData';
 
 async function addItemToInput({ body }: { body: any }) {
   return await ApiWithMessage(
@@ -11,7 +11,7 @@ async function addItemToInput({ body }: { body: any }) {
   );
 }
 
-async function addUserData({ body }: { body: UserSettings_Type }) {
+async function addUserData({ body }: { body: UserSettings }) {
   return await ApiWithMessage(
     '/api/add/add_user_data',
     'Saving account settings...',

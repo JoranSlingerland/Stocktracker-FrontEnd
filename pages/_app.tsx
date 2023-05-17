@@ -8,46 +8,20 @@ import {
   apiRequestReducer,
   initialState,
 } from '../components/utils/api';
-import {
-  userSettingsDispatch_Type,
-  TimeFramestate,
-} from '../components/types/types';
+import { TimeFramestate } from '../components/types/types';
 import useLocalStorageState from '../components/hooks/useLocalStorageState';
 import { dataToGetSwitch } from '../components/utils/dateTimeHelpers';
 import { totalsData } from '../components/constants/placeholders';
-import {
-  getUserData,
-  getTableDataPerformance,
-} from '../components/services/data';
+import { getTableDataPerformance } from '../components/services/data';
 import Footer from '../components/modules/footer';
 import React from 'react';
+import {
+  getUserData,
+  userDataInitialState,
+  userSettingsReducer,
+} from '../components/services/data/getUserData';
 
 const { darkAlgorithm, defaultAlgorithm } = antdTheme;
-
-const userSettingsReducer = (state: any, action: userSettingsDispatch_Type) => {
-  switch (action.type) {
-    case 'setDarkMode':
-      return { ...state, dark_mode: action.payload };
-    case 'setClearbitApiKey':
-      return { ...state, clearbit_api_key: action.payload };
-    case 'setAlphaVantageApiKey':
-      return {
-        ...state,
-        alpha_vantage_api_key: action.payload,
-      };
-    case 'setBrandfetchApiKey':
-      return { ...state, brandfetch_api_key: action.payload };
-    case 'setCurrency':
-      return { ...state, currency: action.payload };
-    case 'setAll':
-      if (typeof action.payload === 'object') {
-        return { ...state, ...action.payload };
-      }
-      throw new Error('Payload must be an object');
-    case 'setLoading':
-      return { ...state, isLoading: action.payload };
-  }
-};
 
 async function getAccountSettings(userSettingsDispatch: any) {
   getUserData({}).then(({ response }) => {
@@ -71,14 +45,10 @@ function MyApp({ Component, pageProps }: AppProps) {
       userDetails: '',
     },
   });
-  const [userSettings, userSettingsDispatch] = useReducer(userSettingsReducer, {
-    dark_mode: false,
-    clearbit_api_key: '',
-    set_brandfetch_api_key: '',
-    alpha_vantage_api_key: '',
-    currency: '',
-    isLoading: true,
-  });
+  const [userSettings, userSettingsDispatch] = useReducer(
+    userSettingsReducer,
+    userDataInitialState({})
+  );
   const [timeFrame, setTimeFrame] = useLocalStorageState('timeFrame', 'max');
   const timeFrameState: TimeFramestate = { timeFrame, setTimeFrame };
   const timeFrameDates = dataToGetSwitch(timeFrame);
@@ -136,7 +106,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <>
       <ConfigProvider
         theme={{
-          algorithm: userSettings.dark_mode ? darkAlgorithm : defaultAlgorithm,
+          algorithm: userSettings?.dark_mode ? darkAlgorithm : defaultAlgorithm,
         }}
       >
         <div

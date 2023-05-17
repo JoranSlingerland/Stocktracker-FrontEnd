@@ -22,10 +22,10 @@ import {
   formatCurrency,
   formatPercentageWithColors,
 } from '../../components/utils/formatting';
-import { UserSettings_Type } from '../../components/types/types';
 import TagRow from '../../components/elements/TagRow';
 import StatCard from '../../components/elements/StatCard';
 import { convertTransactionsArray } from '../../components/utils/misc';
+import { UserSettings } from '../../components/services/data/getUserData';
 
 const { Text, Title, Link } = Typography;
 
@@ -52,7 +52,7 @@ function socialsIcon(platform: Platform, url: string) {
   );
 }
 
-function Stocks({ userSettings }: { userSettings: UserSettings_Type }) {
+function Stocks({ userSettings }: { userSettings: UserSettings }) {
   const router = useRouter();
   const stockSymbol = router.query.stock as string;
   const [stockData, stockDataDispatcher] = useReducer(

@@ -3,8 +3,8 @@ import {
   formatCurrency,
   formatPercentageWithColors,
 } from '../utils/formatting';
-import { UserSettings_Type } from '../types/types';
 import { LineChartData } from '../services/data/getLineChartData';
+import { UserSettings } from '../services/data/getUserData';
 
 export default function tabs({
   totalPerformanceData,
@@ -16,7 +16,7 @@ export default function tabs({
   totalPerformanceData: any;
   valueGrowthData: LineChartData;
   loading: boolean;
-  userSettings: UserSettings_Type;
+  userSettings: UserSettings;
   tabState: any;
 }): JSX.Element {
   const { tab, setTab } = tabState;

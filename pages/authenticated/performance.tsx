@@ -5,10 +5,7 @@ import BasicLineGraph from '../../components/elements/PrimeFaceLineGraph';
 import PrimeFaceBarChart from '../../components/elements/PrimeFaceBarChart';
 import { apiRequestReducer, initialState } from '../../components/utils/api';
 import AntdTable from '../../components/elements/antdTable';
-import {
-  UserSettings_Type,
-  TimeFramestate,
-} from '../../components/types/types';
+import { TimeFramestate } from '../../components/types/types';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
 import { getTableDataPerformance } from '../../components/services/data';
 import {
@@ -16,13 +13,12 @@ import {
   ReceivedDividedColumns,
   TransactionCostColumns,
 } from '../../components/elements/Columns';
-
+import { UserSettings } from '../../components/services/data/getUserData';
 import {
   getBarchartData,
   barChartDataInitialState,
   barChartDataReducer,
 } from '../../components/services/data/getBarchartData';
-
 import {
   getLineChartData,
   lineChartDataInitialState,
@@ -64,7 +60,7 @@ export default function performance({
   timeFrameDates,
   totalPerformanceData,
 }: {
-  userSettings: UserSettings_Type;
+  userSettings: UserSettings;
   timeFrameState: TimeFramestate;
   timeFrameDates: { start_date: string; end_date: string };
   totalPerformanceData: any;

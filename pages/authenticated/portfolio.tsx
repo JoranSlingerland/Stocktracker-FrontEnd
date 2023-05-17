@@ -3,7 +3,6 @@ import { useEffect, useReducer } from 'react';
 import PieChart from '../../components/elements/PrimeFacePieChart';
 import AntdTable from '../../components/elements/antdTable';
 import { apiRequestReducer, initialState } from '../../components/utils/api';
-import { UserSettings_Type } from '../../components/types/types';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
 import { getTableDataBasic } from '../../components/services/data';
 import {
@@ -15,15 +14,12 @@ import {
   pieChartDataReducer,
   pieChartDataInitialState,
 } from '../../components/services/data/getPieData';
+import { UserSettings } from '../../components/services/data/getUserData';
 
 const { Title } = Typography;
 const { Panel } = Collapse;
 
-export default function Home({
-  userSettings,
-}: {
-  userSettings: UserSettings_Type;
-}) {
+export default function Home({ userSettings }: { userSettings: UserSettings }) {
   // Const setup
   const [UnRealizedData, unRealizedDataDispatcher] = useReducer(
     apiRequestReducer,

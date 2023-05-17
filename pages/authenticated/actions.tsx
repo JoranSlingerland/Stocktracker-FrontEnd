@@ -6,22 +6,18 @@ import {
   TransactionsFormModal,
   StockFormModal,
 } from '../../components/modules/formModal';
-import { UserSettings_Type } from '../../components/types/types';
 import { getTableDataBasic } from '../../components/services/data';
 import { deleteInputItems } from '../../components/services/delete';
 import {
   InputInvestedColumns,
   InputTransactionsColumns,
 } from '../../components/elements/Columns';
+import { UserSettings } from '../../components/services/data/getUserData';
 
 const { Search } = Input;
 const { Title } = Typography;
 
-export default function Home({
-  userSettings,
-}: {
-  userSettings: UserSettings_Type;
-}) {
+export default function Home({ userSettings }: { userSettings: UserSettings }) {
   const [InputTransactionsData, InputTransactionsDataDispatcher] = useReducer(
     apiRequestReducer,
     initialState({ isLoading: true })

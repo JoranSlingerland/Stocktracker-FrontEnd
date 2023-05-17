@@ -14,11 +14,7 @@ import { useEffect, useReducer } from 'react';
 import { apiRequestReducer, initialState } from '../../components/utils/api';
 import useWindowDimensions from '../../components/hooks/useWindowDimensions';
 import AntdTable from '../../components/elements/antdTable';
-import {
-  UserInfo_Type,
-  userSettingsDispatch_Type,
-  UserSettings_Type,
-} from '../../components/types/types';
+import { UserInfo_Type } from '../../components/types/types';
 import { currencyCodes } from '../../components/constants/currencyCodes';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
 import { getUserData } from '../../components/services/data';
@@ -32,6 +28,10 @@ import {
 } from '../../components/services/privileged';
 import { addUserData } from '../../components/services/add';
 import { orchestratorColumns } from '../../components/elements/Columns';
+import {
+  UserSettings,
+  userDataActions,
+} from '../../components/services/data/getUserData';
 
 const { Text, Title, Link } = Typography;
 
@@ -51,8 +51,8 @@ export default function Home({
   userSettingsDispatch,
 }: {
   userInfo: UserInfo_Type;
-  userSettings: UserSettings_Type;
-  userSettingsDispatch: (action: userSettingsDispatch_Type) => void;
+  userSettings: UserSettings;
+  userSettingsDispatch: (action: userDataActions) => void;
 }) {
   const [orchestratorList, orchestratorDispatch] = useReducer(
     apiRequestReducer,

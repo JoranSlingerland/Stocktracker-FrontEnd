@@ -19,11 +19,7 @@ import {
   Drawer,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
-import {
-  UserInfo_Type,
-  TimeFramestate,
-  UserSettings_Type,
-} from '../types/types';
+import { UserInfo_Type, TimeFramestate } from '../types/types';
 import type { MenuProps } from 'antd/es/menu';
 import {
   formatCurrency,
@@ -32,6 +28,7 @@ import {
 import useLocalStorageState from '../hooks/useLocalStorageState';
 import { startOrchestrator } from '../services/orchestrator';
 import { MenuOutlined } from '@ant-design/icons';
+import { UserSettings } from '../services/data/getUserData';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -45,7 +42,7 @@ export default function App({
 }: {
   userInfo: UserInfo_Type;
   timeFrameState: TimeFramestate;
-  userSettings: UserSettings_Type;
+  userSettings: UserSettings;
   totalPerformanceData: any;
 }) {
   // const setup

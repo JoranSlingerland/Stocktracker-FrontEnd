@@ -3,7 +3,7 @@ import { Button, Tooltip, Divider, Typography } from 'antd';
 import { useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { formatCurrency } from '../utils/formatting';
-import { UserSettings_Type } from '../types/types';
+import { UserSettings } from '../services/data/getUserData';
 import { addItemToInput } from '../services/add';
 import { TransactionForm, StockForm } from '../elements/Forms';
 import { FormModal } from '../elements/FormModal';
@@ -15,7 +15,7 @@ const StockFormModal = ({
   userSettings,
   parentCallback,
 }: {
-  userSettings: UserSettings_Type;
+  userSettings: UserSettings;
   parentCallback: () => Promise<void>;
 }): JSX.Element => {
   const [totalValue, setTotalValue] = useState(0);
@@ -88,7 +88,7 @@ const TransactionsFormModal = ({
   userSettings,
   parentCallback,
 }: {
-  userSettings: UserSettings_Type;
+  userSettings: UserSettings;
   parentCallback: () => Promise<void>;
 }): JSX.Element => {
   const { form, open, handleOpen, handleClose } = useModal();
