@@ -19,7 +19,7 @@ import {
   getTableDataPerformanceDataTotalsReducer,
   getTableDataPerformanceDataTotalsInitialState,
   getTableDataPerformanceTotals,
-} from '../components/services/data/getTableDataPerformance';
+} from '../components/services/data/GetTableDataPerformance/totals';
 
 const { darkAlgorithm, defaultAlgorithm } = antdTheme;
 

@@ -10,7 +10,7 @@ import {
   getTableDataPerformanceStocksHeld,
   getTableDataPerformanceDataStocksHeldReducer,
   getTableDataPerformanceDataStocksHeldInitialState,
-} from '../../components/services/data/getTableDataPerformance';
+} from '../../components/services/data/GetTableDataPerformance/stocksHeld';
 import {
   valueGrowthColumns,
   ReceivedDividedColumns,

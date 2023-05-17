@@ -22,6 +22,19 @@ function convertTransactionsArray(
     throw new Error('Input is not an array');
   }
 
+  if (inputArray.length === 0) {
+    return [
+      {
+        month: '',
+        values: [
+          {
+            date: '',
+          },
+        ],
+      },
+    ];
+  }
+
   const groupedByMonth: { [month: string]: OutputObject[] } = inputArray.reduce(
     (acc, obj) => {
       const date = new Date(obj.date);

@@ -9,8 +9,6 @@ import {
   Card,
   Skeleton,
 } from 'antd';
-import { getTableDataBasic } from '../../components/services/data';
-import { apiRequestReducer, initialState } from '../../components/utils/api';
 import {
   LinkedinOutlined,
   FacebookOutlined,
@@ -26,6 +24,16 @@ import TagRow from '../../components/elements/TagRow';
 import StatCard from '../../components/elements/StatCard';
 import { convertTransactionsArray } from '../../components/utils/misc';
 import { UserSettings } from '../../components/services/data/getUserData';
+import {
+  getTableDataBasicStocksHeld,
+  getTableDataBasicStocksHeldInitialState,
+  getTableDataBasicStocksHeldReducer,
+} from '../../components/services/data/getTableDataBasic/stocksHeld';
+import {
+  getTableDataBasicInputTransactions,
+  getTableDataBasicInputTransactionsInitialState,
+  getTableDataBasicInputTransactionsReducer,
+} from '../../components/services/data/getTableDataBasic/inputTransactions';
 
 const { Text, Title, Link } = Typography;
 
@@ -56,12 +64,14 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
   const router = useRouter();
   const stockSymbol = router.query.stock as string;
   const [stockData, stockDataDispatcher] = useReducer(
-    apiRequestReducer,
-    initialState({ isLoading: true })
+    getTableDataBasicStocksHeldReducer,
+    getTableDataBasicStocksHeldInitialState({ isLoading: true })
   );
   const [transactionsData, transactionsReducer] = useReducer(
-    apiRequestReducer,
-    initialState({ isLoading: true, fallback_data: [{}] })
+    getTableDataBasicInputTransactionsReducer,
+    getTableDataBasicInputTransactionsInitialState({
+      isLoading: true,
+    })
   );
   const [tab, setTab] = useState('1');
 
@@ -72,7 +82,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
       return;
     }
 
-    getTableDataBasic({
+    getTableDataBasicStocksHeld({
       dispatcher: stockDataDispatcher,
       abortController,
       body: {
@@ -94,7 +104,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
     }
 
     if (tab === '2') {
-      getTableDataBasic({
+      getTableDataBasicInputTransactions({
         dispatcher: transactionsReducer,
         abortController,
         body: {
@@ -108,8 +118,9 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
       abortController.abort();
     };
   }, [stockSymbol, tab]);
-
-  const transactionsArray = convertTransactionsArray(transactionsData.data);
+  const transactionsArray = convertTransactionsArray(transactionsData.data) || [
+    {},
+  ];
   const DescriptionSkeletonProps = {
     active: true,
     paragraph: false,
@@ -553,11 +564,11 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
             { value: stockData.data?.[0]?.['currency'] },
             {
               value:
-                stockData.data?.[0]['fully_realized'] !== undefined
+                stockData.data?.[0]?.['fully_realized'] !== undefined
                   ? stockData.data?.[0]['fully_realized']
                     ? 'Closed'
                     : 'Open'
-                  : null,
+                  : undefined,
             },
           ]}
         />

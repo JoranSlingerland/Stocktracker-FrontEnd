@@ -2,9 +2,7 @@ import { Tabs, Collapse, Typography } from 'antd';
 import { useEffect, useReducer } from 'react';
 import PieChart from '../../components/elements/PrimeFacePieChart';
 import AntdTable from '../../components/elements/antdTable';
-import { apiRequestReducer, initialState } from '../../components/utils/api';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
-import { getTableDataBasic } from '../../components/services/data';
 import {
   RealizedColumns,
   UnRealizedColumns,
@@ -15,6 +13,11 @@ import {
   pieChartDataInitialState,
 } from '../../components/services/data/getPieData';
 import { UserSettings } from '../../components/services/data/getUserData';
+import {
+  getTableDataBasicStocksHeld,
+  getTableDataBasicStocksHeldInitialState,
+  getTableDataBasicStocksHeldReducer,
+} from '../../components/services/data/getTableDataBasic/stocksHeld';
 
 const { Title } = Typography;
 const { Panel } = Collapse;
@@ -22,12 +25,12 @@ const { Panel } = Collapse;
 export default function Home({ userSettings }: { userSettings: UserSettings }) {
   // Const setup
   const [UnRealizedData, unRealizedDataDispatcher] = useReducer(
-    apiRequestReducer,
-    initialState({ isLoading: true })
+    getTableDataBasicStocksHeldReducer,
+    getTableDataBasicStocksHeldInitialState({ isLoading: true })
   );
   const [RealizedData, RealizedDataDispatcher] = useReducer(
-    apiRequestReducer,
-    initialState({ isLoading: true })
+    getTableDataBasicStocksHeldReducer,
+    getTableDataBasicStocksHeldInitialState({ isLoading: true })
   );
   const [StockPieData, StockPieDataDispatcher] = useReducer(
     pieChartDataReducer,
@@ -99,7 +102,7 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
   useEffect(() => {
     const abortController = new AbortController();
 
-    getTableDataBasic({
+    getTableDataBasicStocksHeld({
       dispatcher: unRealizedDataDispatcher,
       abortController,
       body: {
@@ -117,7 +120,7 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
     if (CollapseKey === '1') {
       const abortController = new AbortController();
 
-      getTableDataBasic({
+      getTableDataBasicStocksHeld({
         dispatcher: RealizedDataDispatcher,
         abortController,
         body: {

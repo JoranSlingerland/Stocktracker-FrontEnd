@@ -1,32 +1,39 @@
 import { Divider, Input, Typography } from 'antd';
 import { useState, useEffect, useReducer } from 'react';
 import AntdTable from '../../components/elements/antdTable';
-import { apiRequestReducer, initialState } from '../../components/utils/api';
 import {
   TransactionsFormModal,
   StockFormModal,
 } from '../../components/modules/formModal';
-import { getTableDataBasic } from '../../components/services/data';
 import { deleteInputItems } from '../../components/services/delete/deleteInputItems';
 import {
   InputInvestedColumns,
   InputTransactionsColumns,
 } from '../../components/elements/Columns';
 import { UserSettings } from '../../components/services/data/getUserData';
-
+import {
+  getTableDataBasicInputInvested,
+  getTableDataBasicInputInvestedInitialState,
+  getTableDataBasicInputInvestedReducer,
+} from '../../components/services/data/getTableDataBasic/inputInvested';
+import {
+  getTableDataBasicInputTransactions,
+  getTableDataBasicInputTransactionsInitialState,
+  getTableDataBasicInputTransactionsReducer,
+} from '../../components/services/data/getTableDataBasic/inputTransactions';
 const { Search } = Input;
 const { Title } = Typography;
 
 export default function Home({ userSettings }: { userSettings: UserSettings }) {
   const [InputTransactionsData, InputTransactionsDataDispatcher] = useReducer(
-    apiRequestReducer,
-    initialState({ isLoading: true })
+    getTableDataBasicInputTransactionsReducer,
+    getTableDataBasicInputTransactionsInitialState({ isLoading: true })
   );
   const [InputTransactionsSearchText, setInputTransactionsSearchText] =
     useState<any>();
   const [InputInvestedData, InputInvestedDataDispatcher] = useReducer(
-    apiRequestReducer,
-    initialState({ isLoading: true })
+    getTableDataBasicInputInvestedReducer,
+    getTableDataBasicInputInvestedInitialState({ isLoading: true })
   );
   const [InputInvestedSearchText, setInputInvestedSearchText] =
     useState<any>(undefined);
@@ -36,7 +43,7 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
   useEffect(() => {
     const abortController = new AbortController();
 
-    getTableDataBasic({
+    getTableDataBasicInputTransactions({
       body: {
         containerName: 'input_transactions',
       },
@@ -44,7 +51,7 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
       dispatcher: InputTransactionsDataDispatcher,
     });
 
-    getTableDataBasic({
+    getTableDataBasicInputInvested({
       body: {
         containerName: 'input_invested',
       },
@@ -90,19 +97,26 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
   async function overWriteTableData(
     container: 'input_invested' | 'input_transactions'
   ): Promise<void> {
-    const dispatch =
-      container === 'input_invested'
-        ? InputInvestedDataDispatcher
-        : InputTransactionsDataDispatcher;
-
-    getTableDataBasic({
-      body: {
-        containerName: container,
-      },
-      abortController: new AbortController(),
-      dispatcher: dispatch,
-      overWrite: true,
-    });
+    if (container === 'input_invested') {
+      getTableDataBasicInputInvested({
+        body: {
+          containerName: container,
+        },
+        abortController: new AbortController(),
+        dispatcher: InputInvestedDataDispatcher,
+        overWrite: true,
+      });
+    }
+    if (container === 'input_transactions') {
+      getTableDataBasicInputTransactions({
+        body: {
+          containerName: container,
+        },
+        abortController: new AbortController(),
+        dispatcher: InputTransactionsDataDispatcher,
+        overWrite: true,
+      });
+    }
   }
 
   // Render
