@@ -2,6 +2,7 @@ import { Spin } from 'antd';
 import { Chart } from 'primereact/chart';
 import { formatCurrency } from '../utils/formatting';
 import { UserSettings_Type } from '../types/types';
+import { LineChartData } from '../services/data/getLineChartData';
 
 export default function BasicLineGraph({
   isloading,
@@ -9,7 +10,7 @@ export default function BasicLineGraph({
   userSettings,
 }: {
   isloading: boolean;
-  data: any;
+  data: LineChartData;
   userSettings: UserSettings_Type;
 }): JSX.Element {
   const totalDuration = 500;

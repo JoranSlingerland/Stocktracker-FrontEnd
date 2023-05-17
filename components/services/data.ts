@@ -1,31 +1,5 @@
 import { cachedFetch, overwriteCachedFetch } from '../utils/api';
 
-function getLineChartData({
-  dispatcher,
-  abortController,
-  body,
-  fallback_data = [],
-}: {
-  dispatcher: any;
-  abortController: AbortController;
-  body: {
-    allData: boolean;
-    startDate?: string;
-    endDate?: string;
-    dataType: 'total_gains' | 'invested_and_value';
-  };
-  fallback_data?: any;
-}) {
-  cachedFetch({
-    url: `/api/data/get_linechart_data`,
-    method: 'POST',
-    body,
-    dispatcher,
-    controller: abortController,
-    fallback_data,
-  });
-}
-
 function getPieData({
   dispatcher,
   abortController,
@@ -140,10 +114,4 @@ async function getUserData({ overWrite }: { overWrite?: boolean }) {
   }
 }
 
-export {
-  getLineChartData,
-  getPieData,
-  getTableDataBasic,
-  getTableDataPerformance,
-  getUserData,
-};
+export { getPieData, getTableDataBasic, getTableDataPerformance, getUserData };

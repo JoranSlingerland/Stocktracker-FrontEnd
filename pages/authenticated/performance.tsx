@@ -10,10 +10,7 @@ import {
   TimeFramestate,
 } from '../../components/types/types';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
-import {
-  getLineChartData,
-  getTableDataPerformance,
-} from '../../components/services/data';
+import { getTableDataPerformance } from '../../components/services/data';
 import {
   valueGrowthColumns,
   ReceivedDividedColumns,
@@ -25,6 +22,12 @@ import {
   barChartDataInitialState,
   barChartDataReducer,
 } from '../../components/services/data/getBarchartData';
+
+import {
+  getLineChartData,
+  lineChartDataInitialState,
+  lineChartDataReducer,
+} from '../../components/services/data/getLineChartData';
 
 const { Title } = Typography;
 
@@ -68,9 +71,8 @@ export default function performance({
 }) {
   // const setup
   const [valueGrowthData, valueGrowthDataReducer] = useReducer(
-    apiRequestReducer,
-    initialState({
-      fallback_data: valueGrowthDataFallBackObject,
+    lineChartDataReducer,
+    lineChartDataInitialState({
       isLoading: true,
     })
   );
@@ -81,9 +83,8 @@ export default function performance({
     })
   );
   const [totalGainsData, totalGainsDataReducer] = useReducer(
-    apiRequestReducer,
-    initialState({
-      fallback_data: totalGainsDataFallBackObject,
+    lineChartDataReducer,
+    lineChartDataInitialState({
       isLoading: true,
     })
   );

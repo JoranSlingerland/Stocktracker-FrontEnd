@@ -4,6 +4,7 @@ import {
   formatPercentageWithColors,
 } from '../utils/formatting';
 import { UserSettings_Type } from '../types/types';
+import { LineChartData } from '../services/data/getLineChartData';
 
 export default function tabs({
   totalPerformanceData,
@@ -13,17 +14,17 @@ export default function tabs({
   tabState,
 }: {
   totalPerformanceData: any;
-  valueGrowthData: any;
+  valueGrowthData: LineChartData;
   loading: boolean;
   userSettings: UserSettings_Type;
   tabState: any;
 }): JSX.Element {
   const { tab, setTab } = tabState;
-  const firstData = valueGrowthData.datasets[0].data[0];
+  const firstData = valueGrowthData.datasets[0]?.data[0] ?? 0;
   const lastData =
-    valueGrowthData.datasets[0].data[
-      valueGrowthData.datasets[0].data.length - 1
-    ];
+    valueGrowthData.datasets[0]?.data[
+      valueGrowthData.datasets[0]?.data.length - 1
+    ] ?? 0;
   const valueGrowth = lastData - firstData;
   const valueGrowthPercentage = firstData == 0 ? 0 : valueGrowth / firstData;
 

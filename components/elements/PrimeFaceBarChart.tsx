@@ -2,21 +2,14 @@ import { Chart } from 'primereact/chart';
 import { Spin } from 'antd';
 import { formatCurrency } from '../utils/formatting';
 import { UserSettings_Type } from '../types/types';
+import { BarChartData } from '../services/data/getBarchartData';
 
 export default function PrimeFacePieChart({
   data,
   isloading,
   userSettings,
 }: {
-  data:
-    | [
-        {
-          date: string;
-          category: string;
-          value: number;
-        }
-      ]
-    | any[];
+  data: BarChartData[];
   isloading: boolean;
   userSettings: UserSettings_Type;
 }): JSX.Element {

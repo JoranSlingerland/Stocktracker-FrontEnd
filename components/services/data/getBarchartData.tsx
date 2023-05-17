@@ -59,4 +59,4 @@ function getBarchartData({
 
 export { getBarchartData, barChartDataReducer, barChartDataInitialState };
 
-export type { GetBarchartDataBody, BarChartData, BarChartDataActions };
+export type { BarChartData };
