@@ -31,13 +31,7 @@ const totalsData = {
     forex_pl_percentage: 0,
     total_pl_percentage: 0,
   },
-  userid: '',
   id: '',
-  _rid: '',
-  _self: '/',
-  _etag: '',
-  _attachments: '',
-  _ts: 0,
 };
 
 const stocksHeldData = {
@@ -97,13 +91,20 @@ const stocksHeldData = {
     transaction_cost_percentage: 0,
     total_pl_percentage: 0,
   },
-  userid: '',
+  meta: {
+    symbol: '',
+    name: '',
+    description: '',
+    country: '',
+    sector: '',
+    domain: '',
+    links: [],
+    logo: '',
+    icon: '',
+    symbol_img: '',
+    banner: '',
+  },
   id: '',
-  _rid: '',
-  _self: '',
-  _etag: '',
-  _attachments: '',
-  _ts: 0,
 };
 
 export { totalsData, stocksHeldData };

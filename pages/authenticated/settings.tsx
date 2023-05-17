@@ -5,41 +5,32 @@ import {
   Popconfirm,
   Tabs,
   Typography,
-  Tag,
   Input,
   Switch,
   Skeleton,
   AutoComplete,
 } from 'antd';
-import {
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  ExclamationCircleOutlined,
-  SyncOutlined,
-} from '@ant-design/icons';
 import { useEffect, useReducer } from 'react';
-import { apiRequestReducer, initialState } from '../../components/utils/api';
 import useWindowDimensions from '../../components/hooks/useWindowDimensions';
 import AntdTable from '../../components/elements/antdTable';
-import {
-  UserInfo_Type,
-  userSettingsDispatch_Type,
-  UserSettings_Type,
-} from '../../components/types/types';
+import { UserInfo_Type } from '../../components/types/types';
 import { currencyCodes } from '../../components/constants/currencyCodes';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
-import { getUserData } from '../../components/services/data';
+import { getUserData } from '../../components/services/data/getUserData';
+import { startOrchestrator } from '../../components/services/orchestrator/startOrchestrator';
+import { createCosmosDbAndContainer } from '../../components/services/privileged/createCosmosDbAndContainer';
+import { deleteCosmosDbContainer } from '../../components/services/privileged/deleteCosmosDbContainer';
+import { addUserData } from '../../components/services/add/addUserData';
+import { orchestratorColumns } from '../../components/elements/Columns';
 import {
-  startOrchestrator,
-  fetchOrchestratorList,
-  purgeOrchestrator,
-  terminateOrchestrator,
-} from '../../components/services/orchestrator';
+  UserSettings,
+  userDataActions,
+} from '../../components/services/data/getUserData';
 import {
-  createCosmosDbAndContainer,
-  deleteCosmosDbContainer,
-} from '../../components/services/privileged';
-import { addUserData } from '../../components/services/add';
+  listOrchestrator,
+  listOrchestratorReducer,
+  listOrchestratorInitialState,
+} from '../../components/services/orchestrator/OrchestratorList';
 
 const { Text, Title, Link } = Typography;
 
@@ -59,12 +50,12 @@ export default function Home({
   userSettingsDispatch,
 }: {
   userInfo: UserInfo_Type;
-  userSettings: UserSettings_Type;
-  userSettingsDispatch: (action: userSettingsDispatch_Type) => void;
+  userSettings: UserSettings;
+  userSettingsDispatch: (action: userDataActions) => void;
 }) {
   const [orchestratorList, orchestratorDispatch] = useReducer(
-    apiRequestReducer,
-    initialState({ isLoading: true })
+    listOrchestratorReducer,
+    listOrchestratorInitialState({ isLoading: true })
   );
   const [tab, setTab] = useLocalStorageState('settingsTab', '1');
   const dimensions = useWindowDimensions();
@@ -90,7 +81,7 @@ export default function Home({
   useEffect(() => {
     if (tab === '3') {
       const abortController = new AbortController();
-      fetchOrchestratorList({
+      listOrchestrator({
         body: { days: 7 },
         dispatcher: orchestratorDispatch,
         abortController,
@@ -103,7 +94,7 @@ export default function Home({
     const interval = setInterval(() => {
       if (tab === '3') {
         const abortController = new AbortController();
-        fetchOrchestratorList({
+        listOrchestrator({
           body: { days: 7 },
           dispatcher: orchestratorDispatch,
           abortController,
@@ -116,114 +107,6 @@ export default function Home({
   }, [tab]);
 
   // constants
-  const orchestratorColumns = [
-    {
-      title: 'Status',
-      dataIndex: 'runtimeStatus',
-      key: 'runtimeStatus',
-      render: (text: string) => {
-        if (text === 'Completed') {
-          return (
-            <Tag icon={<CheckCircleOutlined />} color="success">
-              {text}
-            </Tag>
-          );
-        } else if (text === 'Failed') {
-          return (
-            <Tag icon={<CloseCircleOutlined />} color="error">
-              {text}
-            </Tag>
-          );
-        } else if (text === 'Suspended' || text === 'Terminated') {
-          return (
-            <Tag icon={<ExclamationCircleOutlined />} color="warning">
-              {text}
-            </Tag>
-          );
-        } else if (text === 'Running' || text === 'Pending') {
-          return (
-            <Tag icon={<SyncOutlined spin />} color="processing">
-              {text}
-            </Tag>
-          );
-        } else {
-          return <Tag color="default">{text}</Tag>;
-        }
-      },
-    },
-    {
-      title: 'Created Time',
-      dataIndex: 'createdTime',
-      key: 'createdTime',
-    },
-    {
-      title: 'Last Updated Time',
-      dataIndex: 'lastUpdatedTime',
-      key: 'lastUpdatedTime',
-    },
-    {
-      title: 'Instance ID',
-      dataIndex: 'instanceId',
-      key: 'instanceId',
-      render: (text: string) => <Text copyable>{text}</Text>,
-    },
-    {
-      title: 'Actions',
-      dataIndex: 'actions',
-      key: 'actions',
-      render: (text: string, record: any) => (
-        <div className="">
-          <Popconfirm
-            title="Are you sure you want to terminate this orchestrator?"
-            onConfirm={() => {
-              terminateOrchestrator({
-                body: {
-                  instanceId: record.instanceId,
-                },
-              });
-            }}
-            okText="Yes"
-            cancelText="No"
-            arrow={false}
-            icon={false}
-          >
-            <Button
-              danger
-              disabled={
-                record.runtimeStatus === 'Running' ||
-                record.runtimeStatus === 'Pending'
-                  ? false
-                  : true
-              }
-              className="mb-1 mr-1"
-              size="small"
-            >
-              Terminate
-            </Button>
-          </Popconfirm>
-          <Popconfirm
-            title="Are you sure you want to purge this orchestrator?"
-            onConfirm={() => {
-              purgeOrchestrator({
-                body: {
-                  instanceId: record.instanceId,
-                },
-              });
-            }}
-            okText="Yes"
-            cancelText="No"
-            arrow={false}
-            icon={false}
-          >
-            <Button size="small" danger>
-              Purge
-            </Button>
-          </Popconfirm>
-        </div>
-      ),
-    },
-  ];
-
   const buttonRow = (
     title: string,
     description: string,
@@ -235,7 +118,6 @@ export default function Home({
       <Text>{description}</Text>
     </div>
   );
-
   const items = [
     {
       key: '1',
@@ -580,24 +462,20 @@ export default function Home({
   }
 
   return (
-    <div>
-      <div>
-        <Title className="flex items-center justify-center p-5" level={1}>
-          Settings
-        </Title>
-      </div>
+    <>
+      <Title className="flex items-center justify-center p-5" level={1}>
+        Settings
+      </Title>
       <Divider plain></Divider>
-      <div>
-        <Tabs
-          type="line"
-          activeKey={tab}
-          onChange={(key) => setTab(key)}
-          items={items}
-          tabPosition={
-            dimensions.width === null || dimensions.width > 768 ? 'left' : 'top'
-          }
-        />
-      </div>
-    </div>
+      <Tabs
+        type="line"
+        activeKey={tab}
+        onChange={(key) => setTab(key)}
+        items={items}
+        tabPosition={
+          dimensions.width === null || dimensions.width > 768 ? 'left' : 'top'
+        }
+      />
+    </>
   );
 }

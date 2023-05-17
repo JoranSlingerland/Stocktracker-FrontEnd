@@ -1,7 +1,7 @@
 import { Image, Typography } from 'antd';
 import { RiseOutlined, FallOutlined } from '@ant-design/icons';
 import { currencyCodes } from '../constants/currencyCodes';
-const { Text } = Typography;
+const { Text, Link } = Typography;
 
 function formatCurrency({
   value,
@@ -15,6 +15,10 @@ function formatCurrency({
   if (currency === undefined || currency === '') {
     return formatNumber(value, maximumFractionDigits);
   }
+  if (typeof value === 'string') {
+    value = parseFloat(value);
+  }
+  !value && (value = 0);
 
   if (
     !currencyCodes.find(
@@ -59,6 +63,7 @@ function formatCurrencyWithColors({
   if (typeof value === 'string') {
     value = parseFloat(value);
   }
+  !value && (value = 0);
 
   if (currency === undefined) {
     var formattedValue = formatCurrency({ value, maximumFractionDigits });
@@ -94,6 +99,12 @@ function formatCurrencyWithColors({
 }
 
 function formatPercentage(value: number | string, maximumFractionDigits = 2) {
+  !value && (value = 0);
+
+  if (typeof value === 'string') {
+    value = parseFloat(value);
+  }
+
   return value.toLocaleString('nl-NL', {
     style: 'percent',
     minimumFractionDigits: maximumFractionDigits,
@@ -114,6 +125,7 @@ function formatPercentageWithColors({
   if (typeof value === 'string') {
     value = parseFloat(value);
   }
+  !value && (value = 0);
 
   const formattedValue = formatPercentage(value, maximumFractionDigits);
 
@@ -135,6 +147,11 @@ function formatPercentageWithColors({
 }
 
 function formatNumber(value: number | string, maximumFractionDigits = 2) {
+  if (typeof value === 'string') {
+    value = parseFloat(value);
+  }
+  !value && (value = 0);
+
   return value.toLocaleString('nl-NL', {
     maximumFractionDigits: maximumFractionDigits,
   });
@@ -149,22 +166,27 @@ function formatImageAndText(
     image = '/images/fallback.png';
   }
   return (
-    <div className="flex flex-col md:flex-row">
-      <Image
-        className="pr-1"
-        alt="icon"
-        src={image}
-        width={35}
-        height={35}
-        preview={false}
-        placeholder={false}
-      />
-      <div className="flex flex-col md:pl-1">
-        <Text className="hidden md:inline " strong>
-          {name}
-        </Text>
-        <Text type="secondary">{symbol}</Text>
-      </div>
+    <div>
+      <Link
+        className="flex flex-col md:flex-row"
+        href={`/authenticated/stock/?stock=${symbol}`}
+      >
+        <Image
+          className="pr-1"
+          alt="icon"
+          src={image}
+          width={35}
+          height={35}
+          preview={false}
+          placeholder={false}
+        />
+        <div className="flex flex-col md:pl-1">
+          <Text className="hidden md:inline " strong>
+            {name}
+          </Text>
+          <Text type="secondary">{symbol}</Text>
+        </div>
+      </Link>
     </div>
   );
 }

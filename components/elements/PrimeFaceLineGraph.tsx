@@ -1,7 +1,8 @@
 import { Spin } from 'antd';
 import { Chart } from 'primereact/chart';
 import { formatCurrency } from '../utils/formatting';
-import { UserSettings_Type } from '../types/types';
+import { UserSettings } from '../services/data/getUserData';
+import { LineChartData } from '../services/data/getLineChartData';
 
 export default function BasicLineGraph({
   isloading,
@@ -9,8 +10,8 @@ export default function BasicLineGraph({
   userSettings,
 }: {
   isloading: boolean;
-  data: any;
-  userSettings: UserSettings_Type;
+  data: LineChartData;
+  userSettings: UserSettings;
 }): JSX.Element {
   const totalDuration = 500;
   let delayBetweenPoints = totalDuration / data['labels'].length;

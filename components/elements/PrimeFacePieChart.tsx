@@ -3,16 +3,17 @@ import { Chart } from 'primereact/chart';
 import { formatCurrency } from '../utils/formatting';
 import React from 'react';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { UserSettings_Type } from '../types/types';
+import { PieChartData } from '../services/data/getPieData';
+import { UserSettings } from '../services/data/getUserData';
 
 export default function PieChart({
   data,
   isloading,
   userSettings,
 }: {
-  data: any;
+  data: PieChartData;
   isloading: boolean;
-  userSettings: UserSettings_Type;
+  userSettings: UserSettings;
 }): JSX.Element {
   const myChartRef: any = React.createRef();
 

@@ -19,23 +19,20 @@ import {
   Drawer,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
-import {
-  UserInfo_Type,
-  TimeFramestate,
-  UserSettings_Type,
-} from '../types/types';
+import { UserInfo_Type, TimeFramestate } from '../types/types';
 import type { MenuProps } from 'antd/es/menu';
 import {
   formatCurrency,
   formatPercentageWithColors,
 } from '../utils/formatting';
 import useLocalStorageState from '../hooks/useLocalStorageState';
-import { startOrchestrator } from '../services/orchestrator';
+import { startOrchestrator } from '../services/orchestrator/startOrchestrator';
 import { MenuOutlined } from '@ant-design/icons';
+import { UserSettings } from '../services/data/getUserData';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
-const { Text } = Typography;
+const { Text, Link } = Typography;
 
 export default function App({
   userInfo,
@@ -45,7 +42,7 @@ export default function App({
 }: {
   userInfo: UserInfo_Type;
   timeFrameState: TimeFramestate;
-  userSettings: UserSettings_Type;
+  userSettings: UserSettings;
   totalPerformanceData: any;
 }) {
   // const setup
@@ -454,48 +451,43 @@ export default function App({
 
   return (
     <>
-      <div>
-        <Menu
-          selectedKeys={[current]}
-          mode="horizontal"
-          items={topMenuLarge}
-          className="hidden sm:block"
-        />
-        <Menu
-          selectedKeys={[current]}
-          mode="horizontal"
-          items={topMenuSmall}
-          className="sm:hidden block"
-        />
-        <Drawer
-          open={drawerVisible}
-          closable={false}
-          placement="left"
-          onClose={() => {
-            setDrawerVisible(false);
-          }}
-          bodyStyle={{ padding: 0, paddingTop: 12 }}
-          width={200}
-          footer={
-            <div className="text-center">
-              <a
-                href="/.auth/logout?post_logout_redirect_uri=/"
-                onClick={() => {
-                  localStorage.clear();
-                }}
-              >
-                Logout
-              </a>
-            </div>
-          }
-        >
-          <Menu
-            items={navItems}
-            selectedKeys={[current]}
-            className="border-0"
-          />
-        </Drawer>
-      </div>
+      <Menu
+        selectedKeys={[current]}
+        mode="horizontal"
+        items={topMenuLarge}
+        className="hidden sm:block"
+      />
+      <Menu
+        selectedKeys={[current]}
+        mode="horizontal"
+        items={topMenuSmall}
+        className="sm:hidden block"
+      />
+      <Drawer
+        open={drawerVisible}
+        closable={false}
+        placement="left"
+        onClose={() => {
+          setDrawerVisible(false);
+        }}
+        bodyStyle={{ padding: 0, paddingTop: 0 }}
+        width={200}
+        footer={
+          <div className="text-center">
+            <Link
+              type="secondary"
+              href="/.auth/logout?post_logout_redirect_uri=/"
+              onClick={() => {
+                localStorage.clear();
+              }}
+            >
+              Logout
+            </Link>
+          </div>
+        }
+      >
+        <Menu items={navItems} selectedKeys={[current]} className="border-0" />
+      </Drawer>
     </>
   );
 }
