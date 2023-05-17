@@ -33,6 +33,7 @@ interface userSettingsDispatch_Type {
     | {
         dark_mode: boolean;
         clearbit_api_key: string;
+        brandfetch_api_key: string;
         alpha_vantage_api_key: string;
         currency: string;
       };

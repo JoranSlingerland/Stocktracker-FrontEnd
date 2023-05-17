@@ -74,6 +74,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const [userSettings, userSettingsDispatch] = useReducer(userSettingsReducer, {
     dark_mode: false,
     clearbit_api_key: '',
+    set_brandfetch_api_key: '',
     alpha_vantage_api_key: '',
     currency: '',
     isLoading: true,
