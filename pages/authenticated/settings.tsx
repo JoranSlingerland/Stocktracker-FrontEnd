@@ -26,7 +26,7 @@ import {
   createCosmosDbAndContainer,
   deleteCosmosDbContainer,
 } from '../../components/services/privileged';
-import { addUserData } from '../../components/services/add';
+import { addUserData } from '../../components/services/add/addUserData';
 import { orchestratorColumns } from '../../components/elements/Columns';
 import {
   UserSettings,

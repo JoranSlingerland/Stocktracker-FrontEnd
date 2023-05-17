@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { formatCurrency } from '../utils/formatting';
 import { UserSettings } from '../services/data/getUserData';
-import { addItemToInput } from '../services/add';
+import { addItemToInput } from '../services/add/addItemToInput';
 import { TransactionForm, StockForm } from '../elements/Forms';
 import { FormModal } from '../elements/FormModal';
 import useModal from '../hooks/useModal';
