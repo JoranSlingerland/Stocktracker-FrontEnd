@@ -30,7 +30,7 @@
     "wretch": "^2.5.2"
   },
   "devDependencies": {
-    "@types/node": "^20.1.1",
+    "@types/node": "^20.1.7",
     "@types/object-hash": "^3.0.2",
     "@types/react": "^18.2.6",
     "eslint": "^8.39.0",
