@@ -432,7 +432,7 @@ const orchestratorColumns: ColumnsType = [
     title: 'Actions',
     dataIndex: 'actions',
     key: 'actions',
-    render: (record: any) => (
+    render: (text, record: any) => (
       <>
         <Popconfirm
           title="Are you sure you want to terminate this orchestrator?"

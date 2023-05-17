@@ -118,7 +118,6 @@ export default function Home({
       <Text>{description}</Text>
     </div>
   );
-
   const items = [
     {
       key: '1',

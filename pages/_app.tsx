@@ -105,27 +105,25 @@ function MyApp({ Component, pageProps }: AppProps) {
   };
 
   return (
-    <>
-      <ConfigProvider
-        theme={{
-          algorithm: userSettings?.dark_mode ? darkAlgorithm : defaultAlgorithm,
-        }}
+    <ConfigProvider
+      theme={{
+        algorithm: userSettings?.dark_mode ? darkAlgorithm : defaultAlgorithm,
+      }}
+    >
+      <div
+        className={`min-h-screen flex flex-col ${
+          userSettings.dark_mode ? 'dark bg-neutral-900' : 'bg-white'
+        }`}
       >
-        <div
-          className={`min-h-screen flex flex-col ${
-            userSettings.dark_mode ? 'dark bg-neutral-900' : 'bg-white'
-          }`}
-        >
-          <Navbar {...props} />
-          <div className="flex justify-center px-2 xl:px-0">
-            <div className="w-full max-w-7xl">
-              <Component {...pageProps} {...props} />
-            </div>
+        <Navbar {...props} />
+        <div className="flex justify-center px-2 xl:px-0">
+          <div className="w-full max-w-7xl">
+            <Component {...pageProps} {...props} />
           </div>
-          <Footer />
         </div>
-      </ConfigProvider>
-    </>
+        <Footer />
+      </div>
+    </ConfigProvider>
   );
 }
 
