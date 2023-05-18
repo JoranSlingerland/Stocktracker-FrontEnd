@@ -1,6 +1,6 @@
 import Navbar from '../components/modules/navbar';
 import '../styles/globals.css';
-import { ConfigProvider, theme as antdTheme } from 'antd';
+import { ConfigProvider } from 'antd';
 import type { AppProps } from 'next/app';
 import { useEffect, useState, useReducer } from 'react';
 import { regularFetch } from '../components/utils/api';
@@ -20,8 +20,7 @@ import {
   getTableDataPerformanceDataTotalsInitialState,
   getTableDataPerformanceTotals,
 } from '../components/services/data/GetTableDataPerformance/totals';
-
-const { darkAlgorithm, defaultAlgorithm } = antdTheme;
+import useTheme from '../components/hooks/useTheme';
 
 async function getAccountSettings(userSettingsDispatch: any) {
   getUserData({}).then(({ response }) => {
@@ -34,30 +33,6 @@ async function getUserInfo(setUserInfo: any) {
     setUserInfo(response);
   });
 }
-
-type ThemeType = 'light' | 'dark' | 'system';
-
-const getTheme = (themeType: ThemeType) => {
-  switch (themeType) {
-    case 'light':
-      return defaultAlgorithm;
-    case 'dark':
-      return darkAlgorithm;
-    default:
-      return defaultAlgorithm;
-  }
-};
-
-const getClassName = (themeType: ThemeType) => {
-  switch (themeType) {
-    case 'light':
-      return 'bg-white';
-    case 'dark':
-      return 'bg-neutral-900 dark';
-    default:
-      return 'bg-white';
-  }
-};
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [userInfo, setUserInfo] = useState({
@@ -82,23 +57,13 @@ function MyApp({ Component, pageProps }: AppProps) {
       isLoading: true,
     })
   );
-  const [systemTheme, setSystemTheme] = useState<ThemeType>('light');
+  const { algorithmTheme, className } = useTheme({
+    dark_mode: userSettings.dark_mode,
+  });
 
   useEffect(() => {
     getUserInfo(setUserInfo);
     getAccountSettings(userSettingsDispatch);
-  }, []);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    setSystemTheme(mediaQuery.matches ? 'dark' : 'light');
-    const listener = (event: MediaQueryListEvent) => {
-      setSystemTheme(event.matches ? 'dark' : 'light');
-    };
-    mediaQuery.addEventListener('change', listener);
-    return () => {
-      mediaQuery.removeEventListener('change', listener);
-    };
   }, []);
 
   useEffect(() => {
@@ -142,25 +107,8 @@ function MyApp({ Component, pageProps }: AppProps) {
   };
 
   return (
-    <ConfigProvider
-      theme={{
-        algorithm:
-          userSettings?.dark_mode === 'system'
-            ? getTheme(systemTheme)
-            : userSettings?.dark_mode === 'dark'
-            ? darkAlgorithm
-            : defaultAlgorithm,
-      }}
-    >
-      <div
-        className={`min-h-screen flex flex-col ${
-          userSettings.dark_mode === 'system'
-            ? getClassName(systemTheme)
-            : userSettings?.dark_mode === 'dark'
-            ? 'dark bg-neutral-900'
-            : 'bg-white'
-        }`}
-      >
+    <ConfigProvider theme={{ algorithm: algorithmTheme }}>
+      <div className={`min-h-screen flex flex-col ${className}`}>
         <Navbar {...props} />
         <div className="flex justify-center px-2 xl:px-0">
           <div className="w-full max-w-7xl">
