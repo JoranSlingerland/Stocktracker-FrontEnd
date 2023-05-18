@@ -355,7 +355,7 @@ const InputTransactionsColumns = (
     key: 'actions',
     width: 60,
     sorter: false,
-    render: (record: any) => (
+    render: (text, record: any) => (
       <Popconfirm
         title="Are you sure you want to delete this item?"
         onConfirm={() => {
