@@ -35,6 +35,30 @@ async function getUserInfo(setUserInfo: any) {
   });
 }
 
+type ThemeType = 'light' | 'dark' | 'system';
+
+const getTheme = (themeType: ThemeType) => {
+  switch (themeType) {
+    case 'light':
+      return defaultAlgorithm;
+    case 'dark':
+      return darkAlgorithm;
+    default:
+      return defaultAlgorithm;
+  }
+};
+
+const getClassName = (themeType: ThemeType) => {
+  switch (themeType) {
+    case 'light':
+      return 'bg-white';
+    case 'dark':
+      return 'bg-neutral-900 dark';
+    default:
+      return 'bg-white';
+  }
+};
+
 function MyApp({ Component, pageProps }: AppProps) {
   const [userInfo, setUserInfo] = useState({
     clientPrincipal: {
@@ -58,10 +82,23 @@ function MyApp({ Component, pageProps }: AppProps) {
       isLoading: true,
     })
   );
+  const [systemTheme, setSystemTheme] = useState<ThemeType>('light');
 
   useEffect(() => {
     getUserInfo(setUserInfo);
     getAccountSettings(userSettingsDispatch);
+  }, []);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    setSystemTheme(mediaQuery.matches ? 'dark' : 'light');
+    const listener = (event: MediaQueryListEvent) => {
+      setSystemTheme(event.matches ? 'dark' : 'light');
+    };
+    mediaQuery.addEventListener('change', listener);
+    return () => {
+      mediaQuery.removeEventListener('change', listener);
+    };
   }, []);
 
   useEffect(() => {
@@ -107,12 +144,21 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ConfigProvider
       theme={{
-        algorithm: userSettings?.dark_mode ? darkAlgorithm : defaultAlgorithm,
+        algorithm:
+          userSettings?.dark_mode === 'system'
+            ? getTheme(systemTheme)
+            : userSettings?.dark_mode === 'dark'
+            ? darkAlgorithm
+            : defaultAlgorithm,
       }}
     >
       <div
         className={`min-h-screen flex flex-col ${
-          userSettings.dark_mode ? 'dark bg-neutral-900' : 'bg-white'
+          userSettings.dark_mode === 'system'
+            ? getClassName(systemTheme)
+            : userSettings?.dark_mode === 'dark'
+            ? 'dark bg-neutral-900'
+            : 'bg-white'
         }`}
       >
         <Navbar {...props} />

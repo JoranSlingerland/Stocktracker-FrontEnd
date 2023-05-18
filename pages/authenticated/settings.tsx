@@ -6,9 +6,9 @@ import {
   Tabs,
   Typography,
   Input,
-  Switch,
   Skeleton,
   AutoComplete,
+  Select,
 } from 'antd';
 import { useEffect, useReducer } from 'react';
 import useWindowDimensions from '../../components/hooks/useWindowDimensions';
@@ -280,16 +280,21 @@ export default function Home({
           <div className="flex flex-col">
             <Text strong>Dark mode</Text>
             <div>
-              <Switch
-                checked={userSettings.dark_mode}
-                onChange={(checked) => {
+              <Select
+                value={userSettings.dark_mode}
+                onChange={(value) => {
                   userSettingsDispatch({
                     type: 'setDarkMode',
-                    payload: checked,
+                    payload: value,
                   });
                 }}
-                className="mt-2"
+                options={[
+                  { value: 'system', label: 'System' },
+                  { value: 'dark', label: 'Dark' },
+                  { value: 'light', label: 'Light' },
+                ]}
                 loading={userSettings.isLoading}
+                className="mt-2"
               />
             </div>
             <Text className="mt-1" type="secondary">
