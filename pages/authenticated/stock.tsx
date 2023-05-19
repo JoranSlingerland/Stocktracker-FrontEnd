@@ -18,6 +18,7 @@ import {
 import type { TabsProps } from 'antd';
 import {
   formatCurrency,
+  formatPercentage,
   formatPercentageWithColors,
 } from '../../components/utils/formatting';
 import TagRow from '../../components/elements/TagRow';
@@ -180,14 +181,10 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
             />
             <StatCard
               statisticProps={{
-                title: 'Cost',
-                value: stockData.data?.[0]?.['realized']['transaction_cost'],
+                title: 'Weight',
+                value: stockData.data?.[0]?.['weight'],
                 loading: stockData.isLoading,
-                formatter: (value) =>
-                  formatCurrency({
-                    value,
-                    currency: userSettings.currency,
-                  }),
+                formatter: (value) => formatPercentage(value),
               }}
               className="m-2 p-0"
               size="small"

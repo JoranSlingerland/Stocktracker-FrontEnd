@@ -12,7 +12,6 @@ import {
 import { useEffect, useReducer } from 'react';
 import useWindowDimensions from '../../components/hooks/useWindowDimensions';
 import AntdTable from '../../components/elements/antdTable';
-import { UserInfo_Type } from '../../components/types/types';
 import { currencyCodes } from '../../components/constants/currencyCodes';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
 import { getUserData } from '../../components/services/data/getUserData';
@@ -42,11 +41,9 @@ function handleLocalStorageClearClick() {
 }
 
 export default function Home({
-  userInfo,
   userSettings,
   userSettingsDispatch,
 }: {
-  userInfo: UserInfo_Type;
   userSettings: UserSettings;
   userSettingsDispatch: (action: userDataActions) => void;
 }) {
