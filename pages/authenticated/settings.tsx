@@ -18,8 +18,6 @@ import { currencyCodes } from '../../components/constants/currencyCodes';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
 import { getUserData } from '../../components/services/data/getUserData';
 import { startOrchestrator } from '../../components/services/orchestrator/startOrchestrator';
-import { createCosmosDbAndContainer } from '../../components/services/privileged/createCosmosDbAndContainer';
-import { deleteCosmosDbContainer } from '../../components/services/privileged/deleteCosmosDbContainer';
 import { addUserData } from '../../components/services/add/addUserData';
 import { orchestratorColumns } from '../../components/elements/Columns';
 import {
@@ -380,91 +378,6 @@ export default function Home({
       ),
     },
   ];
-  if (userInfo.clientPrincipal.userRoles.includes('admin')) {
-    items.push({
-      key: '4',
-      title: 'Admin',
-      label: 'Admin',
-      children: (
-        <div className="flex flex-col items-center">
-          <div className="w-full px-2 columns-1">
-            <div className="flex items-center justify-center">
-              <Title level={3}>Container actions</Title>
-            </div>
-            {buttonRow(
-              'Create Containers',
-              'This will create all containers and databases that do not exist yet.',
-              <Button
-                onClick={() => createCosmosDbAndContainer()}
-                type="primary"
-                size="large"
-              >
-                Create
-              </Button>
-            )}
-            <Divider plain></Divider>
-            <div className="w-full px-2 columns-1">
-              <div className="flex flex-col items-center justify-center text-xl">
-                <Title type={'danger'} level={3}>
-                  Danger Zone
-                </Title>
-                <Text type={'danger'}>
-                  Actions below can cause permanent data loss
-                </Text>
-              </div>
-              {buttonRow(
-                'Delete output containers',
-                'This will delete all the containers except the input containers.',
-                <Popconfirm
-                  title="Delete output containers?"
-                  description="Are you sure you want to delete the output containers"
-                  okText="Yes"
-                  arrow={false}
-                  icon={false}
-                  okButtonProps={{ danger: true, loading: false }}
-                  onConfirm={() =>
-                    deleteCosmosDbContainer({
-                      body: {
-                        containersToDelete: 'output_only',
-                      },
-                    })
-                  }
-                >
-                  <Button danger type="primary" size="large">
-                    Delete
-                  </Button>
-                </Popconfirm>
-              )}
-              <Divider plain></Divider>
-              {buttonRow(
-                'Delete all containers',
-                'This will delete all containers including the input containers.',
-                <Popconfirm
-                  title="Delete all"
-                  description="Are you sure you want to delete all containers"
-                  okText="Yes"
-                  arrow={false}
-                  icon={false}
-                  okButtonProps={{ danger: true, loading: false }}
-                  onConfirm={() =>
-                    deleteCosmosDbContainer({
-                      body: {
-                        containersToDelete: 'all',
-                      },
-                    })
-                  }
-                >
-                  <Button danger type="primary" size="large">
-                    Delete
-                  </Button>
-                </Popconfirm>
-              )}
-            </div>
-          </div>
-        </div>
-      ),
-    });
-  }
 
   return (
     <>
