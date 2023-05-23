@@ -12,12 +12,6 @@ body {
   box-sizing: border-box;
 }
 
-.p-multiselect {
-  height: 0px;
-  width: 0px;
-  border: 0px !important;
-}
-
 /* Ant design overwrites */
 
 .ant-btn-primary {
@@ -28,20 +22,6 @@ div.ant-list-pagination {
   justify-content: center;
   display: flex;
   margin-top: 10px !important;
-}
-
-@media (min-width: 768px) {
-  .ant-list {
-    height: 505px;
-  }
-}
-
-.ant-form-item {
-  margin-bottom: 8px;
-}
-
-.ant-switch {
-  background: rgba(0, 0, 0, 0.45);
 }
 
 .ant-tag {

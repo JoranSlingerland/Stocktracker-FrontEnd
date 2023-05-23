@@ -112,9 +112,13 @@ function MyApp({ Component, pageProps }: AppProps) {
     <ConfigProvider
       theme={{
         algorithm: algorithmTheme,
+
         components: {
           List: {
             paddingContentHorizontalLG: 0,
+          },
+          Form: {
+            marginLG: 8,
           },
         },
       }}
