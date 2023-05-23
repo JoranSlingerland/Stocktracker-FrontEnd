@@ -46,7 +46,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   });
   const [userSettings, userSettingsDispatch] = useReducer(
     userSettingsReducer,
-    userDataInitialState({})
+    userDataInitialState({
+      isLoading: true,
+    })
   );
   const [timeFrame, setTimeFrame] = useLocalStorageState('timeFrame', 'max');
   const timeFrameState: TimeFramestate = { timeFrame, setTimeFrame };
@@ -107,7 +109,16 @@ function MyApp({ Component, pageProps }: AppProps) {
   };
 
   return (
-    <ConfigProvider theme={{ algorithm: algorithmTheme }}>
+    <ConfigProvider
+      theme={{
+        algorithm: algorithmTheme,
+        components: {
+          List: {
+            paddingContentHorizontalLG: 0,
+          },
+        },
+      }}
+    >
       <div className={`min-h-screen flex flex-col ${className}`}>
         <Navbar {...props} />
         <div className="flex justify-center px-2 xl:px-0">

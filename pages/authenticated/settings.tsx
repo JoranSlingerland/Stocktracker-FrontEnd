@@ -5,10 +5,10 @@ import {
   Tabs,
   Typography,
   Input,
-  Skeleton,
   AutoComplete,
   Select,
   Tooltip,
+  List,
 } from 'antd';
 import { useEffect, useReducer } from 'react';
 import useWindowDimensions from '../../components/hooks/useWindowDimensions';
@@ -113,39 +113,54 @@ export default function Home({
       <Text>{description}</Text>
     </div>
   );
+
   const items = [
     {
       key: '1',
       Title: 'Account',
       label: 'Account',
       children: (
-        <div className="flex flex-col">
-          <div className="flex flex-col items-center">
-            <Title level={3}>Account</Title>
-          </div>
-          <div className="flex flex-col">
-            <Tooltip
-              placement="topLeft"
+        <List
+          size="large"
+          loading={userSettings.isLoading}
+          footer={
+            <div className="flex flex-col items-center">
+              <Button
+                type="primary"
+                onClick={() => {
+                  handleSaveAccountSettings();
+                }}
+                disabled={
+                  currencyCodes.find((o) => o.value === userSettings.currency)
+                    ? false
+                    : true || userSettings.isLoading
+                }
+              >
+                Save
+              </Button>
+            </div>
+          }
+        >
+          <List.Item>
+            <List.Item.Meta
               title={
-                <Text>
-                  Get your Clearbit API Key at{' '}
-                  <Link href="https://clearbit.com" target="_blank">
-                    clearbit.com
-                  </Link>
-                </Text>
+                <Tooltip
+                  placement="topLeft"
+                  title={
+                    <Text>
+                      Get your Clearbit API Key at{' '}
+                      <Link href="https://clearbit.com" target="_blank">
+                        clearbit.com
+                      </Link>
+                    </Text>
+                  }
+                >
+                  <Text strong>Clearbit API Key</Text>
+                </Tooltip>
               }
-            >
-              <Text strong>Clearbit API Key</Text>
-            </Tooltip>
-            <div className="mt-2 w-72 sm:w-96">
-              {userSettings.isLoading ? (
-                <Skeleton
-                  active={true}
-                  paragraph={{ rows: 1 }}
-                  title={false}
-                ></Skeleton>
-              ) : (
+              description={
                 <Input.Password
+                  className="w-72 sm:w-96"
                   value={userSettings.clearbit_api_key}
                   onChange={(e) => {
                     userSettingsDispatch({
@@ -155,36 +170,32 @@ export default function Home({
                   }}
                   size="small"
                 />
-              )}
-            </div>
-          </div>
-          <Divider />
-          <div className="flex flex-col">
-            <Tooltip
-              placement="topLeft"
-              title={
-                <Text>
-                  Get your Brandfetch API Key at{' '}
-                  <Link
-                    href="https://developers.brandfetch.com/"
-                    target="_blank"
-                  >
-                    developers.brandfetch.com
-                  </Link>
-                </Text>
               }
-            >
-              <Text strong>Brandfetch API Key</Text>
-            </Tooltip>
-            <div className="w-72 sm:w-96">
-              {userSettings.isLoading ? (
-                <Skeleton
-                  active={true}
-                  paragraph={{ rows: 1 }}
-                  title={false}
-                ></Skeleton>
-              ) : (
+            />
+          </List.Item>
+          <List.Item>
+            <List.Item.Meta
+              title={
+                <Tooltip
+                  placement="topLeft"
+                  title={
+                    <Text>
+                      Get your Brandfetch API Key at{' '}
+                      <Link
+                        href="https://developers.brandfetch.com/"
+                        target="_blank"
+                      >
+                        developers.brandfetch.com
+                      </Link>
+                    </Text>
+                  }
+                >
+                  <Text strong>Brandfetch API Key</Text>
+                </Tooltip>
+              }
+              description={
                 <Input.Password
+                  className="w-72 sm:w-96"
                   value={userSettings.brandfetch_api_key}
                   onChange={(e) => {
                     userSettingsDispatch({
@@ -194,36 +205,32 @@ export default function Home({
                   }}
                   size="small"
                 />
-              )}
-            </div>
-          </div>
-          <Divider />
-          <div className="flex flex-col">
-            <Tooltip
-              placement="topLeft"
-              title={
-                <Text>
-                  Get your Alpha Vantage API Key at{' '}
-                  <Link
-                    href="https://www.alphavantage.co/support/#api-key"
-                    target="_blank"
-                  >
-                    alphavantage.co
-                  </Link>
-                </Text>
               }
-            >
-              <Text strong>Alpha Vantage API Key</Text>
-            </Tooltip>
-            <div className="mt-2 w-72 sm:w-96">
-              {userSettings.isLoading ? (
-                <Skeleton
-                  active={true}
-                  paragraph={{ rows: 1 }}
-                  title={false}
-                ></Skeleton>
-              ) : (
+            />
+          </List.Item>
+          <List.Item>
+            <List.Item.Meta
+              title={
+                <Tooltip
+                  placement="topLeft"
+                  title={
+                    <Text>
+                      Get your Alpha Vantage API Key at{' '}
+                      <Link
+                        href="https://www.alphavantage.co/support/#api-key"
+                        target="_blank"
+                      >
+                        alphavantage.co
+                      </Link>
+                    </Text>
+                  }
+                >
+                  <Text strong>Alpha Vantage API Key</Text>
+                </Tooltip>
+              }
+              description={
                 <Input.Password
+                  className="w-72 sm:w-96"
                   value={userSettings.alpha_vantage_api_key}
                   onChange={(e) => {
                     userSettingsDispatch({
@@ -233,21 +240,15 @@ export default function Home({
                   }}
                   size="small"
                 />
-              )}
-            </div>
-          </div>
-          <Divider />
-          <div className="flex flex-col">
-            <Text strong>Currency</Text>
-            <div className="mt-2 w-72 sm:w-96">
-              {userSettings.isLoading ? (
-                <Skeleton
-                  active={true}
-                  paragraph={{ rows: 1 }}
-                  title={false}
-                ></Skeleton>
-              ) : (
+              }
+            />
+          </List.Item>
+          <List.Item>
+            <List.Item.Meta
+              title={<Text strong>Currency</Text>}
+              description={
                 <AutoComplete
+                  className="w-72 sm:w-96"
                   value={userSettings.currency}
                   onChange={(value) => {
                     userSettingsDispatch({
@@ -261,7 +262,6 @@ export default function Home({
                       : 'error'
                   }
                   size="small"
-                  className="w-full"
                   options={currencyCodes}
                   filterOption={(inputValue, option) =>
                     option!.value
@@ -275,49 +275,32 @@ export default function Home({
                     });
                   }}
                 />
-              )}
-            </div>
-          </div>
-          <Divider />
-          <div className="flex flex-col">
-            <Text strong>Theme</Text>
-            <div>
-              <Select
-                value={userSettings.dark_mode}
-                onChange={(value) => {
-                  userSettingsDispatch({
-                    type: 'setDarkMode',
-                    payload: value,
-                  });
-                }}
-                options={[
-                  { value: 'system', label: 'System' },
-                  { value: 'dark', label: 'Dark' },
-                  { value: 'light', label: 'Light' },
-                ]}
-                loading={userSettings.isLoading}
-                className="mt-2"
-              />
-            </div>
-          </div>
-          <Divider />
-          <div className="flex flex-col items-center">
-            <Button
-              type="primary"
-              onClick={() => {
-                handleSaveAccountSettings();
-              }}
-              className="mt-2"
-              disabled={
-                currencyCodes.find((o) => o.value === userSettings.currency)
-                  ? false
-                  : true || userSettings.isLoading
               }
-            >
-              Save
-            </Button>
-          </div>
-        </div>
+            />
+          </List.Item>
+          <List.Item>
+            <List.Item.Meta
+              title={<Text strong>Theme</Text>}
+              description={
+                <Select
+                  value={userSettings.dark_mode}
+                  onChange={(value) => {
+                    userSettingsDispatch({
+                      type: 'setDarkMode',
+                      payload: value,
+                    });
+                  }}
+                  options={[
+                    { value: 'system', label: 'System' },
+                    { value: 'dark', label: 'Dark' },
+                    { value: 'light', label: 'Light' },
+                  ]}
+                  loading={userSettings.isLoading}
+                />
+              }
+            />
+          </List.Item>
+        </List>
       ),
     },
     {
