@@ -6,10 +6,8 @@ import {
   StockFormModal,
 } from '../../components/modules/formModal';
 import { deleteInputItems } from '../../components/services/delete/deleteInputItems';
-import {
-  InputInvestedColumns,
-  InputTransactionsColumns,
-} from '../../components/elements/Columns';
+import { InputInvestedColumns } from '../../components/elements/columns/InputInvestedColumns';
+import { InputTransactionsColumns } from '../../components/elements/columns/InputTransactionsColumns';
 import { UserSettings } from '../../components/services/data/getUserData';
 import {
   getTableDataBasicInputInvested,

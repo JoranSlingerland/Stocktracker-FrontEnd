@@ -17,7 +17,7 @@ import useLocalStorageState from '../../components/hooks/useLocalStorageState';
 import { getUserData } from '../../components/services/data/getUserData';
 import { startOrchestrator } from '../../components/services/orchestrator/startOrchestrator';
 import { addUserData } from '../../components/services/add/addUserData';
-import { orchestratorColumns } from '../../components/elements/Columns';
+import { orchestratorColumns } from '../../components/elements/columns/orchestratorColumns';
 import {
   UserSettings,
   userDataActions,

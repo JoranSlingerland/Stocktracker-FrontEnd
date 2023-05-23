@@ -3,10 +3,8 @@ import { useEffect, useReducer } from 'react';
 import PieChart from '../../components/elements/PrimeFacePieChart';
 import AntdTable from '../../components/elements/antdTable';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
-import {
-  RealizedColumns,
-  UnRealizedColumns,
-} from '../../components/elements/Columns';
+import { RealizedColumns } from '../../components/elements/columns/RealizedColumns';
+import { UnRealizedColumns } from '../../components/elements/columns/UnRealizedColumns';
 import {
   getPieData,
   pieChartDataReducer,
