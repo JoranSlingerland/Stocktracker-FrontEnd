@@ -125,6 +125,7 @@ interface StocksHeldData {
     transaction_cost_percentage: number;
     total_pl_percentage: number;
   };
+  weight: number;
   id: string;
   meta: MetaData;
 }

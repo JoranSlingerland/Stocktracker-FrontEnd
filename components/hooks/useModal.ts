@@ -13,7 +13,14 @@ function useModal() {
     setOpen(false);
   };
 
-  return { form, open, handleOpen, handleClose };
+  const handleCloseAndReset = () => {
+    setOpen(false);
+    setTimeout(() => {
+      form.resetFields();
+    }, 500);
+  };
+
+  return { form, open, handleOpen, handleClose, handleCloseAndReset };
 }
 
 export default useModal;

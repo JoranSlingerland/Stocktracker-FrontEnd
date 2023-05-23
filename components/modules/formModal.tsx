@@ -1,29 +1,42 @@
 import React from 'react';
-import { Button, Tooltip, Divider, Typography } from 'antd';
+import { Button, Divider, Typography } from 'antd';
 import { useState } from 'react';
-import { PlusOutlined } from '@ant-design/icons';
+import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { formatCurrency } from '../utils/formatting';
-import { UserSettings } from '../services/data/getUserData';
 import { addItemToInput } from '../services/add/addItemToInput';
 import { TransactionForm, StockForm } from '../elements/Forms';
 import { FormModal } from '../elements/FormModal';
 import useModal from '../hooks/useModal';
+import dayjs from 'dayjs';
 
 const { Text, Title } = Typography;
 
 const StockFormModal = ({
-  userSettings,
+  currency,
   parentCallback,
+  initialValues,
+  isEdit = false,
 }: {
-  userSettings: UserSettings;
+  currency: string;
   parentCallback: () => Promise<void>;
+  initialValues?: any;
+  isEdit?: boolean;
 }): JSX.Element => {
-  const [totalValue, setTotalValue] = useState(0);
-  const [currency, setCurrency] = useState(userSettings.currency);
-  const { form, open, handleOpen, handleClose } = useModal();
+  const [totalValue, setTotalValue] = useState(initialValues?.total_cost || 0);
+  const [stockCurrency, setStockCurrency] = useState(
+    initialValues?.currency || currency
+  );
+  const { form, open, handleOpen, handleClose, handleCloseAndReset } =
+    useModal();
+
+  initialValues?.date &&
+    (initialValues.date = dayjs(initialValues.date, 'YYYY-MM-DD'));
 
   const handleCreate = async (values: any) => {
     handleClose();
+    if (isEdit) {
+      values.id = initialValues.id;
+    }
     await addItemToInput({
       body: {
         type: 'stock',
@@ -33,68 +46,89 @@ const StockFormModal = ({
     parentCallback();
   };
 
-  const handleOk = () => {
-    form.validateFields().then((values) => {
+  const handleOk = async () => {
+    await form.validateFields();
+    handleCreate(form.getFieldsValue());
+    setTimeout(() => {
       form.resetFields();
-      handleCreate(values);
-    });
+    }, 500);
+  };
+
+  const modalProps = {
+    open,
+    title: isEdit
+      ? 'Edit a stock in your portfolio'
+      : 'Add a stock to your portfolio',
+    okText: isEdit ? 'Save' : 'Add',
+    cancelText: 'Cancel',
+    onCancel: isEdit ? handleCloseAndReset : handleClose,
+    onOk: handleOk,
   };
 
   const opener = (
-    <Tooltip title="Add items">
-      <Button icon={<PlusOutlined />} shape="circle" onClick={handleOpen} />
-    </Tooltip>
+    <Button
+      icon={isEdit ? <EditOutlined /> : <PlusOutlined />}
+      type="text"
+      shape={isEdit ? undefined : 'circle'}
+      onClick={handleOpen}
+    />
   );
 
   return (
-    <>
-      <FormModal
-        form={StockForm({
-          currency: userSettings.currency,
-          setTotalValue: setTotalValue,
-          setCurrency: setCurrency,
-          form: form,
-        })}
-        modalProps={{
-          open,
-          title: 'Add a stock to your portfolio',
-          okText: 'Add',
-          cancelText: 'Cancel',
-          onCancel: handleClose,
-          onOk: handleOk,
-        }}
-        footer={
-          <>
-            <Divider />
-            <div className="flex">
-              <div>
-                <Text strong>Total cost</Text>
-              </div>
-              <div className="mr-0 ml-auto">
-                <Title level={5}>
-                  {formatCurrency({ value: totalValue, currency: currency })}
-                </Title>
-              </div>
+    <FormModal
+      form={StockForm({
+        currency: stockCurrency,
+        setTotalValue,
+        setCurrency: setStockCurrency,
+        form: form,
+        initialValues: initialValues || {
+          transaction_type: 'Buy',
+          currency: currency,
+        },
+      })}
+      modalProps={modalProps}
+      footer={
+        <>
+          <Divider />
+          <div className="flex">
+            <div>
+              <Text strong>Total cost</Text>
             </div>
-          </>
-        }
-        opener={opener}
-      />
-    </>
+            <div className="mr-0 ml-auto">
+              <Title level={5}>
+                {formatCurrency({ value: totalValue, currency: stockCurrency })}
+              </Title>
+            </div>
+          </div>
+        </>
+      }
+      opener={opener}
+    />
   );
 };
 
 const TransactionsFormModal = ({
-  userSettings,
+  currency,
   parentCallback,
+  initialValues,
+  isEdit = false,
 }: {
-  userSettings: UserSettings;
+  currency: string;
   parentCallback: () => Promise<void>;
+  initialValues?: any;
+  isEdit?: boolean;
 }): JSX.Element => {
-  const { form, open, handleOpen, handleClose } = useModal();
+  const { form, open, handleOpen, handleClose, handleCloseAndReset } =
+    useModal();
+
+  initialValues?.date &&
+    (initialValues.date = dayjs(initialValues.date, 'YYYY-MM-DD'));
 
   const handleCreate = async (values: any) => {
     handleClose();
+    if (isEdit) {
+      values.id = initialValues.id;
+    }
     await addItemToInput({
       body: {
         type: 'transaction',
@@ -104,30 +138,44 @@ const TransactionsFormModal = ({
     parentCallback();
   };
 
-  const handleOk = () => {
-    form.validateFields().then((values) => {
+  const handleOk = async () => {
+    await form.validateFields();
+    handleCreate(form.getFieldsValue());
+    setTimeout(() => {
       form.resetFields();
-      handleCreate(values);
-    });
+    }, 500);
   };
 
   const opener = (
-    <Tooltip title="Add items">
-      <Button icon={<PlusOutlined />} shape="circle" onClick={handleOpen} />
-    </Tooltip>
+    <Button
+      icon={isEdit ? <EditOutlined /> : <PlusOutlined />}
+      type="text"
+      shape={isEdit ? undefined : 'circle'}
+      onClick={handleOpen}
+    />
   );
+
+  const modalProps = {
+    open,
+    title: isEdit
+      ? 'Edit a transaction to your portfolio'
+      : 'Add a transaction to your portfolio',
+    okText: isEdit ? 'Save' : 'Add',
+    cancelText: 'Cancel',
+    onCancel: handleCloseAndReset,
+    onOk: handleOk,
+  };
 
   return (
     <FormModal
-      form={TransactionForm(userSettings.currency, form)}
-      modalProps={{
-        open,
-        title: 'Add a transaction to your portfolio',
-        okText: 'Add',
-        cancelText: 'Cancel',
-        onCancel: handleClose,
-        onOk: handleOk,
-      }}
+      form={TransactionForm(
+        currency,
+        form,
+        initialValues || {
+          transaction_type: 'Deposit',
+        }
+      )}
+      modalProps={modalProps}
       opener={opener}
     />
   );

@@ -11,11 +11,9 @@ import {
   getTableDataPerformanceDataStocksHeldReducer,
   getTableDataPerformanceDataStocksHeldInitialState,
 } from '../../components/services/data/GetTableDataPerformance/stocksHeld';
-import {
-  valueGrowthColumns,
-  ReceivedDividedColumns,
-  TransactionCostColumns,
-} from '../../components/elements/Columns';
+import { valueGrowthColumns } from '../../components/elements/columns/valueGrowthColumns';
+import { ReceivedDividedColumns } from '../../components/elements/columns/ReceivedDividedColumns';
+import { TransactionCostColumns } from '../../components/elements/columns/TransactionCostColumns';
 import { UserSettings } from '../../components/services/data/getUserData';
 import {
   getBarchartData,

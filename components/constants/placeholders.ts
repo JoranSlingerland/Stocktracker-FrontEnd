@@ -104,6 +104,7 @@ const stocksHeldData = {
     symbol_img: '',
     banner: '',
   },
+  weight: 0,
   id: '',
 };
 

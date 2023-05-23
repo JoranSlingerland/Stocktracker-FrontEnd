@@ -21,10 +21,6 @@
       "allowedRoles": ["authenticated"]
     },
     {
-      "route": "/api/privileged/*",
-      "allowedRoles": ["admin"]
-    },
-    {
       "route": "/.auth/login/twitter",
       "statusCode": 404
     },

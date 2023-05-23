@@ -1,6 +1,6 @@
 import Navbar from '../components/modules/navbar';
 import '../styles/globals.css';
-import { ConfigProvider, theme as antdTheme } from 'antd';
+import { ConfigProvider } from 'antd';
 import type { AppProps } from 'next/app';
 import { useEffect, useState, useReducer } from 'react';
 import { regularFetch } from '../components/utils/api';
@@ -20,8 +20,7 @@ import {
   getTableDataPerformanceDataTotalsInitialState,
   getTableDataPerformanceTotals,
 } from '../components/services/data/GetTableDataPerformance/totals';
-
-const { darkAlgorithm, defaultAlgorithm } = antdTheme;
+import useTheme from '../components/hooks/useTheme';
 
 async function getAccountSettings(userSettingsDispatch: any) {
   getUserData({}).then(({ response }) => {
@@ -47,7 +46,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   });
   const [userSettings, userSettingsDispatch] = useReducer(
     userSettingsReducer,
-    userDataInitialState({})
+    userDataInitialState({
+      isLoading: true,
+    })
   );
   const [timeFrame, setTimeFrame] = useLocalStorageState('timeFrame', 'max');
   const timeFrameState: TimeFramestate = { timeFrame, setTimeFrame };
@@ -58,6 +59,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       isLoading: true,
     })
   );
+  const { algorithmTheme, className } = useTheme({
+    dark_mode: userSettings.dark_mode,
+  });
 
   useEffect(() => {
     getUserInfo(setUserInfo);
@@ -107,14 +111,19 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ConfigProvider
       theme={{
-        algorithm: userSettings?.dark_mode ? darkAlgorithm : defaultAlgorithm,
+        algorithm: algorithmTheme,
+
+        components: {
+          List: {
+            paddingContentHorizontalLG: 0,
+          },
+          Form: {
+            marginLG: 8,
+          },
+        },
       }}
     >
-      <div
-        className={`min-h-screen flex flex-col ${
-          userSettings.dark_mode ? 'dark bg-neutral-900' : 'bg-white'
-        }`}
-      >
+      <div className={`min-h-screen flex flex-col ${className}`}>
         <Navbar {...props} />
         <div className="flex justify-center px-2 xl:px-0">
           <div className="w-full max-w-7xl">

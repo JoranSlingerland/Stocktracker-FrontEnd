@@ -1,7 +1,7 @@
 import { cachedFetch, overwriteCachedFetch } from '../../utils/api';
 
 type UserSettings = {
-  dark_mode: boolean;
+  dark_mode: 'dark' | 'light' | 'system';
   clearbit_api_key: string;
   alpha_vantage_api_key: string;
   currency: string;
@@ -17,7 +17,7 @@ const userDataInitialState = ({
   isLoading?: boolean;
   isError?: boolean;
 }): UserSettings => ({
-  dark_mode: false,
+  dark_mode: 'system',
   clearbit_api_key: '',
   alpha_vantage_api_key: '',
   currency: '',
@@ -27,7 +27,7 @@ const userDataInitialState = ({
 });
 
 type userDataActions =
-  | { type: 'setDarkMode'; payload: boolean }
+  | { type: 'setDarkMode'; payload: 'dark' | 'light' | 'system' }
   | { type: 'setClearbitApiKey'; payload: string }
   | { type: 'setAlphaVantageApiKey'; payload: string }
   | { type: 'setBrandfetchApiKey'; payload: string }
@@ -36,7 +36,7 @@ type userDataActions =
   | {
       type: 'setAll';
       payload: {
-        dark_mode: boolean;
+        dark_mode: 'dark' | 'light' | 'system';
         clearbit_api_key: string;
         brandfetch_api_key: string;
         alpha_vantage_api_key: string;

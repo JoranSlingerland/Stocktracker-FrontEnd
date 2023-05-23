@@ -2,26 +2,23 @@ import {
   Divider,
   Button,
   message,
-  Popconfirm,
   Tabs,
   Typography,
   Input,
-  Switch,
-  Skeleton,
   AutoComplete,
+  Select,
+  Tooltip,
+  List,
 } from 'antd';
 import { useEffect, useReducer } from 'react';
 import useWindowDimensions from '../../components/hooks/useWindowDimensions';
 import AntdTable from '../../components/elements/antdTable';
-import { UserInfo_Type } from '../../components/types/types';
 import { currencyCodes } from '../../components/constants/currencyCodes';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
 import { getUserData } from '../../components/services/data/getUserData';
 import { startOrchestrator } from '../../components/services/orchestrator/startOrchestrator';
-import { createCosmosDbAndContainer } from '../../components/services/privileged/createCosmosDbAndContainer';
-import { deleteCosmosDbContainer } from '../../components/services/privileged/deleteCosmosDbContainer';
 import { addUserData } from '../../components/services/add/addUserData';
-import { orchestratorColumns } from '../../components/elements/Columns';
+import { orchestratorColumns } from '../../components/elements/columns/orchestratorColumns';
 import {
   UserSettings,
   userDataActions,
@@ -45,11 +42,9 @@ function handleLocalStorageClearClick() {
 }
 
 export default function Home({
-  userInfo,
   userSettings,
   userSettingsDispatch,
 }: {
-  userInfo: UserInfo_Type;
   userSettings: UserSettings;
   userSettingsDispatch: (action: userDataActions) => void;
 }) {
@@ -118,27 +113,54 @@ export default function Home({
       <Text>{description}</Text>
     </div>
   );
+
   const items = [
     {
       key: '1',
       Title: 'Account',
       label: 'Account',
       children: (
-        <div className="flex flex-col">
-          <div className="flex flex-col items-center">
-            <Title level={3}>Account</Title>
-          </div>
-          <div className="flex flex-col mt-2">
-            <Text strong>Clearbit API Key</Text>
-            <div className="mt-2 w-72 sm:w-96">
-              {userSettings.isLoading ? (
-                <Skeleton
-                  active={true}
-                  paragraph={{ rows: 1 }}
-                  title={false}
-                ></Skeleton>
-              ) : (
+        <List
+          size="large"
+          loading={userSettings.isLoading}
+          footer={
+            <div className="flex flex-col items-center">
+              <Button
+                type="primary"
+                onClick={() => {
+                  handleSaveAccountSettings();
+                }}
+                disabled={
+                  currencyCodes.find((o) => o.value === userSettings.currency)
+                    ? false
+                    : true || userSettings.isLoading
+                }
+              >
+                Save
+              </Button>
+            </div>
+          }
+        >
+          <List.Item>
+            <List.Item.Meta
+              title={
+                <Tooltip
+                  placement="topLeft"
+                  title={
+                    <Text>
+                      Get your Clearbit API Key at{' '}
+                      <Link href="https://clearbit.com" target="_blank">
+                        clearbit.com
+                      </Link>
+                    </Text>
+                  }
+                >
+                  <Text strong>Clearbit API Key</Text>
+                </Tooltip>
+              }
+              description={
                 <Input.Password
+                  className="w-72 sm:w-96"
                   value={userSettings.clearbit_api_key}
                   onChange={(e) => {
                     userSettingsDispatch({
@@ -148,32 +170,32 @@ export default function Home({
                   }}
                   size="small"
                 />
-              )}
-            </div>
-
-            <Text className="mt-1" type="secondary">
-              Get your Clearbit API Key at{' '}
-              <Link
-                type="secondary"
-                href="https://clearbit.com"
-                target="_blank"
-              >
-                clearbit.com
-              </Link>
-            </Text>
-          </div>
-          <Divider />
-          <div className="flex flex-col mt-2">
-            <Text strong>Brandfetch API Key</Text>
-            <div className="mt-2 w-72 sm:w-96">
-              {userSettings.isLoading ? (
-                <Skeleton
-                  active={true}
-                  paragraph={{ rows: 1 }}
-                  title={false}
-                ></Skeleton>
-              ) : (
+              }
+            />
+          </List.Item>
+          <List.Item>
+            <List.Item.Meta
+              title={
+                <Tooltip
+                  placement="topLeft"
+                  title={
+                    <Text>
+                      Get your Brandfetch API Key at{' '}
+                      <Link
+                        href="https://developers.brandfetch.com/"
+                        target="_blank"
+                      >
+                        developers.brandfetch.com
+                      </Link>
+                    </Text>
+                  }
+                >
+                  <Text strong>Brandfetch API Key</Text>
+                </Tooltip>
+              }
+              description={
                 <Input.Password
+                  className="w-72 sm:w-96"
                   value={userSettings.brandfetch_api_key}
                   onChange={(e) => {
                     userSettingsDispatch({
@@ -183,32 +205,32 @@ export default function Home({
                   }}
                   size="small"
                 />
-              )}
-            </div>
-
-            <Text className="mt-1" type="secondary">
-              Get your Brandfetch API Key at{' '}
-              <Link
-                type="secondary"
-                href="https://developers.brandfetch.com/"
-                target="_blank"
-              >
-                developers.brandfetch.com
-              </Link>
-            </Text>
-          </div>
-          <Divider />
-          <div className="flex flex-col">
-            <Text strong>Alpha Vantage API Key</Text>
-            <div className="mt-2 w-72 sm:w-96">
-              {userSettings.isLoading ? (
-                <Skeleton
-                  active={true}
-                  paragraph={{ rows: 1 }}
-                  title={false}
-                ></Skeleton>
-              ) : (
+              }
+            />
+          </List.Item>
+          <List.Item>
+            <List.Item.Meta
+              title={
+                <Tooltip
+                  placement="topLeft"
+                  title={
+                    <Text>
+                      Get your Alpha Vantage API Key at{' '}
+                      <Link
+                        href="https://www.alphavantage.co/support/#api-key"
+                        target="_blank"
+                      >
+                        alphavantage.co
+                      </Link>
+                    </Text>
+                  }
+                >
+                  <Text strong>Alpha Vantage API Key</Text>
+                </Tooltip>
+              }
+              description={
                 <Input.Password
+                  className="w-72 sm:w-96"
                   value={userSettings.alpha_vantage_api_key}
                   onChange={(e) => {
                     userSettingsDispatch({
@@ -218,31 +240,15 @@ export default function Home({
                   }}
                   size="small"
                 />
-              )}
-            </div>
-            <Text className="mt-1" type="secondary">
-              Get your Alpha Vantage API Key at{' '}
-              <Link
-                type="secondary"
-                href="https://www.alphavantage.co/support/#api-key"
-                target="_blank"
-              >
-                alphavantage.co
-              </Link>
-            </Text>
-          </div>
-          <Divider />
-          <div className="flex flex-col">
-            <Text strong>Currency</Text>
-            <div className="mt-2 w-72 sm:w-96">
-              {userSettings.isLoading ? (
-                <Skeleton
-                  active={true}
-                  paragraph={{ rows: 1 }}
-                  title={false}
-                ></Skeleton>
-              ) : (
+              }
+            />
+          </List.Item>
+          <List.Item>
+            <List.Item.Meta
+              title={<Text strong>Currency</Text>}
+              description={
                 <AutoComplete
+                  className="w-72 sm:w-96"
                   value={userSettings.currency}
                   onChange={(value) => {
                     userSettingsDispatch({
@@ -256,7 +262,6 @@ export default function Home({
                       : 'error'
                   }
                   size="small"
-                  className="w-full"
                   options={currencyCodes}
                   filterOption={(inputValue, option) =>
                     option!.value
@@ -270,50 +275,32 @@ export default function Home({
                     });
                   }}
                 />
-              )}
-            </div>
-            <Text className="mt-1" type="secondary">
-              Set your currency
-            </Text>
-          </div>
-          <Divider />
-          <div className="flex flex-col">
-            <Text strong>Dark mode</Text>
-            <div>
-              <Switch
-                checked={userSettings.dark_mode}
-                onChange={(checked) => {
-                  userSettingsDispatch({
-                    type: 'setDarkMode',
-                    payload: checked,
-                  });
-                }}
-                className="mt-2"
-                loading={userSettings.isLoading}
-              />
-            </div>
-            <Text className="mt-1" type="secondary">
-              Toggle dark mode
-            </Text>
-          </div>
-          <Divider />
-          <div className="flex flex-col items-center">
-            <Button
-              type="primary"
-              onClick={() => {
-                handleSaveAccountSettings();
-              }}
-              className="mt-2"
-              disabled={
-                currencyCodes.find((o) => o.value === userSettings.currency)
-                  ? false
-                  : true || userSettings.isLoading
               }
-            >
-              Save
-            </Button>
-          </div>
-        </div>
+            />
+          </List.Item>
+          <List.Item>
+            <List.Item.Meta
+              title={<Text strong>Theme</Text>}
+              description={
+                <Select
+                  value={userSettings.dark_mode}
+                  onChange={(value) => {
+                    userSettingsDispatch({
+                      type: 'setDarkMode',
+                      payload: value,
+                    });
+                  }}
+                  options={[
+                    { value: 'system', label: 'System' },
+                    { value: 'dark', label: 'Dark' },
+                    { value: 'light', label: 'Light' },
+                  ]}
+                  loading={userSettings.isLoading}
+                />
+              }
+            />
+          </List.Item>
+        </List>
       ),
     },
     {
@@ -375,91 +362,6 @@ export default function Home({
       ),
     },
   ];
-  if (userInfo.clientPrincipal.userRoles.includes('admin')) {
-    items.push({
-      key: '4',
-      title: 'Admin',
-      label: 'Admin',
-      children: (
-        <div className="flex flex-col items-center">
-          <div className="w-full px-2 columns-1">
-            <div className="flex items-center justify-center">
-              <Title level={3}>Container actions</Title>
-            </div>
-            {buttonRow(
-              'Create Containers',
-              'This will create all containers and databases that do not exist yet.',
-              <Button
-                onClick={() => createCosmosDbAndContainer()}
-                type="primary"
-                size="large"
-              >
-                Create
-              </Button>
-            )}
-            <Divider plain></Divider>
-            <div className="w-full px-2 columns-1">
-              <div className="flex flex-col items-center justify-center text-xl">
-                <Title type={'danger'} level={3}>
-                  Danger Zone
-                </Title>
-                <Text type={'danger'}>
-                  Actions below can cause permanent data loss
-                </Text>
-              </div>
-              {buttonRow(
-                'Delete output containers',
-                'This will delete all the containers except the input containers.',
-                <Popconfirm
-                  title="Delete output containers?"
-                  description="Are you sure you want to delete the output containers"
-                  okText="Yes"
-                  arrow={false}
-                  icon={false}
-                  okButtonProps={{ danger: true, loading: false }}
-                  onConfirm={() =>
-                    deleteCosmosDbContainer({
-                      body: {
-                        containersToDelete: 'output_only',
-                      },
-                    })
-                  }
-                >
-                  <Button danger type="primary" size="large">
-                    Delete
-                  </Button>
-                </Popconfirm>
-              )}
-              <Divider plain></Divider>
-              {buttonRow(
-                'Delete all containers',
-                'This will delete all containers including the input containers.',
-                <Popconfirm
-                  title="Delete all"
-                  description="Are you sure you want to delete all containers"
-                  okText="Yes"
-                  arrow={false}
-                  icon={false}
-                  okButtonProps={{ danger: true, loading: false }}
-                  onConfirm={() =>
-                    deleteCosmosDbContainer({
-                      body: {
-                        containersToDelete: 'all',
-                      },
-                    })
-                  }
-                >
-                  <Button danger type="primary" size="large">
-                    Delete
-                  </Button>
-                </Popconfirm>
-              )}
-            </div>
-          </div>
-        </div>
-      ),
-    });
-  }
 
   return (
     <>
