@@ -8,6 +8,7 @@ import {
   Skeleton,
   AutoComplete,
   Select,
+  Tooltip,
 } from 'antd';
 import { useEffect, useReducer } from 'react';
 import useWindowDimensions from '../../components/hooks/useWindowDimensions';
@@ -122,8 +123,20 @@ export default function Home({
           <div className="flex flex-col items-center">
             <Title level={3}>Account</Title>
           </div>
-          <div className="flex flex-col mt-2">
-            <Text strong>Clearbit API Key</Text>
+          <div className="flex flex-col">
+            <Tooltip
+              placement="topLeft"
+              title={
+                <Text>
+                  Get your Clearbit API Key at{' '}
+                  <Link href="https://clearbit.com" target="_blank">
+                    clearbit.com
+                  </Link>
+                </Text>
+              }
+            >
+              <Text strong>Clearbit API Key</Text>
+            </Tooltip>
             <div className="mt-2 w-72 sm:w-96">
               {userSettings.isLoading ? (
                 <Skeleton
@@ -144,22 +157,26 @@ export default function Home({
                 />
               )}
             </div>
-
-            <Text className="mt-1" type="secondary">
-              Get your Clearbit API Key at{' '}
-              <Link
-                type="secondary"
-                href="https://clearbit.com"
-                target="_blank"
-              >
-                clearbit.com
-              </Link>
-            </Text>
           </div>
           <Divider />
-          <div className="flex flex-col mt-2">
-            <Text strong>Brandfetch API Key</Text>
-            <div className="mt-2 w-72 sm:w-96">
+          <div className="flex flex-col">
+            <Tooltip
+              placement="topLeft"
+              title={
+                <Text>
+                  Get your Brandfetch API Key at{' '}
+                  <Link
+                    href="https://developers.brandfetch.com/"
+                    target="_blank"
+                  >
+                    developers.brandfetch.com
+                  </Link>
+                </Text>
+              }
+            >
+              <Text strong>Brandfetch API Key</Text>
+            </Tooltip>
+            <div className="w-72 sm:w-96">
               {userSettings.isLoading ? (
                 <Skeleton
                   active={true}
@@ -179,21 +196,25 @@ export default function Home({
                 />
               )}
             </div>
-
-            <Text className="mt-1" type="secondary">
-              Get your Brandfetch API Key at{' '}
-              <Link
-                type="secondary"
-                href="https://developers.brandfetch.com/"
-                target="_blank"
-              >
-                developers.brandfetch.com
-              </Link>
-            </Text>
           </div>
           <Divider />
           <div className="flex flex-col">
-            <Text strong>Alpha Vantage API Key</Text>
+            <Tooltip
+              placement="topLeft"
+              title={
+                <Text>
+                  Get your Alpha Vantage API Key at{' '}
+                  <Link
+                    href="https://www.alphavantage.co/support/#api-key"
+                    target="_blank"
+                  >
+                    alphavantage.co
+                  </Link>
+                </Text>
+              }
+            >
+              <Text strong>Alpha Vantage API Key</Text>
+            </Tooltip>
             <div className="mt-2 w-72 sm:w-96">
               {userSettings.isLoading ? (
                 <Skeleton
@@ -214,16 +235,6 @@ export default function Home({
                 />
               )}
             </div>
-            <Text className="mt-1" type="secondary">
-              Get your Alpha Vantage API Key at{' '}
-              <Link
-                type="secondary"
-                href="https://www.alphavantage.co/support/#api-key"
-                target="_blank"
-              >
-                alphavantage.co
-              </Link>
-            </Text>
           </div>
           <Divider />
           <div className="flex flex-col">
@@ -266,13 +277,10 @@ export default function Home({
                 />
               )}
             </div>
-            <Text className="mt-1" type="secondary">
-              Set your currency
-            </Text>
           </div>
           <Divider />
           <div className="flex flex-col">
-            <Text strong>Dark mode</Text>
+            <Text strong>Theme</Text>
             <div>
               <Select
                 value={userSettings.dark_mode}
@@ -291,9 +299,6 @@ export default function Home({
                 className="mt-2"
               />
             </div>
-            <Text className="mt-1" type="secondary">
-              Toggle dark mode
-            </Text>
           </div>
           <Divider />
           <div className="flex flex-col items-center">
