@@ -16,159 +16,10 @@ import {
 } from '../utils/formatting';
 import { terminateOrchestrator } from '../services/orchestrator/terminateOrchestrator';
 import { purgeOrchestrator } from '../services/orchestrator/purgeOrchestrator';
+import { StockFormModal, TransactionsFormModal } from '../modules/formModal';
+import dayjs from 'dayjs';
 
 const { Text } = Typography;
-
-const RealizedColumns = (currency: string): ColumnsType => [
-  {
-    title: 'Name',
-    dataIndex: 'meta',
-    key: 'meta.name',
-    fixed: 'left',
-    render: (text, record: any) =>
-      formatImageAndText(record.symbol, text.name, record.meta.icon),
-  },
-  {
-    title: 'Cost',
-    dataIndex: 'realized',
-    key: 'realized.buy_price',
-    responsive: ['md'],
-    render: (text) => (
-      <>
-        <Text strong>
-          {formatCurrency({
-            value: text.buy_price,
-            currency: currency,
-          })}
-        </Text>
-        <div className="flex space-x-0.5 flex-row">
-          <Text keyboard> x{formatNumber(text.quantity)} </Text>
-          <Text type="secondary">
-            {formatCurrency({
-              value: text.cost_per_share_buy,
-              currency,
-            })}
-          </Text>
-        </div>
-      </>
-    ),
-  },
-  {
-    title: 'Realized',
-    dataIndex: 'realized',
-    key: 'realized.sell_price',
-    render: (text) => (
-      <>
-        <Text strong>
-          {formatCurrency({
-            value: text.sell_price,
-            currency,
-          })}
-        </Text>
-        <div className="flex space-x-0.5 flex-row">
-          <Text className="whitespace-nowrap" keyboard>
-            x{formatNumber(text.quantity)}{' '}
-          </Text>
-          <Text type="secondary">
-            {formatCurrency({
-              value: text.cost_per_share_sell,
-              currency,
-            })}
-          </Text>
-        </div>
-      </>
-    ),
-  },
-  {
-    title: 'P/L',
-    dataIndex: 'realized',
-    key: 'realized.total_pl',
-    render: (text) => (
-      <>
-        {formatCurrencyWithColors({
-          value: text.total_pl,
-          currency,
-        })}
-        {formatPercentageWithColors({ value: text.total_pl_percentage })}
-      </>
-    ),
-  },
-];
-
-const UnRealizedColumns = (currency: string): ColumnsType => [
-  {
-    title: 'Name',
-    dataIndex: 'meta',
-    key: 'meta.name',
-    fixed: 'left',
-    render: (text: any, record: any) =>
-      formatImageAndText(record.symbol, text.name, record.meta.icon),
-  },
-  {
-    title: 'Cost',
-    dataIndex: 'unrealized',
-    key: 'unrealized.total_cost',
-    responsive: ['md'],
-    render: (text: { total_cost: string | number }, record: any) => (
-      <>
-        <Text strong>
-          {formatCurrency({
-            value: text.total_cost,
-            currency,
-          })}
-        </Text>
-        <div className="flex space-x-0.5 flex-row flex-nowrap">
-          <Text keyboard> x{formatNumber(record.unrealized.quantity)} </Text>
-          <Text type="secondary">
-            {formatCurrency({
-              value: record.unrealized.cost_per_share,
-              currency,
-            })}
-          </Text>
-        </div>
-      </>
-    ),
-  },
-  {
-    title: 'Value',
-    dataIndex: 'unrealized',
-    key: 'unrealized.total_value',
-    render: (text: { total_value: string | number }, record: any) => (
-      <>
-        <Text strong>
-          {formatCurrency({
-            value: text.total_value,
-            currency,
-          })}
-        </Text>
-        <div className="flex space-x-0.5 flex-row">
-          <Text keyboard> x{formatNumber(record.unrealized.quantity)} </Text>
-          <Text type="secondary">
-            {formatCurrency({
-              value: record.unrealized.close_value,
-              currency,
-            })}
-          </Text>
-        </div>
-      </>
-    ),
-  },
-  {
-    title: 'P/L',
-    dataIndex: 'unrealized',
-    key: 'unrealized.total_pl',
-    render: (text) => (
-      <>
-        {formatCurrencyWithColors({
-          value: text.total_pl,
-          currency,
-        })}
-
-        {formatPercentageWithColors({ value: text.total_pl_percentage })}
-      </>
-    ),
-  },
-];
 
 const valueGrowthColumns = (currency: string): ColumnsType => [
   {
@@ -240,12 +91,15 @@ const InputInvestedColumns = (
   deleteData: (
     id: string[],
     container: 'input_invested' | 'input_transactions'
-  ) => Promise<void>
+  ) => Promise<void>,
+  parentCallback: () => Promise<void>
 ): ColumnsType => [
   {
     title: 'Transaction Date',
     dataIndex: 'date',
     key: 'date',
+    render: (text: string | dayjs.Dayjs) =>
+      typeof text === 'string' ? text : text.format('YYYY-MM-DD'),
   },
   {
     title: 'Transaction Type',
@@ -266,23 +120,31 @@ const InputInvestedColumns = (
     width: 60,
     sorter: false,
     render: (text: string, record: any) => (
-      <Popconfirm
-        title="Are you sure you want to delete this item?"
-        onConfirm={() => {
-          deleteData([record.id], 'input_invested');
-        }}
-        okText="Yes"
-        cancelText="No"
-        arrow={false}
-        icon={false}
-      >
-        <Button
-          size="small"
-          type="text"
-          icon={<DeleteOutlined />}
-          danger
-        ></Button>
-      </Popconfirm>
+      <div className="flex">
+        <Popconfirm
+          title="Are you sure you want to delete this item?"
+          onConfirm={() => {
+            deleteData([record.id], 'input_invested');
+          }}
+          okText="Yes"
+          cancelText="No"
+          arrow={false}
+          icon={false}
+        >
+          <Button
+            size="small"
+            type="text"
+            icon={<DeleteOutlined />}
+            danger
+          ></Button>
+        </Popconfirm>
+        <TransactionsFormModal
+          currency={currency}
+          parentCallback={parentCallback}
+          initialValues={record}
+          isEdit={true}
+        />
+      </div>
     ),
   },
 ];
@@ -291,7 +153,9 @@ const InputTransactionsColumns = (
   deleteData: (
     id: string[],
     container: 'input_invested' | 'input_transactions'
-  ) => Promise<void>
+  ) => Promise<void>,
+  parentCallback: () => Promise<void>,
+  currency: string
 ): ColumnsType => [
   {
     title: 'Name',
@@ -307,6 +171,8 @@ const InputTransactionsColumns = (
     title: 'Transaction Date',
     dataIndex: 'date',
     key: 'date',
+    render: (text: string | dayjs.Dayjs) =>
+      typeof text === 'string' ? text : text.format('YYYY-MM-DD'),
   },
   {
     title: 'Cost',
@@ -356,23 +222,31 @@ const InputTransactionsColumns = (
     width: 60,
     sorter: false,
     render: (text, record: any) => (
-      <Popconfirm
-        title="Are you sure you want to delete this item?"
-        onConfirm={() => {
-          deleteData([record.id], 'input_transactions');
-        }}
-        okText="Yes"
-        cancelText="No"
-        arrow={false}
-        icon={false}
-      >
-        <Button
-          size="small"
-          type="text"
-          icon={<DeleteOutlined />}
-          danger
-        ></Button>
-      </Popconfirm>
+      <div className="flex">
+        <Popconfirm
+          title="Are you sure you want to delete this item?"
+          onConfirm={() => {
+            deleteData([record.id], 'input_transactions');
+          }}
+          okText="Yes"
+          cancelText="No"
+          arrow={false}
+          icon={false}
+        >
+          <Button
+            size="small"
+            type="text"
+            icon={<DeleteOutlined />}
+            danger
+          ></Button>
+        </Popconfirm>
+        <StockFormModal
+          parentCallback={parentCallback}
+          initialValues={record}
+          currency={currency}
+          isEdit={true}
+        />
+      </div>
     ),
   },
 ];
@@ -486,8 +360,6 @@ const orchestratorColumns: ColumnsType = [
 ];
 
 export {
-  RealizedColumns,
-  UnRealizedColumns,
   valueGrowthColumns,
   ReceivedDividedColumns,
   TransactionCostColumns,

@@ -11,16 +11,15 @@ import { currencyCodes } from '../constants/currencyCodes';
 
 const TransactionForm = (
   currency: string,
-  form: FormInstance<any>
+  form: FormInstance<any>,
+  initialValues: any
 ): JSX.Element => {
   return (
     <Form
       form={form}
       layout="vertical"
       name="add_transaction_form"
-      initialValues={{
-        transaction_type: 'Deposit',
-      }}
+      initialValues={initialValues}
     >
       <Form.Item
         name="date"
@@ -81,11 +80,13 @@ const StockForm = ({
   setTotalValue,
   setCurrency,
   form,
+  initialValues,
 }: {
   currency: string;
   setTotalValue: (value: number) => void;
   setCurrency: (value: string) => void;
   form: FormInstance<any>;
+  initialValues: any;
 }): JSX.Element => {
   const currencySelector = (
     <Form.Item name="currency" hasFeedback noStyle required={true}>
@@ -99,7 +100,6 @@ const StockForm = ({
       />
     </Form.Item>
   );
-
   return (
     <Form
       onFieldsChange={() => {
@@ -115,10 +115,7 @@ const StockForm = ({
       form={form}
       layout="vertical"
       name="add_stock_form"
-      initialValues={{
-        transaction_type: 'Buy',
-        currency: currency,
-      }}
+      initialValues={initialValues}
     >
       <Form.Item
         name="symbol"

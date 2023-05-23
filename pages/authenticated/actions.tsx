@@ -131,7 +131,11 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
       </Title>
       <AntdTable
         isLoading={InputTransactionsData.isLoading}
-        columns={InputTransactionsColumns(deleteData)}
+        columns={InputTransactionsColumns(
+          deleteData,
+          () => overWriteTableData('input_transactions'),
+          userSettings.currency
+        )}
         data={InputTransactionsData.data}
         globalSorter={true}
         searchEnabled={true}
@@ -162,7 +166,7 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
             </div>
             <div className="mb-1 ml-auto">
               <StockFormModal
-                userSettings={userSettings}
+                currency={userSettings.currency}
                 parentCallback={() => overWriteTableData('input_transactions')}
               />
             </div>
@@ -175,7 +179,9 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
       </Title>
       <AntdTable
         isLoading={InputInvestedData.isLoading}
-        columns={InputInvestedColumns(userSettings.currency, deleteData)}
+        columns={InputInvestedColumns(userSettings.currency, deleteData, () =>
+          overWriteTableData('input_invested')
+        )}
         data={InputInvestedData.data}
         globalSorter={true}
         searchEnabled={true}
@@ -206,7 +212,7 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
             </div>
             <div className="ml-auto">
               <TransactionsFormModal
-                userSettings={userSettings}
+                currency={userSettings.currency}
                 parentCallback={() => overWriteTableData('input_invested')}
               />
             </div>
