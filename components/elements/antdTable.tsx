@@ -13,7 +13,7 @@ export default function AntdTable({
   globalSorter,
 }: {
   columns: ColumnsType;
-  data: any[];
+  data: any[] | undefined;
   isLoading: boolean;
   caption?: JSX.Element;
   searchEnabled?: boolean;

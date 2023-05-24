@@ -25,11 +25,7 @@ import TagRow from '../../components/elements/TagRow';
 import StatCard from '../../components/elements/StatCard';
 import { convertTransactionsArray } from '../../components/utils/misc';
 import { UserSettings } from '../../components/services/data/getUserData';
-import {
-  getTableDataBasicStocksHeld,
-  getTableDataBasicStocksHeldInitialState,
-  getTableDataBasicStocksHeldReducer,
-} from '../../components/services/data/getTableDataBasic/stocksHeld';
+import { useTableDataBasicStocksHeld } from '../../components/services/data/getTableDataBasic/stocksHeld';
 import {
   getTableDataBasicInputTransactions,
   getTableDataBasicInputTransactionsInitialState,
@@ -64,10 +60,13 @@ function socialsIcon(platform: Platform, url: string) {
 function Stocks({ userSettings }: { userSettings: UserSettings }) {
   const router = useRouter();
   const stockSymbol = router.query.stock as string;
-  const [stockData, stockDataDispatcher] = useReducer(
-    getTableDataBasicStocksHeldReducer,
-    getTableDataBasicStocksHeldInitialState({ isLoading: true })
-  );
+  const { data: stockData, isLoading: stockIsLoading } =
+    useTableDataBasicStocksHeld({
+      body: {
+        containerName: 'stocks_held',
+        symbol: stockSymbol,
+      },
+    });
   const [transactionsData, transactionsReducer] = useReducer(
     getTableDataBasicInputTransactionsReducer,
     getTableDataBasicInputTransactionsInitialState({
@@ -75,27 +74,6 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
     })
   );
   const [tab, setTab] = useState('1');
-
-  useEffect(() => {
-    const abortController = new AbortController();
-
-    if (!stockSymbol) {
-      return;
-    }
-
-    getTableDataBasicStocksHeld({
-      dispatcher: stockDataDispatcher,
-      abortController,
-      body: {
-        containerName: 'stocks_held',
-        symbol: stockSymbol,
-      },
-    });
-
-    return function cancel() {
-      abortController.abort();
-    };
-  }, [stockSymbol]);
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -137,8 +115,8 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
             <StatCard
               statisticProps={{
                 title: 'Value',
-                value: stockData.data?.[0]?.['unrealized']['total_value'],
-                loading: stockData.isLoading,
+                value: stockData?.[0]?.['unrealized']['total_value'],
+                loading: stockIsLoading,
                 formatter: (value) =>
                   formatCurrency({
                     value,
@@ -151,11 +129,11 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
             <StatCard
               statisticProps={{
                 title:
-                  stockData.data?.[0]?.['unrealized']['total_pl'] >= 0
+                  (stockData?.[0]?.['unrealized']['total_pl'] ?? 0) >= 0
                     ? 'Profit'
                     : 'Loss',
-                value: stockData.data?.[0]?.['unrealized']['total_pl'],
-                loading: stockData.isLoading,
+                value: stockData?.[0]?.['unrealized']['total_pl'],
+                loading: stockIsLoading,
                 formatter: (value) =>
                   formatCurrency({
                     value,
@@ -168,8 +146,8 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
             <StatCard
               statisticProps={{
                 title: 'Dividends',
-                value: stockData.data?.[0]?.['realized']['total_dividends'],
-                loading: stockData.isLoading,
+                value: stockData?.[0]?.['realized']['total_dividends'],
+                loading: stockIsLoading,
                 formatter: (value) =>
                   formatCurrency({
                     value,
@@ -182,8 +160,8 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
             <StatCard
               statisticProps={{
                 title: 'Weight',
-                value: stockData.data?.[0]?.['weight'],
-                loading: stockData.isLoading,
+                value: stockData?.[0]?.['weight'],
+                loading: stockIsLoading,
                 formatter: (value) => formatPercentage(value),
               }}
               className="m-2 p-0"
@@ -200,101 +178,80 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
             className="mt-2"
           >
             <Descriptions.Item label="Shares">
-              <Skeleton
-                loading={stockData.isLoading}
-                {...DescriptionSkeletonProps}
-              >
-                {stockData.data?.[0]?.['unrealized']['quantity']}
+              <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
+                {stockData?.[0]?.['unrealized']['quantity']}
               </Skeleton>
             </Descriptions.Item>
             <Descriptions.Item label="Average cost">
-              <Skeleton
-                loading={stockData.isLoading}
-                {...DescriptionSkeletonProps}
-              >
+              <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
-                  value: stockData.data?.[0]?.['unrealized']['cost_per_share'],
+                  value: stockData?.[0]?.['unrealized']['cost_per_share'],
                   currency: userSettings.currency,
                 })}
               </Skeleton>
             </Descriptions.Item>
             <Descriptions.Item label="Current price">
-              <Skeleton
-                loading={stockData.isLoading}
-                {...DescriptionSkeletonProps}
-              >
+              <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
-                  value: stockData.data?.[0]?.['unrealized']['close_value'],
+                  value: stockData?.[0]?.['unrealized']['close_value'],
                   currency: userSettings.currency,
                 })}
               </Skeleton>
             </Descriptions.Item>
             <Descriptions.Item
               label={
-                stockData.data?.[0]?.['unrealized']['forex_pl'] >= 0
+                (stockData?.[0]?.['unrealized']['forex_pl'] ?? 0) >= 0
                   ? 'Forex profit'
                   : 'Forex loss'
               }
               className="flex flex-row items-center"
             >
-              <Skeleton
-                loading={stockData.isLoading}
-                {...DescriptionSkeletonProps}
-              >
+              <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
-                  value: stockData.data?.[0]?.['unrealized']['forex_pl'],
+                  value: stockData?.[0]?.['unrealized']['forex_pl'],
                   currency: userSettings.currency,
                 })}
                 <Divider type="vertical" />
                 {formatPercentageWithColors({
-                  value:
-                    stockData.data?.[0]?.['unrealized']['forex_pl_percentage'],
+                  value: stockData?.[0]?.['unrealized']['forex_pl_percentage'],
                   addIcon: true,
                 })}
               </Skeleton>
             </Descriptions.Item>
             <Descriptions.Item
               label={
-                stockData.data?.[0]?.['unrealized']['value_pl'] >= 0
+                (stockData?.[0]?.['unrealized']?.['value_pl'] ?? 0) >= 0
                   ? 'Value profit'
                   : 'Value loss'
               }
             >
-              <Skeleton
-                loading={stockData.isLoading}
-                {...DescriptionSkeletonProps}
-              >
+              <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
-                  value: stockData.data?.[0]?.['unrealized']['value_pl'],
+                  value: stockData?.[0]?.['unrealized']['value_pl'],
                   currency: userSettings.currency,
                 })}
                 <Divider type="vertical" />
                 {formatPercentageWithColors({
-                  value:
-                    stockData.data?.[0]?.['unrealized']['value_pl_percentage'],
+                  value: stockData?.[0]?.['unrealized']['value_pl_percentage'],
                   addIcon: true,
                 })}
               </Skeleton>
             </Descriptions.Item>
             <Descriptions.Item
               label={
-                stockData.data?.[0]?.['unrealized']['total_pl'] >= 0
+                (stockData?.[0]?.['unrealized']['total_pl'] ?? 0) >= 0
                   ? 'Total profit'
                   : 'Total loss'
               }
             >
-              <Skeleton
-                loading={stockData.isLoading}
-                {...DescriptionSkeletonProps}
-              >
+              <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
-                  value: stockData.data?.[0]?.['unrealized']['total_pl'],
+                  value: stockData?.[0]?.['unrealized']['total_pl'],
                   currency: userSettings.currency,
                 })}
                 <Divider type="vertical" />
                 {formatPercentageWithColors({
-                  value:
-                    stockData.data?.[0]?.['unrealized']['total_pl_percentage'],
+                  value: stockData?.[0]?.['unrealized']['total_pl_percentage'],
                   addIcon: true,
                 })}
               </Skeleton>
@@ -311,107 +268,81 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
             className="mt-2 "
           >
             <Descriptions.Item label="Shares">
-              <Skeleton
-                loading={stockData.isLoading}
-                {...DescriptionSkeletonProps}
-              >
-                {stockData.data?.[0]?.['realized']['quantity']}
+              <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
+                {stockData?.[0]?.['realized']['quantity']}
               </Skeleton>
             </Descriptions.Item>
             <Descriptions.Item label="Average cost">
-              <Skeleton
-                loading={stockData.isLoading}
-                {...DescriptionSkeletonProps}
-              >
+              <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
-                  value:
-                    stockData.data?.[0]?.['realized']['cost_per_share_buy'],
+                  value: stockData?.[0]?.['realized']['cost_per_share_buy'],
                   currency: userSettings.currency,
                 })}
               </Skeleton>
             </Descriptions.Item>
             <Descriptions.Item label="Average sell price">
-              <Skeleton
-                loading={stockData.isLoading}
-                {...DescriptionSkeletonProps}
-              >
+              <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
-                  value:
-                    stockData.data?.[0]?.['realized']['cost_per_share_sell'],
+                  value: stockData?.[0]?.['realized']['cost_per_share_sell'],
                   currency: userSettings.currency,
                 })}
               </Skeleton>
             </Descriptions.Item>
             <Descriptions.Item
               label={
-                stockData.data?.[0]?.['realized']['forex_pl'] >= 0
+                (stockData?.[0]?.['realized']['forex_pl'] ?? 0) >= 0
                   ? 'Forex profit'
                   : 'Forex loss'
               }
             >
-              <Skeleton
-                loading={stockData.isLoading}
-                {...DescriptionSkeletonProps}
-              >
+              <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
-                  value: stockData.data?.[0]?.['realized']['forex_pl'],
+                  value: stockData?.[0]?.['realized']['forex_pl'],
                   currency: userSettings.currency,
                 })}
               </Skeleton>
               <Divider type="vertical" />
-              <Skeleton
-                loading={stockData.isLoading}
-                {...DescriptionSkeletonProps}
-              >
+              <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatPercentageWithColors({
-                  value:
-                    stockData.data?.[0]?.['realized']['forex_pl_percentage'],
+                  value: stockData?.[0]?.['realized']['forex_pl_percentage'],
                   addIcon: true,
                 })}
               </Skeleton>
             </Descriptions.Item>
             <Descriptions.Item
               label={
-                stockData.data?.[0]?.['realized']['value_pl'] >= 0
+                (stockData?.[0]?.['realized']['value_pl'] ?? 0) >= 0
                   ? 'Value profit'
                   : 'Value loss'
               }
             >
-              <Skeleton
-                loading={stockData.isLoading}
-                {...DescriptionSkeletonProps}
-              >
+              <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
-                  value: stockData.data?.[0]?.['realized']['value_pl'],
+                  value: stockData?.[0]?.['realized']['value_pl'],
                   currency: userSettings.currency,
                 })}
                 <Divider type="vertical" />
                 {formatPercentageWithColors({
-                  value:
-                    stockData.data?.[0]?.['realized']['value_pl_percentage'],
+                  value: stockData?.[0]?.['realized']['value_pl_percentage'],
                   addIcon: true,
                 })}
               </Skeleton>
             </Descriptions.Item>
             <Descriptions.Item
               label={
-                stockData.data?.[0]?.['realized']['total_pl'] >= 0
+                (stockData?.[0]?.['realized']['total_pl'] ?? 0) >= 0
                   ? 'Total profit'
                   : 'Total loss'
               }
             >
-              <Skeleton
-                loading={stockData.isLoading}
-                {...DescriptionSkeletonProps}
-              >
+              <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
-                  value: stockData.data?.[0]?.['realized']['total_pl'],
+                  value: stockData?.[0]?.['realized']['total_pl'],
                   currency: userSettings.currency,
                 })}
                 <Divider type="vertical" />
                 {formatPercentageWithColors({
-                  value:
-                    stockData.data?.[0]?.['realized']['total_pl_percentage'],
+                  value: stockData?.[0]?.['realized']['total_pl_percentage'],
                   addIcon: true,
                 })}
               </Skeleton>
@@ -490,11 +421,11 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
     <div className="mt-2">
       <div className="flex space-x-2">
         <div>
-          {stockData.isLoading ? (
+          {stockIsLoading ? (
             <Skeleton.Image active />
           ) : (
             <Image
-              src={stockData.data?.[0]?.['meta']['icon']}
+              src={stockData?.[0]?.['meta']['icon']}
               width={96}
               alt="Logo"
               preview={false}
@@ -508,12 +439,12 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
             width: ['80px', '80px'],
           }}
           active
-          loading={stockData.isLoading}
+          loading={stockIsLoading}
         >
           <div className="flex flex-col">
-            <Title level={3}>{stockData.data?.[0]?.['meta']['name']}</Title>
+            <Title level={3}>{stockData?.[0]?.['meta']['name']}</Title>
             <Text type="secondary" copyable>
-              {stockData.data?.[0]?.['meta']['symbol']}
+              {stockData?.[0]?.['meta']['symbol']}
             </Text>
           </div>
         </Skeleton>
@@ -521,48 +452,43 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
       <Skeleton
         paragraph={false}
         title={{ width: '200px' }}
-        loading={stockData.isLoading}
+        loading={stockIsLoading}
         active
         className="mt-2"
       >
         <div className="flex flex-row items-center space-x-2">
-          {stockData.data?.[0]?.['meta']['links']?.map((link: any) => {
+          {stockData?.[0]?.['meta']['links']?.map((link: any) => {
             return socialsIcon(link.name, link.url);
           })}
           <Divider type="vertical" />
           <Link
             type="secondary"
             target="_blank"
-            href={`https://${stockData.data?.[0]?.['meta']['domain']}`}
+            href={`https://${stockData?.[0]?.['meta']['domain']}`}
           >
-            {stockData.data?.[0]?.['meta']['domain']}
+            {stockData?.[0]?.['meta']['domain']}
           </Link>
         </div>
       </Skeleton>
-      <Skeleton
-        title={false}
-        active
-        loading={stockData.isLoading}
-        className="mt-2"
-      >
-        <Text>{stockData.data?.[0]?.['meta']['description']}</Text>
+      <Skeleton title={false} active loading={stockIsLoading} className="mt-2">
+        <Text>{stockData?.[0]?.['meta']['description']}</Text>
       </Skeleton>
       <Divider className="m-2" plain></Divider>
       <Skeleton
         paragraph={false}
         title={{ width: '200px' }}
         active
-        loading={stockData.isLoading}
+        loading={stockIsLoading}
       >
         <TagRow
           items={[
-            { value: stockData.data?.[0]?.['meta']['country'] },
-            { value: stockData.data?.[0]?.['meta']['sector'] },
-            { value: stockData.data?.[0]?.['currency'] },
+            { value: stockData?.[0]?.['meta']['country'] },
+            { value: stockData?.[0]?.['meta']['sector'] },
+            { value: stockData?.[0]?.['currency'] },
             {
               value:
-                stockData.data?.[0]?.['fully_realized'] !== undefined
-                  ? stockData.data?.[0]['fully_realized']
+                stockData?.[0]?.['fully_realized'] !== undefined
+                  ? stockData?.[0]['fully_realized']
                     ? 'Closed'
                     : 'Open'
                   : undefined,

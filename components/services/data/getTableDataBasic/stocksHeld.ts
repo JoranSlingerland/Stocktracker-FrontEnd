@@ -1,10 +1,6 @@
-import {
-  cachedFetch,
-  overwriteCachedFetch,
-  apiRequestReducer,
-  ApiRequestAction,
-} from '../../../utils/api';
+import { cachedFetch, overwriteCachedFetch } from '../../../utils/api';
 import { StocksHeldData } from '../../../types/types';
+import useFetch from '../../../hooks/useFetch';
 
 interface GetTableDataBasicBody {
   containerName: 'stocks_held';
@@ -13,62 +9,53 @@ interface GetTableDataBasicBody {
   andOr?: 'and' | 'or';
   symbol?: string;
 }
-const getTableDataBasicStocksHeldInitialState = ({
-  isLoading,
-  isError,
-}: {
-  isLoading?: boolean;
-  isError?: boolean;
-}): { isLoading: boolean; isError: boolean; data: StocksHeldData[] } => ({
-  isLoading: isLoading || false,
-  isError: isError || false,
-  data: [],
-});
 
-const getTableDataBasicStocksHeldReducer = (
-  state: {
-    isLoading: boolean;
-    isError: boolean;
-    data: StocksHeldData[];
-  },
-  action: ApiRequestAction<StocksHeldData[]>
-): { isLoading: boolean; isError: boolean; data: StocksHeldData[] } => {
-  return apiRequestReducer(state, action);
-};
-
-function getTableDataBasicStocksHeld({
-  dispatcher,
+async function getTableDataBasicStocksHeld({
   abortController,
   body,
   overWrite,
 }: {
-  dispatcher: React.Dispatch<ApiRequestAction<StocksHeldData[]>>;
   abortController: AbortController;
   body: GetTableDataBasicBody;
   overWrite?: boolean;
 }) {
   if (overWrite) {
-    overwriteCachedFetch({
+    const response = await overwriteCachedFetch({
       url: `/api/data/get_table_data_basic`,
       method: 'POST',
       body,
-      dispatcher,
       controller: abortController,
       background: true,
     });
+    return response;
   } else {
-    cachedFetch({
+    const response = await cachedFetch({
       url: `/api/data/get_table_data_basic`,
       method: 'POST',
       body,
-      dispatcher,
       controller: abortController,
     });
+    return response;
   }
 }
 
-export {
-  getTableDataBasicStocksHeld,
-  getTableDataBasicStocksHeldReducer,
-  getTableDataBasicStocksHeldInitialState,
-};
+function useTableDataBasicStocksHeld({
+  body,
+  enabled = true,
+  overWrite = false,
+}: {
+  body: GetTableDataBasicBody;
+  enabled?: boolean;
+  overWrite?: boolean;
+}) {
+  const fetchResult = useFetch<GetTableDataBasicBody, StocksHeldData[]>({
+    body,
+    fetchData: getTableDataBasicStocksHeld,
+    enabled,
+    overWrite,
+  });
+
+  return fetchResult;
+}
+
+export { useTableDataBasicStocksHeld };
