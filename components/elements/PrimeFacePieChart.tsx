@@ -11,15 +11,19 @@ export default function PieChart({
   isloading,
   userSettings,
 }: {
-  data: PieChartData;
+  data: PieChartData | undefined;
   isloading: boolean;
   userSettings: UserSettings;
 }): JSX.Element {
   const myChartRef: any = React.createRef();
 
-  const chartData = {
-    labels: data['labels'],
-    datasets: [
+  const chartData: any = {
+    labels: [],
+    datasets: [],
+  };
+  if (data) {
+    chartData.labels = data['labels'];
+    chartData.datasets = [
       {
         data: data['data'],
         backgroundColor: data['color'],
@@ -27,8 +31,8 @@ export default function PieChart({
         hoverBorderColor: data['color'],
         hoverOffset: 3,
       },
-    ],
-  };
+    ];
+  }
 
   const list_data_source = chartData['labels'].map(
     (label: string, i: number) => {
