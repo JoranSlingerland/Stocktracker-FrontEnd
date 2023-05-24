@@ -248,13 +248,13 @@ async function ApiWithMessage(
   }
 }
 
-type ApiRequestAction =
+type ApiRequestAction<T> =
   | { type: 'FETCH_INIT' }
-  | { type: 'FETCH_SUCCESS'; payload: any }
-  | { type: 'FETCH_FAILURE'; payload?: any }
+  | { type: 'FETCH_SUCCESS'; payload: T }
+  | { type: 'FETCH_FAILURE'; payload?: T }
   | { type: 'FETCH_ABORT' };
 
-const apiRequestReducer = (state: any, action: ApiRequestAction) => {
+const apiRequestReducer = (state: any, action: ApiRequestAction<any>) => {
   switch (action.type) {
     case 'FETCH_INIT':
       return {
@@ -301,3 +301,5 @@ export {
   cachedFetch,
   overwriteCachedFetch,
 };
+
+export type { ApiRequestAction };

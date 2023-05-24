@@ -1,16 +1,14 @@
-import { apiRequestReducer, cachedFetch } from '../../../utils/api';
+import {
+  apiRequestReducer,
+  cachedFetch,
+  ApiRequestAction,
+} from '../../../utils/api';
 import { StocksHeldData } from '../../../types/types';
 import { stocksHeldData } from '../../../constants/placeholders';
 
 interface GetTableDataPerformanceBodyStocksHeld extends SharedBody {
   dataType: 'stocks_held';
 }
-
-type GetTableDataPerformanceDataStocksHeldAction =
-  | { type: 'FETCH_INIT' }
-  | { type: 'FETCH_SUCCESS'; payload: StocksHeldData[] }
-  | { type: 'FETCH_FAILURE'; payload?: StocksHeldData[] }
-  | { type: 'FETCH_ABORT' };
 
 const getTableDataPerformanceDataStocksHeldInitialState = ({
   isLoading,
@@ -30,7 +28,7 @@ const getTableDataPerformanceDataStocksHeldReducer = (
     isError: boolean;
     data: StocksHeldData[];
   },
-  action: GetTableDataPerformanceDataStocksHeldAction
+  action: ApiRequestAction<StocksHeldData[]>
 ): {
   isLoading: boolean;
   isError: boolean;
@@ -45,7 +43,7 @@ function getTableDataPerformanceStocksHeld({
   body,
   fallback_data = [],
 }: {
-  dispatcher: React.Dispatch<GetTableDataPerformanceDataStocksHeldAction>;
+  dispatcher: React.Dispatch<ApiRequestAction<StocksHeldData[]>>;
   abortController: AbortController;
   body: GetTableDataPerformanceBodyStocksHeld;
   fallback_data?: StocksHeldData[];

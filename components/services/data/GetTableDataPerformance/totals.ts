@@ -1,4 +1,4 @@
-import { cachedFetch } from '../../../utils/api';
+import { cachedFetch, ApiRequestAction } from '../../../utils/api';
 import { apiRequestReducer } from '../../../utils/api';
 import { totalsData } from '../../../constants/placeholders';
 import { TotalsData } from '../../../types/types';
@@ -7,12 +7,6 @@ import { TotalsData } from '../../../types/types';
 interface GetTableDataPerformanceBodyTotals extends SharedBody {
   dataType: 'totals';
 }
-
-type GetTableDataPerformanceDataAction =
-  | { type: 'FETCH_INIT' }
-  | { type: 'FETCH_SUCCESS'; payload: TotalsData[] }
-  | { type: 'FETCH_FAILURE'; payload?: TotalsData[] }
-  | { type: 'FETCH_ABORT' };
 
 const getTableDataPerformanceDataTotalsInitialState = ({
   isLoading,
@@ -32,7 +26,7 @@ const getTableDataPerformanceDataTotalsReducer = (
     isError: boolean;
     data: TotalsData[];
   },
-  action: GetTableDataPerformanceDataAction
+  action: ApiRequestAction<TotalsData[]>
 ): {
   isLoading: boolean;
   isError: boolean;
@@ -47,7 +41,7 @@ function getTableDataPerformanceTotals({
   body,
   fallback_data = [],
 }: {
-  dispatcher: React.Dispatch<GetTableDataPerformanceDataAction>;
+  dispatcher: React.Dispatch<ApiRequestAction<TotalsData[]>>;
   abortController: AbortController;
   body: GetTableDataPerformanceBodyTotals;
   fallback_data?: TotalsData[];

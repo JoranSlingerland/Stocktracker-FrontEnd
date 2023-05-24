@@ -2,6 +2,7 @@ import {
   cachedFetch,
   overwriteCachedFetch,
   apiRequestReducer,
+  ApiRequestAction,
 } from '../../../utils/api';
 import { StocksHeldData } from '../../../types/types';
 
@@ -12,13 +13,6 @@ interface GetTableDataBasicBody {
   andOr?: 'and' | 'or';
   symbol?: string;
 }
-
-type GetTableDataBasicActions =
-  | { type: 'FETCH_INIT' }
-  | { type: 'FETCH_SUCCESS'; payload: StocksHeldData[] }
-  | { type: 'FETCH_FAILURE'; payload?: StocksHeldData[] }
-  | { type: 'FETCH_ABORT' };
-
 const getTableDataBasicStocksHeldInitialState = ({
   isLoading,
   isError,
@@ -37,7 +31,7 @@ const getTableDataBasicStocksHeldReducer = (
     isError: boolean;
     data: StocksHeldData[];
   },
-  action: GetTableDataBasicActions
+  action: ApiRequestAction<StocksHeldData[]>
 ): { isLoading: boolean; isError: boolean; data: StocksHeldData[] } => {
   return apiRequestReducer(state, action);
 };
@@ -48,7 +42,7 @@ function getTableDataBasicStocksHeld({
   body,
   overWrite,
 }: {
-  dispatcher: React.Dispatch<GetTableDataBasicActions>;
+  dispatcher: React.Dispatch<ApiRequestAction<StocksHeldData[]>>;
   abortController: AbortController;
   body: GetTableDataBasicBody;
   overWrite?: boolean;

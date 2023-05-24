@@ -1,4 +1,4 @@
-import { cachedFetch } from '../../utils/api';
+import { cachedFetch, ApiRequestAction } from '../../utils/api';
 import { apiRequestReducer } from '../../utils/api';
 
 interface GetBarchartDataBody {
@@ -14,12 +14,6 @@ interface BarChartData {
   category: string;
 }
 
-type BarChartDataActions =
-  | { type: 'FETCH_INIT' }
-  | { type: 'FETCH_SUCCESS'; payload: BarChartData[] }
-  | { type: 'FETCH_FAILURE'; payload?: BarChartData[] }
-  | { type: 'FETCH_ABORT' };
-
 const barChartDataInitialState = ({
   isLoading,
   isError,
@@ -34,7 +28,7 @@ const barChartDataInitialState = ({
 
 const barChartDataReducer = (
   state: { isLoading: boolean; isError: boolean; data: BarChartData[] },
-  action: BarChartDataActions
+  action: ApiRequestAction<BarChartData[]>
 ): { isLoading: boolean; isError: boolean; data: BarChartData[] } => {
   return apiRequestReducer(state, action);
 };
@@ -44,7 +38,7 @@ function getBarchartData({
   abortController,
   body,
 }: {
-  dispatcher: React.Dispatch<BarChartDataActions>;
+  dispatcher: React.Dispatch<ApiRequestAction<BarChartData[]>>;
   abortController: AbortController;
   body: GetBarchartDataBody;
 }) {

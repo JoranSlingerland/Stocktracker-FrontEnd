@@ -2,18 +2,13 @@ import {
   cachedFetch,
   overwriteCachedFetch,
   apiRequestReducer,
+  ApiRequestAction,
 } from '../../../utils/api';
 import { InputInvestedData } from '../../../types/types';
 
 interface GetTableDataBasicBody {
   containerName: 'input_invested';
 }
-
-type GetTableDataBasicActions =
-  | { type: 'FETCH_INIT' }
-  | { type: 'FETCH_SUCCESS'; payload: InputInvestedData[] }
-  | { type: 'FETCH_FAILURE'; payload?: InputInvestedData[] }
-  | { type: 'FETCH_ABORT' };
 
 const getTableDataBasicInputInvestedInitialState = ({
   isLoading,
@@ -33,7 +28,7 @@ const getTableDataBasicInputInvestedReducer = (
     isError: boolean;
     data: InputInvestedData[];
   },
-  action: GetTableDataBasicActions
+  action: ApiRequestAction<InputInvestedData[]>
 ): { isLoading: boolean; isError: boolean; data: InputInvestedData[] } => {
   return apiRequestReducer(state, action);
 };
@@ -44,7 +39,7 @@ function getTableDataBasicInputInvested({
   body,
   overWrite,
 }: {
-  dispatcher: React.Dispatch<GetTableDataBasicActions>;
+  dispatcher: React.Dispatch<ApiRequestAction<InputInvestedData[]>>;
   abortController: AbortController;
   body: GetTableDataBasicBody;
   overWrite?: boolean;

@@ -1,4 +1,4 @@
-import { cachedFetch } from '../../utils/api';
+import { cachedFetch, ApiRequestAction } from '../../utils/api';
 import { apiRequestReducer } from '../../utils/api';
 
 interface GetPieChartDataBody {
@@ -10,12 +10,6 @@ interface PieChartData {
   data: number[];
   color: string[];
 }
-
-type PieChartDataActions =
-  | { type: 'FETCH_INIT' }
-  | { type: 'FETCH_SUCCESS'; payload: PieChartData }
-  | { type: 'FETCH_FAILURE'; payload?: PieChartData }
-  | { type: 'FETCH_ABORT' };
 
 const pieChartDataInitialState = ({
   isLoading,
@@ -35,7 +29,7 @@ const pieChartDataInitialState = ({
 
 const pieChartDataReducer = (
   state: { isLoading: boolean; isError: boolean; data: PieChartData },
-  action: PieChartDataActions
+  action: ApiRequestAction<PieChartData>
 ): { isLoading: boolean; isError: boolean; data: PieChartData } => {
   return apiRequestReducer(state, action);
 };
@@ -45,7 +39,7 @@ function getPieData({
   abortController,
   body,
 }: {
-  dispatcher: React.Dispatch<PieChartDataActions>;
+  dispatcher: React.Dispatch<ApiRequestAction<PieChartData>>;
   abortController: AbortController;
   body: GetPieChartDataBody;
 }) {

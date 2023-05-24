@@ -1,4 +1,4 @@
-import { cachedFetch } from '../../utils/api';
+import { cachedFetch, ApiRequestAction } from '../../utils/api';
 import { apiRequestReducer } from '../../utils/api';
 
 interface GetLineChartDataBody {
@@ -18,12 +18,6 @@ interface LineChartData {
   datasets: DataSets[];
 }
 
-type LineChartDataActions =
-  | { type: 'FETCH_INIT' }
-  | { type: 'FETCH_SUCCESS'; payload: LineChartData }
-  | { type: 'FETCH_FAILURE'; payload?: LineChartData }
-  | { type: 'FETCH_ABORT' };
-
 const lineChartDataInitialState = ({
   isLoading,
   isError,
@@ -41,7 +35,7 @@ const lineChartDataInitialState = ({
 
 const lineChartDataReducer = (
   state: { isLoading: boolean; isError: boolean; data: LineChartData },
-  action: LineChartDataActions
+  action: ApiRequestAction<LineChartData>
 ): { isLoading: boolean; isError: boolean; data: LineChartData } => {
   return apiRequestReducer(state, action);
 };
@@ -55,7 +49,7 @@ function getLineChartData({
     datasets: [],
   },
 }: {
-  dispatcher: React.Dispatch<LineChartDataActions>;
+  dispatcher: React.Dispatch<ApiRequestAction<LineChartData>>;
   abortController: AbortController;
   body: GetLineChartDataBody;
   fallback_data?: LineChartData;
