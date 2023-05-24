@@ -117,6 +117,7 @@ async function cachedFetch({
   hours = 24,
   controller,
   background = false,
+  overwrite = false,
 }: {
   url: string;
   dispatcher?: any;
@@ -126,6 +127,7 @@ async function cachedFetch({
   hours?: number;
   controller?: AbortController;
   background?: boolean;
+  overwrite?: boolean;
 }): Promise<{ response: any; error: boolean }> {
   if (dispatcher && !background) {
     dispatcher({ type: 'FETCH_INIT' });
@@ -134,7 +136,7 @@ async function cachedFetch({
   const key = newKey(url, body);
   let response = getWithExpiry(key);
   let error = false;
-  if (response) {
+  if (response && !overwrite) {
     if (dispatcher) {
       dispatcher({ type: 'FETCH_SUCCESS', payload: response });
     }
@@ -155,43 +157,6 @@ async function cachedFetch({
     setWithExpiry(key, response, hours * 1000 * 60 * 60);
     return { response, error };
   }
-}
-
-async function overwriteCachedFetch({
-  url,
-  dispatcher,
-  fallback_data = [],
-  method = 'GET',
-  body = {},
-  hours = 24,
-  controller,
-  background = false,
-}: {
-  url: string;
-  dispatcher?: any;
-  fallback_data?: any;
-  method?: 'GET' | 'POST';
-  body?: any;
-  hours?: number;
-  controller?: AbortController;
-  background?: boolean;
-}): Promise<{ response: any; error: boolean }> {
-  const key = newKey(url, body);
-
-  const { response, error } = await regularFetch({
-    url,
-    dispatcher,
-    fallback_data,
-    method,
-    body,
-    controller,
-    background,
-  });
-  if (error) {
-    return { response: fallback_data, error };
-  }
-  setWithExpiry(key, response, hours * 1000 * 60 * 60);
-  return { response, error };
 }
 
 async function ApiWithMessage(
@@ -294,12 +259,6 @@ const apiRequestReducer = (state: any, action: ApiRequestAction<any>) => {
 
 // End of main functions
 
-export {
-  ApiWithMessage,
-  apiRequestReducer,
-  regularFetch,
-  cachedFetch,
-  overwriteCachedFetch,
-};
+export { ApiWithMessage, apiRequestReducer, regularFetch, cachedFetch };
 
 export type { ApiRequestAction };

@@ -1,6 +1,5 @@
 import {
   cachedFetch,
-  overwriteCachedFetch,
   apiRequestReducer,
   ApiRequestAction,
 } from '../../../utils/api';
@@ -37,31 +36,21 @@ function getTableDataBasicInputInvested({
   dispatcher,
   abortController,
   body,
-  overWrite,
+  overwrite,
 }: {
   dispatcher: React.Dispatch<ApiRequestAction<InputInvestedData[]>>;
   abortController: AbortController;
   body: GetTableDataBasicBody;
-  overWrite?: boolean;
+  overwrite?: boolean;
 }) {
-  if (overWrite) {
-    overwriteCachedFetch({
-      url: `/api/data/get_table_data_basic`,
-      method: 'POST',
-      body,
-      dispatcher,
-      controller: abortController,
-      background: true,
-    });
-  } else {
-    cachedFetch({
-      url: `/api/data/get_table_data_basic`,
-      method: 'POST',
-      body,
-      dispatcher,
-      controller: abortController,
-    });
-  }
+  cachedFetch({
+    url: `/api/data/get_table_data_basic`,
+    method: 'POST',
+    body,
+    dispatcher,
+    controller: abortController,
+    overwrite,
+  });
 }
 
 export {

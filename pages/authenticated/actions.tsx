@@ -102,7 +102,7 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
         },
         abortController: new AbortController(),
         dispatcher: InputInvestedDataDispatcher,
-        overWrite: true,
+        overwrite: true,
       });
     }
     if (container === 'input_transactions') {
@@ -112,7 +112,7 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
         },
         abortController: new AbortController(),
         dispatcher: InputTransactionsDataDispatcher,
-        overWrite: true,
+        overwrite: true,
       });
     }
   }

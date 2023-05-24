@@ -1,4 +1,4 @@
-import { cachedFetch, overwriteCachedFetch } from '../../utils/api';
+import { cachedFetch } from '../../utils/api';
 
 type UserSettings = {
   dark_mode: 'dark' | 'light' | 'system';
@@ -70,27 +70,18 @@ const userSettingsReducer = (state: UserSettings, action: userDataActions) => {
 };
 
 async function getUserData({
-  overWrite,
+  overwrite,
 }: {
-  overWrite?: boolean;
+  overwrite?: boolean;
 }): Promise<{ error: boolean; response: UserSettings }> {
-  if (overWrite) {
-    return await overwriteCachedFetch({
-      url: `/api/data/get_user_data`,
-      method: 'POST',
-      fallback_data: {},
-    }).then((data) => {
-      return data;
-    });
-  } else {
-    return await cachedFetch({
-      url: `/api/data/get_user_data`,
-      method: 'POST',
-      fallback_data: {},
-    }).then((data) => {
-      return data;
-    });
-  }
+  return await cachedFetch({
+    url: `/api/data/get_user_data`,
+    method: 'POST',
+    fallback_data: {},
+    overwrite,
+  }).then((data) => {
+    return data;
+  });
 }
 
 export { getUserData, userDataInitialState, userSettingsReducer };

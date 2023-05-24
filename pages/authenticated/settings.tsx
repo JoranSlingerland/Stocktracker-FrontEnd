@@ -62,7 +62,7 @@ export default function Home({
       body: userSettings,
     }).then(() => {
       getUserData({
-        overWrite: true,
+        overwrite: true,
       }).then(({ response }) => {
         userSettingsDispatch({
           type: 'setAll',

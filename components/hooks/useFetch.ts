@@ -2,18 +2,14 @@ import { useEffect, useState } from 'react';
 
 function useFetch<Body, Response>({
   body,
-  overWrite,
+  overWrite = false,
   fetchData,
   enabled = true,
   background = false,
 }: {
   body: Body;
   overWrite?: boolean;
-  fetchData: ({
-    body,
-    abortController,
-    overWrite,
-  }: {
+  fetchData: (params: {
     body: Body;
     abortController: AbortController;
     overWrite?: boolean;

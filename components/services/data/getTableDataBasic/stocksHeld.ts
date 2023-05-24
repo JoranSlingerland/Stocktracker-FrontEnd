@@ -1,4 +1,4 @@
-import { cachedFetch, overwriteCachedFetch } from '../../../utils/api';
+import { cachedFetch } from '../../../utils/api';
 import { StocksHeldData } from '../../../types/types';
 import useFetch from '../../../hooks/useFetch';
 
@@ -13,30 +13,20 @@ interface GetTableDataBasicBody {
 async function getTableDataBasicStocksHeld({
   abortController,
   body,
-  overWrite,
+  overwrite,
 }: {
   abortController: AbortController;
   body: GetTableDataBasicBody;
-  overWrite?: boolean;
+  overwrite?: boolean;
 }) {
-  if (overWrite) {
-    const response = await overwriteCachedFetch({
-      url: `/api/data/get_table_data_basic`,
-      method: 'POST',
-      body,
-      controller: abortController,
-      background: true,
-    });
-    return response;
-  } else {
-    const response = await cachedFetch({
-      url: `/api/data/get_table_data_basic`,
-      method: 'POST',
-      body,
-      controller: abortController,
-    });
-    return response;
-  }
+  const response = await cachedFetch({
+    url: `/api/data/get_table_data_basic`,
+    method: 'POST',
+    body,
+    controller: abortController,
+    overwrite,
+  });
+  return response;
 }
 
 function useTableDataBasicStocksHeld({
