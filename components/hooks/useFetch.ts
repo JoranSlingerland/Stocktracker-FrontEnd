@@ -27,6 +27,9 @@ function useFetch<Body, Response>({
   const refetchData = () => {
     setRefetch(true);
   };
+  const overwriteData = (data: Response) => {
+    setData(data);
+  };
   const fetchDataAsync = async (abortController: AbortController) => {
     await fetchData({
       body,
@@ -55,7 +58,7 @@ function useFetch<Body, Response>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled, refetch]);
 
-  return { data, isLoading, isError, refetchData };
+  return { data, isLoading, isError, refetchData, overwriteData };
 }
 
 export default useFetch;

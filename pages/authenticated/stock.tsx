@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useReducer, useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Typography,
   Divider,
@@ -26,11 +26,7 @@ import StatCard from '../../components/elements/StatCard';
 import { convertTransactionsArray } from '../../components/utils/misc';
 import { UserSettings } from '../../components/services/data/getUserData';
 import { useTableDataBasicStocksHeld } from '../../components/services/data/getTableDataBasic/stocksHeld';
-import {
-  getTableDataBasicInputTransactions,
-  getTableDataBasicInputTransactionsInitialState,
-  getTableDataBasicInputTransactionsReducer,
-} from '../../components/services/data/getTableDataBasic/inputTransactions';
+import { useTableDataBasicInputTransactions } from '../../components/services/data/getTableDataBasic/inputTransactions';
 
 const { Text, Title, Link } = Typography;
 
@@ -60,6 +56,7 @@ function socialsIcon(platform: Platform, url: string) {
 function Stocks({ userSettings }: { userSettings: UserSettings }) {
   const router = useRouter();
   const stockSymbol = router.query.stock as string;
+  const [tab, setTab] = useState('1');
   const { data: stockData, isLoading: stockIsLoading } =
     useTableDataBasicStocksHeld({
       body: {
@@ -68,39 +65,16 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
       },
       enabled: !!stockSymbol,
     });
-  const [transactionsData, transactionsReducer] = useReducer(
-    getTableDataBasicInputTransactionsReducer,
-    getTableDataBasicInputTransactionsInitialState({
-      isLoading: true,
-    })
-  );
-  const [tab, setTab] = useState('1');
+  const { data: transactionsData, isLoading: transactionsIsLoading } =
+    useTableDataBasicInputTransactions({
+      body: {
+        containerName: 'input_transactions',
+        symbol: stockSymbol,
+      },
+      enabled: !!stockSymbol && tab === '2',
+    });
 
-  useEffect(() => {
-    const abortController = new AbortController();
-
-    if (!stockSymbol) {
-      return;
-    }
-
-    if (tab === '2') {
-      getTableDataBasicInputTransactions({
-        dispatcher: transactionsReducer,
-        abortController,
-        body: {
-          containerName: 'input_transactions',
-          symbol: stockSymbol,
-        },
-      });
-    }
-
-    return function cancel() {
-      abortController.abort();
-    };
-  }, [stockSymbol, tab]);
-  const transactionsArray = convertTransactionsArray(transactionsData.data) || [
-    {},
-  ];
+  const transactionsArray = convertTransactionsArray(transactionsData);
   const DescriptionSkeletonProps = {
     active: true,
     paragraph: false,
@@ -364,7 +338,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
                   paragraph={false}
                   title={{ width: '100px' }}
                   active
-                  loading={transactionsData.isLoading}
+                  loading={transactionsIsLoading}
                 >
                   <Title level={4}>{month.month}</Title>
                 </Skeleton>
@@ -377,7 +351,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
                           <Skeleton
                             paragraph={false}
                             active
-                            loading={transactionsData.isLoading}
+                            loading={transactionsIsLoading}
                           >
                             {value.transaction_type} on {value.date}
                           </Skeleton>
@@ -385,7 +359,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
                         bordered={false}
                         size="small"
                         className="mt-2 mx-2"
-                        loading={transactionsData.isLoading}
+                        loading={transactionsIsLoading}
                       >
                         <div className="flex flex-col">
                           <Text type="secondary">{`${

@@ -14,9 +14,22 @@ interface OutputArrayItem {
 }
 
 function convertTransactionsArray(
-  inputArray: InputObject[]
+  inputArray: InputObject[] | undefined
 ): OutputArrayItem[] {
   const outputArray: OutputArrayItem[] = [];
+
+  if (!inputArray) {
+    return [
+      {
+        month: '',
+        values: [
+          {
+            date: '',
+          },
+        ],
+      },
+    ];
+  }
 
   if (!Array.isArray(inputArray)) {
     throw new Error('Input is not an array');

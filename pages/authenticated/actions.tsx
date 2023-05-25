@@ -14,19 +14,21 @@ import {
   getTableDataBasicInputInvestedInitialState,
   getTableDataBasicInputInvestedReducer,
 } from '../../components/services/data/getTableDataBasic/inputInvested';
-import {
-  getTableDataBasicInputTransactions,
-  getTableDataBasicInputTransactionsInitialState,
-  getTableDataBasicInputTransactionsReducer,
-} from '../../components/services/data/getTableDataBasic/inputTransactions';
+import { useTableDataBasicInputTransactions } from '../../components/services/data/getTableDataBasic/inputTransactions';
 const { Search } = Input;
 const { Title } = Typography;
 
 export default function Home({ userSettings }: { userSettings: UserSettings }) {
-  const [InputTransactionsData, InputTransactionsDataDispatcher] = useReducer(
-    getTableDataBasicInputTransactionsReducer,
-    getTableDataBasicInputTransactionsInitialState({ isLoading: true })
-  );
+  const {
+    data: inputTransactionsData,
+    isLoading: inputTransactionsIsloading,
+    refetchData: inputTransactionsRefetch,
+    overwriteData: inputTransactionsOverwrite,
+  } = useTableDataBasicInputTransactions({
+    body: {
+      containerName: 'input_transactions',
+    },
+  });
   const [InputTransactionsSearchText, setInputTransactionsSearchText] =
     useState<any>();
   const [InputInvestedData, InputInvestedDataDispatcher] = useReducer(
@@ -40,14 +42,6 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
 
   useEffect(() => {
     const abortController = new AbortController();
-
-    getTableDataBasicInputTransactions({
-      body: {
-        containerName: 'input_transactions',
-      },
-      abortController,
-      dispatcher: InputTransactionsDataDispatcher,
-    });
 
     getTableDataBasicInputInvested({
       body: {
@@ -79,14 +73,13 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
           type: 'FETCH_SUCCESS',
           payload: newData,
         });
-      } else if (container === 'input_transactions') {
-        const newData = InputTransactionsData.data.filter(
-          (item: any) => !id.includes(item.id)
+      } else if (container === 'input_transactions' && inputTransactionsData) {
+        console.log('input_transactions', inputTransactionsData);
+        const newData = inputTransactionsData.filter(
+          (item) => !id.includes(item.id)
         );
-        InputTransactionsDataDispatcher({
-          type: 'FETCH_SUCCESS',
-          payload: newData,
-        });
+        console.log('newData', newData);
+        inputTransactionsOverwrite(newData);
       }
       overWriteTableData(container);
     });
@@ -106,14 +99,7 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
       });
     }
     if (container === 'input_transactions') {
-      getTableDataBasicInputTransactions({
-        body: {
-          containerName: container,
-        },
-        abortController: new AbortController(),
-        dispatcher: InputTransactionsDataDispatcher,
-        overwrite: true,
-      });
+      inputTransactionsRefetch();
     }
   }
 
@@ -128,13 +114,13 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
         Stock Transactions
       </Title>
       <AntdTable
-        isLoading={InputTransactionsData.isLoading}
+        isLoading={inputTransactionsIsloading}
         columns={InputTransactionsColumns(
           deleteData,
           () => overWriteTableData('input_transactions'),
           userSettings.currency
         )}
-        data={InputTransactionsData.data}
+        data={inputTransactionsData}
         globalSorter={true}
         searchEnabled={true}
         searchText={InputTransactionsSearchText}
