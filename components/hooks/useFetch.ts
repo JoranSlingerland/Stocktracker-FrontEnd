@@ -1,12 +1,6 @@
 import { useEffect, useState } from 'react';
 
-function useFetch<Body, Response>({
-  body,
-  fetchData,
-  enabled = true,
-  background = false,
-  overwrite = false,
-}: {
+interface UseFetchOptions<Body, Response> {
   body: Body;
   fetchData: (params: {
     body: Body;
@@ -16,7 +10,15 @@ function useFetch<Body, Response>({
   enabled?: boolean;
   background?: boolean;
   overwrite?: boolean;
-}) {
+}
+
+function useFetch<Body, Response>({
+  body,
+  fetchData,
+  enabled = true,
+  background = false,
+  overwrite = false,
+}: UseFetchOptions<Body, Response>) {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [refetch, setRefetch] = useState(false);
@@ -25,30 +27,26 @@ function useFetch<Body, Response>({
   const refetchData = () => {
     setRefetch(true);
   };
+  const fetchDataAsync = async (abortController: AbortController) => {
+    await fetchData({
+      body,
+      abortController,
+      overwrite: overwrite || refetch,
+    }).then((data) => {
+      setData(data.response);
+      setIsError(data.error);
+      setIsLoading(false);
+      setRefetch(false);
+    });
+  };
 
   useEffect(() => {
-    const abortController = new AbortController();
-
-    const fetchDataAsync = async () => {
-      setIsError(false);
-      if (!background || !refetch) {
-        setIsLoading(true);
-      }
-
-      await fetchData({
-        body,
-        abortController,
-        overwrite: overwrite || refetch,
-      }).then((data) => {
-        setData(data.response);
-        setIsError(data.error);
-        setIsLoading(false);
-        setRefetch(false);
-      });
-    };
+    let abortController = new AbortController();
 
     if (enabled) {
-      fetchDataAsync();
+      setIsError(false);
+      setIsLoading(background || refetch ? false : true);
+      fetchDataAsync(abortController);
     }
 
     return () => {
