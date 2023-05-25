@@ -66,6 +66,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
         containerName: 'stocks_held',
         symbol: stockSymbol,
       },
+      enabled: !!stockSymbol,
     });
   const [transactionsData, transactionsReducer] = useReducer(
     getTableDataBasicInputTransactionsReducer,

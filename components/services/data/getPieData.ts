@@ -18,7 +18,7 @@ async function getPieData({
   abortController: AbortController;
   body: GetPieChartDataBody;
 }) {
-  const fallbackObject = {
+  const fallback_data = {
     labels: [],
     data: [],
     color: [],
@@ -26,7 +26,7 @@ async function getPieData({
 
   const response = await cachedFetch({
     url: `/api/data/get_pie_data`,
-    fallback_data: fallbackObject,
+    fallback_data,
     method: 'POST',
     body,
     controller: abortController,

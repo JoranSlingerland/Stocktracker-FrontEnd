@@ -2,22 +2,22 @@ import { useEffect, useState } from 'react';
 
 function useFetch<Body, Response>({
   body,
-  overWrite = false,
   fetchData,
   enabled = true,
   background = false,
+  overwrite = false,
 }: {
   body: Body;
-  overWrite?: boolean;
   fetchData: (params: {
     body: Body;
     abortController: AbortController;
-    overWrite?: boolean;
+    overwrite?: boolean;
   }) => Promise<{ response: Response; error: boolean }>;
   enabled?: boolean;
   background?: boolean;
+  overwrite?: boolean;
 }) {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [refetch, setRefetch] = useState(false);
   const [data, setData] = useState<Response>();
@@ -34,12 +34,16 @@ function useFetch<Body, Response>({
       if (!background || !refetch) {
         setIsLoading(true);
       }
-      setRefetch(false);
 
-      await fetchData({ body, abortController, overWrite }).then((data) => {
+      await fetchData({
+        body,
+        abortController,
+        overwrite: overwrite || refetch,
+      }).then((data) => {
         setData(data.response);
         setIsError(data.error);
         setIsLoading(false);
+        setRefetch(false);
       });
     };
 

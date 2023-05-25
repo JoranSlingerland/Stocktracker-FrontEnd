@@ -36,7 +36,6 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
       },
       enabled: true,
     });
-
   const { data: stockPieData, isLoading: stockPieIsLoading } = usePieData({
     body: {
       dataType: 'stocks',

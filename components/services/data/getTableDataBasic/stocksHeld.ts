@@ -32,17 +32,17 @@ async function getTableDataBasicStocksHeld({
 function useTableDataBasicStocksHeld({
   body,
   enabled = true,
-  overWrite = false,
+  overwrite = false,
 }: {
   body: GetTableDataBasicBody;
   enabled?: boolean;
-  overWrite?: boolean;
+  overwrite?: boolean;
 }) {
   const fetchResult = useFetch<GetTableDataBasicBody, StocksHeldData[]>({
     body,
     fetchData: getTableDataBasicStocksHeld,
     enabled,
-    overWrite,
+    overwrite,
   });
 
   return fetchResult;
