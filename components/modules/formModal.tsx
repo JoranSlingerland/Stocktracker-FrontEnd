@@ -18,7 +18,7 @@ const StockFormModal = ({
   isEdit = false,
 }: {
   currency: string;
-  parentCallback: () => Promise<void>;
+  parentCallback: () => void;
   initialValues?: any;
   isEdit?: boolean;
 }): JSX.Element => {
@@ -114,7 +114,7 @@ const TransactionsFormModal = ({
   isEdit = false,
 }: {
   currency: string;
-  parentCallback: () => Promise<void>;
+  parentCallback: () => Promise<void> | void;
   initialValues?: any;
   isEdit?: boolean;
 }): JSX.Element => {

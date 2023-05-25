@@ -11,7 +11,7 @@ export const InputInvestedColumns = (
     id: string[],
     container: 'input_invested' | 'input_transactions'
   ) => Promise<void>,
-  parentCallback: () => Promise<void>
+  parentCallback: () => void
 ): ColumnsType => [
   {
     title: 'Transaction Date',

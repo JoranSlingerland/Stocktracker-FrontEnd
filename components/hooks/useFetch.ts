@@ -19,13 +19,17 @@ function useFetch<Body, Response>({
   background = false,
   overwrite = false,
 }: UseFetchOptions<Body, Response>) {
+  // Constants
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [refetch, setRefetch] = useState(false);
   const [data, setData] = useState<Response>();
+  const [cacheOnly, setCacheOnly] = useState(false);
 
-  const refetchData = () => {
+  // Functions
+  const refetchData = ({ cacheOnly = false }: { cacheOnly?: boolean } = {}) => {
     setRefetch(true);
+    setCacheOnly(cacheOnly);
   };
   const overwriteData = (data: Response) => {
     setData(data);
@@ -36,6 +40,8 @@ function useFetch<Body, Response>({
       abortController,
       overwrite: overwrite || refetch,
     }).then((data) => {
+      if (cacheOnly) return;
+
       setData(data.response);
       setIsError(data.error);
       setIsLoading(false);
@@ -43,6 +49,7 @@ function useFetch<Body, Response>({
     });
   };
 
+  // Effects
   useEffect(() => {
     let abortController = new AbortController();
 

@@ -1,5 +1,5 @@
 import { Divider, Input, Typography } from 'antd';
-import { useState, useEffect, useReducer } from 'react';
+import { useState } from 'react';
 import AntdTable from '../../components/elements/antdTable';
 import {
   TransactionsFormModal,
@@ -9,11 +9,7 @@ import { deleteInputItems } from '../../components/services/delete/deleteInputIt
 import { InputInvestedColumns } from '../../components/elements/columns/InputInvestedColumns';
 import { InputTransactionsColumns } from '../../components/elements/columns/InputTransactionsColumns';
 import { UserSettings } from '../../components/services/data/getUserData';
-import {
-  getTableDataBasicInputInvested,
-  getTableDataBasicInputInvestedInitialState,
-  getTableDataBasicInputInvestedReducer,
-} from '../../components/services/data/getTableDataBasic/inputInvested';
+import { useTableDataBasicInputInvested } from '../../components/services/data/getTableDataBasic/inputInvested';
 import { useTableDataBasicInputTransactions } from '../../components/services/data/getTableDataBasic/inputTransactions';
 const { Search } = Input;
 const { Title } = Typography;
@@ -29,31 +25,20 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
       containerName: 'input_transactions',
     },
   });
+  const {
+    data: inputInvestedData,
+    isLoading: inputInvestedIsloading,
+    refetchData: inputInvestedRefetch,
+    overwriteData: inputInvestedOverwrite,
+  } = useTableDataBasicInputInvested({
+    body: {
+      containerName: 'input_invested',
+    },
+  });
   const [InputTransactionsSearchText, setInputTransactionsSearchText] =
     useState<any>();
-  const [InputInvestedData, InputInvestedDataDispatcher] = useReducer(
-    getTableDataBasicInputInvestedReducer,
-    getTableDataBasicInputInvestedInitialState({ isLoading: true })
-  );
   const [InputInvestedSearchText, setInputInvestedSearchText] =
     useState<any>(undefined);
-
-  // columns
-
-  useEffect(() => {
-    const abortController = new AbortController();
-
-    getTableDataBasicInputInvested({
-      body: {
-        containerName: 'input_invested',
-      },
-      abortController,
-      dispatcher: InputInvestedDataDispatcher,
-    });
-    return () => {
-      abortController.abort();
-    };
-  }, []);
 
   async function deleteData(
     id: string[],
@@ -65,42 +50,20 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
         container: container,
       },
     }).then(() => {
-      if (container === 'input_invested') {
-        const newData = InputInvestedData.data.filter(
+      if (container === 'input_invested' && inputInvestedData) {
+        const newData = inputInvestedData.filter(
           (item: any) => !id.includes(item.id)
         );
-        InputInvestedDataDispatcher({
-          type: 'FETCH_SUCCESS',
-          payload: newData,
-        });
+        inputInvestedOverwrite(newData);
+        inputInvestedRefetch({ cacheOnly: true });
       } else if (container === 'input_transactions' && inputTransactionsData) {
-        console.log('input_transactions', inputTransactionsData);
         const newData = inputTransactionsData.filter(
           (item) => !id.includes(item.id)
         );
-        console.log('newData', newData);
         inputTransactionsOverwrite(newData);
+        inputTransactionsRefetch({ cacheOnly: true });
       }
-      overWriteTableData(container);
     });
-  }
-
-  async function overWriteTableData(
-    container: 'input_invested' | 'input_transactions'
-  ): Promise<void> {
-    if (container === 'input_invested') {
-      getTableDataBasicInputInvested({
-        body: {
-          containerName: container,
-        },
-        abortController: new AbortController(),
-        dispatcher: InputInvestedDataDispatcher,
-        overwrite: true,
-      });
-    }
-    if (container === 'input_transactions') {
-      inputTransactionsRefetch();
-    }
   }
 
   // Render
@@ -117,7 +80,7 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
         isLoading={inputTransactionsIsloading}
         columns={InputTransactionsColumns(
           deleteData,
-          () => overWriteTableData('input_transactions'),
+          () => inputTransactionsRefetch(),
           userSettings.currency
         )}
         data={inputTransactionsData}
@@ -151,7 +114,7 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
             <div className="mb-1 ml-auto">
               <StockFormModal
                 currency={userSettings.currency}
-                parentCallback={() => overWriteTableData('input_transactions')}
+                parentCallback={() => inputTransactionsRefetch()}
               />
             </div>
           </div>
@@ -162,11 +125,11 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
         Money Transactions
       </Title>
       <AntdTable
-        isLoading={InputInvestedData.isLoading}
+        isLoading={inputInvestedIsloading}
         columns={InputInvestedColumns(userSettings.currency, deleteData, () =>
-          overWriteTableData('input_invested')
+          inputInvestedRefetch()
         )}
-        data={InputInvestedData.data}
+        data={inputInvestedData}
         globalSorter={true}
         searchEnabled={true}
         searchText={InputInvestedSearchText}
@@ -197,7 +160,7 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
             <div className="ml-auto">
               <TransactionsFormModal
                 currency={userSettings.currency}
-                parentCallback={() => overWriteTableData('input_invested')}
+                parentCallback={() => inputInvestedRefetch()}
               />
             </div>
           </div>
