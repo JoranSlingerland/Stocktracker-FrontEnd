@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useDeepCompareEffect } from 'ahooks';
 
 interface UseFetchOptions<Body, Response> {
   body: Body;
@@ -10,6 +11,15 @@ interface UseFetchOptions<Body, Response> {
   enabled?: boolean;
   background?: boolean;
   overwrite?: boolean;
+  initialData?: Response;
+}
+
+interface UseFetchResult<Response> {
+  data: Response | undefined;
+  isLoading: boolean;
+  isError: boolean;
+  refetchData: (params?: { cacheOnly?: boolean }) => void;
+  overwriteData: (data: Response) => void;
 }
 
 function useFetch<Body, Response>({
@@ -18,12 +28,13 @@ function useFetch<Body, Response>({
   enabled = true,
   background = false,
   overwrite = false,
+  initialData,
 }: UseFetchOptions<Body, Response>) {
   // Constants
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [refetch, setRefetch] = useState(false);
-  const [data, setData] = useState<Response>();
+  const [data, setData] = useState<Response | undefined>(initialData);
   const [cacheOnly, setCacheOnly] = useState(false);
 
   // Functions
@@ -50,7 +61,7 @@ function useFetch<Body, Response>({
   };
 
   // Effects
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     let abortController = new AbortController();
 
     if (enabled) {
@@ -62,10 +73,11 @@ function useFetch<Body, Response>({
     return () => {
       abortController.abort();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled, refetch]);
+  }, [enabled, refetch, body]);
 
   return { data, isLoading, isError, refetchData, overwriteData };
 }
 
-export default useFetch;
+export { useFetch };
+
+export type { UseFetchResult, UseFetchOptions };

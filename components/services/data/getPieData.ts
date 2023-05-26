@@ -1,5 +1,5 @@
 import { cachedFetch } from '../../utils/api';
-import useFetch from '../../hooks/useFetch';
+import { useFetch } from '../../hooks/useFetch';
 
 interface GetPieChartDataBody {
   dataType: 'stocks' | 'country' | 'sector' | 'currency';

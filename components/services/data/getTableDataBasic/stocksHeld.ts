@@ -1,6 +1,6 @@
 import { cachedFetch } from '../../../utils/api';
 import { StocksHeldData } from '../../../types/types';
-import useFetch from '../../../hooks/useFetch';
+import { useFetch } from '../../../hooks/useFetch';
 
 interface GetTableDataBasicBody {
   containerName: 'stocks_held';

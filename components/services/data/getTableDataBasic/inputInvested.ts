@@ -1,5 +1,5 @@
 import { cachedFetch } from '../../../utils/api';
-import useFetch from '../../../hooks/useFetch';
+import { useFetch } from '../../../hooks/useFetch';
 
 interface GetTableDataBasicBody {
   containerName: 'input_invested';
