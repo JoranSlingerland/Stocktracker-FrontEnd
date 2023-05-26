@@ -11,8 +11,8 @@ import { valueGrowthColumns } from '../../components/elements/columns/valueGrowt
 import { ReceivedDividedColumns } from '../../components/elements/columns/ReceivedDividedColumns';
 import { TransactionCostColumns } from '../../components/elements/columns/TransactionCostColumns';
 import { UseUserData } from '../../components/services/data/getUserData';
-import { useBarchartData } from '../../components/services/data/getBarchartData';
-import { useLineChartData } from '../../components/services/data/getLineChartData';
+import { useBarchartData } from '../../components/services/chart/bar';
+import { useLineChartData } from '../../components/services/chart/line';
 import { UseFetchResult } from '../../components/hooks/useFetch';
 import { TotalsData } from '../../components/types/types';
 
