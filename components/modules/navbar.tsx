@@ -25,7 +25,7 @@ import {
   formatCurrency,
   formatPercentageWithColors,
 } from '../utils/formatting';
-import useLocalStorageState from '../hooks/useLocalStorageState';
+import useSessionStorageState from '../hooks/useSessionStorageState';
 import { startOrchestrator } from '../services/orchestrator/startOrchestrator';
 import { MenuOutlined } from '@ant-design/icons';
 import { TotalsData } from '../types/types';
@@ -50,7 +50,7 @@ export default function App({
   // const setup
   const [current, setCurrent] = useState('portfolio');
   const { timeFrame, setTimeFrame } = timeFrameState;
-  const [tab, setTab] = useLocalStorageState('navbarTab', '1');
+  const [tab, setTab] = useSessionStorageState('navbarTab', '1');
   const timeFrameMap = {
     max: 'Max',
     year: 'Year',
@@ -431,7 +431,7 @@ export default function App({
             <a
               href="/.auth/logout?post_logout_redirect_uri=/"
               onClick={() => {
-                localStorage.clear();
+                sessionStorage.clear();
               }}
             >
               Logout
@@ -490,7 +490,7 @@ export default function App({
               type="secondary"
               href="/.auth/logout?post_logout_redirect_uri=/"
               onClick={() => {
-                localStorage.clear();
+                sessionStorage.clear();
               }}
             >
               Logout

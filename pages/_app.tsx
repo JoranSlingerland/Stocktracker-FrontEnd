@@ -5,7 +5,7 @@ import type { AppProps } from 'next/app';
 import { useEffect, useState, useMemo } from 'react';
 import { regularFetch } from '../components/utils/api';
 import { TimeFramestate } from '../components/types/types';
-import useLocalStorageState from '../components/hooks/useLocalStorageState';
+import useSessionStorageState from '../components/hooks/useSessionStorageState';
 import { dataToGetSwitch } from '../components/utils/dateTimeHelpers';
 import Footer from '../components/modules/footer';
 import React from 'react';
@@ -30,7 +30,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     },
   });
   const userSettings = useUserData();
-  const [timeFrame, setTimeFrame] = useLocalStorageState('timeFrame', 'max');
+  const [timeFrame, setTimeFrame] = useSessionStorageState('timeFrame', 'max');
   const timeFrameState: TimeFramestate = { timeFrame, setTimeFrame };
   const timeFrameDates = dataToGetSwitch(timeFrame);
   const timeFrameBody = useMemo(() => {

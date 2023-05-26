@@ -13,7 +13,7 @@ import {
 import useWindowDimensions from '../../components/hooks/useWindowDimensions';
 import AntdTable from '../../components/elements/antdTable';
 import { currencyCodes } from '../../components/constants/currencyCodes';
-import useLocalStorageState from '../../components/hooks/useLocalStorageState';
+import useSessionStorageState from '../../components/hooks/useSessionStorageState';
 import { startOrchestrator } from '../../components/services/orchestrator/startOrchestrator';
 import { addUserData } from '../../components/services/add/addUserData';
 import { orchestratorColumns } from '../../components/elements/columns/orchestratorColumns';
@@ -24,9 +24,9 @@ import { RedoOutlined } from '@ant-design/icons';
 const { Text, Title, Link } = Typography;
 
 // handle click functions
-function handleLocalStorageClearClick() {
-  localStorage.clear();
-  if (localStorage.length === 0) {
+function handleSessionStorageClearClick() {
+  sessionStorage.clear();
+  if (sessionStorage.length === 0) {
     message.success('Local storage cleared');
   } else {
     message.error('Something went wrong :(');
@@ -34,7 +34,7 @@ function handleLocalStorageClearClick() {
 }
 
 export default function Home({ userSettings }: { userSettings: UseUserData }) {
-  const [tab, setTab] = useLocalStorageState('settingsTab', '1');
+  const [tab, setTab] = useSessionStorageState('settingsTab', '1');
   const dimensions = useWindowDimensions();
   const {
     data: orchestratorListData,
@@ -297,7 +297,7 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
               'Clear local storage',
               'This will clear all cached data in the local storage of the browser.',
               <Button
-                onClick={() => handleLocalStorageClearClick()}
+                onClick={() => handleSessionStorageClearClick()}
                 type="primary"
                 size="large"
               >

@@ -85,7 +85,7 @@ export default function tabs({
         2,
         60,
         <Statistic
-          value={totalPerformanceData?.[0].realized.dividends}
+          value={totalPerformanceData?.[0]?.realized.dividends}
           title={'Received dividends'}
           formatter={(value) => formatCurrency({ value, currency })}
           className="ml-1"
@@ -95,7 +95,7 @@ export default function tabs({
         3,
         60,
         <Statistic
-          value={totalPerformanceData?.[0].realized.transaction_cost}
+          value={totalPerformanceData?.[0]?.realized.transaction_cost}
           title={'Transaction cost'}
           formatter={(value) => formatCurrency({ value, currency })}
           className="ml-1"
@@ -105,7 +105,7 @@ export default function tabs({
         4,
         100,
         <Statistic
-          value={totalPerformanceData?.[0].unrealized.total_pl}
+          value={totalPerformanceData?.[0]?.unrealized.total_pl}
           formatter={(value) => formatCurrency({ value, currency })}
           title={
             totalPerformanceData &&
@@ -116,7 +116,7 @@ export default function tabs({
           className="ml-1"
         ></Statistic>,
         <Statistic
-          value={totalPerformanceData?.[0].unrealized.total_pl_percentage}
+          value={totalPerformanceData?.[0]?.unrealized.total_pl_percentage}
           formatter={(value) =>
             formatPercentageWithColors({
               value,

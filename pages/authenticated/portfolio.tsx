@@ -1,7 +1,7 @@
 import { Tabs, Collapse, Typography } from 'antd';
 import PieChart from '../../components/elements/PrimeFacePieChart';
 import AntdTable from '../../components/elements/antdTable';
-import useLocalStorageState from '../../components/hooks/useLocalStorageState';
+import useSessionStorageState from '../../components/hooks/useSessionStorageState';
 import { RealizedColumns } from '../../components/elements/columns/RealizedColumns';
 import { UnRealizedColumns } from '../../components/elements/columns/UnRealizedColumns';
 import { usePieData } from '../../components/services/data/getPieData';
@@ -13,8 +13,8 @@ const { Panel } = Collapse;
 
 export default function Home({ userSettings }: { userSettings: UseUserData }) {
   // Const setup
-  const [tab, setTab] = useLocalStorageState('portfolioTab', '1');
-  const [CollapseKey, setCollapseKey] = useLocalStorageState(
+  const [tab, setTab] = useSessionStorageState('portfolioTab', '1');
+  const [CollapseKey, setCollapseKey] = useSessionStorageState(
     'portfolioCollapse',
     '0'
   );

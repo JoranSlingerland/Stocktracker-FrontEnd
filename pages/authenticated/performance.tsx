@@ -5,7 +5,7 @@ import BasicLineGraph from '../../components/elements/PrimeFaceLineGraph';
 import PrimeFaceBarChart from '../../components/elements/PrimeFaceBarChart';
 import AntdTable from '../../components/elements/antdTable';
 import { TimeFramestate } from '../../components/types/types';
-import useLocalStorageState from '../../components/hooks/useLocalStorageState';
+import useSessionStorageState from '../../components/hooks/useSessionStorageState';
 import { useTableDataPerformanceStocksHeld } from '../../components/services/data/GetTableDataPerformance/stocksHeld';
 import { valueGrowthColumns } from '../../components/elements/columns/valueGrowthColumns';
 import { ReceivedDividedColumns } from '../../components/elements/columns/ReceivedDividedColumns';
@@ -45,7 +45,7 @@ export default function performance({
     }
     return body;
   }, [timeFrameDates.end_date, timeFrameDates.start_date]);
-  const [tab, setTab] = useLocalStorageState('performanceTab', 1);
+  const [tab, setTab] = useSessionStorageState('performanceTab', 1);
   const { data: valueGrowthData, isLoading: valueGrowthIsLoading } =
     useLineChartData({
       body: {
