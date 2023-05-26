@@ -2,16 +2,15 @@ import { Chart } from 'primereact/chart';
 import { Spin } from 'antd';
 import { formatCurrency } from '../utils/formatting';
 import { BarChartData } from '../services/data/getBarchartData';
-import { UserSettings } from '../services/data/getUserData';
 
 export default function PrimeFacePieChart({
   data,
   isloading,
-  userSettings,
+  currency,
 }: {
   data: BarChartData[] | undefined;
   isloading: boolean;
-  userSettings: UserSettings;
+  currency: string;
 }): JSX.Element {
   const labels = data
     ? data.map(function (index) {
@@ -108,7 +107,7 @@ export default function PrimeFacePieChart({
             label += ': ';
             label += formatCurrency({
               value: context.dataset.data[index],
-              currency: userSettings.currency,
+              currency,
             });
             return label;
           },
@@ -149,7 +148,7 @@ export default function PrimeFacePieChart({
               return formatCurrency({
                 value: value,
                 maximumFractionDigits: 0,
-                currency: userSettings.currency,
+                currency,
               });
             }
           },

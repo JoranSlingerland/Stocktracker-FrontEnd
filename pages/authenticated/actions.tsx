@@ -8,13 +8,13 @@ import {
 import { deleteInputItems } from '../../components/services/delete/deleteInputItems';
 import { InputInvestedColumns } from '../../components/elements/columns/InputInvestedColumns';
 import { InputTransactionsColumns } from '../../components/elements/columns/InputTransactionsColumns';
-import { UserSettings } from '../../components/services/data/getUserData';
+import { UseUserData } from '../../components/services/data/getUserData';
 import { useTableDataBasicInputInvested } from '../../components/services/data/getTableDataBasic/inputInvested';
 import { useTableDataBasicInputTransactions } from '../../components/services/data/getTableDataBasic/inputTransactions';
 const { Search } = Input;
 const { Title } = Typography;
 
-export default function Home({ userSettings }: { userSettings: UserSettings }) {
+export default function Home({ userSettings }: { userSettings: UseUserData }) {
   const {
     data: inputTransactionsData,
     isLoading: inputTransactionsIsloading,
@@ -81,7 +81,7 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
         columns={InputTransactionsColumns(
           deleteData,
           () => inputTransactionsRefetch(),
-          userSettings.currency
+          userSettings.data.currency
         )}
         data={inputTransactionsData}
         globalSorter={true}
@@ -113,7 +113,7 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
             </div>
             <div className="mb-1 ml-auto">
               <StockFormModal
-                currency={userSettings.currency}
+                currency={userSettings.data.currency}
                 parentCallback={() => inputTransactionsRefetch()}
               />
             </div>
@@ -126,8 +126,10 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
       </Title>
       <AntdTable
         isLoading={inputInvestedIsloading}
-        columns={InputInvestedColumns(userSettings.currency, deleteData, () =>
-          inputInvestedRefetch()
+        columns={InputInvestedColumns(
+          userSettings.data.currency,
+          deleteData,
+          () => inputInvestedRefetch()
         )}
         data={inputInvestedData}
         globalSorter={true}
@@ -159,7 +161,7 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
             </div>
             <div className="ml-auto">
               <TransactionsFormModal
-                currency={userSettings.currency}
+                currency={userSettings.data.currency}
                 parentCallback={() => inputInvestedRefetch()}
               />
             </div>

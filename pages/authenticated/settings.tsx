@@ -14,14 +14,10 @@ import useWindowDimensions from '../../components/hooks/useWindowDimensions';
 import AntdTable from '../../components/elements/antdTable';
 import { currencyCodes } from '../../components/constants/currencyCodes';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
-import { getUserData } from '../../components/services/data/getUserData';
 import { startOrchestrator } from '../../components/services/orchestrator/startOrchestrator';
 import { addUserData } from '../../components/services/add/addUserData';
 import { orchestratorColumns } from '../../components/elements/columns/orchestratorColumns';
-import {
-  UserSettings,
-  userDataActions,
-} from '../../components/services/data/getUserData';
+import { UseUserData } from '../../components/services/data/getUserData';
 import { useListOrchestrator } from '../../components/services/orchestrator/OrchestratorList';
 import { RedoOutlined } from '@ant-design/icons';
 
@@ -37,13 +33,7 @@ function handleLocalStorageClearClick() {
   }
 }
 
-export default function Home({
-  userSettings,
-  userSettingsDispatch,
-}: {
-  userSettings: UserSettings;
-  userSettingsDispatch: (action: userDataActions) => void;
-}) {
+export default function Home({ userSettings }: { userSettings: UseUserData }) {
   const [tab, setTab] = useLocalStorageState('settingsTab', '1');
   const dimensions = useWindowDimensions();
   const {
@@ -57,19 +47,15 @@ export default function Home({
 
   // handle click functions
   async function handleSaveAccountSettings() {
-    userSettingsDispatch({ type: 'setLoading', payload: true });
-    await addUserData({
-      body: userSettings,
-    }).then(() => {
-      getUserData({
-        overwrite: true,
-      }).then(({ response }) => {
-        userSettingsDispatch({
-          type: 'setAll',
-          payload: response,
+    if (userSettings.data) {
+      await addUserData({
+        body: userSettings.data,
+      }).then(() => {
+        userSettings.refetchData({
+          cacheOnly: true,
         });
       });
-    });
+    }
   }
 
   // constants
@@ -102,7 +88,9 @@ export default function Home({
                   handleSaveAccountSettings();
                 }}
                 disabled={
-                  currencyCodes.find((o) => o.value === userSettings.currency)
+                  currencyCodes.find(
+                    (o) => o.value === userSettings.data.currency
+                  )
                     ? false
                     : true || userSettings.isLoading
                 }
@@ -132,11 +120,11 @@ export default function Home({
               description={
                 <Input.Password
                   className="w-72 sm:w-96"
-                  value={userSettings.clearbit_api_key}
+                  value={userSettings.data.clearbit_api_key}
                   onChange={(e) => {
-                    userSettingsDispatch({
-                      type: 'setClearbitApiKey',
-                      payload: e.target.value,
+                    userSettings.overwriteData({
+                      ...userSettings.data,
+                      clearbit_api_key: e.target.value,
                     });
                   }}
                   size="small"
@@ -167,11 +155,11 @@ export default function Home({
               description={
                 <Input.Password
                   className="w-72 sm:w-96"
-                  value={userSettings.brandfetch_api_key}
+                  value={userSettings.data.brandfetch_api_key}
                   onChange={(e) => {
-                    userSettingsDispatch({
-                      type: 'setBrandfetchApiKey',
-                      payload: e.target.value,
+                    userSettings.overwriteData({
+                      ...userSettings.data,
+                      brandfetch_api_key: e.target.value,
                     });
                   }}
                   size="small"
@@ -202,11 +190,11 @@ export default function Home({
               description={
                 <Input.Password
                   className="w-72 sm:w-96"
-                  value={userSettings.alpha_vantage_api_key}
+                  value={userSettings.data.alpha_vantage_api_key}
                   onChange={(e) => {
-                    userSettingsDispatch({
-                      type: 'setAlphaVantageApiKey',
-                      payload: e.target.value,
+                    userSettings.overwriteData({
+                      ...userSettings.data,
+                      alpha_vantage_api_key: e.target.value,
                     });
                   }}
                   size="small"
@@ -220,15 +208,17 @@ export default function Home({
               description={
                 <AutoComplete
                   className="w-72 sm:w-96"
-                  value={userSettings.currency}
+                  value={userSettings.data.currency}
                   onChange={(value) => {
-                    userSettingsDispatch({
-                      type: 'setCurrency',
-                      payload: value,
+                    userSettings.overwriteData({
+                      ...userSettings.data,
+                      currency: value,
                     });
                   }}
                   status={
-                    currencyCodes.find((o) => o.value === userSettings.currency)
+                    currencyCodes.find(
+                      (o) => o.value === userSettings.data.currency
+                    )
                       ? ''
                       : 'error'
                   }
@@ -240,9 +230,9 @@ export default function Home({
                       .indexOf(inputValue.toUpperCase()) !== -1
                   }
                   onSelect={(value) => {
-                    userSettingsDispatch({
-                      type: 'setCurrency',
-                      payload: value,
+                    userSettings.overwriteData({
+                      ...userSettings.data,
+                      currency: value,
                     });
                   }}
                 />
@@ -254,11 +244,11 @@ export default function Home({
               title={<Text strong>Theme</Text>}
               description={
                 <Select
-                  value={userSettings.dark_mode}
+                  value={userSettings.data.dark_mode}
                   onChange={(value) => {
-                    userSettingsDispatch({
-                      type: 'setDarkMode',
-                      payload: value,
+                    userSettings.overwriteData({
+                      ...userSettings.data,
+                      dark_mode: value,
                     });
                   }}
                   options={[

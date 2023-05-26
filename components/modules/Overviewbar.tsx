@@ -4,20 +4,19 @@ import {
   formatPercentageWithColors,
 } from '../utils/formatting';
 import { LineChartData } from '../services/data/getLineChartData';
-import { UserSettings } from '../services/data/getUserData';
 import { TotalsData } from '../../components/types/types';
 
 export default function tabs({
   totalPerformanceData,
   valueGrowthData,
   loading,
-  userSettings,
+  currency,
   tabState,
 }: {
   totalPerformanceData: TotalsData[] | undefined;
   valueGrowthData: LineChartData | undefined;
   loading: boolean;
-  userSettings: UserSettings;
+  currency: string;
   tabState: any;
 }): JSX.Element {
   const { tab, setTab } = tabState;
@@ -67,9 +66,7 @@ export default function tabs({
         100,
         <Statistic
           value={valueGrowth}
-          formatter={(value) =>
-            formatCurrency({ value, currency: userSettings.currency })
-          }
+          formatter={(value) => formatCurrency({ value, currency })}
           title={valueGrowth > 0 ? 'Value growth' : 'Value loss'}
           className="ml-1"
         ></Statistic>,
@@ -90,9 +87,7 @@ export default function tabs({
         <Statistic
           value={totalPerformanceData?.[0].realized.dividends}
           title={'Received dividends'}
-          formatter={(value) =>
-            formatCurrency({ value, currency: userSettings.currency })
-          }
+          formatter={(value) => formatCurrency({ value, currency })}
           className="ml-1"
         />
       )}
@@ -102,9 +97,7 @@ export default function tabs({
         <Statistic
           value={totalPerformanceData?.[0].realized.transaction_cost}
           title={'Transaction cost'}
-          formatter={(value) =>
-            formatCurrency({ value, currency: userSettings.currency })
-          }
+          formatter={(value) => formatCurrency({ value, currency })}
           className="ml-1"
         />
       )}
@@ -113,9 +106,7 @@ export default function tabs({
         100,
         <Statistic
           value={totalPerformanceData?.[0].unrealized.total_pl}
-          formatter={(value) =>
-            formatCurrency({ value, currency: userSettings.currency })
-          }
+          formatter={(value) => formatCurrency({ value, currency })}
           title={
             totalPerformanceData &&
             totalPerformanceData[0]?.unrealized?.total_pl > 0

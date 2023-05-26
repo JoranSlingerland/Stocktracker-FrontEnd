@@ -5,13 +5,13 @@ import useLocalStorageState from '../../components/hooks/useLocalStorageState';
 import { RealizedColumns } from '../../components/elements/columns/RealizedColumns';
 import { UnRealizedColumns } from '../../components/elements/columns/UnRealizedColumns';
 import { usePieData } from '../../components/services/data/getPieData';
-import { UserSettings } from '../../components/services/data/getUserData';
+import { UseUserData } from '../../components/services/data/getUserData';
 import { useTableDataBasicStocksHeld } from '../../components/services/data/getTableDataBasic/stocksHeld';
 
 const { Title } = Typography;
 const { Panel } = Collapse;
 
-export default function Home({ userSettings }: { userSettings: UserSettings }) {
+export default function Home({ userSettings }: { userSettings: UseUserData }) {
   // Const setup
   const [tab, setTab] = useLocalStorageState('portfolioTab', '1');
   const [CollapseKey, setCollapseKey] = useLocalStorageState(
@@ -73,7 +73,7 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
           <PieChart
             data={stockPieData}
             isloading={stockPieIsLoading}
-            userSettings={userSettings}
+            currency={userSettings.data.currency}
           />
         </div>
       ),
@@ -86,7 +86,7 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
           <PieChart
             data={sectorPieData}
             isloading={sectorPieIsLoading}
-            userSettings={userSettings}
+            currency={userSettings.data.currency}
           />
         </div>
       ),
@@ -99,7 +99,7 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
           <PieChart
             data={countryPieData}
             isloading={countryPieIsLoading}
-            userSettings={userSettings}
+            currency={userSettings.data.currency}
           />
         </div>
       ),
@@ -112,7 +112,7 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
           <PieChart
             data={currencyPieData}
             isloading={currencyPieIsLoading}
-            userSettings={userSettings}
+            currency={userSettings.data.currency}
           />
         </div>
       ),
@@ -134,7 +134,7 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
         items={items}
       />
       <AntdTable
-        columns={UnRealizedColumns(userSettings.currency)}
+        columns={UnRealizedColumns(userSettings.data.currency)}
         data={unRealizedData}
         isLoading={unRealizedIsLoading}
         globalSorter={true}
@@ -152,7 +152,7 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
       >
         <Panel className="p-0" header="Realized Stocks" key="1">
           <AntdTable
-            columns={RealizedColumns(userSettings.currency)}
+            columns={RealizedColumns(userSettings.data.currency)}
             data={realizedData}
             isLoading={realizedIsLoading}
             globalSorter={true}

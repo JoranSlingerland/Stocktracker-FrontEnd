@@ -24,7 +24,7 @@ import {
 import TagRow from '../../components/elements/TagRow';
 import StatCard from '../../components/elements/StatCard';
 import { convertTransactionsArray } from '../../components/utils/misc';
-import { UserSettings } from '../../components/services/data/getUserData';
+import { UseUserData } from '../../components/services/data/getUserData';
 import { useTableDataBasicStocksHeld } from '../../components/services/data/getTableDataBasic/stocksHeld';
 import { useTableDataBasicInputTransactions } from '../../components/services/data/getTableDataBasic/inputTransactions';
 
@@ -53,7 +53,7 @@ function socialsIcon(platform: Platform, url: string) {
   );
 }
 
-function Stocks({ userSettings }: { userSettings: UserSettings }) {
+function Stocks({ userSettings }: { userSettings: UseUserData }) {
   const router = useRouter();
   const stockSymbol = router.query.stock as string;
   const [tab, setTab] = useState('1');
@@ -95,7 +95,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
                 formatter: (value) =>
                   formatCurrency({
                     value,
-                    currency: userSettings.currency,
+                    currency: userSettings.data.currency,
                   }),
               }}
               className="m-2 p-0"
@@ -112,7 +112,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
                 formatter: (value) =>
                   formatCurrency({
                     value,
-                    currency: userSettings.currency,
+                    currency: userSettings.data.currency,
                   }),
               }}
               className="m-2 p-0"
@@ -126,7 +126,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
                 formatter: (value) =>
                   formatCurrency({
                     value,
-                    currency: userSettings.currency,
+                    currency: userSettings.data.currency,
                   }),
               }}
               className="m-2 p-0"
@@ -161,7 +161,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
               <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
                   value: stockData?.[0]?.['unrealized']['cost_per_share'],
-                  currency: userSettings.currency,
+                  currency: userSettings.data.currency,
                 })}
               </Skeleton>
             </Descriptions.Item>
@@ -169,7 +169,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
               <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
                   value: stockData?.[0]?.['unrealized']['close_value'],
-                  currency: userSettings.currency,
+                  currency: userSettings.data.currency,
                 })}
               </Skeleton>
             </Descriptions.Item>
@@ -184,7 +184,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
               <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
                   value: stockData?.[0]?.['unrealized']['forex_pl'],
-                  currency: userSettings.currency,
+                  currency: userSettings.data.currency,
                 })}
                 <Divider type="vertical" />
                 {formatPercentageWithColors({
@@ -203,7 +203,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
               <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
                   value: stockData?.[0]?.['unrealized']['value_pl'],
-                  currency: userSettings.currency,
+                  currency: userSettings.data.currency,
                 })}
                 <Divider type="vertical" />
                 {formatPercentageWithColors({
@@ -222,7 +222,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
               <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
                   value: stockData?.[0]?.['unrealized']['total_pl'],
-                  currency: userSettings.currency,
+                  currency: userSettings.data.currency,
                 })}
                 <Divider type="vertical" />
                 {formatPercentageWithColors({
@@ -251,7 +251,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
               <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
                   value: stockData?.[0]?.['realized']['cost_per_share_buy'],
-                  currency: userSettings.currency,
+                  currency: userSettings.data.currency,
                 })}
               </Skeleton>
             </Descriptions.Item>
@@ -259,7 +259,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
               <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
                   value: stockData?.[0]?.['realized']['cost_per_share_sell'],
-                  currency: userSettings.currency,
+                  currency: userSettings.data.currency,
                 })}
               </Skeleton>
             </Descriptions.Item>
@@ -273,7 +273,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
               <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
                   value: stockData?.[0]?.['realized']['forex_pl'],
-                  currency: userSettings.currency,
+                  currency: userSettings.data.currency,
                 })}
               </Skeleton>
               <Divider type="vertical" />
@@ -294,7 +294,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
               <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
                   value: stockData?.[0]?.['realized']['value_pl'],
-                  currency: userSettings.currency,
+                  currency: userSettings.data.currency,
                 })}
                 <Divider type="vertical" />
                 {formatPercentageWithColors({
@@ -313,7 +313,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
               <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
                   value: stockData?.[0]?.['realized']['total_pl'],
-                  currency: userSettings.currency,
+                  currency: userSettings.data.currency,
                 })}
                 <Divider type="vertical" />
                 {formatPercentageWithColors({
@@ -376,7 +376,7 @@ function Stocks({ userSettings }: { userSettings: UserSettings }) {
                           <Text type="secondary">{`transactions costs: ${formatCurrency(
                             {
                               value: value.transaction_costs,
-                              currency: userSettings.currency,
+                              currency: userSettings.data.currency,
                             }
                           )}`}</Text>
                         </div>

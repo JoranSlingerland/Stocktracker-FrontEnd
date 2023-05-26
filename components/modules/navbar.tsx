@@ -28,9 +28,9 @@ import {
 import useLocalStorageState from '../hooks/useLocalStorageState';
 import { startOrchestrator } from '../services/orchestrator/startOrchestrator';
 import { MenuOutlined } from '@ant-design/icons';
-import { UserSettings } from '../services/data/getUserData';
 import { TotalsData } from '../types/types';
 import { UseFetchResult } from '../hooks/useFetch';
+import { UseUserData } from '../services/data/getUserData';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -44,7 +44,7 @@ export default function App({
 }: {
   userInfo: UserInfo_Type;
   timeFrameState: TimeFramestate;
-  userSettings: UserSettings;
+  userSettings: UseUserData;
   totalPerformance: UseFetchResult<TotalsData[]>;
 }) {
   // const setup
@@ -93,7 +93,7 @@ export default function App({
               className="pt-1"
               valueStyle={{ fontSize: '24px' }}
               formatter={(value) =>
-                formatCurrency({ value, currency: userSettings.currency })
+                formatCurrency({ value, currency: userSettings.data.currency })
               }
             />
           </Skeleton>
@@ -157,7 +157,7 @@ export default function App({
             <Statistic
               value={totalPerformance.data?.[0]?.unrealized.total_value}
               formatter={(value) =>
-                formatCurrency({ value, currency: userSettings.currency })
+                formatCurrency({ value, currency: userSettings.data.currency })
               }
             />
           </Skeleton>
@@ -341,7 +341,7 @@ export default function App({
               <Text>
                 {formatCurrency({
                   value: totalPerformance.data?.[0]?.unrealized?.total_value,
-                  currency: userSettings.currency,
+                  currency: userSettings.data.currency,
                 })}
               </Text>
             </div>

@@ -10,7 +10,7 @@ import { useTableDataPerformanceStocksHeld } from '../../components/services/dat
 import { valueGrowthColumns } from '../../components/elements/columns/valueGrowthColumns';
 import { ReceivedDividedColumns } from '../../components/elements/columns/ReceivedDividedColumns';
 import { TransactionCostColumns } from '../../components/elements/columns/TransactionCostColumns';
-import { UserSettings } from '../../components/services/data/getUserData';
+import { UseUserData } from '../../components/services/data/getUserData';
 import { useBarchartData } from '../../components/services/data/getBarchartData';
 import { useLineChartData } from '../../components/services/data/getLineChartData';
 import { UseFetchResult } from '../../components/hooks/useFetch';
@@ -24,7 +24,7 @@ export default function performance({
   timeFrameDates,
   totalPerformance,
 }: {
-  userSettings: UserSettings;
+  userSettings: UseUserData;
   timeFrameState: TimeFramestate;
   timeFrameDates: { start_date: string; end_date: string };
   totalPerformance: UseFetchResult<TotalsData[]>;
@@ -96,40 +96,44 @@ export default function performance({
       <BasicLineGraph
         data={valueGrowthData}
         isloading={valueGrowthIsLoading}
-        userSettings={userSettings}
+        userSettings={userSettings.data}
       />
     );
-  }, [valueGrowthData, valueGrowthIsLoading, userSettings]);
+  }, [valueGrowthData, valueGrowthIsLoading, userSettings.data]);
 
   const totalGainsDataMemo = useMemo(() => {
     return (
       <BasicLineGraph
         data={totalGainsData}
         isloading={totalGainsIsLoading}
-        userSettings={userSettings}
+        userSettings={userSettings.data}
       />
     );
-  }, [totalGainsData, totalGainsIsLoading, userSettings]);
+  }, [totalGainsData, totalGainsIsLoading, userSettings.data]);
 
   const dividendDataMemo = useMemo(() => {
     return (
       <PrimeFaceBarChart
         data={dividendData}
         isloading={dividendIsLoading}
-        userSettings={userSettings}
+        currency={userSettings.data.currency}
       />
     );
-  }, [dividendData, dividendIsLoading, userSettings]);
+  }, [dividendData, dividendIsLoading, userSettings.data]);
 
   const totalTransactionCostDataMemo = useMemo(() => {
     return (
       <PrimeFaceBarChart
         data={totalTransactionCostData}
         isloading={totalTransactionCostIsLoading}
-        userSettings={userSettings}
+        currency={userSettings.data.currency}
       />
     );
-  }, [totalTransactionCostData, totalTransactionCostIsLoading, userSettings]);
+  }, [
+    totalTransactionCostData,
+    totalTransactionCostIsLoading,
+    userSettings.data,
+  ]);
 
   // Render
   return (
@@ -170,7 +174,7 @@ export default function performance({
         totalPerformanceData={totalPerformance.data}
         valueGrowthData={valueGrowthData}
         loading={totalPerformance.isLoading || valueGrowthIsLoading}
-        userSettings={userSettings}
+        currency={userSettings.data.currency}
         tabState={{ tab, setTab }}
       />
       {tab === 1 && (
@@ -179,7 +183,7 @@ export default function performance({
           <Divider />
           <AntdTable
             isLoading={singleDayIsLoading}
-            columns={valueGrowthColumns(userSettings.currency)}
+            columns={valueGrowthColumns(userSettings.data.currency)}
             data={singleDayData}
             globalSorter={true}
           />
@@ -191,7 +195,7 @@ export default function performance({
           <Divider />
           <AntdTable
             isLoading={singleDayIsLoading}
-            columns={ReceivedDividedColumns(userSettings.currency)}
+            columns={ReceivedDividedColumns(userSettings.data.currency)}
             data={singleDayData}
             globalSorter={true}
           />
@@ -203,7 +207,7 @@ export default function performance({
           <Divider />
           <AntdTable
             isLoading={singleDayIsLoading}
-            columns={TransactionCostColumns(userSettings.currency)}
+            columns={TransactionCostColumns(userSettings.data.currency)}
             data={singleDayData}
             globalSorter={true}
           />
@@ -215,7 +219,7 @@ export default function performance({
           <Divider />
           <AntdTable
             isLoading={singleDayIsLoading}
-            columns={valueGrowthColumns(userSettings.currency)}
+            columns={valueGrowthColumns(userSettings.data.currency)}
             data={singleDayData}
             globalSorter={true}
           />

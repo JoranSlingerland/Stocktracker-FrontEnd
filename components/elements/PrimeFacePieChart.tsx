@@ -4,16 +4,15 @@ import { formatCurrency } from '../utils/formatting';
 import React from 'react';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { PieChartData } from '../services/data/getPieData';
-import { UserSettings } from '../services/data/getUserData';
 
 export default function PieChart({
   data,
   isloading,
-  userSettings,
+  currency,
 }: {
   data: PieChartData | undefined;
   isloading: boolean;
-  userSettings: UserSettings;
+  currency: string;
 }): JSX.Element {
   const myChartRef: any = React.createRef();
 
@@ -116,7 +115,7 @@ export default function PieChart({
             label += ': ';
             label += formatCurrency({
               value: context.dataset.data[index],
-              currency: userSettings.currency,
+              currency,
             });
             return label;
           },
@@ -204,7 +203,7 @@ export default function PieChart({
                 <div>
                   {formatCurrency({
                     value: item.data,
-                    currency: userSettings.currency,
+                    currency,
                   })}
                 </div>
               </List.Item>

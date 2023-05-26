@@ -2,26 +2,16 @@ import Navbar from '../components/modules/navbar';
 import '../styles/globals.css';
 import { ConfigProvider } from 'antd';
 import type { AppProps } from 'next/app';
-import { useEffect, useState, useReducer, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { regularFetch } from '../components/utils/api';
 import { TimeFramestate } from '../components/types/types';
 import useLocalStorageState from '../components/hooks/useLocalStorageState';
 import { dataToGetSwitch } from '../components/utils/dateTimeHelpers';
 import Footer from '../components/modules/footer';
 import React from 'react';
-import {
-  getUserData,
-  userDataInitialState,
-  userSettingsReducer,
-} from '../components/services/data/getUserData';
+import { useUserData } from '../components/services/data/getUserData';
 import { useTableDataPerformanceTotals } from '../components/services/data/GetTableDataPerformance/totals';
 import useTheme from '../components/hooks/useTheme';
-
-async function getAccountSettings(userSettingsDispatch: any) {
-  getUserData({}).then(({ response }) => {
-    userSettingsDispatch({ type: 'setAll', payload: response });
-  });
-}
 
 async function getUserInfo(setUserInfo: any) {
   await regularFetch({ url: '/.auth/me' }).then(({ response }) => {
@@ -39,12 +29,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       userDetails: '',
     },
   });
-  const [userSettings, userSettingsDispatch] = useReducer(
-    userSettingsReducer,
-    userDataInitialState({
-      isLoading: true,
-    })
-  );
+  const userSettings = useUserData();
   const [timeFrame, setTimeFrame] = useLocalStorageState('timeFrame', 'max');
   const timeFrameState: TimeFramestate = { timeFrame, setTimeFrame };
   const timeFrameDates = dataToGetSwitch(timeFrame);
@@ -70,17 +55,15 @@ function MyApp({ Component, pageProps }: AppProps) {
     },
   });
   const { algorithmTheme, className } = useTheme({
-    dark_mode: userSettings.dark_mode,
+    dark_mode: userSettings.data?.dark_mode || 'system',
   });
 
   useEffect(() => {
     getUserInfo(setUserInfo);
-    getAccountSettings(userSettingsDispatch);
   }, []);
 
   const props = {
     userInfo,
-    userSettingsDispatch,
     userSettings,
     timeFrameState,
     timeFrameDates,
