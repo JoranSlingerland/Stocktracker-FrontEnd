@@ -213,52 +213,6 @@ async function ApiWithMessage(
   }
 }
 
-type ApiRequestAction<T> =
-  | { type: 'FETCH_INIT' }
-  | { type: 'FETCH_SUCCESS'; payload: T }
-  | { type: 'FETCH_FAILURE'; payload?: T }
-  | { type: 'FETCH_ABORT' };
-
-const apiRequestReducer = (state: any, action: ApiRequestAction<any>) => {
-  switch (action.type) {
-    case 'FETCH_INIT':
-      return {
-        ...state,
-        isLoading: true,
-        isError: false,
-      };
-    case 'FETCH_SUCCESS':
-      return {
-        ...state,
-        isLoading: false,
-        isError: false,
-        data: action.payload,
-      };
-    case 'FETCH_FAILURE':
-      if (action.payload) {
-        return {
-          ...state,
-          isLoading: false,
-          isError: true,
-          data: action.payload,
-        };
-      }
-      return {
-        ...state,
-        isLoading: false,
-        isError: true,
-      };
-    case 'FETCH_ABORT':
-      return {
-        ...state,
-        isLoading: true,
-        isError: false,
-      };
-  }
-};
-
 // End of main functions
 
-export { ApiWithMessage, apiRequestReducer, regularFetch, cachedFetch };
-
-export type { ApiRequestAction };
+export { ApiWithMessage, regularFetch, cachedFetch };

@@ -10,7 +10,6 @@ import {
   Tooltip,
   List,
 } from 'antd';
-import { useEffect, useReducer } from 'react';
 import useWindowDimensions from '../../components/hooks/useWindowDimensions';
 import AntdTable from '../../components/elements/antdTable';
 import { currencyCodes } from '../../components/constants/currencyCodes';
@@ -23,11 +22,8 @@ import {
   UserSettings,
   userDataActions,
 } from '../../components/services/data/getUserData';
-import {
-  listOrchestrator,
-  listOrchestratorReducer,
-  listOrchestratorInitialState,
-} from '../../components/services/orchestrator/OrchestratorList';
+import { useListOrchestrator } from '../../components/services/orchestrator/OrchestratorList';
+import { RedoOutlined } from '@ant-design/icons';
 
 const { Text, Title, Link } = Typography;
 
@@ -48,12 +44,16 @@ export default function Home({
   userSettings: UserSettings;
   userSettingsDispatch: (action: userDataActions) => void;
 }) {
-  const [orchestratorList, orchestratorDispatch] = useReducer(
-    listOrchestratorReducer,
-    listOrchestratorInitialState({ isLoading: true })
-  );
   const [tab, setTab] = useLocalStorageState('settingsTab', '1');
   const dimensions = useWindowDimensions();
+  const {
+    data: orchestratorListData,
+    isLoading: orchestratorListIsLoading,
+    refetchData: orchestratorListRefetch,
+  } = useListOrchestrator({
+    body: { days: 7 },
+    enabled: tab === '3',
+  });
 
   // handle click functions
   async function handleSaveAccountSettings() {
@@ -71,35 +71,6 @@ export default function Home({
       });
     });
   }
-
-  // useEffects
-  useEffect(() => {
-    if (tab === '3') {
-      const abortController = new AbortController();
-      listOrchestrator({
-        body: { days: 7 },
-        dispatcher: orchestratorDispatch,
-        abortController,
-      });
-      return () => abortController.abort();
-    }
-  }, [tab]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (tab === '3') {
-        const abortController = new AbortController();
-        listOrchestrator({
-          body: { days: 7 },
-          dispatcher: orchestratorDispatch,
-          abortController,
-          background: true,
-        });
-        return () => abortController.abort();
-      }
-    }, 10000);
-    return () => clearInterval(interval);
-  }, [tab]);
 
   // constants
   const buttonRow = (
@@ -354,9 +325,21 @@ export default function Home({
       children: (
         <div>
           <AntdTable
-            isLoading={orchestratorList.isLoading}
+            isLoading={orchestratorListIsLoading}
             columns={orchestratorColumns}
-            data={orchestratorList.data}
+            data={orchestratorListData}
+            caption={
+              <div className="flex flex-row-reverse">
+                <Button
+                  icon={<RedoOutlined />}
+                  type="text"
+                  shape="circle"
+                  onClick={() => {
+                    orchestratorListRefetch();
+                  }}
+                ></Button>
+              </div>
+            }
           />
         </div>
       ),
