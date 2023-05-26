@@ -29,7 +29,7 @@ function useFetch<Body, Response>({
   background = false,
   overwrite = false,
   initialData,
-}: UseFetchOptions<Body, Response>) {
+}: UseFetchOptions<Body, Response>): UseFetchResult<Response> {
   // Constants
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);

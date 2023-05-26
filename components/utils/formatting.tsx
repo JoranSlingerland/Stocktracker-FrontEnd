@@ -10,7 +10,7 @@ function formatCurrency({
 }: {
   value: number | string | undefined;
   maximumFractionDigits?: number;
-  currency?: string;
+  currency?: string | undefined;
 }) {
   if (currency === undefined || currency === '') {
     return formatNumber(value, maximumFractionDigits);
