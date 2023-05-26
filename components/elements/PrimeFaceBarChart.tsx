@@ -9,29 +9,35 @@ export default function PrimeFacePieChart({
   isloading,
   userSettings,
 }: {
-  data: BarChartData[];
+  data: BarChartData[] | undefined;
   isloading: boolean;
   userSettings: UserSettings;
 }): JSX.Element {
-  const labels = data.map(function (index) {
-    return index.date;
-  });
+  const labels = data
+    ? data.map(function (index) {
+        return index.date;
+      })
+    : [];
 
   const uniqueLabels = Array.from(new Set(labels));
 
-  const category = data.map(function (index) {
-    return index.category;
-  });
+  const category = data
+    ? data.map(function (index) {
+        return index.category;
+      })
+    : [];
 
   function filter_json(symbol: string) {
     let outputData = [];
-    for (const element of data) {
-      for (let i = 1; i < uniqueLabels.length + 1; i++) {
-        if (
-          element['category'] === symbol &&
-          element['date'] === uniqueLabels[i - 1]
-        ) {
-          outputData.push(element);
+    if (data) {
+      for (const element of data) {
+        for (let i = 1; i < uniqueLabels.length + 1; i++) {
+          if (
+            element['category'] === symbol &&
+            element['date'] === uniqueLabels[i - 1]
+          ) {
+            outputData.push(element);
+          }
         }
       }
     }

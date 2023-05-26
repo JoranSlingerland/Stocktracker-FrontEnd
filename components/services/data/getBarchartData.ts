@@ -1,5 +1,5 @@
-import { cachedFetch, ApiRequestAction } from '../../utils/api';
-import { apiRequestReducer } from '../../utils/api';
+import { cachedFetch } from '../../utils/api';
+import { useFetch } from '../../hooks/useFetch';
 
 interface GetBarchartDataBody {
   allData: boolean;
@@ -14,43 +14,38 @@ interface BarChartData {
   category: string;
 }
 
-const barChartDataInitialState = ({
-  isLoading,
-  isError,
-}: {
-  isLoading?: boolean;
-  isError?: boolean;
-}) => ({
-  isLoading: isLoading || false,
-  isError: isError || false,
-  data: [],
-});
-
-const barChartDataReducer = (
-  state: { isLoading: boolean; isError: boolean; data: BarChartData[] },
-  action: ApiRequestAction<BarChartData[]>
-): { isLoading: boolean; isError: boolean; data: BarChartData[] } => {
-  return apiRequestReducer(state, action);
-};
-
-function getBarchartData({
-  dispatcher,
+async function getBarchartData({
   abortController,
   body,
 }: {
-  dispatcher: React.Dispatch<ApiRequestAction<BarChartData[]>>;
   abortController: AbortController;
   body: GetBarchartDataBody;
 }) {
-  cachedFetch({
+  const response = await cachedFetch({
     url: `/api/data/get_barchart_data`,
     method: 'POST',
     body,
-    dispatcher,
     controller: abortController,
   });
+  return response;
 }
 
-export { getBarchartData, barChartDataReducer, barChartDataInitialState };
+function useBarchartData({
+  body,
+  enabled = true,
+}: {
+  body: GetBarchartDataBody;
+  enabled?: boolean;
+}) {
+  const fetchResult = useFetch<GetBarchartDataBody, BarChartData[]>({
+    body,
+    fetchData: getBarchartData,
+    enabled,
+  });
+
+  return fetchResult;
+}
+
+export { useBarchartData };
 
 export type { BarChartData };

@@ -1,5 +1,5 @@
-import { cachedFetch, ApiRequestAction } from '../../utils/api';
-import { apiRequestReducer } from '../../utils/api';
+import { cachedFetch } from '../../utils/api';
+import { useFetch } from '../../hooks/useFetch';
 
 interface GetLineChartDataBody {
   allData: boolean;
@@ -18,52 +18,45 @@ interface LineChartData {
   datasets: DataSets[];
 }
 
-const lineChartDataInitialState = ({
-  isLoading,
-  isError,
-}: {
-  isLoading?: boolean;
-  isError?: boolean;
-}): { isLoading: boolean; isError: boolean; data: LineChartData } => ({
-  isLoading: isLoading || false,
-  isError: isError || false,
-  data: {
-    labels: [],
-    datasets: [],
-  },
-});
-
-const lineChartDataReducer = (
-  state: { isLoading: boolean; isError: boolean; data: LineChartData },
-  action: ApiRequestAction<LineChartData>
-): { isLoading: boolean; isError: boolean; data: LineChartData } => {
-  return apiRequestReducer(state, action);
-};
-
-function getLineChartData({
-  dispatcher,
+async function getLineChartData({
   abortController,
   body,
-  fallback_data = {
-    labels: [],
-    datasets: [],
-  },
 }: {
-  dispatcher: React.Dispatch<ApiRequestAction<LineChartData>>;
   abortController: AbortController;
   body: GetLineChartDataBody;
   fallback_data?: LineChartData;
 }) {
-  cachedFetch({
+  const fallback_data = {
+    labels: [],
+    datasets: [],
+  };
+
+  const response = await cachedFetch({
     url: `/api/data/get_linechart_data`,
     method: 'POST',
     body,
-    dispatcher,
     controller: abortController,
     fallback_data,
   });
+  return response;
 }
 
-export { getLineChartData, lineChartDataReducer, lineChartDataInitialState };
+function useLineChartData({
+  body,
+  enabled = true,
+}: {
+  body: GetLineChartDataBody;
+  enabled?: boolean;
+}) {
+  const fetchResult = useFetch<GetLineChartDataBody, LineChartData>({
+    body,
+    enabled,
+    fetchData: getLineChartData,
+  });
+
+  return fetchResult;
+}
+
+export { useLineChartData };
 
 export type { LineChartData };

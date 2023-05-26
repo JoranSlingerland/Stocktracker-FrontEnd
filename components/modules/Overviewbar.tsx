@@ -5,6 +5,7 @@ import {
 } from '../utils/formatting';
 import { LineChartData } from '../services/data/getLineChartData';
 import { UserSettings } from '../services/data/getUserData';
+import { TotalsData } from '../../components/types/types';
 
 export default function tabs({
   totalPerformanceData,
@@ -13,16 +14,16 @@ export default function tabs({
   userSettings,
   tabState,
 }: {
-  totalPerformanceData: any;
-  valueGrowthData: LineChartData;
+  totalPerformanceData: TotalsData[] | undefined;
+  valueGrowthData: LineChartData | undefined;
   loading: boolean;
   userSettings: UserSettings;
   tabState: any;
 }): JSX.Element {
   const { tab, setTab } = tabState;
-  const firstData = valueGrowthData.datasets[0]?.data[0] ?? 0;
+  const firstData = valueGrowthData?.datasets[0]?.data[0] ?? 0;
   const lastData =
-    valueGrowthData.datasets[0]?.data[
+    valueGrowthData?.datasets[0]?.data[
       valueGrowthData.datasets[0]?.data.length - 1
     ] ?? 0;
   const valueGrowth = lastData - firstData;
@@ -87,7 +88,7 @@ export default function tabs({
         2,
         60,
         <Statistic
-          value={totalPerformanceData[0].realized.dividends}
+          value={totalPerformanceData?.[0].realized.dividends}
           title={'Received dividends'}
           formatter={(value) =>
             formatCurrency({ value, currency: userSettings.currency })
@@ -99,7 +100,7 @@ export default function tabs({
         3,
         60,
         <Statistic
-          value={totalPerformanceData[0].realized.transaction_cost}
+          value={totalPerformanceData?.[0].realized.transaction_cost}
           title={'Transaction cost'}
           formatter={(value) =>
             formatCurrency({ value, currency: userSettings.currency })
@@ -111,17 +112,20 @@ export default function tabs({
         4,
         100,
         <Statistic
-          value={totalPerformanceData[0].unrealized.total_pl}
+          value={totalPerformanceData?.[0].unrealized.total_pl}
           formatter={(value) =>
             formatCurrency({ value, currency: userSettings.currency })
           }
           title={
-            totalPerformanceData[0].unrealized.total_pl > 0 ? 'Gains' : 'Losses'
+            totalPerformanceData &&
+            totalPerformanceData[0]?.unrealized?.total_pl > 0
+              ? 'Gains'
+              : 'Losses'
           }
           className="ml-1"
         ></Statistic>,
         <Statistic
-          value={totalPerformanceData[0].unrealized.total_pl_percentage}
+          value={totalPerformanceData?.[0].unrealized.total_pl_percentage}
           formatter={(value) =>
             formatPercentageWithColors({
               value,
