@@ -6,11 +6,7 @@ import PrimeFaceBarChart from '../../components/elements/PrimeFaceBarChart';
 import AntdTable from '../../components/elements/antdTable';
 import { TimeFramestate } from '../../components/types/types';
 import useLocalStorageState from '../../components/hooks/useLocalStorageState';
-import {
-  getTableDataPerformanceStocksHeld,
-  getTableDataPerformanceDataStocksHeldReducer,
-  getTableDataPerformanceDataStocksHeldInitialState,
-} from '../../components/services/data/GetTableDataPerformance/stocksHeld';
+import { useTableDataPerformanceStocksHeld } from '../../components/services/data/GetTableDataPerformance/stocksHeld';
 import { valueGrowthColumns } from '../../components/elements/columns/valueGrowthColumns';
 import { ReceivedDividedColumns } from '../../components/elements/columns/ReceivedDividedColumns';
 import { TransactionCostColumns } from '../../components/elements/columns/TransactionCostColumns';
@@ -25,6 +21,8 @@ import {
   lineChartDataInitialState,
   lineChartDataReducer,
 } from '../../components/services/data/getLineChartData';
+import { UseFetchResult } from '../../components/hooks/useFetch';
+import { TotalsData } from '../../components/types/types';
 
 const { Title } = Typography;
 
@@ -59,12 +57,12 @@ export default function performance({
   userSettings,
   timeFrameState,
   timeFrameDates,
-  totalPerformanceData,
+  totalPerformance,
 }: {
   userSettings: UserSettings;
   timeFrameState: TimeFramestate;
   timeFrameDates: { start_date: string; end_date: string };
-  totalPerformanceData: any;
+  totalPerformance: UseFetchResult<TotalsData[]>;
 }) {
   // const setup
   const [valueGrowthData, valueGrowthDataReducer] = useReducer(
@@ -90,10 +88,29 @@ export default function performance({
       barChartDataReducer,
       barChartDataInitialState({ isLoading: true })
     );
-  const [SingleDayData, SingleDayDataReducer] = useReducer(
-    getTableDataPerformanceDataStocksHeldReducer,
-    getTableDataPerformanceDataStocksHeldInitialState({ isLoading: true })
-  );
+  const timeFrameBody = useMemo(() => {
+    const body: any = {};
+    if (
+      timeFrameDates.end_date === 'max' &&
+      timeFrameDates.start_date === 'max'
+    ) {
+      body.allData = true;
+    } else if (timeFrameDates.end_date && timeFrameDates.start_date) {
+      body.startDate = timeFrameDates.start_date;
+      body.endDate = timeFrameDates.end_date;
+    } else {
+      return;
+    }
+    return body;
+  }, [timeFrameDates.end_date, timeFrameDates.start_date]);
+  const { data: singleDayData, isLoading: singleDayIsLoading } =
+    useTableDataPerformanceStocksHeld({
+      body: {
+        ...timeFrameBody,
+        containerName: 'stocks_held',
+        dataType: 'stocks_held',
+      },
+    });
   const [tab, setTab] = useLocalStorageState('performanceTab', 1);
   const { timeFrame, setTimeFrame } = timeFrameState;
 
@@ -215,14 +232,6 @@ export default function performance({
     }
 
     const abortController = new AbortController();
-    getTableDataPerformanceStocksHeld({
-      dispatcher: SingleDayDataReducer,
-      abortController,
-      body: {
-        ...body,
-        dataType: 'stocks_held',
-      },
-    });
 
     getLineChartData({
       dispatcher: valueGrowthDataReducer,
@@ -277,9 +286,9 @@ export default function performance({
         </div>
       </div>
       <Overviewbar
-        totalPerformanceData={totalPerformanceData.data}
+        totalPerformanceData={totalPerformance.data}
         valueGrowthData={valueGrowthData.data}
-        loading={totalPerformanceData.isLoading || valueGrowthData.isLoading}
+        loading={totalPerformance.isLoading || valueGrowthData.isLoading}
         userSettings={userSettings}
         tabState={{ tab, setTab }}
       />
@@ -288,9 +297,9 @@ export default function performance({
           {valueGrowthDataMemo}
           <Divider />
           <AntdTable
-            isLoading={SingleDayData.isLoading}
+            isLoading={singleDayIsLoading}
             columns={valueGrowthColumns(userSettings.currency)}
-            data={SingleDayData.data}
+            data={singleDayData}
             globalSorter={true}
           />
         </>
@@ -300,9 +309,9 @@ export default function performance({
           {dividendDataMemo}
           <Divider />
           <AntdTable
-            isLoading={SingleDayData.isLoading}
+            isLoading={singleDayIsLoading}
             columns={ReceivedDividedColumns(userSettings.currency)}
-            data={SingleDayData.data}
+            data={singleDayData}
             globalSorter={true}
           />
         </>
@@ -312,9 +321,9 @@ export default function performance({
           {totalTransactionCostDataMemo}
           <Divider />
           <AntdTable
-            isLoading={SingleDayData.isLoading}
+            isLoading={singleDayIsLoading}
             columns={TransactionCostColumns(userSettings.currency)}
-            data={SingleDayData.data}
+            data={singleDayData}
             globalSorter={true}
           />
         </>
@@ -324,9 +333,9 @@ export default function performance({
           {totalGainsDataMemo}
           <Divider />
           <AntdTable
-            isLoading={SingleDayData.isLoading}
+            isLoading={singleDayIsLoading}
             columns={valueGrowthColumns(userSettings.currency)}
-            data={SingleDayData.data}
+            data={singleDayData}
             globalSorter={true}
           />
         </>

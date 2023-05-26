@@ -2,12 +2,11 @@ import Navbar from '../components/modules/navbar';
 import '../styles/globals.css';
 import { ConfigProvider } from 'antd';
 import type { AppProps } from 'next/app';
-import { useEffect, useState, useReducer } from 'react';
+import { useEffect, useState, useReducer, useMemo } from 'react';
 import { regularFetch } from '../components/utils/api';
 import { TimeFramestate } from '../components/types/types';
 import useLocalStorageState from '../components/hooks/useLocalStorageState';
 import { dataToGetSwitch } from '../components/utils/dateTimeHelpers';
-import { totalsData } from '../components/constants/placeholders';
 import Footer from '../components/modules/footer';
 import React from 'react';
 import {
@@ -15,11 +14,7 @@ import {
   userDataInitialState,
   userSettingsReducer,
 } from '../components/services/data/getUserData';
-import {
-  getTableDataPerformanceDataTotalsReducer,
-  getTableDataPerformanceDataTotalsInitialState,
-  getTableDataPerformanceTotals,
-} from '../components/services/data/GetTableDataPerformance/totals';
+import { useTableDataPerformanceTotals } from '../components/services/data/GetTableDataPerformance/totals';
 import useTheme from '../components/hooks/useTheme';
 
 async function getAccountSettings(userSettingsDispatch: any) {
@@ -53,26 +48,8 @@ function MyApp({ Component, pageProps }: AppProps) {
   const [timeFrame, setTimeFrame] = useLocalStorageState('timeFrame', 'max');
   const timeFrameState: TimeFramestate = { timeFrame, setTimeFrame };
   const timeFrameDates = dataToGetSwitch(timeFrame);
-  const [totalPerformanceData, totalPerformanceDataDispatch] = useReducer(
-    getTableDataPerformanceDataTotalsReducer,
-    getTableDataPerformanceDataTotalsInitialState({
-      isLoading: true,
-    })
-  );
-  const { algorithmTheme, className } = useTheme({
-    dark_mode: userSettings.dark_mode,
-  });
-
-  useEffect(() => {
-    getUserInfo(setUserInfo);
-    getAccountSettings(userSettingsDispatch);
-  }, []);
-
-  useEffect(() => {
-    const body: any = {
-      containerName: 'totals',
-    };
-
+  const timeFrameBody = useMemo(() => {
+    const body: any = {};
     if (
       timeFrameDates.end_date === 'max' &&
       timeFrameDates.start_date === 'max'
@@ -84,20 +61,22 @@ function MyApp({ Component, pageProps }: AppProps) {
     } else {
       return;
     }
-
-    const abortController = new AbortController();
-
-    getTableDataPerformanceTotals({
-      dispatcher: totalPerformanceDataDispatch,
-      body,
-      abortController,
-      fallback_data: [totalsData],
-    });
-
-    return () => {
-      abortController.abort();
-    };
+    return body;
   }, [timeFrameDates.end_date, timeFrameDates.start_date]);
+  const totalPerformance = useTableDataPerformanceTotals({
+    body: {
+      ...timeFrameBody,
+      containerName: 'totals',
+    },
+  });
+  const { algorithmTheme, className } = useTheme({
+    dark_mode: userSettings.dark_mode,
+  });
+
+  useEffect(() => {
+    getUserInfo(setUserInfo);
+    getAccountSettings(userSettingsDispatch);
+  }, []);
 
   const props = {
     userInfo,
@@ -105,7 +84,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     userSettings,
     timeFrameState,
     timeFrameDates,
-    totalPerformanceData,
+    totalPerformance,
   };
 
   return (

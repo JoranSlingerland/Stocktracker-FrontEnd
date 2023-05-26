@@ -1,63 +1,52 @@
-import { cachedFetch, ApiRequestAction } from '../../../utils/api';
-import { apiRequestReducer } from '../../../utils/api';
-import { totalsData } from '../../../constants/placeholders';
+import { cachedFetch } from '../../../utils/api';
 import { TotalsData } from '../../../types/types';
+import { totalsData } from '../../../constants/placeholders';
+import { useFetch } from '../../../hooks/useFetch';
 
 // Totals
 interface GetTableDataPerformanceBodyTotals extends SharedBody {
   dataType: 'totals';
 }
 
-const getTableDataPerformanceDataTotalsInitialState = ({
-  isLoading,
-  isError,
-}: {
-  isLoading?: boolean;
-  isError?: boolean;
-}) => ({
-  isLoading: isLoading || false,
-  isError: isError || false,
-  data: [totalsData],
-});
-
-const getTableDataPerformanceDataTotalsReducer = (
-  state: {
-    isLoading: boolean;
-    isError: boolean;
-    data: TotalsData[];
-  },
-  action: ApiRequestAction<TotalsData[]>
-): {
-  isLoading: boolean;
-  isError: boolean;
-  data: TotalsData[];
-} => {
-  return apiRequestReducer(state, action);
-};
-
-function getTableDataPerformanceTotals({
-  dispatcher,
+async function getTableDataPerformanceTotals({
   abortController,
   body,
   fallback_data = [],
 }: {
-  dispatcher: React.Dispatch<ApiRequestAction<TotalsData[]>>;
   abortController: AbortController;
   body: GetTableDataPerformanceBodyTotals;
   fallback_data?: TotalsData[];
 }) {
-  cachedFetch({
+  const response = await cachedFetch({
     url: `/api/data/get_table_data_performance`,
     method: 'POST',
     body,
-    dispatcher,
     controller: abortController,
     fallback_data,
   });
+  return response;
 }
 
-export {
-  getTableDataPerformanceTotals,
-  getTableDataPerformanceDataTotalsReducer,
-  getTableDataPerformanceDataTotalsInitialState,
-};
+function useTableDataPerformanceTotals({
+  body,
+  enabled = true,
+  background = false,
+}: {
+  body: GetTableDataPerformanceBodyTotals;
+  enabled?: boolean;
+  background?: boolean;
+}) {
+  const fetchResult = useFetch<GetTableDataPerformanceBodyTotals, TotalsData[]>(
+    {
+      body,
+      fetchData: getTableDataPerformanceTotals,
+      enabled,
+      background,
+      overwrite: true,
+      initialData: [totalsData],
+    }
+  );
+  return fetchResult;
+}
+
+export { useTableDataPerformanceTotals };
