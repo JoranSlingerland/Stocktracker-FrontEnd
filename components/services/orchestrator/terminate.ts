@@ -9,14 +9,13 @@ function terminateOrchestrator({
 }: {
   query: TerminateOrchestratorQuery;
 }) {
-  ApiWithMessage(
-    '/api/orchestrator/terminate',
-    'Terminating orchestrator',
-    'Orchestrator terminated',
-    'POST',
-    {},
-    query
-  );
+  ApiWithMessage({
+    url: '/api/orchestrator/terminate',
+    runningMessage: 'Terminating orchestrator',
+    successMessage: 'Orchestrator terminated',
+    method: 'POST',
+    query,
+  });
 }
 
 export { terminateOrchestrator };

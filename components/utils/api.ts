@@ -54,7 +54,7 @@ async function regularFetch({
 }: {
   url: string;
   fallback_data?: any;
-  method?: 'GET' | 'POST' | 'DELETE';
+  method: 'GET' | 'POST' | 'DELETE';
   query?: any;
   body?: any;
   controller?: AbortController;
@@ -123,7 +123,7 @@ async function cachedFetch({
 }: {
   url: string;
   fallback_data?: any;
-  method?: 'GET' | 'POST' | 'DELETE';
+  method: 'GET' | 'POST' | 'DELETE';
   query?: any;
   body?: any;
   hours?: number;
@@ -152,61 +152,36 @@ async function cachedFetch({
   }
 }
 
-async function ApiWithMessage(
-  url: string,
-  runningMessage: string,
-  successMessage: string,
-  method: 'GET' | 'POST' | 'DELETE' = 'GET',
-  body: any = {},
-  query: any = {}
-): Promise<any> {
+async function ApiWithMessage({
+  url,
+  runningMessage,
+  successMessage,
+  method = 'GET',
+  body = undefined,
+  query = undefined,
+}: {
+  url: string;
+  runningMessage: string;
+  successMessage: string;
+  method: 'GET' | 'POST' | 'DELETE';
+  body?: any;
+  query?: any;
+}): Promise<void> {
   const hide = message.loading(runningMessage, 10);
-  if (method === 'GET') {
-    const response = await wretch(url)
-      .addon(QueryStringAddon)
-      .query(query)
-      .get(body)
-      .json(() => {
-        hide();
-        message.success(successMessage);
-      })
-      .catch(() => {
-        hide();
-        message.error('Something went wrong :(');
-      });
-    return response;
-  }
-  if (method === 'POST') {
-    const response = await wretch(url)
-      .addon(QueryStringAddon)
-      .query(query)
-      .post(body)
-      .json(() => {
-        hide();
-        message.success(successMessage);
-      })
-      .catch(() => {
-        hide();
-        message.error('Something went wrong :(');
-      });
-    return response;
-  }
-  if (method === 'DELETE') {
-    const response = await wretch(url)
-      .addon(QueryStringAddon)
-      .query(query)
-      .json(body)
-      // .body(body)
-      .delete()
-      .json(() => {
-        hide();
-        message.success(successMessage);
-      })
-      .catch(() => {
-        hide();
-        message.error('Something went wrong :(');
-      });
-    return response;
+
+  const response = await regularFetch({
+    url,
+    method,
+    body,
+    query,
+  });
+
+  if (response.error) {
+    hide();
+    message.error('Something went wrong :(');
+  } else {
+    hide();
+    message.success(successMessage);
   }
 }
 

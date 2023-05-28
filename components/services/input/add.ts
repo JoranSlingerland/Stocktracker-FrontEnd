@@ -23,13 +23,13 @@ interface AddItemToInputBody {
 }
 
 async function addItemToInput({ body }: { body: AddItemToInputBody }) {
-  return await ApiWithMessage(
-    `/api/input/add`,
-    'Creating new items',
-    'Items Created',
-    'POST',
-    body
-  );
+  return await ApiWithMessage({
+    url: '/api/input/add',
+    runningMessage: 'Creating new items',
+    successMessage: 'Items Created',
+    method: 'POST',
+    body,
+  });
 }
 
 export { addItemToInput };

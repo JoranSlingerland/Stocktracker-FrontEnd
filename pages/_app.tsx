@@ -14,9 +14,11 @@ import { useTableDataPerformanceTotals } from '../components/services/table/perf
 import useTheme from '../components/hooks/useTheme';
 
 async function getUserInfo(setUserInfo: any) {
-  await regularFetch({ url: '/.auth/me' }).then(({ response }) => {
-    setUserInfo(response);
-  });
+  await regularFetch({ url: '/.auth/me', method: 'GET' }).then(
+    ({ response }) => {
+      setUserInfo(response);
+    }
+  );
 }
 
 function MyApp({ Component, pageProps }: AppProps) {

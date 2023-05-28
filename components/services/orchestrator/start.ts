@@ -6,14 +6,13 @@ interface StartOrchestratorQuery {
 }
 
 function startOrchestrator({ query }: { query: StartOrchestratorQuery }) {
-  ApiWithMessage(
-    '/api/orchestrator/start',
-    'Calling Orchestrator',
-    'Orchestration called, This will take a while',
-    'POST',
-    {},
-    query
-  );
+  ApiWithMessage({
+    url: '/api/orchestrator/start',
+    runningMessage: 'Calling Orchestrator',
+    successMessage: 'Orchestration called, This will take a while',
+    method: 'POST',
+    query,
+  });
 }
 
 export { startOrchestrator };

@@ -5,14 +5,13 @@ interface PurgeOrchestratorQuery {
 }
 
 function purgeOrchestrator({ query }: { query: PurgeOrchestratorQuery }) {
-  ApiWithMessage(
-    '/api/orchestrator/purge',
-    'Purging orchestrator',
-    'Orchestrator purged',
-    'DELETE',
-    {},
-    query
-  );
+  ApiWithMessage({
+    url: '/api/orchestrator/purge',
+    runningMessage: 'Purging orchestrator',
+    successMessage: 'Orchestrator purged',
+    method: 'DELETE',
+    query,
+  });
 }
 
 export { purgeOrchestrator };

@@ -6,13 +6,13 @@ interface DeleteInputItemsBody {
 }
 
 async function deleteInputItems({ body }: { body: DeleteInputItemsBody }) {
-  return await ApiWithMessage(
-    `/api/input/delete`,
-    'Deleting item',
-    'Item deleted',
-    'DELETE',
-    body
-  );
+  return await ApiWithMessage({
+    url: '/api/input/delete',
+    runningMessage: 'Deleting item',
+    successMessage: 'Item deleted',
+    method: 'DELETE',
+    body,
+  });
 }
 
 export { deleteInputItems };

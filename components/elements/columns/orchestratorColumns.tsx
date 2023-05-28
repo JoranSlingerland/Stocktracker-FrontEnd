@@ -82,19 +82,12 @@ export const orchestratorColumns: ColumnsType = [
           arrow={false}
           icon={false}
         >
-          <Button
-            danger
-            disabled={
-              record.runtimeStatus === 'Running' ||
-              record.runtimeStatus === 'Pending'
-                ? false
-                : true
-            }
-            className="mb-1 mr-1"
-            size="small"
-          >
-            Terminate
-          </Button>
+          {record.runtimeStatus === 'Running' ||
+          record.runtimeStatus === 'Pending' ? (
+            <Button danger className="mb-1 mr-1" size="small">
+              Terminate
+            </Button>
+          ) : null}
         </Popconfirm>
         <Popconfirm
           title="Are you sure you want to purge this orchestrator?"
