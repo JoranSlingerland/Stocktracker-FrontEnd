@@ -10,96 +10,53 @@ import {
   Tooltip,
   List,
 } from 'antd';
-import { useEffect, useReducer } from 'react';
 import useWindowDimensions from '../../components/hooks/useWindowDimensions';
 import AntdTable from '../../components/elements/antdTable';
 import { currencyCodes } from '../../components/constants/currencyCodes';
-import useLocalStorageState from '../../components/hooks/useLocalStorageState';
-import { getUserData } from '../../components/services/data/getUserData';
-import { startOrchestrator } from '../../components/services/orchestrator/startOrchestrator';
-import { addUserData } from '../../components/services/add/addUserData';
+import useSessionStorageState from '../../components/hooks/useSessionStorageState';
+import { startOrchestrator } from '../../components/services/orchestrator/start';
+import { addUserData } from '../../components/services/user/add';
 import { orchestratorColumns } from '../../components/elements/columns/orchestratorColumns';
-import {
-  UserSettings,
-  userDataActions,
-} from '../../components/services/data/getUserData';
-import {
-  listOrchestrator,
-  listOrchestratorReducer,
-  listOrchestratorInitialState,
-} from '../../components/services/orchestrator/OrchestratorList';
+import { UseUserData } from '../../components/services/user/get';
+import { useListOrchestrator } from '../../components/services/orchestrator/list';
+import { RedoOutlined } from '@ant-design/icons';
 
 const { Text, Title, Link } = Typography;
 
 // handle click functions
-function handleLocalStorageClearClick() {
-  localStorage.clear();
-  if (localStorage.length === 0) {
+function handleSessionStorageClearClick() {
+  sessionStorage.clear();
+  if (sessionStorage.length === 0) {
     message.success('Local storage cleared');
   } else {
     message.error('Something went wrong :(');
   }
 }
 
-export default function Home({
-  userSettings,
-  userSettingsDispatch,
-}: {
-  userSettings: UserSettings;
-  userSettingsDispatch: (action: userDataActions) => void;
-}) {
-  const [orchestratorList, orchestratorDispatch] = useReducer(
-    listOrchestratorReducer,
-    listOrchestratorInitialState({ isLoading: true })
-  );
-  const [tab, setTab] = useLocalStorageState('settingsTab', '1');
+export default function Home({ userSettings }: { userSettings: UseUserData }) {
+  const [tab, setTab] = useSessionStorageState('settingsTab', '1');
   const dimensions = useWindowDimensions();
+  const {
+    data: orchestratorListData,
+    isLoading: orchestratorListIsLoading,
+    refetchData: orchestratorListRefetch,
+  } = useListOrchestrator({
+    query: { days: 7 },
+    enabled: tab === '3',
+  });
 
   // handle click functions
   async function handleSaveAccountSettings() {
-    userSettingsDispatch({ type: 'setLoading', payload: true });
-    await addUserData({
-      body: userSettings,
-    }).then(() => {
-      getUserData({
-        overWrite: true,
-      }).then(({ response }) => {
-        userSettingsDispatch({
-          type: 'setAll',
-          payload: response,
+    if (userSettings.data) {
+      await addUserData({
+        body: userSettings.data,
+      }).then(() => {
+        userSettings.refetchData({
+          cacheOnly: true,
         });
       });
-    });
-  }
-
-  // useEffects
-  useEffect(() => {
-    if (tab === '3') {
-      const abortController = new AbortController();
-      listOrchestrator({
-        body: { days: 7 },
-        dispatcher: orchestratorDispatch,
-        abortController,
-      });
-      return () => abortController.abort();
     }
-  }, [tab]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (tab === '3') {
-        const abortController = new AbortController();
-        listOrchestrator({
-          body: { days: 7 },
-          dispatcher: orchestratorDispatch,
-          abortController,
-          background: true,
-        });
-        return () => abortController.abort();
-      }
-    }, 10000);
-    return () => clearInterval(interval);
-  }, [tab]);
+  }
 
   // constants
   const buttonRow = (
@@ -131,7 +88,9 @@ export default function Home({
                   handleSaveAccountSettings();
                 }}
                 disabled={
-                  currencyCodes.find((o) => o.value === userSettings.currency)
+                  currencyCodes.find(
+                    (o) => o.value === userSettings.data.currency
+                  )
                     ? false
                     : true || userSettings.isLoading
                 }
@@ -161,11 +120,11 @@ export default function Home({
               description={
                 <Input.Password
                   className="w-72 sm:w-96"
-                  value={userSettings.clearbit_api_key}
+                  value={userSettings.data.clearbit_api_key}
                   onChange={(e) => {
-                    userSettingsDispatch({
-                      type: 'setClearbitApiKey',
-                      payload: e.target.value,
+                    userSettings.overwriteData({
+                      ...userSettings.data,
+                      clearbit_api_key: e.target.value,
                     });
                   }}
                   size="small"
@@ -196,11 +155,11 @@ export default function Home({
               description={
                 <Input.Password
                   className="w-72 sm:w-96"
-                  value={userSettings.brandfetch_api_key}
+                  value={userSettings.data.brandfetch_api_key}
                   onChange={(e) => {
-                    userSettingsDispatch({
-                      type: 'setBrandfetchApiKey',
-                      payload: e.target.value,
+                    userSettings.overwriteData({
+                      ...userSettings.data,
+                      brandfetch_api_key: e.target.value,
                     });
                   }}
                   size="small"
@@ -231,11 +190,11 @@ export default function Home({
               description={
                 <Input.Password
                   className="w-72 sm:w-96"
-                  value={userSettings.alpha_vantage_api_key}
+                  value={userSettings.data.alpha_vantage_api_key}
                   onChange={(e) => {
-                    userSettingsDispatch({
-                      type: 'setAlphaVantageApiKey',
-                      payload: e.target.value,
+                    userSettings.overwriteData({
+                      ...userSettings.data,
+                      alpha_vantage_api_key: e.target.value,
                     });
                   }}
                   size="small"
@@ -249,15 +208,17 @@ export default function Home({
               description={
                 <AutoComplete
                   className="w-72 sm:w-96"
-                  value={userSettings.currency}
+                  value={userSettings.data.currency}
                   onChange={(value) => {
-                    userSettingsDispatch({
-                      type: 'setCurrency',
-                      payload: value,
+                    userSettings.overwriteData({
+                      ...userSettings.data,
+                      currency: value,
                     });
                   }}
                   status={
-                    currencyCodes.find((o) => o.value === userSettings.currency)
+                    currencyCodes.find(
+                      (o) => o.value === userSettings.data.currency
+                    )
                       ? ''
                       : 'error'
                   }
@@ -269,9 +230,9 @@ export default function Home({
                       .indexOf(inputValue.toUpperCase()) !== -1
                   }
                   onSelect={(value) => {
-                    userSettingsDispatch({
-                      type: 'setCurrency',
-                      payload: value,
+                    userSettings.overwriteData({
+                      ...userSettings.data,
+                      currency: value,
                     });
                   }}
                 />
@@ -283,11 +244,11 @@ export default function Home({
               title={<Text strong>Theme</Text>}
               description={
                 <Select
-                  value={userSettings.dark_mode}
+                  value={userSettings.data.dark_mode}
                   onChange={(value) => {
-                    userSettingsDispatch({
-                      type: 'setDarkMode',
-                      payload: value,
+                    userSettings.overwriteData({
+                      ...userSettings.data,
+                      dark_mode: value,
                     });
                   }}
                   options={[
@@ -319,7 +280,7 @@ export default function Home({
               <Button
                 onClick={() =>
                   startOrchestrator({
-                    body: {
+                    query: {
                       functionName: 'stocktracker_orchestrator',
                       daysToUpdate: 'all',
                     },
@@ -336,7 +297,7 @@ export default function Home({
               'Clear local storage',
               'This will clear all cached data in the local storage of the browser.',
               <Button
-                onClick={() => handleLocalStorageClearClick()}
+                onClick={() => handleSessionStorageClearClick()}
                 type="primary"
                 size="large"
               >
@@ -354,9 +315,21 @@ export default function Home({
       children: (
         <div>
           <AntdTable
-            isLoading={orchestratorList.isLoading}
+            isLoading={orchestratorListIsLoading}
             columns={orchestratorColumns}
-            data={orchestratorList.data}
+            data={orchestratorListData}
+            caption={
+              <div className="flex flex-row-reverse">
+                <Button
+                  icon={<RedoOutlined />}
+                  type="text"
+                  shape="circle"
+                  onClick={() => {
+                    orchestratorListRefetch();
+                  }}
+                ></Button>
+              </div>
+            }
           />
         </div>
       ),

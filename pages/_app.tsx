@@ -2,77 +2,25 @@ import Navbar from '../components/modules/navbar';
 import '../styles/globals.css';
 import { ConfigProvider } from 'antd';
 import type { AppProps } from 'next/app';
-import { useEffect, useState, useReducer } from 'react';
-import { regularFetch } from '../components/utils/api';
+import { useMemo } from 'react';
 import { TimeFramestate } from '../components/types/types';
-import useLocalStorageState from '../components/hooks/useLocalStorageState';
+import useSessionStorageState from '../components/hooks/useSessionStorageState';
 import { dataToGetSwitch } from '../components/utils/dateTimeHelpers';
-import { totalsData } from '../components/constants/placeholders';
 import Footer from '../components/modules/footer';
 import React from 'react';
-import {
-  getUserData,
-  userDataInitialState,
-  userSettingsReducer,
-} from '../components/services/data/getUserData';
-import {
-  getTableDataPerformanceDataTotalsReducer,
-  getTableDataPerformanceDataTotalsInitialState,
-  getTableDataPerformanceTotals,
-} from '../components/services/data/GetTableDataPerformance/totals';
+import { useUserData } from '../components/services/user/get';
+import { useTableDataPerformanceTotals } from '../components/services/table/performance/totals';
 import useTheme from '../components/hooks/useTheme';
-
-async function getAccountSettings(userSettingsDispatch: any) {
-  getUserData({}).then(({ response }) => {
-    userSettingsDispatch({ type: 'setAll', payload: response });
-  });
-}
-
-async function getUserInfo(setUserInfo: any) {
-  await regularFetch({ url: '/.auth/me' }).then(({ response }) => {
-    setUserInfo(response);
-  });
-}
+import { useUserInfo } from '../components/services/.auth/me';
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const [userInfo, setUserInfo] = useState({
-    clientPrincipal: {
-      userId: '',
-      userRoles: ['anonymous'],
-      claims: [],
-      identityProvider: '',
-      userDetails: '',
-    },
-  });
-  const [userSettings, userSettingsDispatch] = useReducer(
-    userSettingsReducer,
-    userDataInitialState({
-      isLoading: true,
-    })
-  );
-  const [timeFrame, setTimeFrame] = useLocalStorageState('timeFrame', 'max');
+  const { data: userInfo } = useUserInfo();
+  const userSettings = useUserData();
+  const [timeFrame, setTimeFrame] = useSessionStorageState('timeFrame', 'max');
   const timeFrameState: TimeFramestate = { timeFrame, setTimeFrame };
   const timeFrameDates = dataToGetSwitch(timeFrame);
-  const [totalPerformanceData, totalPerformanceDataDispatch] = useReducer(
-    getTableDataPerformanceDataTotalsReducer,
-    getTableDataPerformanceDataTotalsInitialState({
-      isLoading: true,
-    })
-  );
-  const { algorithmTheme, className } = useTheme({
-    dark_mode: userSettings.dark_mode,
-  });
-
-  useEffect(() => {
-    getUserInfo(setUserInfo);
-    getAccountSettings(userSettingsDispatch);
-  }, []);
-
-  useEffect(() => {
-    const body: any = {
-      containerName: 'totals',
-    };
-
+  const timeFrameBody = useMemo(() => {
+    const body: any = {};
     if (
       timeFrameDates.end_date === 'max' &&
       timeFrameDates.start_date === 'max'
@@ -84,28 +32,24 @@ function MyApp({ Component, pageProps }: AppProps) {
     } else {
       return;
     }
-
-    const abortController = new AbortController();
-
-    getTableDataPerformanceTotals({
-      dispatcher: totalPerformanceDataDispatch,
-      body,
-      abortController,
-      fallback_data: [totalsData],
-    });
-
-    return () => {
-      abortController.abort();
-    };
+    return body;
   }, [timeFrameDates.end_date, timeFrameDates.start_date]);
+  const totalPerformance = useTableDataPerformanceTotals({
+    query: {
+      ...timeFrameBody,
+      containerName: 'totals',
+    },
+  });
+  const { algorithmTheme, className } = useTheme({
+    dark_mode: userSettings.data?.dark_mode || 'system',
+  });
 
   const props = {
     userInfo,
-    userSettingsDispatch,
     userSettings,
     timeFrameState,
     timeFrameDates,
-    totalPerformanceData,
+    totalPerformance,
   };
 
   return (

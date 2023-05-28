@@ -1,139 +1,67 @@
 import { Tabs, Collapse, Typography } from 'antd';
-import { useEffect, useReducer } from 'react';
 import PieChart from '../../components/elements/PrimeFacePieChart';
 import AntdTable from '../../components/elements/antdTable';
-import useLocalStorageState from '../../components/hooks/useLocalStorageState';
+import useSessionStorageState from '../../components/hooks/useSessionStorageState';
 import { RealizedColumns } from '../../components/elements/columns/RealizedColumns';
 import { UnRealizedColumns } from '../../components/elements/columns/UnRealizedColumns';
-import {
-  getPieData,
-  pieChartDataReducer,
-  pieChartDataInitialState,
-} from '../../components/services/data/getPieData';
-import { UserSettings } from '../../components/services/data/getUserData';
-import {
-  getTableDataBasicStocksHeld,
-  getTableDataBasicStocksHeldInitialState,
-  getTableDataBasicStocksHeldReducer,
-} from '../../components/services/data/getTableDataBasic/stocksHeld';
+import { usePieData } from '../../components/services/chart/pie';
+import { UseUserData } from '../../components/services/user/get';
+import { useTableDataBasicStocksHeld } from '../../components/services/table/basic/stocksHeld';
 
 const { Title } = Typography;
 const { Panel } = Collapse;
 
-export default function Home({ userSettings }: { userSettings: UserSettings }) {
+export default function Home({ userSettings }: { userSettings: UseUserData }) {
   // Const setup
-  const [UnRealizedData, unRealizedDataDispatcher] = useReducer(
-    getTableDataBasicStocksHeldReducer,
-    getTableDataBasicStocksHeldInitialState({ isLoading: true })
-  );
-  const [RealizedData, RealizedDataDispatcher] = useReducer(
-    getTableDataBasicStocksHeldReducer,
-    getTableDataBasicStocksHeldInitialState({ isLoading: true })
-  );
-  const [StockPieData, StockPieDataDispatcher] = useReducer(
-    pieChartDataReducer,
-    pieChartDataInitialState({ isLoading: true })
-  );
-  const [CurrencyPieData, CurrencyPieDataDispatcher] = useReducer(
-    pieChartDataReducer,
-    pieChartDataInitialState({ isLoading: true })
-  );
-  const [SectorPieData, SectorPieDataReducer] = useReducer(
-    pieChartDataReducer,
-    pieChartDataInitialState({ isLoading: true })
-  );
-  const [CountryPieData, CountryPieDataReducer] = useReducer(
-    pieChartDataReducer,
-    pieChartDataInitialState({ isLoading: true })
-  );
-  const [tab, setTab] = useLocalStorageState('portfolioTab', '1');
-  const [CollapseKey, setCollapseKey] = useLocalStorageState(
+  const [tab, setTab] = useSessionStorageState('portfolioTab', '1');
+  const [CollapseKey, setCollapseKey] = useSessionStorageState(
     'portfolioCollapse',
     '0'
   );
-
-  // UseEffect setup
-  useEffect(() => {
-    const abortController = new AbortController();
-    if (tab === '1') {
-      getPieData({
-        body: {
-          dataType: 'stocks',
-        },
-        dispatcher: StockPieDataDispatcher,
-        abortController,
-      });
-    }
-    if (tab === '2') {
-      getPieData({
-        body: {
-          dataType: 'sector',
-        },
-        dispatcher: SectorPieDataReducer,
-        abortController,
-      });
-    }
-    if (tab === '3') {
-      getPieData({
-        body: {
-          dataType: 'country',
-        },
-
-        dispatcher: CountryPieDataReducer,
-        abortController,
-      });
-    }
-    if (tab === '4') {
-      getPieData({
-        body: {
-          dataType: 'currency',
-        },
-        dispatcher: CurrencyPieDataDispatcher,
-        abortController,
-      });
-    }
-    return () => {
-      abortController.abort();
-    };
-  }, [tab]);
-
-  useEffect(() => {
-    const abortController = new AbortController();
-
-    getTableDataBasicStocksHeld({
-      dispatcher: unRealizedDataDispatcher,
-      abortController,
-      body: {
+  const { data: realizedData, isLoading: realizedIsLoading } =
+    useTableDataBasicStocksHeld({
+      query: {
+        fullyRealized: true,
+        partialRealized: true,
+        andOr: 'or',
+        containerName: 'stocks_held',
+      },
+      enabled: CollapseKey === '1',
+    });
+  const { data: unRealizedData, isLoading: unRealizedIsLoading } =
+    useTableDataBasicStocksHeld({
+      query: {
         fullyRealized: false,
         containerName: 'stocks_held',
       },
+      enabled: true,
     });
-
-    return () => {
-      abortController.abort();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (CollapseKey === '1') {
-      const abortController = new AbortController();
-
-      getTableDataBasicStocksHeld({
-        dispatcher: RealizedDataDispatcher,
-        abortController,
-        body: {
-          fullyRealized: true,
-          partialRealized: true,
-          andOr: 'or',
-          containerName: 'stocks_held',
-        },
-      });
-
-      return () => {
-        abortController.abort();
-      };
+  const { data: stockPieData, isLoading: stockPieIsLoading } = usePieData({
+    query: {
+      dataType: 'stocks',
+    },
+    enabled: tab === '1',
+  });
+  const { data: sectorPieData, isLoading: sectorPieIsLoading } = usePieData({
+    query: {
+      dataType: 'sector',
+    },
+    enabled: tab === '2',
+  });
+  const { data: countryPieData, isLoading: countryPieIsLoading } = usePieData({
+    query: {
+      dataType: 'country',
+    },
+    enabled: tab === '3',
+  });
+  const { data: currencyPieData, isLoading: currencyPieIsLoading } = usePieData(
+    {
+      query: {
+        dataType: 'currency',
+      },
+      enabled: tab === '4',
     }
-  }, [CollapseKey]);
+  );
 
   // Tabs setup
   const items = [
@@ -143,9 +71,9 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
       children: (
         <div className="min-h-96">
           <PieChart
-            data={StockPieData.data}
-            isloading={StockPieData.isLoading}
-            userSettings={userSettings}
+            data={stockPieData}
+            isloading={stockPieIsLoading}
+            currency={userSettings.data.currency}
           />
         </div>
       ),
@@ -156,9 +84,9 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
       children: (
         <div className="min-h-96">
           <PieChart
-            data={SectorPieData.data}
-            isloading={SectorPieData.isLoading}
-            userSettings={userSettings}
+            data={sectorPieData}
+            isloading={sectorPieIsLoading}
+            currency={userSettings.data.currency}
           />
         </div>
       ),
@@ -169,9 +97,9 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
       children: (
         <div className="min-h-96">
           <PieChart
-            data={CountryPieData.data}
-            isloading={CountryPieData.isLoading}
-            userSettings={userSettings}
+            data={countryPieData}
+            isloading={countryPieIsLoading}
+            currency={userSettings.data.currency}
           />
         </div>
       ),
@@ -182,9 +110,9 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
       children: (
         <div className="min-h-96">
           <PieChart
-            data={CurrencyPieData.data}
-            isloading={CurrencyPieData.isLoading}
-            userSettings={userSettings}
+            data={currencyPieData}
+            isloading={currencyPieIsLoading}
+            currency={userSettings.data.currency}
           />
         </div>
       ),
@@ -206,9 +134,9 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
         items={items}
       />
       <AntdTable
-        columns={UnRealizedColumns(userSettings.currency)}
-        data={UnRealizedData.data}
-        isLoading={UnRealizedData.isLoading}
+        columns={UnRealizedColumns(userSettings.data.currency)}
+        data={unRealizedData}
+        isLoading={unRealizedIsLoading}
         globalSorter={true}
         tableProps={{
           scroll: true,
@@ -224,9 +152,9 @@ export default function Home({ userSettings }: { userSettings: UserSettings }) {
       >
         <Panel className="p-0" header="Realized Stocks" key="1">
           <AntdTable
-            columns={RealizedColumns(userSettings.currency)}
-            data={RealizedData.data}
-            isLoading={RealizedData.isLoading}
+            columns={RealizedColumns(userSettings.data.currency)}
+            data={realizedData}
+            isLoading={realizedIsLoading}
             globalSorter={true}
             tableProps={{
               scroll: true,

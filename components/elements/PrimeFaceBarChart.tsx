@@ -1,37 +1,42 @@
 import { Chart } from 'primereact/chart';
 import { Spin } from 'antd';
 import { formatCurrency } from '../utils/formatting';
-import { BarChartData } from '../services/data/getBarchartData';
-import { UserSettings } from '../services/data/getUserData';
+import { BarChartData } from '../services/chart/bar';
 
 export default function PrimeFacePieChart({
   data,
   isloading,
-  userSettings,
+  currency,
 }: {
-  data: BarChartData[];
+  data: BarChartData[] | undefined;
   isloading: boolean;
-  userSettings: UserSettings;
+  currency: string;
 }): JSX.Element {
-  const labels = data.map(function (index) {
-    return index.date;
-  });
+  const labels = data
+    ? data.map(function (index) {
+        return index.date;
+      })
+    : [];
 
   const uniqueLabels = Array.from(new Set(labels));
 
-  const category = data.map(function (index) {
-    return index.category;
-  });
+  const category = data
+    ? data.map(function (index) {
+        return index.category;
+      })
+    : [];
 
   function filter_json(symbol: string) {
     let outputData = [];
-    for (const element of data) {
-      for (let i = 1; i < uniqueLabels.length + 1; i++) {
-        if (
-          element['category'] === symbol &&
-          element['date'] === uniqueLabels[i - 1]
-        ) {
-          outputData.push(element);
+    if (data) {
+      for (const element of data) {
+        for (let i = 1; i < uniqueLabels.length + 1; i++) {
+          if (
+            element['category'] === symbol &&
+            element['date'] === uniqueLabels[i - 1]
+          ) {
+            outputData.push(element);
+          }
         }
       }
     }
@@ -102,7 +107,7 @@ export default function PrimeFacePieChart({
             label += ': ';
             label += formatCurrency({
               value: context.dataset.data[index],
-              currency: userSettings.currency,
+              currency,
             });
             return label;
           },
@@ -143,7 +148,7 @@ export default function PrimeFacePieChart({
               return formatCurrency({
                 value: value,
                 maximumFractionDigits: 0,
-                currency: userSettings.currency,
+                currency,
               });
             }
           },

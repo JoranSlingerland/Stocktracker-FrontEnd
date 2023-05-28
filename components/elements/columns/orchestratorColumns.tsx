@@ -6,8 +6,8 @@ import {
   ExclamationCircleOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
-import { terminateOrchestrator } from '../../services/orchestrator/terminateOrchestrator';
-import { purgeOrchestrator } from '../../services/orchestrator/purgeOrchestrator';
+import { terminateOrchestrator } from '../../services/orchestrator/terminate';
+import { purgeOrchestrator } from '../../services/orchestrator/purge';
 
 const { Text } = Typography;
 
@@ -72,7 +72,7 @@ export const orchestratorColumns: ColumnsType = [
           title="Are you sure you want to terminate this orchestrator?"
           onConfirm={() => {
             terminateOrchestrator({
-              body: {
+              query: {
                 instanceId: record.instanceId,
               },
             });
@@ -82,25 +82,18 @@ export const orchestratorColumns: ColumnsType = [
           arrow={false}
           icon={false}
         >
-          <Button
-            danger
-            disabled={
-              record.runtimeStatus === 'Running' ||
-              record.runtimeStatus === 'Pending'
-                ? false
-                : true
-            }
-            className="mb-1 mr-1"
-            size="small"
-          >
-            Terminate
-          </Button>
+          {record.runtimeStatus === 'Running' ||
+          record.runtimeStatus === 'Pending' ? (
+            <Button danger className="mb-1 mr-1" size="small">
+              Terminate
+            </Button>
+          ) : null}
         </Popconfirm>
         <Popconfirm
           title="Are you sure you want to purge this orchestrator?"
           onConfirm={() => {
             purgeOrchestrator({
-              body: {
+              query: {
                 instanceId: record.instanceId,
               },
             });

@@ -25,10 +25,12 @@ import {
   formatCurrency,
   formatPercentageWithColors,
 } from '../utils/formatting';
-import useLocalStorageState from '../hooks/useLocalStorageState';
-import { startOrchestrator } from '../services/orchestrator/startOrchestrator';
+import useSessionStorageState from '../hooks/useSessionStorageState';
+import { startOrchestrator } from '../services/orchestrator/start';
 import { MenuOutlined } from '@ant-design/icons';
-import { UserSettings } from '../services/data/getUserData';
+import { TotalsData } from '../types/types';
+import { UseFetchResult } from '../hooks/useFetch';
+import { UseUserData } from '../services/user/get';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -38,17 +40,17 @@ export default function App({
   userInfo,
   timeFrameState,
   userSettings,
-  totalPerformanceData,
+  totalPerformance,
 }: {
   userInfo: UserInfo_Type;
   timeFrameState: TimeFramestate;
-  userSettings: UserSettings;
-  totalPerformanceData: any;
+  userSettings: UseUserData;
+  totalPerformance: UseFetchResult<TotalsData[]>;
 }) {
   // const setup
   const [current, setCurrent] = useState('portfolio');
   const { timeFrame, setTimeFrame } = timeFrameState;
-  const [tab, setTab] = useLocalStorageState('navbarTab', '1');
+  const [tab, setTab] = useSessionStorageState('navbarTab', '1');
   const timeFrameMap = {
     max: 'Max',
     year: 'Year',
@@ -71,8 +73,8 @@ export default function App({
   // functions
   function overViewBarRow(
     text: string,
-    value: number,
-    percentage: number,
+    value: number | undefined,
+    percentage: number | undefined,
     loading: boolean
   ) {
     return (
@@ -91,7 +93,7 @@ export default function App({
               className="pt-1"
               valueStyle={{ fontSize: '24px' }}
               formatter={(value) =>
-                formatCurrency({ value, currency: userSettings.currency })
+                formatCurrency({ value, currency: userSettings.data.currency })
               }
             />
           </Skeleton>
@@ -153,9 +155,9 @@ export default function App({
             className="w-40"
           >
             <Statistic
-              value={totalPerformanceData.data[0].unrealized.total_value}
+              value={totalPerformance.data?.[0]?.unrealized.total_value}
               formatter={(value) =>
-                formatCurrency({ value, currency: userSettings.currency })
+                formatCurrency({ value, currency: userSettings.data.currency })
               }
             />
           </Skeleton>
@@ -174,34 +176,39 @@ export default function App({
                 <div>
                   {overViewBarRow(
                     'Value P/L',
-                    totalPerformanceData.data[0].combined.value_pl,
-                    totalPerformanceData.data[0].combined.value_pl_percentage,
+                    totalPerformance.data?.[0]?.combined.value_pl,
+                    totalPerformance.data?.[0]?.combined.value_pl_percentage,
                     loading
                   )}
                   {overViewBarRow(
                     'Forex P/L',
-                    totalPerformanceData.data[0].combined.forex_pl,
-                    totalPerformanceData.data[0].combined.forex_pl_percentage,
+                    totalPerformance.data?.[0]?.combined.forex_pl,
+                    totalPerformance.data?.[0]?.combined.forex_pl_percentage,
                     loading
                   )}
                   {overViewBarRow(
                     'Dividend',
-                    totalPerformanceData.data[0].realized.dividends,
-                    totalPerformanceData.data[0].realized.dividends_percentage,
+                    totalPerformance.data?.[0]?.realized.dividends,
+                    totalPerformance.data?.[0]?.realized.dividends_percentage,
                     loading
                   )}
                   {overViewBarRow(
                     'Fees',
-                    totalPerformanceData.data[0].realized.transaction_cost * -1,
-                    totalPerformanceData.data[0].realized
-                      .transaction_cost_percentage * -1,
+                    totalPerformance.data?.[0]?.realized?.transaction_cost
+                      ? totalPerformance.data[0]?.realized.transaction_cost * -1
+                      : 0,
+                    totalPerformance.data?.[0]?.realized
+                      ?.transaction_cost_percentage
+                      ? totalPerformance.data[0]?.realized
+                          .transaction_cost_percentage * -1
+                      : 0,
                     loading
                   )}
                   <Divider className="m-2" />
                   {overViewBarRow(
                     'Total P/L',
-                    totalPerformanceData.data[0].combined.total_pl,
-                    totalPerformanceData.data[0].combined.total_pl_percentage,
+                    totalPerformance.data?.[0]?.combined.total_pl,
+                    totalPerformance.data?.[0]?.combined.total_pl_percentage,
                     loading
                   )}
                 </div>
@@ -214,21 +221,21 @@ export default function App({
                 <div>
                   {overViewBarRow(
                     'Value P/L',
-                    totalPerformanceData.data[0].unrealized.value_pl,
-                    totalPerformanceData.data[0].unrealized.value_pl_percentage,
+                    totalPerformance.data?.[0]?.unrealized.value_pl,
+                    totalPerformance.data?.[0]?.unrealized.value_pl_percentage,
                     loading
                   )}
                   {overViewBarRow(
                     'Forex P/L',
-                    totalPerformanceData.data[0].unrealized.forex_pl,
-                    totalPerformanceData.data[0].unrealized.forex_pl_percentage,
+                    totalPerformance.data?.[0]?.unrealized.forex_pl,
+                    totalPerformance.data?.[0]?.unrealized.forex_pl_percentage,
                     loading
                   )}
                   <Divider className="m-2" />
                   {overViewBarRow(
                     'Total P/L',
-                    totalPerformanceData.data[0].unrealized.total_pl,
-                    totalPerformanceData.data[0].unrealized.total_pl_percentage,
+                    totalPerformance.data?.[0]?.unrealized.total_pl,
+                    totalPerformance.data?.[0]?.unrealized.total_pl_percentage,
                     loading
                   )}
                 </div>
@@ -241,34 +248,39 @@ export default function App({
                 <div>
                   {overViewBarRow(
                     'Value P/L',
-                    totalPerformanceData.data[0].realized.value_pl,
-                    totalPerformanceData.data[0].realized.value_pl_percentage,
+                    totalPerformance.data?.[0]?.realized.value_pl,
+                    totalPerformance.data?.[0]?.realized.value_pl_percentage,
                     loading
                   )}
                   {overViewBarRow(
                     'Forex P/L',
-                    totalPerformanceData.data[0].realized.forex_pl,
-                    totalPerformanceData.data[0].realized.forex_pl_percentage,
+                    totalPerformance.data?.[0]?.realized.forex_pl,
+                    totalPerformance.data?.[0]?.realized.forex_pl_percentage,
                     loading
                   )}
                   {overViewBarRow(
                     'Dividend',
-                    totalPerformanceData.data[0].realized.dividends,
-                    totalPerformanceData.data[0].realized.dividends_percentage,
+                    totalPerformance.data?.[0]?.realized.dividends,
+                    totalPerformance.data?.[0]?.realized.dividends_percentage,
                     loading
                   )}
                   {overViewBarRow(
                     'Fees',
-                    totalPerformanceData.data[0].realized.transaction_cost * -1,
-                    totalPerformanceData.data[0].realized
-                      .transaction_cost_percentage * -1,
+                    totalPerformance.data?.[0]?.realized?.transaction_cost
+                      ? totalPerformance.data[0]?.realized.transaction_cost * -1
+                      : 0,
+                    totalPerformance.data?.[0]?.realized
+                      ?.transaction_cost_percentage
+                      ? totalPerformance.data[0]?.realized
+                          .transaction_cost_percentage * -1
+                      : 0,
                     loading
                   )}
                   <Divider className="m-2" />
                   {overViewBarRow(
                     'Total P/L',
-                    totalPerformanceData.data[0].realized.total_pl,
-                    totalPerformanceData.data[0].realized.total_pl_percentage,
+                    totalPerformance.data?.[0]?.realized.total_pl,
+                    totalPerformance.data?.[0]?.realized.total_pl_percentage,
                     loading
                   )}
                 </div>
@@ -316,20 +328,20 @@ export default function App({
   const overViewBar: MenuItem[] = [
     {
       key: 'overviewBar',
-      disabled: totalPerformanceData.isLoading,
+      disabled: totalPerformance.isLoading,
       label: (
         <div className="cursor-default flex">
           <Skeleton
             className="w-20 pt-4"
-            active={totalPerformanceData.isLoading}
+            active={totalPerformance.isLoading}
             paragraph={false}
-            loading={totalPerformanceData.isLoading}
+            loading={totalPerformance.isLoading}
           >
             <div>
               <Text>
                 {formatCurrency({
-                  value: totalPerformanceData.data[0].unrealized.total_value,
-                  currency: userSettings.currency,
+                  value: totalPerformance.data?.[0]?.unrealized?.total_value,
+                  currency: userSettings.data.currency,
                 })}
               </Text>
             </div>
@@ -342,15 +354,15 @@ export default function App({
           </div>
           <Skeleton
             className="w-12 pt-4"
-            active={totalPerformanceData.isLoading}
+            active={totalPerformance.isLoading}
             paragraph={false}
-            loading={totalPerformanceData.isLoading}
+            loading={totalPerformance.isLoading}
           >
             <div>
               <Text>
                 {formatPercentageWithColors({
                   value:
-                    totalPerformanceData.data[0].unrealized.value_pl_percentage,
+                    totalPerformance.data?.[0]?.unrealized.value_pl_percentage,
                   addIcon: true,
                 })}
               </Text>
@@ -362,7 +374,7 @@ export default function App({
       children: [
         {
           key: 'overviewDropdown',
-          label: <OverViewBar loading={totalPerformanceData.isLoading} />,
+          label: <OverViewBar loading={totalPerformance.isLoading} />,
           style: {
             width: 'fit-content',
             height: 'fit-content',
@@ -395,7 +407,7 @@ export default function App({
               <a
                 onClick={() =>
                   startOrchestrator({
-                    body: {
+                    query: {
                       functionName: 'stocktracker_orchestrator',
                       daysToUpdate: 7,
                     },
@@ -419,7 +431,7 @@ export default function App({
             <a
               href="/.auth/logout?post_logout_redirect_uri=/"
               onClick={() => {
-                localStorage.clear();
+                sessionStorage.clear();
               }}
             >
               Logout
@@ -478,7 +490,7 @@ export default function App({
               type="secondary"
               href="/.auth/logout?post_logout_redirect_uri=/"
               onClick={() => {
-                localStorage.clear();
+                sessionStorage.clear();
               }}
             >
               Logout

@@ -1,8 +1,8 @@
 import { Spin } from 'antd';
 import { Chart } from 'primereact/chart';
 import { formatCurrency } from '../utils/formatting';
-import { UserSettings } from '../services/data/getUserData';
-import { LineChartData } from '../services/data/getLineChartData';
+import { UserSettings } from '../services/user/get';
+import { LineChartData } from '../services/chart/line';
 
 export default function BasicLineGraph({
   isloading,
@@ -10,11 +10,14 @@ export default function BasicLineGraph({
   userSettings,
 }: {
   isloading: boolean;
-  data: LineChartData;
+  data: LineChartData | undefined;
   userSettings: UserSettings;
 }): JSX.Element {
   const totalDuration = 500;
-  let delayBetweenPoints = totalDuration / data['labels'].length;
+  let delayBetweenPoints = 0;
+  if (data && data['labels']) {
+    delayBetweenPoints = totalDuration / data['labels'].length;
+  }
 
   const previousY = (ctx: any) =>
     ctx.index === 0
@@ -133,7 +136,7 @@ export default function BasicLineGraph({
     },
   };
 
-  if (isloading) {
+  if (isloading || data == undefined || data['datasets'].length == 0) {
     return (
       <div className="h-[500px]">
         <Spin spinning={isloading}>
@@ -189,7 +192,7 @@ export default function BasicLineGraph({
       </div>
     );
   }
-  // return empty chart if no data
+  // return empty if no conditions are met
   return (
     <div className="h-[500px]">
       <Chart type="line" data={{}} options={multiAxisOptions} />

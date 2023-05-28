@@ -3,23 +3,26 @@ import { Chart } from 'primereact/chart';
 import { formatCurrency } from '../utils/formatting';
 import React from 'react';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { PieChartData } from '../services/data/getPieData';
-import { UserSettings } from '../services/data/getUserData';
+import { PieChartData } from '../services/chart/pie';
 
 export default function PieChart({
   data,
   isloading,
-  userSettings,
+  currency,
 }: {
-  data: PieChartData;
+  data: PieChartData | undefined;
   isloading: boolean;
-  userSettings: UserSettings;
+  currency: string;
 }): JSX.Element {
   const myChartRef: any = React.createRef();
 
-  const chartData = {
-    labels: data['labels'],
-    datasets: [
+  const chartData: any = {
+    labels: [],
+    datasets: [],
+  };
+  if (data) {
+    chartData.labels = data['labels'];
+    chartData.datasets = [
       {
         data: data['data'],
         backgroundColor: data['color'],
@@ -27,8 +30,8 @@ export default function PieChart({
         hoverBorderColor: data['color'],
         hoverOffset: 3,
       },
-    ],
-  };
+    ];
+  }
 
   const list_data_source = chartData['labels'].map(
     (label: string, i: number) => {
@@ -112,7 +115,7 @@ export default function PieChart({
             label += ': ';
             label += formatCurrency({
               value: context.dataset.data[index],
-              currency: userSettings.currency,
+              currency,
             });
             return label;
           },
@@ -200,7 +203,7 @@ export default function PieChart({
                 <div>
                   {formatCurrency({
                     value: item.data,
-                    currency: userSettings.currency,
+                    currency,
                   })}
                 </div>
               </List.Item>

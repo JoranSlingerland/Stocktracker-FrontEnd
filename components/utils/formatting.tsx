@@ -8,9 +8,9 @@ function formatCurrency({
   maximumFractionDigits,
   currency,
 }: {
-  value: number | string;
+  value: number | string | undefined;
   maximumFractionDigits?: number;
-  currency?: string;
+  currency?: string | undefined;
 }) {
   if (currency === undefined || currency === '') {
     return formatNumber(value, maximumFractionDigits);
@@ -117,7 +117,7 @@ function formatPercentageWithColors({
   className = '',
   addIcon = false,
 }: {
-  value: number | string;
+  value: number | string | undefined;
   maximumFractionDigits?: number;
   className?: string;
   addIcon?: boolean;
@@ -146,7 +146,10 @@ function formatPercentageWithColors({
   return <Text className={className}>{formattedValue}</Text>;
 }
 
-function formatNumber(value: number | string, maximumFractionDigits = 2) {
+function formatNumber(
+  value: number | string | undefined,
+  maximumFractionDigits = 2
+) {
   if (typeof value === 'string') {
     value = parseFloat(value);
   }
