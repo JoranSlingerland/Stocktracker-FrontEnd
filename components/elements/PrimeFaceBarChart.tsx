@@ -1,7 +1,7 @@
 import { Chart } from 'primereact/chart';
 import { Spin } from 'antd';
 import { formatCurrency } from '../utils/formatting';
-import { BarChartData } from '../services/data/getBarchartData';
+import { BarChartData } from '../services/chart/bar';
 
 export default function PrimeFacePieChart({
   data,

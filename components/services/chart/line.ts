@@ -1,7 +1,7 @@
 import { cachedFetch } from '../../utils/api';
 import { useFetch } from '../../hooks/useFetch';
 
-interface GetLineChartDataBody {
+interface GetLineChartDataQuery {
   allData: boolean;
   startDate?: string;
   endDate?: string;
@@ -20,11 +20,10 @@ interface LineChartData {
 
 async function getLineChartData({
   abortController,
-  body,
+  query,
 }: {
   abortController: AbortController;
-  body: GetLineChartDataBody;
-  fallback_data?: LineChartData;
+  query?: GetLineChartDataQuery;
 }) {
   const fallback_data = {
     labels: [],
@@ -32,9 +31,9 @@ async function getLineChartData({
   };
 
   const response = await cachedFetch({
-    url: `/api/data/get_linechart_data`,
-    method: 'POST',
-    body,
+    url: `/api/chart/line`,
+    method: 'GET',
+    query,
     controller: abortController,
     fallback_data,
   });
@@ -42,17 +41,19 @@ async function getLineChartData({
 }
 
 function useLineChartData({
-  body,
+  query,
   enabled = true,
 }: {
-  body: GetLineChartDataBody;
+  query: GetLineChartDataQuery;
   enabled?: boolean;
 }) {
-  const fetchResult = useFetch<GetLineChartDataBody, LineChartData>({
-    body,
-    enabled,
-    fetchData: getLineChartData,
-  });
+  const fetchResult = useFetch<undefined, GetLineChartDataQuery, LineChartData>(
+    {
+      query,
+      enabled,
+      fetchData: getLineChartData,
+    }
+  );
 
   return fetchResult;
 }

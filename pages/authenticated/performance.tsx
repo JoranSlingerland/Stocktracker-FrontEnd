@@ -6,11 +6,11 @@ import PrimeFaceBarChart from '../../components/elements/PrimeFaceBarChart';
 import AntdTable from '../../components/elements/antdTable';
 import { TimeFramestate } from '../../components/types/types';
 import useSessionStorageState from '../../components/hooks/useSessionStorageState';
-import { useTableDataPerformanceStocksHeld } from '../../components/services/data/GetTableDataPerformance/stocksHeld';
+import { useTableDataPerformanceStocksHeld } from '../../components/services/table/performance/stocksHeld';
 import { valueGrowthColumns } from '../../components/elements/columns/valueGrowthColumns';
 import { ReceivedDividedColumns } from '../../components/elements/columns/ReceivedDividedColumns';
 import { TransactionCostColumns } from '../../components/elements/columns/TransactionCostColumns';
-import { UseUserData } from '../../components/services/data/getUserData';
+import { UseUserData } from '../../components/services/user/get';
 import { useBarchartData } from '../../components/services/chart/bar';
 import { useLineChartData } from '../../components/services/chart/line';
 import { UseFetchResult } from '../../components/hooks/useFetch';
@@ -48,21 +48,13 @@ export default function performance({
   const [tab, setTab] = useSessionStorageState('performanceTab', 1);
   const { data: valueGrowthData, isLoading: valueGrowthIsLoading } =
     useLineChartData({
-      body: {
+      query: {
         ...timeFrameBody,
         dataType: 'invested_and_value',
       },
     });
-  const { data: totalGainsData, isLoading: totalGainsIsLoading } =
-    useLineChartData({
-      body: {
-        ...timeFrameBody,
-        dataType: 'total_gains',
-      },
-      enabled: tab === 2,
-    });
   const { data: dividendData, isLoading: dividendIsLoading } = useBarchartData({
-    body: {
+    query: {
       ...timeFrameBody,
       dataType: 'dividend',
     },
@@ -72,16 +64,24 @@ export default function performance({
     data: totalTransactionCostData,
     isLoading: totalTransactionCostIsLoading,
   } = useBarchartData({
-    body: {
+    query: {
       ...timeFrameBody,
       dataType: 'transaction_cost',
     },
     enabled: tab === 3,
   });
+  const { data: totalGainsData, isLoading: totalGainsIsLoading } =
+    useLineChartData({
+      query: {
+        ...timeFrameBody,
+        dataType: 'total_gains',
+      },
+      enabled: tab === 4,
+    });
 
   const { data: singleDayData, isLoading: singleDayIsLoading } =
     useTableDataPerformanceStocksHeld({
-      body: {
+      query: {
         ...timeFrameBody,
         containerName: 'stocks_held',
         dataType: 'stocks_held',

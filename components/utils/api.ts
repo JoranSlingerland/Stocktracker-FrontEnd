@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import wretch from 'wretch';
-import FormDataAddon from 'wretch/addons/formData';
+import QueryStringAddon from 'wretch/addons/queryString';
 import AbortAddon from 'wretch/addons/abort';
 import hash from 'object-hash';
 
@@ -28,10 +28,17 @@ function getWithExpiry(key: string) {
   return item.value;
 }
 
-function newKey(url: string, body: any) {
-  body = JSON.parse(JSON.stringify(body));
-  delete body.userId;
-  return hash(url + JSON.stringify(body));
+function newKey(url: string, method: string, body: object, query: object) {
+  let body_string = '';
+  let query_string = '';
+  if (body) {
+    body_string = JSON.stringify(body);
+  }
+  if (query) {
+    query_string = JSON.stringify(query);
+  }
+
+  return hash(url + body_string + query_string + method);
 }
 
 // End of helper functions
@@ -39,117 +46,103 @@ function newKey(url: string, body: any) {
 // main functions
 async function regularFetch({
   url,
-  dispatcher,
   fallback_data = [],
   method = 'GET',
-  body = {},
+  query = undefined,
+  body = undefined,
   controller,
-  background = false,
 }: {
   url: string;
-  dispatcher?: any;
   fallback_data?: any;
-  method?: 'GET' | 'POST';
+  method?: 'GET' | 'POST' | 'DELETE';
+  query?: any;
   body?: any;
   controller?: AbortController;
-  background?: boolean;
 }): Promise<{ response: any; error: boolean }> {
   controller = controller || new AbortController();
-  if (dispatcher && !background) {
-    dispatcher({ type: 'FETCH_INIT' });
-  }
   let error = false;
+
+  const w = wretch()
+    .url(url)
+    .addon(AbortAddon())
+    .addon(QueryStringAddon)
+    .signal(controller)
+    .query(query);
+
   if (method === 'GET') {
-    var response = await wretch(url)
-      .addon(AbortAddon())
-      .signal(controller)
+    response = await w
       .get()
       .onAbort(() => {
-        if (dispatcher) {
-          dispatcher({ type: 'FETCH_ABORT', payload: fallback_data });
-        }
         error = true;
       })
       .json()
       .catch(() => {
-        if (dispatcher) {
-          dispatcher({ type: 'FETCH_FAILURE', payload: fallback_data });
-        }
         error = true;
       });
-  }
-  if (method === 'POST') {
-    var response = await wretch(url)
-      .addon(FormDataAddon)
-      .addon(AbortAddon())
-      .signal(controller)
-      .formData(body)
+  } else if (method === 'POST') {
+    var response = await w
+      .json(body)
       .post()
       .onAbort(() => {
-        if (dispatcher) {
-          dispatcher({ type: 'FETCH_ABORT', payload: fallback_data });
-        }
         error = true;
       })
       .json()
       .catch(() => {
-        if (dispatcher) {
-          dispatcher({ type: 'FETCH_FAILURE', payload: fallback_data });
-        }
         error = true;
       });
+  } else if (method === 'DELETE') {
+    var response = await w
+      .json(body)
+      .delete()
+      .onAbort(() => {
+        error = true;
+      })
+      .json()
+      .catch(() => {
+        error = true;
+      });
+  } else {
+    error = true;
   }
+
   if (error) {
     return { response: fallback_data, error: error };
-  }
-  if (dispatcher) {
-    dispatcher({ type: 'FETCH_SUCCESS', payload: response });
   }
   return { response, error };
 }
 
 async function cachedFetch({
   url,
-  dispatcher,
   fallback_data = [],
   method = 'GET',
-  body = {},
+  query = undefined,
+  body = undefined,
   hours = 24,
   controller,
-  background = false,
   overwrite = false,
 }: {
   url: string;
-  dispatcher?: any;
   fallback_data?: any;
-  method?: 'GET' | 'POST';
+  method?: 'GET' | 'POST' | 'DELETE';
+  query?: any;
   body?: any;
   hours?: number;
   controller?: AbortController;
-  background?: boolean;
   overwrite?: boolean;
 }): Promise<{ response: any; error: boolean }> {
-  if (dispatcher && !background) {
-    dispatcher({ type: 'FETCH_INIT' });
-  }
-
-  const key = newKey(url, body);
+  const key = newKey(url, method, body, query);
   let response = getWithExpiry(key);
   let error = false;
   if (response && !overwrite) {
-    if (dispatcher) {
-      dispatcher({ type: 'FETCH_SUCCESS', payload: response });
-    }
     return { response, error };
   } else {
     const { response, error } = await regularFetch({
       url,
-      dispatcher,
       fallback_data,
       method,
       body,
       controller,
-      background,
+      query,
     });
     if (error) {
       return { response: fallback_data, error };
@@ -163,14 +156,16 @@ async function ApiWithMessage(
   url: string,
   runningMessage: string,
   successMessage: string,
-  method: 'GET' | 'POST' = 'GET',
+  method: 'GET' | 'POST' | 'DELETE' = 'GET',
   body: any = {},
-  contentType: 'application/json' | 'multipart/form-data' = 'application/json'
+  query: any = {}
 ): Promise<any> {
   const hide = message.loading(runningMessage, 10);
   if (method === 'GET') {
     const response = await wretch(url)
-      .get()
+      .addon(QueryStringAddon)
+      .query(query)
+      .get(body)
       .json(() => {
         hide();
         message.success(successMessage);
@@ -182,34 +177,36 @@ async function ApiWithMessage(
     return response;
   }
   if (method === 'POST') {
-    if (contentType === 'application/json') {
-      const response = await wretch(url)
-        .post(body)
-        .json(() => {
-          hide();
-          message.success(successMessage);
-        })
-        .catch(() => {
-          hide();
-          message.error('Something went wrong :(');
-        });
-      return response;
-    }
-    if (contentType === 'multipart/form-data') {
-      const response = await wretch(url)
-        .addon(FormDataAddon)
-        .formData(body)
-        .post()
-        .json(() => {
-          hide();
-          message.success(successMessage);
-        })
-        .catch(() => {
-          hide();
-          message.error('Something went wrong :(');
-        });
-      return response;
-    }
+    const response = await wretch(url)
+      .addon(QueryStringAddon)
+      .query(query)
+      .post(body)
+      .json(() => {
+        hide();
+        message.success(successMessage);
+      })
+      .catch(() => {
+        hide();
+        message.error('Something went wrong :(');
+      });
+    return response;
+  }
+  if (method === 'DELETE') {
+    const response = await wretch(url)
+      .addon(QueryStringAddon)
+      .query(query)
+      .json(body)
+      // .body(body)
+      .delete()
+      .json(() => {
+        hide();
+        message.success(successMessage);
+      })
+      .catch(() => {
+        hide();
+        message.error('Something went wrong :(');
+      });
+    return response;
   }
 }
 

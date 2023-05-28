@@ -3,7 +3,7 @@ import {
   formatCurrency,
   formatPercentageWithColors,
 } from '../utils/formatting';
-import { LineChartData } from '../services/data/getLineChartData';
+import { LineChartData } from '../services/chart/line';
 import { TotalsData } from '../../components/types/types';
 
 export default function tabs({

@@ -9,8 +9,8 @@ import useSessionStorageState from '../components/hooks/useSessionStorageState';
 import { dataToGetSwitch } from '../components/utils/dateTimeHelpers';
 import Footer from '../components/modules/footer';
 import React from 'react';
-import { useUserData } from '../components/services/data/getUserData';
-import { useTableDataPerformanceTotals } from '../components/services/data/GetTableDataPerformance/totals';
+import { useUserData } from '../components/services/user/get';
+import { useTableDataPerformanceTotals } from '../components/services/table/performance/totals';
 import useTheme from '../components/hooks/useTheme';
 
 async function getUserInfo(setUserInfo: any) {
@@ -49,7 +49,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     return body;
   }, [timeFrameDates.end_date, timeFrameDates.start_date]);
   const totalPerformance = useTableDataPerformanceTotals({
-    body: {
+    query: {
       ...timeFrameBody,
       containerName: 'totals',
     },

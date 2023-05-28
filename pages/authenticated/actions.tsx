@@ -5,12 +5,12 @@ import {
   TransactionsFormModal,
   StockFormModal,
 } from '../../components/modules/formModal';
-import { deleteInputItems } from '../../components/services/delete/deleteInputItems';
+import { deleteInputItems } from '../../components/services/input/delete';
 import { InputInvestedColumns } from '../../components/elements/columns/InputInvestedColumns';
 import { InputTransactionsColumns } from '../../components/elements/columns/InputTransactionsColumns';
-import { UseUserData } from '../../components/services/data/getUserData';
-import { useTableDataBasicInputInvested } from '../../components/services/data/getTableDataBasic/inputInvested';
-import { useTableDataBasicInputTransactions } from '../../components/services/data/getTableDataBasic/inputTransactions';
+import { UseUserData } from '../../components/services/user/get';
+import { useTableDataBasicInputInvested } from '../../components/services/table/basic/inputInvested';
+import { useTableDataBasicInputTransactions } from '../../components/services/table/basic/inputTransactions';
 const { Search } = Input;
 const { Title } = Typography;
 
@@ -21,7 +21,7 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
     refetchData: inputTransactionsRefetch,
     overwriteData: inputTransactionsOverwrite,
   } = useTableDataBasicInputTransactions({
-    body: {
+    query: {
       containerName: 'input_transactions',
     },
   });
@@ -31,7 +31,7 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
     refetchData: inputInvestedRefetch,
     overwriteData: inputInvestedOverwrite,
   } = useTableDataBasicInputInvested({
-    body: {
+    query: {
       containerName: 'input_invested',
     },
   });

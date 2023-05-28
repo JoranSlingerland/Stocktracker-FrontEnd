@@ -7,12 +7,11 @@ interface DeleteInputItemsBody {
 
 async function deleteInputItems({ body }: { body: DeleteInputItemsBody }) {
   return await ApiWithMessage(
-    `/api/delete/delete_input_items`,
+    `/api/input/delete`,
     'Deleting item',
     'Item deleted',
-    'POST',
-    body,
-    'application/json'
+    'DELETE',
+    body
   );
 }
 

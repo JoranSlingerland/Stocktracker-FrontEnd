@@ -1,8 +1,8 @@
 import { Spin } from 'antd';
 import { Chart } from 'primereact/chart';
 import { formatCurrency } from '../utils/formatting';
-import { UserSettings } from '../services/data/getUserData';
-import { LineChartData } from '../services/data/getLineChartData';
+import { UserSettings } from '../services/user/get';
+import { LineChartData } from '../services/chart/line';
 
 export default function BasicLineGraph({
   isloading,

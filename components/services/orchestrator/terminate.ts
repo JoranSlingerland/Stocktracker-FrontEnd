@@ -1,17 +1,21 @@
 import { ApiWithMessage } from '../../utils/api';
 
-interface TerminateOrchestratorBody {
+interface TerminateOrchestratorQuery {
   instanceId: string;
 }
 
-function terminateOrchestrator({ body }: { body: TerminateOrchestratorBody }) {
+function terminateOrchestrator({
+  query,
+}: {
+  query: TerminateOrchestratorQuery;
+}) {
   ApiWithMessage(
     '/api/orchestrator/terminate',
     'Terminating orchestrator',
     'Orchestrator terminated',
     'POST',
-    body,
-    'multipart/form-data'
+    {},
+    query
   );
 }
 

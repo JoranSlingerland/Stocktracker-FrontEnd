@@ -1,7 +1,7 @@
 import { cachedFetch } from '../../utils/api';
 import { useFetch } from '../../hooks/useFetch';
 
-interface GetBarchartDataBody {
+interface GetBarchartDataQuery {
   allData: boolean;
   startDate?: string;
   endDate?: string;
@@ -16,32 +16,34 @@ interface BarChartData {
 
 async function getBarchartData({
   abortController,
-  body,
+  query,
 }: {
   abortController: AbortController;
-  body: GetBarchartDataBody;
+  query?: GetBarchartDataQuery;
 }) {
   const response = await cachedFetch({
-    url: `/api/data/get_barchart_data`,
-    method: 'POST',
-    body,
+    url: `/api/chart/bar`,
+    method: 'GET',
     controller: abortController,
+    query,
   });
   return response;
 }
 
 function useBarchartData({
-  body,
+  query,
   enabled = true,
 }: {
-  body: GetBarchartDataBody;
+  query: GetBarchartDataQuery;
   enabled?: boolean;
 }) {
-  const fetchResult = useFetch<GetBarchartDataBody, BarChartData[]>({
-    body,
-    fetchData: getBarchartData,
-    enabled,
-  });
+  const fetchResult = useFetch<undefined, GetBarchartDataQuery, BarChartData[]>(
+    {
+      query,
+      fetchData: getBarchartData,
+      enabled,
+    }
+  );
 
   return fetchResult;
 }

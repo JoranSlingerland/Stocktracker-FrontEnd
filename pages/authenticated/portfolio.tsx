@@ -4,9 +4,9 @@ import AntdTable from '../../components/elements/antdTable';
 import useSessionStorageState from '../../components/hooks/useSessionStorageState';
 import { RealizedColumns } from '../../components/elements/columns/RealizedColumns';
 import { UnRealizedColumns } from '../../components/elements/columns/UnRealizedColumns';
-import { usePieData } from '../../components/services/data/getPieData';
-import { UseUserData } from '../../components/services/data/getUserData';
-import { useTableDataBasicStocksHeld } from '../../components/services/data/getTableDataBasic/stocksHeld';
+import { usePieData } from '../../components/services/chart/pie';
+import { UseUserData } from '../../components/services/user/get';
+import { useTableDataBasicStocksHeld } from '../../components/services/table/basic/stocksHeld';
 
 const { Title } = Typography;
 const { Panel } = Collapse;
@@ -20,7 +20,7 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
   );
   const { data: realizedData, isLoading: realizedIsLoading } =
     useTableDataBasicStocksHeld({
-      body: {
+      query: {
         fullyRealized: true,
         partialRealized: true,
         andOr: 'or',
@@ -30,33 +30,33 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
     });
   const { data: unRealizedData, isLoading: unRealizedIsLoading } =
     useTableDataBasicStocksHeld({
-      body: {
+      query: {
         fullyRealized: false,
         containerName: 'stocks_held',
       },
       enabled: true,
     });
   const { data: stockPieData, isLoading: stockPieIsLoading } = usePieData({
-    body: {
+    query: {
       dataType: 'stocks',
     },
     enabled: tab === '1',
   });
   const { data: sectorPieData, isLoading: sectorPieIsLoading } = usePieData({
-    body: {
+    query: {
       dataType: 'sector',
     },
     enabled: tab === '2',
   });
   const { data: countryPieData, isLoading: countryPieIsLoading } = usePieData({
-    body: {
+    query: {
       dataType: 'country',
     },
     enabled: tab === '3',
   });
   const { data: currencyPieData, isLoading: currencyPieIsLoading } = usePieData(
     {
-      body: {
+      query: {
         dataType: 'currency',
       },
       enabled: tab === '4',

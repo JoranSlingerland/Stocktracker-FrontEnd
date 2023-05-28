@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useDeepCompareEffect } from 'ahooks';
 
-interface UseFetchOptions<Body, Response> {
-  body: Body;
+interface UseFetchOptions<Body, Query, Response> {
+  body?: Body;
+  query?: Query;
   fetchData: (params: {
-    body: Body;
+    query?: Query;
+    body?: Body;
     abortController: AbortController;
     overwrite?: boolean;
   }) => Promise<{ response: Response; error: boolean }>;
@@ -22,14 +24,15 @@ interface UseFetchResult<Response> {
   overwriteData: (data: Response) => void;
 }
 
-function useFetch<Body, Response>({
+function useFetch<Body, Query, Response>({
   body,
+  query,
   fetchData,
   enabled = true,
   background = false,
   overwrite = false,
   initialData,
-}: UseFetchOptions<Body, Response>): UseFetchResult<Response> {
+}: UseFetchOptions<Body, Query, Response>): UseFetchResult<Response> {
   // Constants
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
@@ -48,6 +51,7 @@ function useFetch<Body, Response>({
   const fetchDataAsync = async (abortController: AbortController) => {
     await fetchData({
       body,
+      query,
       abortController,
       overwrite: overwrite || refetch,
     }).then((data) => {
@@ -73,7 +77,7 @@ function useFetch<Body, Response>({
     return () => {
       abortController.abort();
     };
-  }, [enabled, refetch, body]);
+  }, [enabled, refetch, body, query]);
 
   return { data, isLoading, isError, refetchData, overwriteData };
 }

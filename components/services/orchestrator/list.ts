@@ -1,7 +1,7 @@
 import { regularFetch } from '../../utils/api';
 import { useFetch } from '../../hooks/useFetch';
 
-interface ListOrchestratorBody {
+interface ListOrchestratorQuery {
   days: number | 'all';
 }
 
@@ -13,35 +13,36 @@ interface ListOrchestratorData {
 }
 
 async function getListOrchestrator({
-  body,
+  query,
   abortController,
-  background,
 }: {
-  body: ListOrchestratorBody;
+  query?: ListOrchestratorQuery;
   abortController: AbortController;
-  background?: boolean;
 }) {
   const response = await regularFetch({
     url: `/api/orchestrator/list`,
-    method: 'POST',
-    body: body,
+    method: 'GET',
+    query,
     controller: abortController,
-    background: background,
   });
   return response;
 }
 
 function useListOrchestrator({
-  body,
+  query,
   enabled = true,
   background = false,
 }: {
-  body: ListOrchestratorBody;
+  query: ListOrchestratorQuery;
   enabled?: boolean;
   background?: boolean;
 }) {
-  const fetchResult = useFetch<ListOrchestratorBody, ListOrchestratorData[]>({
-    body,
+  const fetchResult = useFetch<
+    undefined,
+    ListOrchestratorQuery,
+    ListOrchestratorData[]
+  >({
+    query,
     fetchData: getListOrchestrator,
     enabled,
     background,

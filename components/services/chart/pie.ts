@@ -1,7 +1,7 @@
 import { cachedFetch } from '../../utils/api';
 import { useFetch } from '../../hooks/useFetch';
 
-interface GetPieChartDataBody {
+interface GetPieChartDataQuery {
   dataType: 'stocks' | 'country' | 'sector' | 'currency';
 }
 
@@ -13,10 +13,10 @@ interface PieChartData {
 
 async function getPieData({
   abortController,
-  body,
+  query,
 }: {
   abortController: AbortController;
-  body: GetPieChartDataBody;
+  query?: GetPieChartDataQuery;
 }) {
   const fallback_data = {
     labels: [],
@@ -25,24 +25,24 @@ async function getPieData({
   };
 
   const response = await cachedFetch({
-    url: `/api/data/get_pie_data`,
+    url: `/api/chart/pie`,
     fallback_data,
-    method: 'POST',
-    body,
+    method: 'GET',
+    query,
     controller: abortController,
   });
   return response;
 }
 
 function usePieData({
-  body,
+  query,
   enabled,
 }: {
-  body: GetPieChartDataBody;
+  query: GetPieChartDataQuery;
   enabled: boolean;
 }) {
-  const fetchResult = useFetch<GetPieChartDataBody, PieChartData>({
-    body,
+  const fetchResult = useFetch<undefined, GetPieChartDataQuery, PieChartData>({
+    query,
     fetchData: getPieData,
     enabled,
   });

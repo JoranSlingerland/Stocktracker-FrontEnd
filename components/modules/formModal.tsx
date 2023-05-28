@@ -3,7 +3,7 @@ import { Button, Divider, Typography } from 'antd';
 import { useState } from 'react';
 import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { formatCurrency } from '../utils/formatting';
-import { addItemToInput } from '../services/add/addItemToInput';
+import { addItemToInput } from '../services/input/add';
 import { TransactionForm, StockForm } from '../elements/Forms';
 import { FormModal } from '../elements/FormModal';
 import useModal from '../hooks/useModal';

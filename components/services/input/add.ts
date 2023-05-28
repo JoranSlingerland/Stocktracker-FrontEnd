@@ -24,7 +24,7 @@ interface AddItemToInputBody {
 
 async function addItemToInput({ body }: { body: AddItemToInputBody }) {
   return await ApiWithMessage(
-    `/api/add/add_item_to_input`,
+    `/api/input/add`,
     'Creating new items',
     'Items Created',
     'POST',

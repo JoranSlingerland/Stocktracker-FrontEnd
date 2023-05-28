@@ -19,8 +19,8 @@ interface UseUserData {
 
 async function getUserData({ overwrite }: { overwrite?: boolean }) {
   const response = await cachedFetch({
-    url: `/api/data/get_user_data`,
-    method: 'POST',
+    url: `/api/user/get`,
+    method: 'GET',
     fallback_data: {
       dark_mode: 'system',
       clearbit_api_key: '',
@@ -36,7 +36,7 @@ async function getUserData({ overwrite }: { overwrite?: boolean }) {
 function useUserData({
   enabled = true,
 }: { enabled?: boolean } = {}): UseUserData {
-  const fetchResult = useFetch<undefined, UserSettings>({
+  const fetchResult = useFetch<undefined, undefined, UserSettings>({
     body: undefined,
     fetchData: getUserData,
     enabled,
@@ -48,7 +48,6 @@ function useUserData({
       brandfetch_api_key: '',
     },
   });
-
   return fetchResult as UseUserData;
 }
 

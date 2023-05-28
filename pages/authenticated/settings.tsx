@@ -14,11 +14,11 @@ import useWindowDimensions from '../../components/hooks/useWindowDimensions';
 import AntdTable from '../../components/elements/antdTable';
 import { currencyCodes } from '../../components/constants/currencyCodes';
 import useSessionStorageState from '../../components/hooks/useSessionStorageState';
-import { startOrchestrator } from '../../components/services/orchestrator/startOrchestrator';
-import { addUserData } from '../../components/services/add/addUserData';
+import { startOrchestrator } from '../../components/services/orchestrator/start';
+import { addUserData } from '../../components/services/user/add';
 import { orchestratorColumns } from '../../components/elements/columns/orchestratorColumns';
-import { UseUserData } from '../../components/services/data/getUserData';
-import { useListOrchestrator } from '../../components/services/orchestrator/OrchestratorList';
+import { UseUserData } from '../../components/services/user/get';
+import { useListOrchestrator } from '../../components/services/orchestrator/list';
 import { RedoOutlined } from '@ant-design/icons';
 
 const { Text, Title, Link } = Typography;
@@ -41,7 +41,7 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
     isLoading: orchestratorListIsLoading,
     refetchData: orchestratorListRefetch,
   } = useListOrchestrator({
-    body: { days: 7 },
+    query: { days: 7 },
     enabled: tab === '3',
   });
 
@@ -280,7 +280,7 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
               <Button
                 onClick={() =>
                   startOrchestrator({
-                    body: {
+                    query: {
                       functionName: 'stocktracker_orchestrator',
                       daysToUpdate: 'all',
                     },

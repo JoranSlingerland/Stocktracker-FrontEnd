@@ -24,9 +24,9 @@ import {
 import TagRow from '../../components/elements/TagRow';
 import StatCard from '../../components/elements/StatCard';
 import { convertTransactionsArray } from '../../components/utils/misc';
-import { UseUserData } from '../../components/services/data/getUserData';
-import { useTableDataBasicStocksHeld } from '../../components/services/data/getTableDataBasic/stocksHeld';
-import { useTableDataBasicInputTransactions } from '../../components/services/data/getTableDataBasic/inputTransactions';
+import { UseUserData } from '../../components/services/user/get';
+import { useTableDataBasicStocksHeld } from '../../components/services/table/basic/stocksHeld';
+import { useTableDataBasicInputTransactions } from '../../components/services/table/basic//inputTransactions';
 
 const { Text, Title, Link } = Typography;
 
@@ -59,7 +59,7 @@ function Stocks({ userSettings }: { userSettings: UseUserData }) {
   const [tab, setTab] = useState('1');
   const { data: stockData, isLoading: stockIsLoading } =
     useTableDataBasicStocksHeld({
-      body: {
+      query: {
         containerName: 'stocks_held',
         symbol: stockSymbol,
       },
@@ -67,7 +67,7 @@ function Stocks({ userSettings }: { userSettings: UseUserData }) {
     });
   const { data: transactionsData, isLoading: transactionsIsLoading } =
     useTableDataBasicInputTransactions({
-      body: {
+      query: {
         containerName: 'input_transactions',
         symbol: stockSymbol,
       },

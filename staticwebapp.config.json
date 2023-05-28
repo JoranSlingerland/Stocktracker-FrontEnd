@@ -9,15 +9,23 @@
       "allowedRoles": ["authenticated"]
     },
     {
-      "route": "/api/add/*",
-      "allowedRoles": ["authenticated"]
-    },
-    {
-      "route": "/api/data/*",
-      "allowedRoles": ["authenticated"]
-    },
-    {
       "route": "/api/orchestrator/*",
+      "allowedRoles": ["authenticated"]
+    },
+    {
+      "route": "/api/chart/*",
+      "allowedRoles": ["authenticated"]
+    },
+    {
+      "route": "/api/input/*",
+      "allowedRoles": ["authenticated"]
+    },
+    {
+      "route": "/api/table/*",
+      "allowedRoles": ["authenticated"]
+    },
+    {
+      "route": "/api/user/*",
       "allowedRoles": ["authenticated"]
     },
     {

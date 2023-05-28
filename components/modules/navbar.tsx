@@ -26,11 +26,11 @@ import {
   formatPercentageWithColors,
 } from '../utils/formatting';
 import useSessionStorageState from '../hooks/useSessionStorageState';
-import { startOrchestrator } from '../services/orchestrator/startOrchestrator';
+import { startOrchestrator } from '../services/orchestrator/start';
 import { MenuOutlined } from '@ant-design/icons';
 import { TotalsData } from '../types/types';
 import { UseFetchResult } from '../hooks/useFetch';
-import { UseUserData } from '../services/data/getUserData';
+import { UseUserData } from '../services/user/get';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -407,7 +407,7 @@ export default function App({
               <a
                 onClick={() =>
                   startOrchestrator({
-                    body: {
+                    query: {
                       functionName: 'stocktracker_orchestrator',
                       daysToUpdate: 7,
                     },
