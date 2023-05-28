@@ -2,8 +2,7 @@ import Navbar from '../components/modules/navbar';
 import '../styles/globals.css';
 import { ConfigProvider } from 'antd';
 import type { AppProps } from 'next/app';
-import { useEffect, useState, useMemo } from 'react';
-import { regularFetch } from '../components/utils/api';
+import { useMemo } from 'react';
 import { TimeFramestate } from '../components/types/types';
 import useSessionStorageState from '../components/hooks/useSessionStorageState';
 import { dataToGetSwitch } from '../components/utils/dateTimeHelpers';
@@ -12,25 +11,10 @@ import React from 'react';
 import { useUserData } from '../components/services/user/get';
 import { useTableDataPerformanceTotals } from '../components/services/table/performance/totals';
 import useTheme from '../components/hooks/useTheme';
-
-async function getUserInfo(setUserInfo: any) {
-  await regularFetch({ url: '/.auth/me', method: 'GET' }).then(
-    ({ response }) => {
-      setUserInfo(response);
-    }
-  );
-}
+import { useUserInfo } from '../components/services/.auth/me';
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const [userInfo, setUserInfo] = useState({
-    clientPrincipal: {
-      userId: '',
-      userRoles: ['anonymous'],
-      claims: [],
-      identityProvider: '',
-      userDetails: '',
-    },
-  });
+  const { data: userInfo } = useUserInfo();
   const userSettings = useUserData();
   const [timeFrame, setTimeFrame] = useSessionStorageState('timeFrame', 'max');
   const timeFrameState: TimeFramestate = { timeFrame, setTimeFrame };
@@ -59,10 +43,6 @@ function MyApp({ Component, pageProps }: AppProps) {
   const { algorithmTheme, className } = useTheme({
     dark_mode: userSettings.data?.dark_mode || 'system',
   });
-
-  useEffect(() => {
-    getUserInfo(setUserInfo);
-  }, []);
 
   const props = {
     userInfo,
