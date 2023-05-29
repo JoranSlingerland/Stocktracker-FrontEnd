@@ -1,7 +1,7 @@
 import { cachedFetch } from '../../../utils/api';
 
 interface SharedQuery {
-  allData: boolean;
+  allData?: boolean;
   startDate?: string;
   endDate?: string;
 }

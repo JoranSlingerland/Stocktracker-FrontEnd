@@ -4,7 +4,7 @@ import { useFetch } from '../../../hooks/useFetch';
 import { SharedQuery, getTableDataPerformance } from './shared';
 
 interface GetTableDataPerformanceQueryStocksHeld extends SharedQuery {
-  dataType: 'stocks_held';
+  containerName: 'stocks_held';
 }
 
 function useTableDataPerformanceStocksHeld({

@@ -2,7 +2,7 @@ import { cachedFetch } from '../../utils/api';
 import { useFetch } from '../../hooks/useFetch';
 
 interface GetBarchartDataQuery {
-  allData: boolean;
+  allData?: boolean;
   startDate?: string;
   endDate?: string;
   dataType: 'dividend' | 'transaction_cost';

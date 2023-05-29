@@ -15,6 +15,12 @@ interface TimeFramestate {
   >;
 }
 
+interface TimeFrameBody {
+  endDate?: string;
+  startDate?: string;
+  allData?: boolean;
+}
+
 interface MetaData {
   symbol: string;
   name: string;
@@ -158,4 +164,6 @@ export type {
   StocksHeldData,
   InputInvestedData,
   InputTransactionData,
+  TimeFrameBody,
+  MetaData,
 };

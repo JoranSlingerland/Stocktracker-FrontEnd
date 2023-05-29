@@ -12,7 +12,7 @@ import { currencyCodes } from '../constants/currencyCodes';
 const TransactionForm = (
   currency: string,
   form: FormInstance<any>,
-  initialValues: any
+  initialValues: object
 ): JSX.Element => {
   return (
     <Form
@@ -86,7 +86,7 @@ const StockForm = ({
   setTotalValue: (value: number) => void;
   setCurrency: (value: string) => void;
   form: FormInstance<any>;
-  initialValues: any;
+  initialValues: object;
 }): JSX.Element => {
   const currencySelector = (
     <Form.Item name="currency" hasFeedback noStyle required={true}>

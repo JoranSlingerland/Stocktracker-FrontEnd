@@ -14,7 +14,7 @@ import { UseUserData } from '../../components/services/user/get';
 import { useBarchartData } from '../../components/services/chart/bar';
 import { useLineChartData } from '../../components/services/chart/line';
 import { UseFetchResult } from '../../components/hooks/useFetch';
-import { TotalsData } from '../../components/types/types';
+import { TotalsData, TimeFrameBody } from '../../components/types/types';
 
 const { Title } = Typography;
 
@@ -31,7 +31,7 @@ export default function performance({
 }) {
   // const setup
   const timeFrameBody = useMemo(() => {
-    const body: any = {};
+    const body: TimeFrameBody = {};
     if (
       timeFrameDates.end_date === 'max' &&
       timeFrameDates.start_date === 'max'
@@ -84,7 +84,6 @@ export default function performance({
       query: {
         ...timeFrameBody,
         containerName: 'stocks_held',
-        dataType: 'stocks_held',
       },
     });
 

@@ -1,19 +1,22 @@
 import type { ColumnsType } from 'antd/es/table';
 import { formatCurrency, formatImageAndText } from '../../utils/formatting';
+import { StocksHeldData, MetaData } from '../../types/types';
 
-export const ReceivedDividedColumns = (currency: string): ColumnsType => [
+export const ReceivedDividedColumns = (
+  currency: string
+): ColumnsType<StocksHeldData> => [
   {
     title: 'Name',
     dataIndex: 'meta',
     key: 'meta.name',
-    render: (text: any, record: any) =>
+    render: (text: MetaData, record) =>
       formatImageAndText(record.symbol, text.name, record.meta.icon),
   },
   {
     title: 'Dividends',
     dataIndex: 'realized',
     key: 'realized.total_dividends',
-    render: (text: { total_dividends: string | number }) =>
+    render: (text: StocksHeldData['realized']) =>
       formatCurrency({
         value: text.total_dividends,
         currency,

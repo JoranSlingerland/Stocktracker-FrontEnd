@@ -39,7 +39,17 @@ const platformIconMap: Record<Platform, React.ReactNode> = {
   instagram: <InstagramOutlined />,
 };
 
-function socialsIcon(platform: Platform, url: string) {
+function isPlatform(name: string): name is Platform {
+  return ['facebook', 'twitter', 'linkedin', 'instagram'].includes(
+    name as Platform
+  );
+}
+
+function socialsIcon(platform: string, url: string) {
+  if (!isPlatform(platform)) {
+    return null;
+  }
+
   const icon = platformIconMap[platform];
 
   if (!icon) {
@@ -375,7 +385,7 @@ function Stocks({ userSettings }: { userSettings: UseUserData }) {
                           <Divider className="m-1" />
                           <Text type="secondary">{`transactions costs: ${formatCurrency(
                             {
-                              value: value.transaction_costs,
+                              value: value.transaction_cost,
                               currency: userSettings.data.currency,
                             }
                           )}`}</Text>
@@ -432,7 +442,7 @@ function Stocks({ userSettings }: { userSettings: UseUserData }) {
         className="mt-2"
       >
         <div className="flex flex-row items-center space-x-2">
-          {stockData?.[0]?.['meta']['links']?.map((link: any) => {
+          {stockData?.[0]?.['meta']['links']?.map((link) => {
             return socialsIcon(link.name, link.url);
           })}
           <Divider type="vertical" />

@@ -1,19 +1,22 @@
 import type { ColumnsType } from 'antd/es/table';
 import { formatCurrency, formatImageAndText } from '../../utils/formatting';
+import { StocksHeldData, MetaData } from '../../types/types';
 
-export const TransactionCostColumns = (currency: string): ColumnsType => [
+export const TransactionCostColumns = (
+  currency: string
+): ColumnsType<StocksHeldData> => [
   {
     title: 'Name',
     dataIndex: 'meta',
     key: 'meta.name',
-    render: (text: any, record: any) =>
+    render: (text: MetaData, record) =>
       formatImageAndText(record.symbol, text.name, record.meta.icon),
   },
   {
     title: 'Transaction Costs',
     dataIndex: 'realized',
     key: 'realized.transaction_cost',
-    render: (text: { transaction_cost: string | number }) =>
+    render: (text: StocksHeldData['realized']) =>
       formatCurrency({
         value: text.transaction_cost,
         currency,

@@ -62,19 +62,16 @@ export default function PrimeFacePieChart({
     return hexToRgbA(colour);
   }
 
-  function hexToRgbA(hex: string) {
-    var c: any;
-    if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
-      c = hex.substring(1).split('');
-      if (c.length == 3) {
-        c = [c[0], c[0], c[1], c[1], c[2], c[2]];
-      }
-      c = '0x' + c.join('');
-      return (
-        'rgba(' + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',') + ',1)'
-      );
+  function hexToRgbA(hex: string, alpha: string = '1') {
+    var r = parseInt(hex.slice(1, 3), 16),
+      g = parseInt(hex.slice(3, 5), 16),
+      b = parseInt(hex.slice(5, 7), 16);
+
+    if (alpha) {
+      return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')';
+    } else {
+      return 'rgb(' + r + ', ' + g + ', ' + b + ')';
     }
-    throw new Error('Bad Hex');
   }
 
   for (let i = 1; i < uniqueCategory.length + 1; i++) {

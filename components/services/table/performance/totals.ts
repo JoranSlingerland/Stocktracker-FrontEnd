@@ -5,7 +5,7 @@ import { SharedQuery, getTableDataPerformance } from './shared';
 
 // Totals
 interface GetTableDataPerformanceQueryTotals extends SharedQuery {
-  dataType: 'totals';
+  containerName: 'totals';
 }
 
 function useTableDataPerformanceTotals({

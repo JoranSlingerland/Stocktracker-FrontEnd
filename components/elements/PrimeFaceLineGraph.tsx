@@ -68,8 +68,8 @@ export default function BasicLineGraph({
       tooltip: {
         callbacks: {
           label: function (context: {
-            dataIndex: any;
-            dataset: { label: any; data: { [x: string]: string | number } };
+            dataIndex: number;
+            dataset: { label: string; data: { [x: string]: string | number } };
           }) {
             let index = context.dataIndex;
             let label = context.dataset.label;

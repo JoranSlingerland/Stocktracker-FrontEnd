@@ -3,7 +3,7 @@ import '../styles/globals.css';
 import { ConfigProvider } from 'antd';
 import type { AppProps } from 'next/app';
 import { useMemo } from 'react';
-import { TimeFramestate } from '../components/types/types';
+import { TimeFramestate, TimeFrameBody } from '../components/types/types';
 import useSessionStorageState from '../components/hooks/useSessionStorageState';
 import { dataToGetSwitch } from '../components/utils/dateTimeHelpers';
 import Footer from '../components/modules/footer';
@@ -16,11 +16,13 @@ import { useUserInfo } from '../components/services/.auth/me';
 function MyApp({ Component, pageProps }: AppProps) {
   const { data: userInfo } = useUserInfo();
   const userSettings = useUserData();
-  const [timeFrame, setTimeFrame] = useSessionStorageState('timeFrame', 'max');
+  const [timeFrame, setTimeFrame] = useSessionStorageState<
+    TimeFramestate['timeFrame']
+  >('timeFrame', 'max');
   const timeFrameState: TimeFramestate = { timeFrame, setTimeFrame };
   const timeFrameDates = dataToGetSwitch(timeFrame);
   const timeFrameBody = useMemo(() => {
-    const body: any = {};
+    const body: TimeFrameBody = {};
     if (
       timeFrameDates.end_date === 'max' &&
       timeFrameDates.start_date === 'max'

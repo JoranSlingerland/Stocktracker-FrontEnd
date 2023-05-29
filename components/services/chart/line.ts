@@ -2,7 +2,7 @@ import { cachedFetch } from '../../utils/api';
 import { useFetch } from '../../hooks/useFetch';
 
 interface GetLineChartDataQuery {
-  allData: boolean;
+  allData?: boolean;
   startDate?: string;
   endDate?: string;
   dataType: 'total_gains' | 'invested_and_value';

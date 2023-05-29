@@ -7,16 +7,19 @@ import {
   formatNumber,
   formatPercentageWithColors,
 } from '../../utils/formatting';
+import { StocksHeldData, MetaData } from '../../types/types';
 
 const { Text } = Typography;
 
-export const UnRealizedColumns = (currency: string): ColumnsType => [
+export const UnRealizedColumns = (
+  currency: string
+): ColumnsType<StocksHeldData> => [
   {
     title: 'Name',
     dataIndex: 'meta',
     key: 'meta.name',
     fixed: 'left',
-    render: (text: any, record: any) =>
+    render: (text: MetaData, record) =>
       formatImageAndText(record.symbol, text.name, record.meta.icon),
   },
   {
@@ -24,7 +27,7 @@ export const UnRealizedColumns = (currency: string): ColumnsType => [
     dataIndex: 'unrealized',
     key: 'unrealized.total_cost',
     responsive: ['md'],
-    render: (text: { total_cost: string | number }, record: any) => (
+    render: (text: StocksHeldData['unrealized'], record) => (
       <>
         <Text strong>
           {formatCurrency({
@@ -48,7 +51,7 @@ export const UnRealizedColumns = (currency: string): ColumnsType => [
     title: 'Value',
     dataIndex: 'unrealized',
     key: 'unrealized.total_value',
-    render: (text: { total_value: string | number }, record: any) => (
+    render: (text: StocksHeldData['unrealized'], record) => (
       <>
         <Text strong>
           {formatCurrency({
@@ -72,7 +75,7 @@ export const UnRealizedColumns = (currency: string): ColumnsType => [
     title: 'P/L',
     dataIndex: 'unrealized',
     key: 'unrealized.total_pl',
-    render: (text) => (
+    render: (text: StocksHeldData['unrealized']) => (
       <>
         {formatCurrencyWithColors({
           value: text.total_pl,

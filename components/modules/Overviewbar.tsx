@@ -17,7 +17,10 @@ export default function tabs({
   valueGrowthData: LineChartData | undefined;
   loading: boolean;
   currency: string;
-  tabState: any;
+  tabState: {
+    tab: number;
+    setTab: React.Dispatch<React.SetStateAction<number>>;
+  };
 }): JSX.Element {
   const { tab, setTab } = tabState;
   const firstData = valueGrowthData?.datasets[0]?.data[0] ?? 0;

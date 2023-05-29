@@ -1,4 +1,25 @@
-const totalsData = {
+import {
+  TotalsData,
+  MetaData,
+  StocksHeldData,
+  InputTransactionData,
+} from '../types/types';
+
+const metaData: MetaData = {
+  symbol: '',
+  name: '',
+  description: '',
+  country: '',
+  sector: '',
+  domain: '',
+  links: [],
+  logo: '',
+  icon: '',
+  symbol_img: '',
+  banner: '',
+};
+
+const totalsData: TotalsData = {
   date: '',
   total_invested: 0,
   realized: {
@@ -34,7 +55,7 @@ const totalsData = {
   id: '',
 };
 
-const stocksHeldData = {
+const stocksHeldData: StocksHeldData = {
   date: '',
   symbol: '',
   currency: '',
@@ -91,21 +112,23 @@ const stocksHeldData = {
     transaction_cost_percentage: 0,
     total_pl_percentage: 0,
   },
-  meta: {
-    symbol: '',
-    name: '',
-    description: '',
-    country: '',
-    sector: '',
-    domain: '',
-    links: [],
-    logo: '',
-    icon: '',
-    symbol_img: '',
-    banner: '',
-  },
+  meta: metaData,
   weight: 0,
   id: '',
 };
 
-export { totalsData, stocksHeldData };
+const inputTransactionData: InputTransactionData = {
+  symbol: '',
+  date: '',
+  currency: '',
+  cost_per_share: 0,
+  quantity: 0,
+  transaction_type: '',
+  transaction_cost: 0,
+  domain: '',
+  id: '',
+  meta: metaData,
+  total_cost: 0,
+};
+
+export { totalsData, stocksHeldData, metaData, inputTransactionData };

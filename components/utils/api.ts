@@ -5,7 +5,7 @@ import AbortAddon from 'wretch/addons/abort';
 import hash from 'object-hash';
 
 // Helper functions
-function setWithExpiry(key: string, value: any, ttl: number) {
+function setWithExpiry<T>(key: string, value: T, ttl: number) {
   const now = new Date();
   const item = {
     value: value,
@@ -28,7 +28,7 @@ function getWithExpiry(key: string) {
   return item.value;
 }
 
-function newKey(url: string, method: string, body: object, query: object) {
+function newKey(url: string, method: string, body?: object, query?: object) {
   let body_string = '';
   let query_string = '';
   if (body) {
@@ -46,17 +46,17 @@ function newKey(url: string, method: string, body: object, query: object) {
 // main functions
 async function regularFetch({
   url,
-  fallback_data = [],
-  method = 'GET',
-  query = undefined,
-  body = undefined,
+  fallback_data,
+  method,
+  query,
+  body,
   controller,
 }: {
   url: string;
   fallback_data?: any;
   method: 'GET' | 'POST' | 'DELETE';
-  query?: any;
-  body?: any;
+  query?: object;
+  body?: object;
   controller?: AbortController;
 }): Promise<{ response: any; error: boolean }> {
   controller = controller || new AbortController();
@@ -66,11 +66,11 @@ async function regularFetch({
     .url(url)
     .addon(AbortAddon())
     .addon(QueryStringAddon)
-    .signal(controller)
-    .query(query);
+    .signal(controller);
 
   if (method === 'GET') {
     response = await w
+      .query(query || {})
       .get()
       .onAbort(() => {
         error = true;
@@ -81,7 +81,8 @@ async function regularFetch({
       });
   } else if (method === 'POST') {
     var response = await w
-      .json(body)
+      .query(query || {})
+      .json(body || {})
       .post()
       .onAbort(() => {
         error = true;
@@ -92,7 +93,8 @@ async function regularFetch({
       });
   } else if (method === 'DELETE') {
     var response = await w
-      .json(body)
+      .query(query || {})
+      .json(body || {})
       .delete()
       .onAbort(() => {
         error = true;
@@ -113,10 +115,10 @@ async function regularFetch({
 
 async function cachedFetch({
   url,
-  fallback_data = [],
-  method = 'GET',
-  query = undefined,
-  body = undefined,
+  fallback_data,
+  method,
+  query,
+  body,
   hours = 24,
   controller,
   overwrite = false,
@@ -156,16 +158,16 @@ async function ApiWithMessage({
   url,
   runningMessage,
   successMessage,
-  method = 'GET',
-  body = undefined,
-  query = undefined,
+  method,
+  body,
+  query,
 }: {
   url: string;
   runningMessage: string;
   successMessage: string;
   method: 'GET' | 'POST' | 'DELETE';
-  body?: any;
-  query?: any;
+  body?: object;
+  query?: object;
 }): Promise<void> {
   const hide = message.loading(runningMessage, 10);
 

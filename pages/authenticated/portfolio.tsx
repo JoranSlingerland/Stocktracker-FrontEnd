@@ -139,7 +139,9 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
         isLoading={unRealizedIsLoading}
         globalSorter={true}
         tableProps={{
-          scroll: true,
+          scroll: {
+            x: true,
+          },
         }}
       />
       <Collapse
@@ -157,7 +159,9 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
             isLoading={realizedIsLoading}
             globalSorter={true}
             tableProps={{
-              scroll: true,
+              scroll: {
+                x: true,
+              },
             }}
           />
         </Panel>

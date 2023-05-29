@@ -8,10 +8,11 @@ import {
 } from '@ant-design/icons';
 import { terminateOrchestrator } from '../../services/orchestrator/terminate';
 import { purgeOrchestrator } from '../../services/orchestrator/purge';
+import { ListOrchestratorData } from '../../services/orchestrator/list';
 
 const { Text } = Typography;
 
-export const orchestratorColumns: ColumnsType = [
+export const orchestratorColumns: ColumnsType<ListOrchestratorData> = [
   {
     title: 'Status',
     dataIndex: 'runtimeStatus',
@@ -66,7 +67,7 @@ export const orchestratorColumns: ColumnsType = [
     title: 'Actions',
     dataIndex: 'actions',
     key: 'actions',
-    render: (text, record: any) => (
+    render: (text, record) => (
       <>
         <Popconfirm
           title="Are you sure you want to terminate this orchestrator?"

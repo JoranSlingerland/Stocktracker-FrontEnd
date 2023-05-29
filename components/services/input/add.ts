@@ -19,7 +19,7 @@ interface StockInput {
 
 interface AddItemToInputBody {
   type: 'stock' | 'transaction';
-  items: (TransactionInput[] & { 0?: never }) | (StockInput[] & { 0?: never });
+  items: TransactionInput[] | StockInput[];
 }
 
 async function addItemToInput({ body }: { body: AddItemToInputBody }) {

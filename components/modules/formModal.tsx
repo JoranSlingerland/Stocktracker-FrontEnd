@@ -8,6 +8,7 @@ import { TransactionForm, StockForm } from '../elements/Forms';
 import { FormModal } from '../elements/FormModal';
 import useModal from '../hooks/useModal';
 import dayjs from 'dayjs';
+import { InputTransactionData, InputInvestedData } from '../types/types';
 
 const { Text, Title } = Typography;
 
@@ -19,7 +20,7 @@ const StockFormModal = ({
 }: {
   currency: string;
   parentCallback: () => void;
-  initialValues?: any;
+  initialValues?: InputTransactionData;
   isEdit?: boolean;
 }): JSX.Element => {
   const [totalValue, setTotalValue] = useState(initialValues?.total_cost || 0);
@@ -29,13 +30,12 @@ const StockFormModal = ({
   const { form, open, handleOpen, handleClose, handleCloseAndReset } =
     useModal();
 
-  initialValues?.date &&
-    (initialValues.date = dayjs(initialValues.date, 'YYYY-MM-DD'));
+  const dayjsDate = initialValues?.date && dayjs(initialValues.date);
 
-  const handleCreate = async (values: any) => {
+  const handleCreate = async (values: InputTransactionData) => {
     handleClose();
     if (isEdit) {
-      values.id = initialValues.id;
+      values.id = initialValues ? initialValues.id : values.id;
     }
     await addItemToInput({
       body: {
@@ -81,7 +81,10 @@ const StockFormModal = ({
         setTotalValue,
         setCurrency: setStockCurrency,
         form: form,
-        initialValues: initialValues || {
+        initialValues: {
+          ...initialValues,
+          date: dayjsDate,
+        } || {
           transaction_type: 'Buy',
           currency: currency,
         },
@@ -115,19 +118,18 @@ const TransactionsFormModal = ({
 }: {
   currency: string;
   parentCallback: () => Promise<void> | void;
-  initialValues?: any;
+  initialValues?: InputInvestedData;
   isEdit?: boolean;
 }): JSX.Element => {
   const { form, open, handleOpen, handleClose, handleCloseAndReset } =
     useModal();
 
-  initialValues?.date &&
-    (initialValues.date = dayjs(initialValues.date, 'YYYY-MM-DD'));
+  const dayjsDate = initialValues?.date && dayjs(initialValues.date);
 
-  const handleCreate = async (values: any) => {
+  const handleCreate = async (values: InputInvestedData) => {
     handleClose();
     if (isEdit) {
-      values.id = initialValues.id;
+      values.id = initialValues ? initialValues.id : values.id;
     }
     await addItemToInput({
       body: {
@@ -171,7 +173,7 @@ const TransactionsFormModal = ({
       form={TransactionForm(
         currency,
         form,
-        initialValues || {
+        { ...initialValues, date: dayjsDate } || {
           transaction_type: 'Deposit',
         }
       )}

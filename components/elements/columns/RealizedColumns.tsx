@@ -7,16 +7,19 @@ import {
   formatNumber,
   formatPercentageWithColors,
 } from '../../utils/formatting';
+import { StocksHeldData, MetaData } from '../../types/types';
 
 const { Text } = Typography;
 
-export const RealizedColumns = (currency: string): ColumnsType => [
+export const RealizedColumns = (
+  currency: string
+): ColumnsType<StocksHeldData> => [
   {
     title: 'Name',
     dataIndex: 'meta',
     key: 'meta.name',
     fixed: 'left',
-    render: (text, record: any) =>
+    render: (text: MetaData, record) =>
       formatImageAndText(record.symbol, text.name, record.meta.icon),
   },
   {
@@ -24,7 +27,7 @@ export const RealizedColumns = (currency: string): ColumnsType => [
     dataIndex: 'realized',
     key: 'realized.buy_price',
     responsive: ['md'],
-    render: (text) => (
+    render: (text: StocksHeldData['realized']) => (
       <>
         <Text strong>
           {formatCurrency({
@@ -48,7 +51,7 @@ export const RealizedColumns = (currency: string): ColumnsType => [
     title: 'Realized',
     dataIndex: 'realized',
     key: 'realized.sell_price',
-    render: (text) => (
+    render: (text: StocksHeldData['realized']) => (
       <>
         <Text strong>
           {formatCurrency({
@@ -74,7 +77,7 @@ export const RealizedColumns = (currency: string): ColumnsType => [
     title: 'P/L',
     dataIndex: 'realized',
     key: 'realized.total_pl',
-    render: (text) => (
+    render: (text: StocksHeldData['realized']) => (
       <>
         {formatCurrencyWithColors({
           value: text.total_pl,

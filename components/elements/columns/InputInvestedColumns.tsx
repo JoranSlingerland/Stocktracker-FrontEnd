@@ -4,6 +4,7 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { formatCurrency } from '../../utils/formatting';
 import dayjs from 'dayjs';
 import { TransactionsFormModal } from '../../modules/formModal';
+import { InputInvestedData } from '../../types/types';
 
 export const InputInvestedColumns = (
   currency: string,
@@ -12,7 +13,7 @@ export const InputInvestedColumns = (
     container: 'input_invested' | 'input_transactions'
   ) => Promise<void>,
   parentCallback: () => void
-): ColumnsType => [
+): ColumnsType<InputInvestedData> => [
   {
     title: 'Transaction Date',
     dataIndex: 'date',
@@ -38,7 +39,7 @@ export const InputInvestedColumns = (
     key: 'actions',
     width: 60,
     sorter: false,
-    render: (text: string, record: any) => (
+    render: (text: string, record) => (
       <div className="flex">
         <Popconfirm
           title="Are you sure you want to delete this item?"

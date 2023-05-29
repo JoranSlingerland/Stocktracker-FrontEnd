@@ -36,9 +36,10 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
     },
   });
   const [InputTransactionsSearchText, setInputTransactionsSearchText] =
-    useState<any>();
-  const [InputInvestedSearchText, setInputInvestedSearchText] =
-    useState<any>(undefined);
+    useState<string[]>([]);
+  const [InputInvestedSearchText, setInputInvestedSearchText] = useState<
+    string[]
+  >([]);
 
   async function deleteData(
     id: string[],
@@ -52,7 +53,7 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
     }).then(() => {
       if (container === 'input_invested' && inputInvestedData) {
         const newData = inputInvestedData.filter(
-          (item: any) => !id.includes(item.id)
+          (item) => !id.includes(item.id)
         );
         inputInvestedOverwrite(newData);
         inputInvestedRefetch({ cacheOnly: true });
