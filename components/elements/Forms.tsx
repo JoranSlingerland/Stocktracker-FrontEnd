@@ -81,12 +81,14 @@ const StockForm = ({
   setCurrency,
   form,
   initialValues,
+  baseCurrency,
 }: {
   currency: string;
   setTotalValue: (value: number) => void;
   setCurrency: (value: string) => void;
   form: FormInstance<any>;
   initialValues: object;
+  baseCurrency: string;
 }): JSX.Element => {
   const currencySelector = (
     <Form.Item name="currency" hasFeedback noStyle required={true}>
@@ -220,7 +222,7 @@ const StockForm = ({
       >
         <InputNumber
           className="w-full"
-          prefix={getCurrencySymbol(currency)}
+          prefix={getCurrencySymbol(baseCurrency)}
           controls={false}
         />
       </Form.Item>
