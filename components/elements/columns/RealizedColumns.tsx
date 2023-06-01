@@ -5,7 +5,7 @@ import {
   formatCurrencyWithColors,
   formatImageAndText,
   formatNumber,
-  formatPercentageWithColors,
+  formatPercentage,
 } from '../../utils/formatting';
 import { StocksHeldData, MetaData } from '../../types/types';
 
@@ -82,8 +82,10 @@ export const RealizedColumns = (
         {formatCurrencyWithColors({
           value: text.total_pl,
           currency,
-        })}
-        {formatPercentageWithColors({ value: text.total_pl_percentage })}
+        })}{' '}
+        <Text type="secondary">
+          {formatPercentage(text.total_pl_percentage)}
+        </Text>
       </>
     ),
   },
