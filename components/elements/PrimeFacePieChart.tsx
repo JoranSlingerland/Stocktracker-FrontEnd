@@ -1,4 +1,4 @@
-import { Spin, Checkbox, List, Skeleton } from 'antd';
+import { Spin, Checkbox, List, Skeleton, Progress } from 'antd';
 import { Chart } from 'primereact/chart';
 import { formatCurrency } from '../utils/formatting';
 import React from 'react';
@@ -15,6 +15,7 @@ export default function PieChart({
   currency: string;
 }): JSX.Element {
   const myChartRef: any = React.createRef();
+  const sum = data?.data?.reduce((a: number, b: number) => a + b, 0) ?? 0;
 
   const chartData: any = {
     labels: [],
@@ -168,7 +169,7 @@ export default function PieChart({
             renderItem={(item: {
               title: string;
               color: string;
-              data: number | string;
+              data: number;
             }) => (
               <List.Item
                 key="legend_li_item"
@@ -177,22 +178,6 @@ export default function PieChart({
                 onMouseLeave={mouseLeave}
               >
                 <List.Item.Meta
-                  title={
-                    <div>
-                      <div
-                        className="w-10 h-2 rounded-full display:"
-                        ref={(el) =>
-                          el &&
-                          el.style.setProperty(
-                            'background-color',
-                            item.color,
-                            'important'
-                          )
-                        }
-                      ></div>
-                      <div>{item.title}</div>
-                    </div>
-                  }
                   avatar={
                     <Checkbox
                       onClick={clickEvent}
@@ -200,6 +185,15 @@ export default function PieChart({
                     ></Checkbox>
                   }
                 />
+                <div className="w-full pr-10">
+                  <div>{item.title}</div>
+                  <Progress
+                    percent={(item.data / sum) * 100}
+                    showInfo={false}
+                    status="normal"
+                    strokeColor={item.color}
+                  />
+                </div>
                 <div>
                   {formatCurrency({
                     value: item.data,

@@ -98,7 +98,10 @@ function formatCurrencyWithColors({
   return <Text className={className}> formattedValue </Text>;
 }
 
-function formatPercentage(value: number | string, maximumFractionDigits = 2) {
+function formatPercentage(
+  value: number | string | undefined,
+  maximumFractionDigits = 2
+) {
   !value && (value = 0);
 
   if (typeof value === 'string') {
