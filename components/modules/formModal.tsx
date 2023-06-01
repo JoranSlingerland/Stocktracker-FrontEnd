@@ -27,6 +27,7 @@ const StockFormModal = ({
   const [stockCurrency, setStockCurrency] = useState(
     initialValues?.currency || currency
   );
+
   const { form, open, handleOpen, handleClose, handleCloseAndReset } =
     useModal();
 
@@ -81,13 +82,17 @@ const StockFormModal = ({
         setTotalValue,
         setCurrency: setStockCurrency,
         form: form,
-        initialValues: {
-          ...initialValues,
-          date: dayjsDate,
-        } || {
-          transaction_type: 'Buy',
-          currency: currency,
-        },
+        initialValues: isEdit
+          ? {
+              ...initialValues,
+              date: dayjsDate,
+            }
+          : {
+              transaction_type: 'Buy',
+              currency: currency,
+              date: dayjs(),
+            },
+        baseCurrency: currency,
       })}
       modalProps={modalProps}
       footer={
@@ -173,9 +178,12 @@ const TransactionsFormModal = ({
       form={TransactionForm(
         currency,
         form,
-        { ...initialValues, date: dayjsDate } || {
-          transaction_type: 'Deposit',
-        }
+        isEdit
+          ? { ...initialValues, date: dayjsDate }
+          : {
+              transaction_type: 'Deposit',
+              date: dayjs(),
+            }
       )}
       modalProps={modalProps}
       opener={opener}
