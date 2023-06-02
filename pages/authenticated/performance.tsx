@@ -4,7 +4,6 @@ import { Divider, Segmented, Typography } from 'antd';
 import LineGraph from '../../components/elements/LineGraph';
 import BarChart from '../../components/elements/BarChart';
 import AntdTable from '../../components/elements/antdTable';
-import { TimeFramestate } from '../../components/types/types';
 import useSessionStorageState from '../../components/hooks/useSessionStorageState';
 import { useTableDataPerformanceStocksHeld } from '../../components/services/table/performance/stocksHeld';
 import { valueGrowthColumns } from '../../components/elements/columns/valueGrowthColumns';
@@ -14,7 +13,6 @@ import { UseUserData } from '../../components/services/user/get';
 import { useBarchartData } from '../../components/services/chart/bar';
 import { useLineChartData } from '../../components/services/chart/line';
 import { UseFetchResult } from '../../components/hooks/useFetch';
-import { TotalsData, TimeFrameBody } from '../../components/types/types';
 
 const { Title } = Typography;
 

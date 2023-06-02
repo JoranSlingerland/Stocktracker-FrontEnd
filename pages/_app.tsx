@@ -3,7 +3,6 @@ import '../styles/globals.css';
 import { ConfigProvider } from 'antd';
 import type { AppProps } from 'next/app';
 import { useMemo } from 'react';
-import { TimeFramestate, TimeFrameBody } from '../components/types/types';
 import useSessionStorageState from '../components/hooks/useSessionStorageState';
 import { dataToGetSwitch } from '../components/utils/dateTimeHelpers';
 import Footer from '../components/modules/footer';

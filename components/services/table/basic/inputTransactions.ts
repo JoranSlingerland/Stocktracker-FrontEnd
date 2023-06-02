@@ -1,5 +1,4 @@
 import { getTableDataBasic } from './shared';
-import { InputTransactionData } from '../../../types/types';
 import { useFetch } from '../../../hooks/useFetch';
 
 interface GetTableDataBasicQuery {

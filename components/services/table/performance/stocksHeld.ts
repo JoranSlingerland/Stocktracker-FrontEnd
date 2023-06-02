@@ -1,4 +1,3 @@
-import { StocksHeldData } from '../../../types/types';
 import { stocksHeldData } from '../../../constants/placeholders';
 import { useFetch } from '../../../hooks/useFetch';
 import { SharedQuery, getTableDataPerformance } from './shared';

@@ -1,10 +1,3 @@
-import {
-  TotalsData,
-  MetaData,
-  StocksHeldData,
-  InputTransactionData,
-} from '../types/types';
-
 const metaData: MetaData = {
   symbol: '',
   name: '',

@@ -8,7 +8,6 @@ import {
 } from '../../utils/formatting';
 import { StockFormModal } from '../../modules/formModal';
 import dayjs from 'dayjs';
-import { InputTransactionData } from '../../types/types';
 
 const { Text } = Typography;
 

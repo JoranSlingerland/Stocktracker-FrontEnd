@@ -19,7 +19,6 @@ import {
   Drawer,
 } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { UserInfo_Type, TimeFramestate } from '../types/types';
 import type { MenuProps } from 'antd/es/menu';
 import {
   formatCurrency,
@@ -28,7 +27,6 @@ import {
 import useSessionStorageState from '../hooks/useSessionStorageState';
 import { startOrchestrator } from '../services/orchestrator/start';
 import { MenuOutlined } from '@ant-design/icons';
-import { TotalsData } from '../types/types';
 import { UseFetchResult } from '../hooks/useFetch';
 import { UseUserData } from '../services/user/get';
 
@@ -42,7 +40,7 @@ export default function App({
   userSettings,
   totalPerformance,
 }: {
-  userInfo: UserInfo_Type;
+  userInfo: UserInfo;
   timeFrameState: TimeFramestate;
   userSettings: UseUserData;
   totalPerformance: UseFetchResult<TotalsData[]>;

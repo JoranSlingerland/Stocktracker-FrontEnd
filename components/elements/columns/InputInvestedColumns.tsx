@@ -4,7 +4,6 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { formatCurrency } from '../../utils/formatting';
 import dayjs from 'dayjs';
 import { TransactionsFormModal } from '../../modules/formModal';
-import { InputInvestedData } from '../../types/types';
 
 export const InputInvestedColumns = (
   currency: string,

@@ -1,4 +1,3 @@
-import { TotalsData } from '../../../types/types';
 import { totalsData } from '../../../constants/placeholders';
 import { useFetch } from '../../../hooks/useFetch';
 import { SharedQuery, getTableDataPerformance } from './shared';

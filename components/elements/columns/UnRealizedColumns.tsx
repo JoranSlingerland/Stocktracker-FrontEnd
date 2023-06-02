@@ -7,7 +7,6 @@ import {
   formatNumber,
   formatPercentage,
 } from '../../utils/formatting';
-import { StocksHeldData, MetaData } from '../../types/types';
 
 const { Text } = Typography;
 

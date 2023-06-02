@@ -1,4 +1,3 @@
-import { InputTransactionData } from '../types/types';
 import { inputTransactionData } from '../constants/placeholders';
 
 function convertTransactionsArray(

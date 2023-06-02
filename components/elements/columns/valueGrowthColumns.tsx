@@ -4,7 +4,6 @@ import {
   formatImageAndText,
   formatPercentage,
 } from '../../utils/formatting';
-import { StocksHeldData, MetaData } from '../../types/types';
 import { Typography } from 'antd';
 
 const { Text } = Typography;

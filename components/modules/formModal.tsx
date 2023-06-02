@@ -8,7 +8,6 @@ import { TransactionForm, StockForm } from '../elements/Forms';
 import { FormModal } from '../elements/FormModal';
 import useModal from '../hooks/useModal';
 import dayjs from 'dayjs';
-import { InputTransactionData, InputInvestedData } from '../types/types';
 
 const { Text, Title } = Typography;
 

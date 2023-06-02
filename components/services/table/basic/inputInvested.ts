@@ -1,6 +1,5 @@
 import { useFetch } from '../../../hooks/useFetch';
 import { getTableDataBasic } from './shared';
-import { InputInvestedData } from '../../../types/types';
 
 interface GetTableDataBasicQuery {
   containerName: 'input_invested';

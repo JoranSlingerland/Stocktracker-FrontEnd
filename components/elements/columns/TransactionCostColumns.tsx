@@ -1,6 +1,5 @@
 import type { ColumnsType } from 'antd/es/table';
 import { formatCurrency, formatImageAndText } from '../../utils/formatting';
-import { StocksHeldData, MetaData } from '../../types/types';
 
 export const TransactionCostColumns = (
   currency: string
