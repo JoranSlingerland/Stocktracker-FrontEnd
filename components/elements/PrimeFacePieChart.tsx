@@ -1,9 +1,9 @@
 import { Spin, Checkbox, List, Skeleton, Progress } from 'antd';
 import { Chart } from 'primereact/chart';
 import { formatCurrency } from '../utils/formatting';
-import React from 'react';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { PieChartData } from '../services/chart/pie';
+import { useRef } from 'react';
 
 export default function PieChart({
   data,
@@ -14,7 +14,7 @@ export default function PieChart({
   isloading: boolean;
   currency: string;
 }): JSX.Element {
-  const myChartRef: any = React.createRef();
+  const myChartRef: any = useRef();
   const sum = data?.data?.reduce((a: number, b: number) => a + b, 0) ?? 0;
 
   const chartData: any = {
@@ -45,40 +45,19 @@ export default function PieChart({
     }
   );
 
-  function find_parent_with_id(target: any, id: string) {
-    while (target && target.id !== id) {
-      target = target.parentNode;
-    }
-    return target;
-  }
-
-  function find_target_index(target: any) {
-    var parent = target.parentNode;
-    var index = Array.prototype.indexOf.call(parent.children, target);
-    return index;
-  }
-
-  function clickEvent(e: { target: any }) {
-    var target = e.target;
-    target = find_parent_with_id(target, 'legend_li_item');
-    var index = find_target_index(target);
+  function onClick(index: number) {
     const chart_ctx = myChartRef.current.getChart();
     chart_ctx.toggleDataVisibility(index);
     chart_ctx.update();
   }
 
-  function mouseEnter(e: any) {
-    var target = e.target;
-    target = find_parent_with_id(target, 'legend_li_item');
-    var index = find_target_index(target);
+  function mouseEnter(index: number) {
     const chart_ctx = myChartRef.current.getChart();
     chart_ctx.setActiveElements([{ datasetIndex: 0, index: index }]);
     chart_ctx.update();
   }
 
-  function mouseLeave(e: any) {
-    var target = e.target;
-    target = find_parent_with_id(target, 'legend_li_item');
+  function mouseLeave() {
     const chart_ctx = myChartRef.current.getChart();
     chart_ctx.setActiveElements([]);
     chart_ctx.update();
@@ -170,17 +149,18 @@ export default function PieChart({
               title: string;
               color: string;
               data: number;
+              key: number;
             }) => (
               <List.Item
-                key="legend_li_item"
-                id="legend_li_item"
-                onMouseEnter={mouseEnter}
+                onMouseEnter={() => mouseEnter(item.key)}
                 onMouseLeave={mouseLeave}
               >
                 <List.Item.Meta
                   avatar={
                     <Checkbox
-                      onClick={clickEvent}
+                      onChange={() => {
+                        onClick(item.key);
+                      }}
                       defaultChecked={true}
                     ></Checkbox>
                   }
