@@ -1,5 +1,5 @@
 import { Tabs, Collapse, Typography } from 'antd';
-import PieChart from '../../components/elements/PrimeFacePieChart';
+import PieChart from '../../components/elements/PieChart';
 import AntdTable from '../../components/elements/antdTable';
 import useSessionStorageState from '../../components/hooks/useSessionStorageState';
 import { RealizedColumns } from '../../components/elements/columns/RealizedColumns';
@@ -72,7 +72,7 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
         <div className="min-h-96">
           <PieChart
             data={stockPieData}
-            isloading={stockPieIsLoading}
+            isLoading={stockPieIsLoading}
             currency={userSettings.data.currency}
           />
         </div>
@@ -85,7 +85,7 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
         <div className="min-h-96">
           <PieChart
             data={sectorPieData}
-            isloading={sectorPieIsLoading}
+            isLoading={sectorPieIsLoading}
             currency={userSettings.data.currency}
           />
         </div>
@@ -98,7 +98,7 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
         <div className="min-h-96">
           <PieChart
             data={countryPieData}
-            isloading={countryPieIsLoading}
+            isLoading={countryPieIsLoading}
             currency={userSettings.data.currency}
           />
         </div>
@@ -111,7 +111,7 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
         <div className="min-h-96">
           <PieChart
             data={currencyPieData}
-            isloading={currencyPieIsLoading}
+            isLoading={currencyPieIsLoading}
             currency={userSettings.data.currency}
           />
         </div>

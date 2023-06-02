@@ -1,8 +1,8 @@
 import Overviewbar from '../../components/modules/Overviewbar';
 import React, { useMemo } from 'react';
 import { Divider, Segmented, Typography } from 'antd';
-import BasicLineGraph from '../../components/elements/PrimeFaceLineGraph';
-import PrimeFaceBarChart from '../../components/elements/PrimeFaceBarChart';
+import LineGraph from '../../components/elements/LineGraph';
+import BarChart from '../../components/elements/BarChart';
 import AntdTable from '../../components/elements/antdTable';
 import { TimeFramestate } from '../../components/types/types';
 import useSessionStorageState from '../../components/hooks/useSessionStorageState';
@@ -92,9 +92,9 @@ export default function performance({
   // useMemo
   const valueGrowthDataMemo = useMemo(() => {
     return (
-      <BasicLineGraph
+      <LineGraph
         data={valueGrowthData}
-        isloading={valueGrowthIsLoading}
+        isLoading={valueGrowthIsLoading}
         userSettings={userSettings.data}
       />
     );
@@ -102,9 +102,9 @@ export default function performance({
 
   const totalGainsDataMemo = useMemo(() => {
     return (
-      <BasicLineGraph
+      <LineGraph
         data={totalGainsData}
-        isloading={totalGainsIsLoading}
+        isLoading={totalGainsIsLoading}
         userSettings={userSettings.data}
       />
     );
@@ -112,7 +112,7 @@ export default function performance({
 
   const dividendDataMemo = useMemo(() => {
     return (
-      <PrimeFaceBarChart
+      <BarChart
         data={dividendData}
         isloading={dividendIsLoading}
         currency={userSettings.data.currency}
@@ -122,7 +122,7 @@ export default function performance({
 
   const totalTransactionCostDataMemo = useMemo(() => {
     return (
-      <PrimeFaceBarChart
+      <BarChart
         data={totalTransactionCostData}
         isloading={totalTransactionCostIsLoading}
         currency={userSettings.data.currency}

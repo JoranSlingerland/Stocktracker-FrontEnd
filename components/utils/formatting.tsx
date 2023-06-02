@@ -8,7 +8,7 @@ function formatCurrency({
   maximumFractionDigits,
   currency,
 }: {
-  value: number | string | undefined;
+  value: number | string | undefined | null;
   maximumFractionDigits?: number;
   currency?: string | undefined;
 }) {
@@ -150,7 +150,7 @@ function formatPercentageWithColors({
 }
 
 function formatNumber(
-  value: number | string | undefined,
+  value: number | string | undefined | null,
   maximumFractionDigits = 2
 ) {
   if (typeof value === 'string') {

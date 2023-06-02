@@ -1,23 +1,37 @@
 import { Spin, Checkbox, List, Skeleton, Progress } from 'antd';
-import { Chart } from 'primereact/chart';
 import { formatCurrency } from '../utils/formatting';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { PieChartData } from '../services/chart/pie';
 import { useRef } from 'react';
+import { Chart as ChartJS, ArcElement, Tooltip } from 'chart.js';
+import { Pie } from 'react-chartjs-2';
+import { ChartOptions } from 'chart.js/auto';
+
+ChartJS.register(ArcElement, Tooltip, ChartDataLabels);
+
+interface ChartData {
+  datasets: {
+    data: number[];
+    backgroundColor: string[];
+    hoverBackgroundColor: string[];
+    borderWidth: number;
+  }[];
+  labels: string[];
+}
 
 export default function PieChart({
   data,
-  isloading,
+  isLoading,
   currency,
 }: {
   data: PieChartData | undefined;
-  isloading: boolean;
+  isLoading: boolean;
   currency: string;
 }): JSX.Element {
-  const myChartRef: any = useRef();
+  const chartRef = useRef<ChartJS<'pie'>>(null);
   const sum = data?.data?.reduce((a: number, b: number) => a + b, 0) ?? 0;
 
-  const chartData: any = {
+  const chartData: ChartData = {
     labels: [],
     datasets: [],
   };
@@ -27,77 +41,56 @@ export default function PieChart({
       {
         data: data['data'],
         backgroundColor: data['color'],
-        hoverBorderWidth: 0,
-        hoverBorderColor: data['color'],
-        hoverOffset: 3,
+        hoverBackgroundColor: data['color'].map((color) => color + '80'),
+        borderWidth: 0,
       },
     ];
   }
 
-  const list_data_source = chartData['labels'].map(
-    (label: string, i: number) => {
-      return {
-        title: label,
-        color: chartData['datasets'][0]['backgroundColor'][i],
-        data: chartData['datasets'][0]['data'][i],
-        key: i,
-      };
-    }
-  );
+  const listDataSource = chartData['labels'].map((label: string, i: number) => {
+    return {
+      title: label,
+      color: chartData?.['datasets'][0]['backgroundColor'][i],
+      data: chartData['datasets'][0]['data'][i],
+      key: i,
+    };
+  });
 
   function onClick(index: number) {
-    const chart_ctx = myChartRef.current.getChart();
-    chart_ctx.toggleDataVisibility(index);
-    chart_ctx.update();
+    chartRef.current?.toggleDataVisibility(index);
+    chartRef.current?.update();
   }
 
   function mouseEnter(index: number) {
-    const chart_ctx = myChartRef.current.getChart();
-    chart_ctx.setActiveElements([{ datasetIndex: 0, index: index }]);
-    chart_ctx.update();
+    chartRef.current?.setActiveElements([{ datasetIndex: 0, index }]);
+    chartRef.current?.update();
   }
 
   function mouseLeave() {
-    const chart_ctx = myChartRef.current.getChart();
-    chart_ctx.setActiveElements([]);
-    chart_ctx.update();
+    chartRef.current?.setActiveElements([]);
+    chartRef.current?.update();
   }
 
-  const options = {
+  const options: ChartOptions<'pie'> = {
+    responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       datalabels: {
         color: '#fff',
-        formatter: (
-          value: number,
-          ctx: {
-            chart: { data: { datasets: { data: number[] }[] } };
-          }
-        ) => {
-          let sum = 0;
-          let dataArr = ctx.chart.data.datasets[0].data;
-          dataArr.map((data) => {
-            sum += data;
-          });
-          let percentage = ((value * 100) / sum).toFixed(0) + '%';
-          return percentage;
+        formatter(value) {
+          let percentage = (value * 100) / sum;
+          if (percentage < 3) return '';
+          return percentage.toFixed(0) + '%';
         },
       },
       tooltip: {
         usePointStyle: true,
         callbacks: {
-          label: function (context: {
-            dataIndex: any;
-            label: any;
-            dataset: { data: { [x: string]: string | number } };
-          }) {
-            let index = context.dataIndex;
-            let label = context.label;
-            label += ': ';
-            label += formatCurrency({
-              value: context.dataset.data[index],
+          label(tooltipItem) {
+            return formatCurrency({
+              value: tooltipItem.parsed,
               currency,
             });
-            return label;
           },
           labelPointStyle: function () {
             return {
@@ -114,29 +107,23 @@ export default function PieChart({
   };
 
   return (
-    <div className="flex flex-col justify-center md:flex-row">
-      <Spin spinning={isloading}>
-        <div>
-          <Chart
-            type="pie"
-            data={chartData}
-            options={options}
-            className="w-10/12 m-auto md:w-full md:mr-20"
-            ref={myChartRef}
-            plugins={[ChartDataLabels]}
-          />
+    <div className="md:grid md:grid-cols-2 md:grid-rows-1 mb-4">
+      <Spin className="md:mt-[65px]" spinning={isLoading}>
+        <div className="h-[400px] md:h-[500px] md:m-4">
+          <Pie data={chartData} options={options} ref={chartRef} />
         </div>
       </Spin>
-      <div className="w-full mt-10 md:items-center md:w-1/2 md:my-2">
+      <div>
         <Skeleton
           title={false}
           paragraph={{ width: '100%' }}
-          loading={isloading}
-          active={isloading}
+          loading={isLoading}
+          active={isLoading}
+          className="mt-4 md:mt-0"
         >
           <List
             itemLayout="horizontal"
-            dataSource={list_data_source}
+            dataSource={listDataSource}
             className="w-full"
             size="small"
             pagination={{
