@@ -50,7 +50,7 @@ export const InputTransactionsColumns = (
           })}
         </Text>
         <div className="flex space-x-0.5 flex-row">
-          <Text keyboard> x{formatNumber(record.quantity)} </Text>
+          <Text keyboard> x{formatNumber({ value: record.quantity })} </Text>
           <Text type="secondary">
             {formatCurrency({
               value: record.cost_per_share,

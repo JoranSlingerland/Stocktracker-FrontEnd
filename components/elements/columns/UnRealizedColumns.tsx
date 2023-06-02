@@ -36,7 +36,10 @@ export const UnRealizedColumns = (
           })}
         </Text>
         <div className="flex space-x-0.5 flex-row flex-nowrap">
-          <Text keyboard> x{formatNumber(record.unrealized.quantity)} </Text>
+          <Text keyboard>
+            {' '}
+            x{formatNumber({ value: record.unrealized.quantity })}{' '}
+          </Text>
           <Text type="secondary">
             {formatCurrency({
               value: record.unrealized.cost_per_share,
@@ -60,7 +63,10 @@ export const UnRealizedColumns = (
           })}
         </Text>
         <div className="flex space-x-0.5 flex-row">
-          <Text keyboard> x{formatNumber(record.unrealized.quantity)} </Text>
+          <Text keyboard>
+            {' '}
+            x{formatNumber({ value: record.unrealized.quantity })}{' '}
+          </Text>
           <Text type="secondary">
             {formatCurrency({
               value: record.unrealized.close_value,
@@ -82,7 +88,7 @@ export const UnRealizedColumns = (
           currency,
         })}{' '}
         <Text type="secondary">
-          {formatPercentage(text.total_pl_percentage)}
+          {formatPercentage({ value: text.total_pl_percentage })}
         </Text>
       </>
     ),

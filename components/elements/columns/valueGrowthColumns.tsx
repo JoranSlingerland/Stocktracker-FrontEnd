@@ -30,7 +30,7 @@ export const valueGrowthColumns = (
           currency,
         })}{' '}
         <Text type="secondary">
-          {formatPercentage(text.total_pl_percentage)}
+          {formatPercentage({ value: text.total_pl_percentage })}
         </Text>
       </>
     ),

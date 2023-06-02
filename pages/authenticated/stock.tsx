@@ -147,7 +147,7 @@ function Stocks({ userSettings }: { userSettings: UseUserData }) {
                 title: 'Weight',
                 value: stockData?.[0]?.['weight'],
                 loading: stockIsLoading,
-                formatter: (value) => formatPercentage(value),
+                formatter: (value) => formatPercentage({ value }),
               }}
               className="m-2 p-0"
               size="small"

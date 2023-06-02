@@ -36,7 +36,7 @@ export const RealizedColumns = (
           })}
         </Text>
         <div className="flex space-x-0.5 flex-row">
-          <Text keyboard> x{formatNumber(text.quantity)} </Text>
+          <Text keyboard> x{formatNumber({ value: text.quantity })} </Text>
           <Text type="secondary">
             {formatCurrency({
               value: text.cost_per_share_buy,
@@ -61,7 +61,7 @@ export const RealizedColumns = (
         </Text>
         <div className="flex space-x-0.5 flex-row">
           <Text className="whitespace-nowrap" keyboard>
-            x{formatNumber(text.quantity)}{' '}
+            x{formatNumber({ value: text.quantity })}{' '}
           </Text>
           <Text type="secondary">
             {formatCurrency({
@@ -84,7 +84,7 @@ export const RealizedColumns = (
           currency,
         })}{' '}
         <Text type="secondary">
-          {formatPercentage(text.total_pl_percentage)}
+          {formatPercentage({ value: text.total_pl_percentage })}
         </Text>
       </>
     ),
