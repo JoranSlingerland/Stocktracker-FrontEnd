@@ -318,6 +318,14 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
             isLoading={orchestratorListIsLoading}
             columns={orchestratorColumns}
             data={orchestratorListData}
+            tableProps={{
+              pagination: {
+                pageSize: 10,
+                size: 'small',
+                hideOnSinglePage: true,
+                className: 'm-0',
+              },
+            }}
             caption={
               <div className="flex flex-row-reverse">
                 <Button
