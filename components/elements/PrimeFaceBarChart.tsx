@@ -124,20 +124,20 @@ export default function PrimeFacePieChart({
         },
         stacked: true,
         max: function (context: any) {
-          let max = 10;
-          let customMax = false;
-          for (let i = 0; i < context.chart.data.datasets.length; i++) {
-            for (let j = 0; j < context.chart.data.datasets[i].data.length; j++)
-              if (context.chart.data.datasets[i].data[j] > max) {
-                max = context.chart.data.datasets[i].data[j] * 1.1;
-                customMax = true;
-              }
-          }
-          if (customMax) {
-            return max;
-          } else {
-            return 10;
-          }
+          let result = context.chart.data.datasets.reduce(
+            (acc: number[], curr: any) => {
+              curr.data.forEach((num: number, i: number) => {
+                acc[i] = (acc[i] || 0) + num;
+              });
+              return acc;
+            },
+            []
+          );
+          result = result.map(
+            (num: number) => Math.ceil((num * 1.1) / 10) * 10
+          );
+
+          return Math.max(...result, 10);
         },
         ticks: {
           callback: function (value: number) {
