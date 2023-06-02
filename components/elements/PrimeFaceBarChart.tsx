@@ -8,89 +8,10 @@ export default function PrimeFacePieChart({
   isloading,
   currency,
 }: {
-  data: BarChartData[] | undefined;
+  data: BarChartData | undefined;
   isloading: boolean;
   currency: string;
 }): JSX.Element {
-  const labels = data
-    ? data.map(function (index) {
-        return index.date;
-      })
-    : [];
-
-  const uniqueLabels = Array.from(new Set(labels));
-
-  const category = data
-    ? data.map(function (index) {
-        return index.category;
-      })
-    : [];
-
-  function filter_json(symbol: string) {
-    let outputData = [];
-    if (data) {
-      for (const element of data) {
-        for (let i = 1; i < uniqueLabels.length + 1; i++) {
-          if (
-            element['category'] === symbol &&
-            element['date'] === uniqueLabels[i - 1]
-          ) {
-            outputData.push(element);
-          }
-        }
-      }
-    }
-    const outputData_final = outputData.map(function (index) {
-      return index.value;
-    });
-    return outputData_final;
-  }
-
-  const barchart_datasets = [];
-  const uniqueCategory = Array.from(new Set(category));
-
-  function stringToColour(str: string) {
-    var hash = 0;
-    for (var i = 0; i < str.length; i++) {
-      hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    var colour = '#';
-    for (var i = 0; i < 3; i++) {
-      var value = (hash >> (i * 8)) & 0xff;
-      colour += ('00' + value.toString(16)).substr(-2);
-    }
-    return hexToRgbA(colour);
-  }
-
-  function hexToRgbA(hex: string, alpha: string = '1') {
-    var r = parseInt(hex.slice(1, 3), 16),
-      g = parseInt(hex.slice(3, 5), 16),
-      b = parseInt(hex.slice(5, 7), 16);
-
-    if (alpha) {
-      return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')';
-    } else {
-      return 'rgb(' + r + ', ' + g + ', ' + b + ')';
-    }
-  }
-
-  for (let i = 1; i < uniqueCategory.length + 1; i++) {
-    const filtered_data = filter_json(uniqueCategory[i - 1]);
-    const filtered_data_sum = filtered_data.reduce((a, b) => a + b, 0);
-    if (filtered_data_sum !== 0)
-      barchart_datasets.push({
-        type: 'bar',
-        label: uniqueCategory[i - 1],
-        data: filtered_data,
-        backgroundColor: stringToColour(uniqueCategory[i - 1]),
-      });
-  }
-
-  const stackedData = {
-    labels: uniqueLabels,
-    datasets: barchart_datasets,
-  };
-
   const stackedOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -166,7 +87,7 @@ export default function PrimeFacePieChart({
   return (
     <div className="h-[500px]">
       <Spin spinning={isloading}>
-        <Chart type="bar" data={stackedData} options={stackedOptions} />
+        <Chart type="bar" data={data} options={stackedOptions} />
       </Spin>
     </div>
   );
