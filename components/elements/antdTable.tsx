@@ -23,33 +23,23 @@ export default function AntdTable<T>({
   searchText?: string[];
   globalSorter?: boolean;
 }): JSX.Element {
-  const sorterBy =
-    (key: Key | undefined) =>
-    (
-      a: Record<string, string | number>,
-      b: Record<string, string | number>
-    ) => {
-      if (!key) return 0;
-
-      if (typeof key === 'number') {
-        if (a < b) return -1;
-        if (a > b) return 1;
-        return 0;
-      }
-      if (typeof key === 'string') {
-        const keyList = key.split('.');
-        let aTemp: string | number = 0;
-        let bTemp: string | number = 0;
-        keyList.forEach((key) => {
-          aTemp = a[key];
-          bTemp = b[key];
-        });
-        if (aTemp < bTemp) return -1;
-        if (aTemp > bTemp) return 1;
-        return 0;
-      }
+  const sorterBy = (key: Key | undefined) => (a: any, b: any) => {
+    if (!key) return 0;
+    if (typeof key === 'number') {
+      if (a < b) return -1;
+      if (a > b) return 1;
       return 0;
-    };
+    }
+    const keyList = key.split('.');
+    keyList.forEach((key) => {
+      a = a[key];
+      b = b[key];
+    });
+
+    if (a < b) return -1;
+    if (a > b) return 1;
+    return 0;
+  };
 
   const colDataIndexList = columns.map((col) => col.dataIndex);
 
