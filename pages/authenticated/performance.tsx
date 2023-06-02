@@ -76,7 +76,6 @@ export default function performance({
       },
       enabled: tab === 4,
     });
-
   const { data: singleDayData, isLoading: singleDayIsLoading } =
     useTableDataPerformanceStocksHeld({
       query: {
@@ -84,53 +83,7 @@ export default function performance({
         containerName: 'stocks_held',
       },
     });
-
   const { timeFrame, setTimeFrame } = timeFrameState;
-
-  // useMemo
-  const valueGrowthDataMemo = useMemo(() => {
-    return (
-      <LineGraph
-        data={valueGrowthData}
-        isLoading={valueGrowthIsLoading}
-        userSettings={userSettings.data}
-      />
-    );
-  }, [valueGrowthData, valueGrowthIsLoading, userSettings.data]);
-
-  const totalGainsDataMemo = useMemo(() => {
-    return (
-      <LineGraph
-        data={totalGainsData}
-        isLoading={totalGainsIsLoading}
-        userSettings={userSettings.data}
-      />
-    );
-  }, [totalGainsData, totalGainsIsLoading, userSettings.data]);
-
-  const dividendDataMemo = useMemo(() => {
-    return (
-      <BarChart
-        data={dividendData}
-        isloading={dividendIsLoading}
-        currency={userSettings.data.currency}
-      />
-    );
-  }, [dividendData, dividendIsLoading, userSettings.data]);
-
-  const totalTransactionCostDataMemo = useMemo(() => {
-    return (
-      <BarChart
-        data={totalTransactionCostData}
-        isloading={totalTransactionCostIsLoading}
-        currency={userSettings.data.currency}
-      />
-    );
-  }, [
-    totalTransactionCostData,
-    totalTransactionCostIsLoading,
-    userSettings.data,
-  ]);
 
   // Render
   return (
@@ -176,7 +129,11 @@ export default function performance({
       />
       {tab === 1 && (
         <>
-          {valueGrowthDataMemo}
+          <LineGraph
+            data={valueGrowthData}
+            isLoading={valueGrowthIsLoading}
+            userSettings={userSettings.data}
+          />
           <Divider />
           <AntdTable
             isLoading={singleDayIsLoading}
@@ -188,7 +145,11 @@ export default function performance({
       )}
       {tab === 2 && (
         <>
-          {dividendDataMemo}
+          <BarChart
+            data={dividendData}
+            isloading={dividendIsLoading}
+            currency={userSettings.data.currency}
+          />
           <Divider />
           <AntdTable
             isLoading={singleDayIsLoading}
@@ -200,7 +161,11 @@ export default function performance({
       )}
       {tab === 3 && (
         <>
-          {totalTransactionCostDataMemo}
+          <BarChart
+            data={totalTransactionCostData}
+            isloading={totalTransactionCostIsLoading}
+            currency={userSettings.data.currency}
+          />
           <Divider />
           <AntdTable
             isLoading={singleDayIsLoading}
@@ -212,7 +177,11 @@ export default function performance({
       )}
       {tab === 4 && (
         <>
-          {totalGainsDataMemo}
+          <LineGraph
+            data={totalGainsData}
+            isLoading={totalGainsIsLoading}
+            userSettings={userSettings.data}
+          />
           <Divider />
           <AntdTable
             isLoading={singleDayIsLoading}
