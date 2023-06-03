@@ -1,30 +1,30 @@
 import React from 'react';
 import { Button, Divider, Typography } from 'antd';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { formatCurrency } from '../utils/formatting';
 import { addItemToInput } from '../services/input/add';
 import { TransactionForm, StockForm } from '../elements/Forms';
 import { FormModal } from '../elements/FormModal';
+import { PropsContext } from '../../pages/_app';
 import useModal from '../hooks/useModal';
 import dayjs from 'dayjs';
 
 const { Text, Title } = Typography;
 
 const StockFormModal = ({
-  currency,
   parentCallback,
   initialValues,
   isEdit = false,
 }: {
-  currency: string;
   parentCallback: () => void;
   initialValues?: InputTransactionData;
   isEdit?: boolean;
 }): JSX.Element => {
+  const { userSettings } = useContext(PropsContext);
   const [totalValue, setTotalValue] = useState(initialValues?.total_cost || 0);
   const [stockCurrency, setStockCurrency] = useState(
-    initialValues?.currency || currency
+    initialValues?.currency || userSettings?.data.currency
   );
 
   const { form, open, handleOpen, handleClose, handleCloseAndReset } =
@@ -77,7 +77,6 @@ const StockFormModal = ({
   return (
     <FormModal
       form={StockForm({
-        currency: stockCurrency,
         setTotalValue,
         setCurrency: setStockCurrency,
         form: form,
@@ -88,10 +87,9 @@ const StockFormModal = ({
             }
           : {
               transaction_type: 'Buy',
-              currency: currency,
+              currency: userSettings?.data.currency,
               date: dayjs(),
             },
-        baseCurrency: currency,
       })}
       modalProps={modalProps}
       footer={
@@ -115,12 +113,10 @@ const StockFormModal = ({
 };
 
 const TransactionsFormModal = ({
-  currency,
   parentCallback,
   initialValues,
   isEdit = false,
 }: {
-  currency: string;
   parentCallback: () => Promise<void> | void;
   initialValues?: InputInvestedData;
   isEdit?: boolean;
@@ -175,7 +171,6 @@ const TransactionsFormModal = ({
   return (
     <FormModal
       form={TransactionForm(
-        currency,
         form,
         isEdit
           ? { ...initialValues, date: dayjsDate }

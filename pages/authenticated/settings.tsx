@@ -17,9 +17,10 @@ import useSessionStorageState from '../../components/hooks/useSessionStorageStat
 import { startOrchestrator } from '../../components/services/orchestrator/start';
 import { addUserData } from '../../components/services/user/add';
 import { orchestratorColumns } from '../../components/elements/columns/orchestratorColumns';
-import { UseUserData } from '../../components/services/user/get';
 import { useListOrchestrator } from '../../components/services/orchestrator/list';
 import { RedoOutlined } from '@ant-design/icons';
+import { useContext } from 'react';
+import { PropsContext } from '../_app';
 
 const { Text, Title, Link } = Typography;
 
@@ -33,7 +34,7 @@ function handleSessionStorageClearClick() {
   }
 }
 
-export default function Home({ userSettings }: { userSettings: UseUserData }) {
+export default function Home() {
   const [tab, setTab] = useSessionStorageState('settingsTab', '1');
   const dimensions = useWindowDimensions();
   const {
@@ -44,14 +45,15 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
     query: { days: 7 },
     enabled: tab === '3',
   });
+  const { userSettings } = useContext(PropsContext);
 
   // handle click functions
   async function handleSaveAccountSettings() {
-    if (userSettings.data) {
+    if (userSettings?.data) {
       await addUserData({
-        body: userSettings.data,
+        body: userSettings?.data,
       }).then(() => {
-        userSettings.refetchData({
+        userSettings?.refetchData({
           cacheOnly: true,
         });
       });
@@ -79,7 +81,7 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
       children: (
         <List
           size="large"
-          loading={userSettings.isLoading}
+          loading={userSettings?.isLoading}
           footer={
             <div className="flex flex-col items-center">
               <Button
@@ -89,10 +91,10 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
                 }}
                 disabled={
                   currencyCodes.find(
-                    (o) => o.value === userSettings.data.currency
+                    (o) => o.value === userSettings?.data.currency
                   )
                     ? false
-                    : true || userSettings.isLoading
+                    : true || userSettings?.isLoading
                 }
               >
                 Save
@@ -120,10 +122,10 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
               description={
                 <Input.Password
                   className="w-72 sm:w-96"
-                  value={userSettings.data.clearbit_api_key}
+                  value={userSettings?.data.clearbit_api_key}
                   onChange={(e) => {
-                    userSettings.overwriteData({
-                      ...userSettings.data,
+                    userSettings?.overwriteData({
+                      ...userSettings?.data,
                       clearbit_api_key: e.target.value,
                     });
                   }}
@@ -155,10 +157,10 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
               description={
                 <Input.Password
                   className="w-72 sm:w-96"
-                  value={userSettings.data.brandfetch_api_key}
+                  value={userSettings?.data.brandfetch_api_key}
                   onChange={(e) => {
-                    userSettings.overwriteData({
-                      ...userSettings.data,
+                    userSettings?.overwriteData({
+                      ...userSettings?.data,
                       brandfetch_api_key: e.target.value,
                     });
                   }}
@@ -190,10 +192,10 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
               description={
                 <Input.Password
                   className="w-72 sm:w-96"
-                  value={userSettings.data.alpha_vantage_api_key}
+                  value={userSettings?.data.alpha_vantage_api_key}
                   onChange={(e) => {
-                    userSettings.overwriteData({
-                      ...userSettings.data,
+                    userSettings?.overwriteData({
+                      ...userSettings?.data,
                       alpha_vantage_api_key: e.target.value,
                     });
                   }}
@@ -208,16 +210,16 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
               description={
                 <AutoComplete
                   className="w-72 sm:w-96"
-                  value={userSettings.data.currency}
+                  value={userSettings?.data.currency}
                   onChange={(value) => {
-                    userSettings.overwriteData({
-                      ...userSettings.data,
+                    userSettings?.overwriteData({
+                      ...userSettings?.data,
                       currency: value,
                     });
                   }}
                   status={
                     currencyCodes.find(
-                      (o) => o.value === userSettings.data.currency
+                      (o) => o.value === userSettings?.data.currency
                     )
                       ? ''
                       : 'error'
@@ -230,8 +232,8 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
                       .indexOf(inputValue.toUpperCase()) !== -1
                   }
                   onSelect={(value) => {
-                    userSettings.overwriteData({
-                      ...userSettings.data,
+                    userSettings?.overwriteData({
+                      ...userSettings?.data,
                       currency: value,
                     });
                   }}
@@ -244,10 +246,10 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
               title={<Text strong>Theme</Text>}
               description={
                 <Select
-                  value={userSettings.data.dark_mode}
+                  value={userSettings?.data.dark_mode}
                   onChange={(value) => {
-                    userSettings.overwriteData({
-                      ...userSettings.data,
+                    userSettings?.overwriteData({
+                      ...userSettings?.data,
                       dark_mode: value,
                     });
                   }}
@@ -256,7 +258,7 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
                     { value: 'dark', label: 'Dark' },
                     { value: 'light', label: 'Light' },
                   ]}
-                  loading={userSettings.isLoading}
+                  loading={userSettings?.isLoading}
                 />
               }
             />

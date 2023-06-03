@@ -1,7 +1,7 @@
 import { regularFetch } from '../../utils/api';
 import { useFetch } from '../../hooks/useFetch';
 
-interface UseUserInfo {
+interface UserInfo {
   clientPrincipal: {
     userId: string;
     userRoles: string[];
@@ -9,14 +9,6 @@ interface UseUserInfo {
     identityProvider: string;
     userDetails: string;
   };
-}
-
-interface UseUserInfoData {
-  data: UseUserInfo;
-  isLoading: boolean;
-  isError: boolean;
-  refetchData: (params?: { cacheOnly?: boolean }) => void;
-  overwriteData: (data: UseUserInfo) => void;
 }
 
 async function getUserInfo() {
@@ -33,11 +25,11 @@ async function getUserInfo() {
       },
     },
   });
-  return response;
+  return response as { response: UserInfo; error: boolean };
 }
 
 function useUserInfo({ enabled = true }: { enabled?: boolean } = {}) {
-  const fetchResult = useFetch<undefined, undefined, UseUserInfo>({
+  const fetchResult = useFetch<undefined, undefined, UserInfo>({
     fetchData: getUserInfo,
     enabled,
     initialData: {
@@ -50,7 +42,7 @@ function useUserInfo({ enabled = true }: { enabled?: boolean } = {}) {
       },
     },
   });
-  return fetchResult as UseUserInfoData;
+  return fetchResult;
 }
 
 export { useUserInfo };

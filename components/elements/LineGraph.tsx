@@ -1,6 +1,5 @@
 import { Spin } from 'antd';
 import { formatCurrency } from '../utils/formatting';
-import { UserSettings } from '../services/user/get';
 import { LineChartData } from '../services/chart/line';
 import {
   Chart as ChartJS,
@@ -13,6 +12,8 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { ChartOptions } from 'chart.js/auto';
+import { useContext } from 'react';
+import { PropsContext } from '../../pages/_app';
 
 ChartJS.register(
   CategoryScale,
@@ -41,12 +42,12 @@ interface ChartData {
 export default function LineGraph({
   isLoading,
   data,
-  userSettings,
 }: {
   isLoading: boolean;
   data: LineChartData | undefined;
-  userSettings: UserSettings;
 }): JSX.Element {
+  const { userSettings } = useContext(PropsContext);
+
   const totalDuration = 500;
   let delayBetweenPoints = 0;
   if (data && data['labels']) {
@@ -81,7 +82,7 @@ export default function LineGraph({
         label: data?.datasets[1].label,
         data: data?.datasets[1].data,
         fill: false,
-        borderColor: userSettings.dark_mode ? '#d6d3d1' : '#000000',
+        borderColor: userSettings?.data.dark_mode ? '#d6d3d1' : '#000000',
         tension: 0.1,
       },
     ];
@@ -151,7 +152,7 @@ export default function LineGraph({
             label += ': ';
             label += formatCurrency({
               value: context.dataset.data[index] as number,
-              currency: userSettings.currency,
+              currency: userSettings?.data.currency,
             });
             return label;
           },
@@ -185,7 +186,7 @@ export default function LineGraph({
               return formatCurrency({
                 value: tickValue,
                 maximumFractionDigits: 0,
-                currency: userSettings.currency,
+                currency: userSettings?.data.currency,
               });
             }
           },

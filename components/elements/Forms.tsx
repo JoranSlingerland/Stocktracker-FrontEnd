@@ -8,12 +8,15 @@ import {
 } from 'antd';
 import { getCurrencySymbol } from '../utils/formatting';
 import { currencyCodes } from '../constants/currencyCodes';
+import { useContext } from 'react';
+import { PropsContext } from '../../pages/_app';
 
 const TransactionForm = (
-  currency: string,
   form: FormInstance<any>,
   initialValues: object
 ): JSX.Element => {
+  const { userSettings } = useContext(PropsContext);
+
   return (
     <Form
       form={form}
@@ -52,7 +55,7 @@ const TransactionForm = (
       >
         <InputNumber
           className="w-full"
-          prefix={getCurrencySymbol(currency)}
+          prefix={getCurrencySymbol(userSettings?.data.currency)}
           controls={false}
         />
       </Form.Item>
@@ -76,20 +79,18 @@ const TransactionForm = (
 };
 
 const StockForm = ({
-  currency,
   setTotalValue,
   setCurrency,
   form,
   initialValues,
-  baseCurrency,
 }: {
-  currency: string;
   setTotalValue: (value: number) => void;
   setCurrency: (value: string) => void;
   form: FormInstance<any>;
   initialValues: object;
-  baseCurrency: string;
 }): JSX.Element => {
+  const { userSettings } = useContext(PropsContext);
+
   const currencySelector = (
     <Form.Item name="currency" hasFeedback noStyle required={true}>
       <Select
@@ -222,7 +223,7 @@ const StockForm = ({
       >
         <InputNumber
           className="w-full"
-          prefix={getCurrencySymbol(baseCurrency)}
+          prefix={getCurrencySymbol(userSettings?.data.currency)}
           controls={false}
         />
       </Form.Item>

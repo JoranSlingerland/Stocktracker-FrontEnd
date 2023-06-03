@@ -1,7 +1,8 @@
 import { Spin } from 'antd';
 import { formatCurrency } from '../utils/formatting';
 import { BarChartData } from '../services/chart/bar';
-import React from 'react';
+import React, { useContext } from 'react';
+import { PropsContext } from '../../pages/_app';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -18,12 +19,11 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 export default function BarChart({
   data,
   isloading,
-  currency,
 }: {
   data: BarChartData | undefined;
   isloading: boolean;
-  currency: string;
 }): JSX.Element {
+  const { userSettings } = useContext(PropsContext);
   function getYAxisMaxValue() {
     let result = data?.datasets.reduce((acc: number[], curr) => {
       curr.data.forEach((num, i) => {
@@ -51,18 +51,18 @@ export default function BarChart({
               label += ': ';
               label += formatCurrency({
                 value,
-                currency,
+                currency: userSettings?.data.currency,
               });
             } else {
               label += ': ';
               label += formatCurrency({
                 value: value[0],
-                currency,
+                currency: userSettings?.data.currency,
               });
               label += ' - ';
               label += formatCurrency({
                 value: value[1],
-                currency,
+                currency: userSettings?.data.currency,
               });
             }
             return label;
@@ -90,7 +90,7 @@ export default function BarChart({
               return formatCurrency({
                 value: tickValue,
                 maximumFractionDigits: 0,
-                currency,
+                currency: userSettings?.data.currency,
               });
             }
           },

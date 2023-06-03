@@ -1,5 +1,5 @@
 import Overviewbar from '../../components/modules/Overviewbar';
-import React, { useMemo } from 'react';
+import React, { useMemo, useContext } from 'react';
 import { Divider, Segmented, Typography } from 'antd';
 import LineGraph from '../../components/elements/LineGraph';
 import BarChart from '../../components/elements/BarChart';
@@ -9,25 +9,16 @@ import { useTableDataPerformanceStocksHeld } from '../../components/services/tab
 import { valueGrowthColumns } from '../../components/elements/columns/valueGrowthColumns';
 import { ReceivedDividedColumns } from '../../components/elements/columns/ReceivedDividedColumns';
 import { TransactionCostColumns } from '../../components/elements/columns/TransactionCostColumns';
-import { UseUserData } from '../../components/services/user/get';
 import { useBarchartData } from '../../components/services/chart/bar';
 import { useLineChartData } from '../../components/services/chart/line';
-import { UseFetchResult } from '../../components/hooks/useFetch';
+import { PropsContext } from '../_app';
 
 const { Title } = Typography;
 
-export default function performance({
-  userSettings,
-  timeFrameState,
-  timeFrameDates,
-  totalPerformance,
-}: {
-  userSettings: UseUserData;
-  timeFrameState: TimeFramestate;
-  timeFrameDates: { start_date: string; end_date: string };
-  totalPerformance: UseFetchResult<TotalsData[]>;
-}) {
+export default function performance() {
   // const setup
+  const { timeFrameState, timeFrameDates, totalPerformance } =
+    useContext(PropsContext);
   const timeFrameBody = useMemo(() => {
     const body: TimeFrameBody = {};
     if (
@@ -83,7 +74,7 @@ export default function performance({
         containerName: 'stocks_held',
       },
     });
-  const { timeFrame, setTimeFrame } = timeFrameState;
+  const { timeFrame = 'max', setTimeFrame = () => {} } = timeFrameState ?? {};
 
   // Render
   return (
@@ -121,23 +112,18 @@ export default function performance({
         </div>
       </div>
       <Overviewbar
-        totalPerformanceData={totalPerformance.data}
+        totalPerformanceData={totalPerformance?.data}
         valueGrowthData={valueGrowthData}
-        loading={totalPerformance.isLoading || valueGrowthIsLoading}
-        currency={userSettings.data.currency}
+        loading={totalPerformance?.isLoading || valueGrowthIsLoading}
         tabState={{ tab, setTab }}
       />
       {tab === 1 && (
         <>
-          <LineGraph
-            data={valueGrowthData}
-            isLoading={valueGrowthIsLoading}
-            userSettings={userSettings.data}
-          />
+          <LineGraph data={valueGrowthData} isLoading={valueGrowthIsLoading} />
           <Divider />
           <AntdTable
             isLoading={singleDayIsLoading}
-            columns={valueGrowthColumns(userSettings.data.currency)}
+            columns={valueGrowthColumns()}
             data={singleDayData}
             globalSorter={true}
           />
@@ -145,15 +131,11 @@ export default function performance({
       )}
       {tab === 2 && (
         <>
-          <BarChart
-            data={dividendData}
-            isloading={dividendIsLoading}
-            currency={userSettings.data.currency}
-          />
+          <BarChart data={dividendData} isloading={dividendIsLoading} />
           <Divider />
           <AntdTable
             isLoading={singleDayIsLoading}
-            columns={ReceivedDividedColumns(userSettings.data.currency)}
+            columns={ReceivedDividedColumns()}
             data={singleDayData}
             globalSorter={true}
           />
@@ -164,12 +146,11 @@ export default function performance({
           <BarChart
             data={totalTransactionCostData}
             isloading={totalTransactionCostIsLoading}
-            currency={userSettings.data.currency}
           />
           <Divider />
           <AntdTable
             isLoading={singleDayIsLoading}
-            columns={TransactionCostColumns(userSettings.data.currency)}
+            columns={TransactionCostColumns()}
             data={singleDayData}
             globalSorter={true}
           />
@@ -177,15 +158,11 @@ export default function performance({
       )}
       {tab === 4 && (
         <>
-          <LineGraph
-            data={totalGainsData}
-            isLoading={totalGainsIsLoading}
-            userSettings={userSettings.data}
-          />
+          <LineGraph data={totalGainsData} isLoading={totalGainsIsLoading} />
           <Divider />
           <AntdTable
             isLoading={singleDayIsLoading}
-            columns={valueGrowthColumns(userSettings.data.currency)}
+            columns={valueGrowthColumns()}
             data={singleDayData}
             globalSorter={true}
           />

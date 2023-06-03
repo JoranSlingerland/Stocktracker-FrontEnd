@@ -5,13 +5,12 @@ import useSessionStorageState from '../../components/hooks/useSessionStorageStat
 import { RealizedColumns } from '../../components/elements/columns/RealizedColumns';
 import { UnRealizedColumns } from '../../components/elements/columns/UnRealizedColumns';
 import { usePieData } from '../../components/services/chart/pie';
-import { UseUserData } from '../../components/services/user/get';
 import { useTableDataBasicStocksHeld } from '../../components/services/table/basic/stocksHeld';
 
 const { Title } = Typography;
 const { Panel } = Collapse;
 
-export default function Home({ userSettings }: { userSettings: UseUserData }) {
+export default function Home() {
   // Const setup
   const [tab, setTab] = useSessionStorageState('portfolioTab', '1');
   const [CollapseKey, setCollapseKey] = useSessionStorageState(
@@ -70,11 +69,7 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
       label: 'Stocks',
       children: (
         <div className="min-h-96">
-          <PieChart
-            data={stockPieData}
-            isLoading={stockPieIsLoading}
-            currency={userSettings.data.currency}
-          />
+          <PieChart data={stockPieData} isLoading={stockPieIsLoading} />
         </div>
       ),
     },
@@ -83,11 +78,7 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
       label: 'Sector',
       children: (
         <div className="min-h-96">
-          <PieChart
-            data={sectorPieData}
-            isLoading={sectorPieIsLoading}
-            currency={userSettings.data.currency}
-          />
+          <PieChart data={sectorPieData} isLoading={sectorPieIsLoading} />
         </div>
       ),
     },
@@ -96,11 +87,7 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
       label: 'Country',
       children: (
         <div className="min-h-96">
-          <PieChart
-            data={countryPieData}
-            isLoading={countryPieIsLoading}
-            currency={userSettings.data.currency}
-          />
+          <PieChart data={countryPieData} isLoading={countryPieIsLoading} />
         </div>
       ),
     },
@@ -109,11 +96,7 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
       label: 'Currency',
       children: (
         <div className="min-h-96">
-          <PieChart
-            data={currencyPieData}
-            isLoading={currencyPieIsLoading}
-            currency={userSettings.data.currency}
-          />
+          <PieChart data={currencyPieData} isLoading={currencyPieIsLoading} />
         </div>
       ),
     },
@@ -134,7 +117,7 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
         items={items}
       />
       <AntdTable
-        columns={UnRealizedColumns(userSettings.data.currency)}
+        columns={UnRealizedColumns()}
         data={unRealizedData}
         isLoading={unRealizedIsLoading}
         globalSorter={true}
@@ -154,7 +137,7 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
       >
         <Panel className="p-0" header="Realized Stocks" key="1">
           <AntdTable
-            columns={RealizedColumns(userSettings.data.currency)}
+            columns={RealizedColumns()}
             data={realizedData}
             isLoading={realizedIsLoading}
             globalSorter={true}

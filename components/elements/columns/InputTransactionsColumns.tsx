@@ -16,8 +16,7 @@ export const InputTransactionsColumns = (
     id: string[],
     container: 'input_invested' | 'input_transactions'
   ) => Promise<void>,
-  parentCallback: () => void,
-  currency: string
+  parentCallback: () => void
 ): ColumnsType<InputTransactionData> => [
   {
     title: 'Name',
@@ -105,7 +104,6 @@ export const InputTransactionsColumns = (
         <StockFormModal
           parentCallback={parentCallback}
           initialValues={record}
-          currency={currency}
           isEdit={true}
         />
       </div>

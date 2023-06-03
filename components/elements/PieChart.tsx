@@ -6,6 +6,8 @@ import { useRef } from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 import { ChartOptions } from 'chart.js/auto';
+import { useContext } from 'react';
+import { PropsContext } from '../../pages/_app';
 
 ChartJS.register(ArcElement, Tooltip, ChartDataLabels);
 
@@ -22,12 +24,11 @@ interface ChartData {
 export default function PieChart({
   data,
   isLoading,
-  currency,
 }: {
   data: PieChartData | undefined;
   isLoading: boolean;
-  currency: string;
 }): JSX.Element {
+  const { userSettings } = useContext(PropsContext);
   const chartRef = useRef<ChartJS<'pie'>>(null);
   const sum = data?.data?.reduce((a: number, b: number) => a + b, 0) ?? 0;
 
@@ -89,7 +90,7 @@ export default function PieChart({
           label(tooltipItem) {
             return formatCurrency({
               value: tooltipItem.parsed,
-              currency,
+              currency: userSettings?.data.currency,
             });
           },
           labelPointStyle: function () {
@@ -164,7 +165,7 @@ export default function PieChart({
                 <div>
                   {formatCurrency({
                     value: item.data,
-                    currency,
+                    currency: userSettings?.data.currency,
                   })}
                 </div>
               </List.Item>
