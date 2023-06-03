@@ -4,8 +4,7 @@ import {
   formatPercentageWithColors,
 } from '../utils/formatting';
 import { LineChartData } from '../services/chart/line';
-import { useContext } from 'react';
-import { PropsContext } from '../../pages/_app';
+import { useProps } from '../hooks/useProps';
 
 export default function tabs({
   totalPerformanceData,
@@ -21,7 +20,7 @@ export default function tabs({
     setTab: React.Dispatch<React.SetStateAction<number>>;
   };
 }): JSX.Element {
-  const { userSettings } = useContext(PropsContext);
+  const { userSettings } = useProps();
   const { tab, setTab } = tabState;
   const firstData = valueGrowthData?.datasets[0]?.data[0] ?? 0;
   const lastData =

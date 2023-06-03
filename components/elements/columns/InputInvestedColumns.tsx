@@ -4,8 +4,7 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { formatCurrency } from '../../utils/formatting';
 import dayjs from 'dayjs';
 import { TransactionsFormModal } from '../../modules/formModal';
-import { useContext } from 'react';
-import { PropsContext } from '../../../pages/_app';
+import { useProps } from '../../hooks/useProps';
 
 export const InputInvestedColumns = (
   deleteData: (
@@ -14,7 +13,7 @@ export const InputInvestedColumns = (
   ) => Promise<void>,
   parentCallback: () => void
 ): ColumnsType<InputInvestedData> => {
-  const { userSettings } = useContext(PropsContext);
+  const { userSettings } = useProps();
 
   return [
     {

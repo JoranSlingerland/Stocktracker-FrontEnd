@@ -5,13 +5,12 @@ import {
   formatPercentage,
 } from '../../utils/formatting';
 import { Typography } from 'antd';
-import { useContext } from 'react';
-import { PropsContext } from '../../../pages/_app';
+import { useProps } from '../../hooks/useProps';
 
 const { Text } = Typography;
 
 export const valueGrowthColumns = (): ColumnsType<StocksHeldData> => {
-  const { userSettings } = useContext(PropsContext);
+  const { userSettings } = useProps();
 
   return [
     {

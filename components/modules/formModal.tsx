@@ -1,14 +1,14 @@
 import React from 'react';
 import { Button, Divider, Typography } from 'antd';
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { formatCurrency } from '../utils/formatting';
 import { addItemToInput } from '../services/input/add';
 import { TransactionForm, StockForm } from '../elements/Forms';
 import { FormModal } from '../elements/FormModal';
-import { PropsContext } from '../../pages/_app';
 import useModal from '../hooks/useModal';
 import dayjs from 'dayjs';
+import { useProps } from '../hooks/useProps';
 
 const { Text, Title } = Typography;
 
@@ -21,7 +21,7 @@ const StockFormModal = ({
   initialValues?: InputTransactionData;
   isEdit?: boolean;
 }): JSX.Element => {
-  const { userSettings } = useContext(PropsContext);
+  const { userSettings } = useProps();
   const [totalValue, setTotalValue] = useState(initialValues?.total_cost || 0);
   const [stockCurrency, setStockCurrency] = useState(
     initialValues?.currency || userSettings?.data.currency

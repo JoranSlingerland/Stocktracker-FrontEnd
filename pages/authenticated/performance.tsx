@@ -1,5 +1,5 @@
 import Overviewbar from '../../components/modules/Overviewbar';
-import React, { useMemo, useContext } from 'react';
+import { useMemo } from 'react';
 import { Divider, Segmented, Typography } from 'antd';
 import LineGraph from '../../components/elements/LineGraph';
 import BarChart from '../../components/elements/BarChart';
@@ -11,14 +11,13 @@ import { ReceivedDividedColumns } from '../../components/elements/columns/Receiv
 import { TransactionCostColumns } from '../../components/elements/columns/TransactionCostColumns';
 import { useBarchartData } from '../../components/services/chart/bar';
 import { useLineChartData } from '../../components/services/chart/line';
-import { PropsContext } from '../_app';
+import { useProps } from '../../components/hooks/useProps';
 
 const { Title } = Typography;
 
 export default function performance() {
   // const setup
-  const { timeFrameState, timeFrameDates, totalPerformance } =
-    useContext(PropsContext);
+  const { timeFrameState, timeFrameDates, totalPerformance } = useProps();
   const timeFrameBody = useMemo(() => {
     const body: TimeFrameBody = {};
     if (

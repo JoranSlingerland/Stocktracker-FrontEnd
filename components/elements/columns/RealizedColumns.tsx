@@ -7,13 +7,12 @@ import {
   formatNumber,
   formatPercentage,
 } from '../../utils/formatting';
-import { useContext } from 'react';
-import { PropsContext } from '../../../pages/_app';
+import { useProps } from '../../hooks/useProps';
 
 const { Text } = Typography;
 
 export const RealizedColumns = (): ColumnsType<StocksHeldData> => {
-  const { userSettings } = useContext(PropsContext);
+  const { userSettings } = useProps();
 
   return [
     {

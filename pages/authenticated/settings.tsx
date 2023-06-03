@@ -19,8 +19,7 @@ import { addUserData } from '../../components/services/user/add';
 import { orchestratorColumns } from '../../components/elements/columns/orchestratorColumns';
 import { useListOrchestrator } from '../../components/services/orchestrator/list';
 import { RedoOutlined } from '@ant-design/icons';
-import { useContext } from 'react';
-import { PropsContext } from '../_app';
+import { useProps } from '../../components/hooks/useProps';
 
 const { Text, Title, Link } = Typography;
 
@@ -45,7 +44,7 @@ export default function Home() {
     query: { days: 7 },
     enabled: tab === '3',
   });
-  const { userSettings } = useContext(PropsContext);
+  const { userSettings } = useProps();
 
   // handle click functions
   async function handleSaveAccountSettings() {

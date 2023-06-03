@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import {
   Typography,
   Divider,
@@ -26,7 +26,7 @@ import StatCard from '../../components/elements/StatCard';
 import { convertTransactionsArray } from '../../components/utils/misc';
 import { useTableDataBasicStocksHeld } from '../../components/services/table/basic/stocksHeld';
 import { useTableDataBasicInputTransactions } from '../../components/services/table/basic//inputTransactions';
-import { PropsContext } from '../_app';
+import { useProps } from '../../components/hooks/useProps';
 
 const { Text, Title, Link } = Typography;
 
@@ -64,7 +64,7 @@ function socialsIcon(platform: string, url: string) {
 }
 
 function Stocks() {
-  const { userSettings } = useContext(PropsContext);
+  const { userSettings } = useProps();
   const router = useRouter();
   const stockSymbol = router.query.stock as string;
   const [tab, setTab] = useState('1');

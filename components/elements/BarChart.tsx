@@ -1,8 +1,6 @@
 import { Spin } from 'antd';
 import { formatCurrency } from '../utils/formatting';
 import { BarChartData } from '../services/chart/bar';
-import React, { useContext } from 'react';
-import { PropsContext } from '../../pages/_app';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -13,6 +11,7 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { ChartOptions } from 'chart.js/auto';
+import { useProps } from '../hooks/useProps';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
@@ -23,7 +22,7 @@ export default function BarChart({
   data: BarChartData | undefined;
   isloading: boolean;
 }): JSX.Element {
-  const { userSettings } = useContext(PropsContext);
+  const { userSettings } = useProps();
   function getYAxisMaxValue() {
     let result = data?.datasets.reduce((acc: number[], curr) => {
       curr.data.forEach((num, i) => {

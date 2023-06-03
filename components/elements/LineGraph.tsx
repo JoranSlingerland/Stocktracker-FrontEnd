@@ -12,8 +12,7 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { ChartOptions } from 'chart.js/auto';
-import { useContext } from 'react';
-import { PropsContext } from '../../pages/_app';
+import { useProps } from '../hooks/useProps';
 
 ChartJS.register(
   CategoryScale,
@@ -46,7 +45,7 @@ export default function LineGraph({
   isLoading: boolean;
   data: LineChartData | undefined;
 }): JSX.Element {
-  const { userSettings } = useContext(PropsContext);
+  const { userSettings } = useProps();
 
   const totalDuration = 500;
   let delayBetweenPoints = 0;

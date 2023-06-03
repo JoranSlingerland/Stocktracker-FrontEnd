@@ -1,10 +1,9 @@
 import type { ColumnsType } from 'antd/es/table';
 import { formatCurrency, formatImageAndText } from '../../utils/formatting';
-import { useContext } from 'react';
-import { PropsContext } from '../../../pages/_app';
+import { useProps } from '../../hooks/useProps';
 
 export const TransactionCostColumns = (): ColumnsType<StocksHeldData> => {
-  const { userSettings } = useContext(PropsContext);
+  const { userSettings } = useProps();
 
   return [
     {

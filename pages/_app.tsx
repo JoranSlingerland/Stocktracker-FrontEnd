@@ -2,7 +2,7 @@ import Navbar from '../components/modules/navbar';
 import '../styles/globals.css';
 import { ConfigProvider } from 'antd';
 import type { AppProps } from 'next/app';
-import { useMemo, createContext } from 'react';
+import { useMemo } from 'react';
 import useSessionStorageState from '../components/hooks/useSessionStorageState';
 import { dataToGetSwitch } from '../components/utils/dateTimeHelpers';
 import Footer from '../components/modules/footer';
@@ -11,24 +11,7 @@ import { useUserData } from '../components/services/user/get';
 import { useTableDataPerformanceTotals } from '../components/services/table/performance/totals';
 import useTheme from '../components/hooks/useTheme';
 import { useUserInfo } from '../components/services/.auth/me';
-import { UseUserData } from '../components/services/user/get';
-import { UseFetchResult } from '../components/hooks/useFetch';
-
-interface Props {
-  userInfo: UserInfo | undefined;
-  userSettings: UseUserData | undefined;
-  timeFrameState: TimeFramestate | undefined;
-  timeFrameDates: { start_date: string; end_date: string };
-  totalPerformance: UseFetchResult<TotalsData[]> | undefined;
-}
-
-export const PropsContext = createContext<Props>({
-  userInfo: undefined,
-  userSettings: undefined,
-  timeFrameState: undefined,
-  timeFrameDates: { start_date: 'max', end_date: 'max' },
-  totalPerformance: undefined,
-});
+import { PropsContext } from '../components/hooks/useProps';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const { data: userInfo } = useUserInfo();
@@ -63,16 +46,16 @@ function MyApp({ Component, pageProps }: AppProps) {
     dark_mode: userSettings.data?.dark_mode || 'system',
   });
 
-  const props = {
-    userInfo,
-    userSettings,
-    timeFrameState,
-    timeFrameDates,
-    totalPerformance,
-  };
-
   return (
-    <PropsContext.Provider value={props}>
+    <PropsContext.Provider
+      value={{
+        userInfo,
+        userSettings,
+        timeFrameState,
+        timeFrameDates,
+        totalPerformance,
+      }}
+    >
       <ConfigProvider
         theme={{
           algorithm: algorithmTheme,

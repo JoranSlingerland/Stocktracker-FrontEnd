@@ -8,14 +8,13 @@ import {
 } from 'antd';
 import { getCurrencySymbol } from '../utils/formatting';
 import { currencyCodes } from '../constants/currencyCodes';
-import { useContext } from 'react';
-import { PropsContext } from '../../pages/_app';
+import { useProps } from '../hooks/useProps';
 
 const TransactionForm = (
   form: FormInstance<any>,
   initialValues: object
 ): JSX.Element => {
-  const { userSettings } = useContext(PropsContext);
+  const { userSettings } = useProps();
 
   return (
     <Form
@@ -89,7 +88,7 @@ const StockForm = ({
   form: FormInstance<any>;
   initialValues: object;
 }): JSX.Element => {
-  const { userSettings } = useContext(PropsContext);
+  const { userSettings } = useProps();
 
   const currencySelector = (
     <Form.Item name="currency" hasFeedback noStyle required={true}>

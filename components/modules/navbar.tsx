@@ -18,7 +18,7 @@ import {
   Skeleton,
   Drawer,
 } from 'antd';
-import React, { useEffect, useState, useContext } from 'react';
+import { useEffect, useState } from 'react';
 import type { MenuProps } from 'antd/es/menu';
 import {
   formatCurrency,
@@ -27,7 +27,7 @@ import {
 import useSessionStorageState from '../hooks/useSessionStorageState';
 import { startOrchestrator } from '../services/orchestrator/start';
 import { MenuOutlined } from '@ant-design/icons';
-import { PropsContext } from '../../pages/_app';
+import { useProps } from '../hooks/useProps';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -36,7 +36,7 @@ const { Text, Link } = Typography;
 export default function App() {
   // const setup
   const { userInfo, userSettings, timeFrameState, totalPerformance } =
-    useContext(PropsContext);
+    useProps();
   const [current, setCurrent] = useState('portfolio');
   const { timeFrame = 'max', setTimeFrame = () => {} } = timeFrameState ?? {};
   const [tab, setTab] = useSessionStorageState('navbarTab', '1');
