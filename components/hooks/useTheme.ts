@@ -26,7 +26,7 @@ const getClassName = (themeType: ThemeType) => {
   }
 };
 
-const useTheme = (userSettings: { dark_mode: ThemeType }) => {
+const useTheme = (dark_mode: ThemeType) => {
   const [themeType, setThemeType] = useState<ThemeType>('system');
 
   useEffect(() => {
@@ -42,16 +42,16 @@ const useTheme = (userSettings: { dark_mode: ThemeType }) => {
   }, []);
 
   const algorithmTheme =
-    userSettings?.dark_mode === 'system'
+    dark_mode === 'system'
       ? getTheme(themeType)
-      : userSettings?.dark_mode === 'dark'
+      : dark_mode === 'dark'
       ? darkAlgorithm
       : defaultAlgorithm;
 
   const className =
-    userSettings?.dark_mode === 'system'
+    dark_mode === 'system'
       ? getClassName(themeType)
-      : userSettings?.dark_mode === 'dark'
+      : dark_mode === 'dark'
       ? 'dark bg-neutral-900'
       : 'bg-white';
 

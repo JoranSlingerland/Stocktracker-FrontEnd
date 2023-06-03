@@ -42,9 +42,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       containerName: 'totals',
     },
   });
-  const { algorithmTheme, className } = useTheme({
-    dark_mode: userSettings.data?.dark_mode || 'system',
-  });
+  const { algorithmTheme, className } = useTheme(
+    userSettings.data?.dark_mode || 'system'
+  );
 
   return (
     <PropsContext.Provider
