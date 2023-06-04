@@ -24,9 +24,9 @@ import {
 import TagRow from '../../components/elements/TagRow';
 import StatCard from '../../components/elements/StatCard';
 import { convertTransactionsArray } from '../../components/utils/misc';
-import { UseUserData } from '../../components/services/user/get';
 import { useTableDataBasicStocksHeld } from '../../components/services/table/basic/stocksHeld';
 import { useTableDataBasicInputTransactions } from '../../components/services/table/basic//inputTransactions';
+import { useProps } from '../../components/hooks/useProps';
 
 const { Text, Title, Link } = Typography;
 
@@ -39,7 +39,17 @@ const platformIconMap: Record<Platform, React.ReactNode> = {
   instagram: <InstagramOutlined />,
 };
 
-function socialsIcon(platform: Platform, url: string) {
+function isPlatform(name: string): name is Platform {
+  return ['facebook', 'twitter', 'linkedin', 'instagram'].includes(
+    name as Platform
+  );
+}
+
+function socialsIcon(platform: string, url: string) {
+  if (!isPlatform(platform)) {
+    return null;
+  }
+
   const icon = platformIconMap[platform];
 
   if (!icon) {
@@ -53,7 +63,8 @@ function socialsIcon(platform: Platform, url: string) {
   );
 }
 
-function Stocks({ userSettings }: { userSettings: UseUserData }) {
+function Stocks() {
+  const { userSettings } = useProps();
   const router = useRouter();
   const stockSymbol = router.query.stock as string;
   const [tab, setTab] = useState('1');
@@ -95,7 +106,7 @@ function Stocks({ userSettings }: { userSettings: UseUserData }) {
                 formatter: (value) =>
                   formatCurrency({
                     value,
-                    currency: userSettings.data.currency,
+                    currency: userSettings?.data.currency,
                   }),
               }}
               className="m-2 p-0"
@@ -112,7 +123,7 @@ function Stocks({ userSettings }: { userSettings: UseUserData }) {
                 formatter: (value) =>
                   formatCurrency({
                     value,
-                    currency: userSettings.data.currency,
+                    currency: userSettings?.data.currency,
                   }),
               }}
               className="m-2 p-0"
@@ -126,7 +137,7 @@ function Stocks({ userSettings }: { userSettings: UseUserData }) {
                 formatter: (value) =>
                   formatCurrency({
                     value,
-                    currency: userSettings.data.currency,
+                    currency: userSettings?.data.currency,
                   }),
               }}
               className="m-2 p-0"
@@ -137,7 +148,7 @@ function Stocks({ userSettings }: { userSettings: UseUserData }) {
                 title: 'Weight',
                 value: stockData?.[0]?.['weight'],
                 loading: stockIsLoading,
-                formatter: (value) => formatPercentage(value),
+                formatter: (value) => formatPercentage({ value }),
               }}
               className="m-2 p-0"
               size="small"
@@ -161,7 +172,7 @@ function Stocks({ userSettings }: { userSettings: UseUserData }) {
               <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
                   value: stockData?.[0]?.['unrealized']['cost_per_share'],
-                  currency: userSettings.data.currency,
+                  currency: userSettings?.data.currency,
                 })}
               </Skeleton>
             </Descriptions.Item>
@@ -169,7 +180,7 @@ function Stocks({ userSettings }: { userSettings: UseUserData }) {
               <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
                   value: stockData?.[0]?.['unrealized']['close_value'],
-                  currency: userSettings.data.currency,
+                  currency: userSettings?.data.currency,
                 })}
               </Skeleton>
             </Descriptions.Item>
@@ -184,7 +195,7 @@ function Stocks({ userSettings }: { userSettings: UseUserData }) {
               <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
                   value: stockData?.[0]?.['unrealized']['forex_pl'],
-                  currency: userSettings.data.currency,
+                  currency: userSettings?.data.currency,
                 })}
                 <Divider type="vertical" />
                 {formatPercentageWithColors({
@@ -203,7 +214,7 @@ function Stocks({ userSettings }: { userSettings: UseUserData }) {
               <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
                   value: stockData?.[0]?.['unrealized']['value_pl'],
-                  currency: userSettings.data.currency,
+                  currency: userSettings?.data.currency,
                 })}
                 <Divider type="vertical" />
                 {formatPercentageWithColors({
@@ -222,7 +233,7 @@ function Stocks({ userSettings }: { userSettings: UseUserData }) {
               <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
                   value: stockData?.[0]?.['unrealized']['total_pl'],
-                  currency: userSettings.data.currency,
+                  currency: userSettings?.data.currency,
                 })}
                 <Divider type="vertical" />
                 {formatPercentageWithColors({
@@ -251,7 +262,7 @@ function Stocks({ userSettings }: { userSettings: UseUserData }) {
               <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
                   value: stockData?.[0]?.['realized']['cost_per_share_buy'],
-                  currency: userSettings.data.currency,
+                  currency: userSettings?.data.currency,
                 })}
               </Skeleton>
             </Descriptions.Item>
@@ -259,7 +270,7 @@ function Stocks({ userSettings }: { userSettings: UseUserData }) {
               <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
                   value: stockData?.[0]?.['realized']['cost_per_share_sell'],
-                  currency: userSettings.data.currency,
+                  currency: userSettings?.data.currency,
                 })}
               </Skeleton>
             </Descriptions.Item>
@@ -273,7 +284,7 @@ function Stocks({ userSettings }: { userSettings: UseUserData }) {
               <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
                   value: stockData?.[0]?.['realized']['forex_pl'],
-                  currency: userSettings.data.currency,
+                  currency: userSettings?.data.currency,
                 })}
               </Skeleton>
               <Divider type="vertical" />
@@ -294,7 +305,7 @@ function Stocks({ userSettings }: { userSettings: UseUserData }) {
               <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
                   value: stockData?.[0]?.['realized']['value_pl'],
-                  currency: userSettings.data.currency,
+                  currency: userSettings?.data.currency,
                 })}
                 <Divider type="vertical" />
                 {formatPercentageWithColors({
@@ -313,7 +324,7 @@ function Stocks({ userSettings }: { userSettings: UseUserData }) {
               <Skeleton loading={stockIsLoading} {...DescriptionSkeletonProps}>
                 {formatCurrency({
                   value: stockData?.[0]?.['realized']['total_pl'],
-                  currency: userSettings.data.currency,
+                  currency: userSettings?.data.currency,
                 })}
                 <Divider type="vertical" />
                 {formatPercentageWithColors({
@@ -375,8 +386,8 @@ function Stocks({ userSettings }: { userSettings: UseUserData }) {
                           <Divider className="m-1" />
                           <Text type="secondary">{`transactions costs: ${formatCurrency(
                             {
-                              value: value.transaction_costs,
-                              currency: userSettings.data.currency,
+                              value: value.transaction_cost,
+                              currency: userSettings?.data.currency,
                             }
                           )}`}</Text>
                         </div>
@@ -432,7 +443,7 @@ function Stocks({ userSettings }: { userSettings: UseUserData }) {
         className="mt-2"
       >
         <div className="flex flex-row items-center space-x-2">
-          {stockData?.[0]?.['meta']['links']?.map((link: any) => {
+          {stockData?.[0]?.['meta']['links']?.map((link) => {
             return socialsIcon(link.name, link.url);
           })}
           <Divider type="vertical" />

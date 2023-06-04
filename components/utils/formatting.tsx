@@ -3,17 +3,34 @@ import { RiseOutlined, FallOutlined } from '@ant-design/icons';
 import { currencyCodes } from '../constants/currencyCodes';
 const { Text, Link } = Typography;
 
+type currency = string | undefined;
+
+interface FormatNumberProps {
+  value: number | string | undefined | null;
+  maximumFractionDigits?: number;
+}
+
+interface FormatCurrencyProps extends FormatNumberProps {
+  currency?: currency;
+}
+
+interface FormatCurrencyWithColorsProps extends FormatCurrencyProps {
+  className?: string;
+  addIcon?: boolean;
+}
+
+interface FormatPercentageWithColorsProps extends FormatNumberProps {
+  className?: string;
+  addIcon?: boolean;
+}
+
 function formatCurrency({
   value,
   maximumFractionDigits,
   currency,
-}: {
-  value: number | string | undefined;
-  maximumFractionDigits?: number;
-  currency?: string | undefined;
-}) {
+}: FormatCurrencyProps) {
   if (currency === undefined || currency === '') {
-    return formatNumber(value, maximumFractionDigits);
+    return formatNumber({ value, maximumFractionDigits });
   }
   if (typeof value === 'string') {
     value = parseFloat(value);
@@ -25,7 +42,7 @@ function formatCurrency({
       (obj) => obj.value.toLowerCase() == currency.toLowerCase()
     )
   ) {
-    return formatNumber(value, maximumFractionDigits);
+    return formatNumber({ value, maximumFractionDigits });
   }
 
   return value.toLocaleString('nl-NL', {
@@ -35,7 +52,7 @@ function formatCurrency({
   });
 }
 
-function getCurrencySymbol(currency: string | undefined) {
+function getCurrencySymbol(currency: currency) {
   if (currency === undefined || currency === '') {
     return '';
   }
@@ -53,13 +70,7 @@ function formatCurrencyWithColors({
   currency,
   className = '',
   addIcon = false,
-}: {
-  value: number | string;
-  maximumFractionDigits?: number;
-  currency?: string;
-  className?: string;
-  addIcon?: boolean;
-}) {
+}: FormatCurrencyWithColorsProps) {
   if (typeof value === 'string') {
     value = parseFloat(value);
   }
@@ -72,7 +83,7 @@ function formatCurrencyWithColors({
       (obj) => obj.value.toLowerCase() == currency.toLowerCase()
     )
   ) {
-    var formattedValue = formatNumber(value, maximumFractionDigits);
+    var formattedValue = formatNumber({ value, maximumFractionDigits });
   } else {
     var formattedValue = formatCurrency({
       value,
@@ -98,7 +109,10 @@ function formatCurrencyWithColors({
   return <Text className={className}> formattedValue </Text>;
 }
 
-function formatPercentage(value: number | string, maximumFractionDigits = 2) {
+function formatPercentage({
+  value,
+  maximumFractionDigits = 2,
+}: FormatNumberProps) {
   !value && (value = 0);
 
   if (typeof value === 'string') {
@@ -116,18 +130,13 @@ function formatPercentageWithColors({
   maximumFractionDigits = 2,
   className = '',
   addIcon = false,
-}: {
-  value: number | string | undefined;
-  maximumFractionDigits?: number;
-  className?: string;
-  addIcon?: boolean;
-}) {
+}: FormatPercentageWithColorsProps) {
   if (typeof value === 'string') {
     value = parseFloat(value);
   }
   !value && (value = 0);
 
-  const formattedValue = formatPercentage(value, maximumFractionDigits);
+  const formattedValue = formatPercentage({ value, maximumFractionDigits });
 
   if (value > 0) {
     return (
@@ -146,10 +155,7 @@ function formatPercentageWithColors({
   return <Text className={className}>{formattedValue}</Text>;
 }
 
-function formatNumber(
-  value: number | string | undefined,
-  maximumFractionDigits = 2
-) {
+function formatNumber({ value, maximumFractionDigits = 2 }: FormatNumberProps) {
   if (typeof value === 'string') {
     value = parseFloat(value);
   }

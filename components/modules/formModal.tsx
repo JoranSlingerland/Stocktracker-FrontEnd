@@ -8,34 +8,34 @@ import { TransactionForm, StockForm } from '../elements/Forms';
 import { FormModal } from '../elements/FormModal';
 import useModal from '../hooks/useModal';
 import dayjs from 'dayjs';
+import { useProps } from '../hooks/useProps';
 
 const { Text, Title } = Typography;
 
 const StockFormModal = ({
-  currency,
   parentCallback,
   initialValues,
   isEdit = false,
 }: {
-  currency: string;
   parentCallback: () => void;
-  initialValues?: any;
+  initialValues?: InputTransactionData;
   isEdit?: boolean;
 }): JSX.Element => {
+  const { userSettings } = useProps();
   const [totalValue, setTotalValue] = useState(initialValues?.total_cost || 0);
   const [stockCurrency, setStockCurrency] = useState(
-    initialValues?.currency || currency
+    initialValues?.currency || userSettings?.data.currency
   );
+
   const { form, open, handleOpen, handleClose, handleCloseAndReset } =
     useModal();
 
-  initialValues?.date &&
-    (initialValues.date = dayjs(initialValues.date, 'YYYY-MM-DD'));
+  const dayjsDate = initialValues?.date && dayjs(initialValues.date);
 
-  const handleCreate = async (values: any) => {
+  const handleCreate = async (values: InputTransactionData) => {
     handleClose();
     if (isEdit) {
-      values.id = initialValues.id;
+      values.id = initialValues ? initialValues.id : values.id;
     }
     await addItemToInput({
       body: {
@@ -77,14 +77,19 @@ const StockFormModal = ({
   return (
     <FormModal
       form={StockForm({
-        currency: stockCurrency,
         setTotalValue,
         setCurrency: setStockCurrency,
         form: form,
-        initialValues: initialValues || {
-          transaction_type: 'Buy',
-          currency: currency,
-        },
+        initialValues: isEdit
+          ? {
+              ...initialValues,
+              date: dayjsDate,
+            }
+          : {
+              transaction_type: 'Buy',
+              currency: userSettings?.data.currency,
+              date: dayjs(),
+            },
       })}
       modalProps={modalProps}
       footer={
@@ -108,26 +113,23 @@ const StockFormModal = ({
 };
 
 const TransactionsFormModal = ({
-  currency,
   parentCallback,
   initialValues,
   isEdit = false,
 }: {
-  currency: string;
   parentCallback: () => Promise<void> | void;
-  initialValues?: any;
+  initialValues?: InputInvestedData;
   isEdit?: boolean;
 }): JSX.Element => {
   const { form, open, handleOpen, handleClose, handleCloseAndReset } =
     useModal();
 
-  initialValues?.date &&
-    (initialValues.date = dayjs(initialValues.date, 'YYYY-MM-DD'));
+  const dayjsDate = initialValues?.date && dayjs(initialValues.date);
 
-  const handleCreate = async (values: any) => {
+  const handleCreate = async (values: InputInvestedData) => {
     handleClose();
     if (isEdit) {
-      values.id = initialValues.id;
+      values.id = initialValues ? initialValues.id : values.id;
     }
     await addItemToInput({
       body: {
@@ -169,11 +171,13 @@ const TransactionsFormModal = ({
   return (
     <FormModal
       form={TransactionForm(
-        currency,
         form,
-        initialValues || {
-          transaction_type: 'Deposit',
-        }
+        isEdit
+          ? { ...initialValues, date: dayjsDate }
+          : {
+              transaction_type: 'Deposit',
+              date: dayjs(),
+            }
       )}
       modalProps={modalProps}
       opener={opener}

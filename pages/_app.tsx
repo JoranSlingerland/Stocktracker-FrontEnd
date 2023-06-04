@@ -3,7 +3,6 @@ import '../styles/globals.css';
 import { ConfigProvider } from 'antd';
 import type { AppProps } from 'next/app';
 import { useMemo } from 'react';
-import { TimeFramestate } from '../components/types/types';
 import useSessionStorageState from '../components/hooks/useSessionStorageState';
 import { dataToGetSwitch } from '../components/utils/dateTimeHelpers';
 import Footer from '../components/modules/footer';
@@ -12,15 +11,18 @@ import { useUserData } from '../components/services/user/get';
 import { useTableDataPerformanceTotals } from '../components/services/table/performance/totals';
 import useTheme from '../components/hooks/useTheme';
 import { useUserInfo } from '../components/services/.auth/me';
+import { PropsContext } from '../components/hooks/useProps';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const { data: userInfo } = useUserInfo();
   const userSettings = useUserData();
-  const [timeFrame, setTimeFrame] = useSessionStorageState('timeFrame', 'max');
+  const [timeFrame, setTimeFrame] = useSessionStorageState<
+    TimeFramestate['timeFrame']
+  >('timeFrame', 'max');
   const timeFrameState: TimeFramestate = { timeFrame, setTimeFrame };
   const timeFrameDates = dataToGetSwitch(timeFrame);
   const timeFrameBody = useMemo(() => {
-    const body: any = {};
+    const body: TimeFrameBody = {};
     if (
       timeFrameDates.end_date === 'max' &&
       timeFrameDates.start_date === 'max'
@@ -40,43 +42,45 @@ function MyApp({ Component, pageProps }: AppProps) {
       containerName: 'totals',
     },
   });
-  const { algorithmTheme, className } = useTheme({
-    dark_mode: userSettings.data?.dark_mode || 'system',
-  });
-
-  const props = {
-    userInfo,
-    userSettings,
-    timeFrameState,
-    timeFrameDates,
-    totalPerformance,
-  };
+  const { algorithmTheme, className } = useTheme(
+    userSettings.data?.dark_mode || 'system'
+  );
 
   return (
-    <ConfigProvider
-      theme={{
-        algorithm: algorithmTheme,
-
-        components: {
-          List: {
-            paddingContentHorizontalLG: 0,
-          },
-          Form: {
-            marginLG: 8,
-          },
-        },
+    <PropsContext.Provider
+      value={{
+        userInfo,
+        userSettings,
+        timeFrameState,
+        timeFrameDates,
+        totalPerformance,
       }}
     >
-      <div className={`min-h-screen flex flex-col ${className}`}>
-        <Navbar {...props} />
-        <div className="flex justify-center px-2 xl:px-0">
-          <div className="w-full max-w-7xl">
-            <Component {...pageProps} {...props} />
+      <ConfigProvider
+        theme={{
+          algorithm: algorithmTheme,
+
+          components: {
+            List: {
+              paddingContentHorizontalLG: 0,
+            },
+            Form: {
+              marginLG: 8,
+            },
+          },
+        }}
+      >
+        <div className={`min-h-screen flex flex-col ${className}`}>
+          <Navbar />
+          <div className="flex justify-center px-2 xl:px-0">
+            <div className="w-full max-w-7xl">
+              <Component {...pageProps} />
+            </div>
           </div>
+          <Footer />
         </div>
-        <Footer />
-      </div>
-    </ConfigProvider>
+      </ConfigProvider>
+    </PropsContext.Provider>
   );
 }
 

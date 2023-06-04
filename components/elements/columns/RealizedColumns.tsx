@@ -5,83 +5,90 @@ import {
   formatCurrencyWithColors,
   formatImageAndText,
   formatNumber,
-  formatPercentageWithColors,
+  formatPercentage,
 } from '../../utils/formatting';
+import { useProps } from '../../hooks/useProps';
 
 const { Text } = Typography;
 
-export const RealizedColumns = (currency: string): ColumnsType => [
-  {
-    title: 'Name',
-    dataIndex: 'meta',
-    key: 'meta.name',
-    fixed: 'left',
-    render: (text, record: any) =>
-      formatImageAndText(record.symbol, text.name, record.meta.icon),
-  },
-  {
-    title: 'Cost',
-    dataIndex: 'realized',
-    key: 'realized.buy_price',
-    responsive: ['md'],
-    render: (text) => (
-      <>
-        <Text strong>
-          {formatCurrency({
-            value: text.buy_price,
-            currency: currency,
-          })}
-        </Text>
-        <div className="flex space-x-0.5 flex-row">
-          <Text keyboard> x{formatNumber(text.quantity)} </Text>
-          <Text type="secondary">
+export const RealizedColumns = (): ColumnsType<StocksHeldData> => {
+  const { userSettings } = useProps();
+
+  return [
+    {
+      title: 'Name',
+      dataIndex: 'meta',
+      key: 'meta.name',
+      fixed: 'left',
+      render: (text: MetaData, record) =>
+        formatImageAndText(record.symbol, text.name, record.meta.icon),
+    },
+    {
+      title: 'Cost',
+      dataIndex: 'realized',
+      key: 'realized.buy_price',
+      responsive: ['md'],
+      render: (text: StocksHeldData['realized']) => (
+        <>
+          <Text strong>
             {formatCurrency({
-              value: text.cost_per_share_buy,
-              currency,
+              value: text.buy_price,
+              currency: userSettings?.data.currency,
             })}
           </Text>
-        </div>
-      </>
-    ),
-  },
-  {
-    title: 'Realized',
-    dataIndex: 'realized',
-    key: 'realized.sell_price',
-    render: (text) => (
-      <>
-        <Text strong>
-          {formatCurrency({
-            value: text.sell_price,
-            currency,
-          })}
-        </Text>
-        <div className="flex space-x-0.5 flex-row">
-          <Text className="whitespace-nowrap" keyboard>
-            x{formatNumber(text.quantity)}{' '}
-          </Text>
-          <Text type="secondary">
+          <div className="flex space-x-0.5 flex-row">
+            <Text keyboard> x{formatNumber({ value: text.quantity })} </Text>
+            <Text type="secondary">
+              {formatCurrency({
+                value: text.cost_per_share_buy,
+                currency: userSettings?.data.currency,
+              })}
+            </Text>
+          </div>
+        </>
+      ),
+    },
+    {
+      title: 'Realized',
+      dataIndex: 'realized',
+      key: 'realized.sell_price',
+      render: (text: StocksHeldData['realized']) => (
+        <>
+          <Text strong>
             {formatCurrency({
-              value: text.cost_per_share_sell,
-              currency,
+              value: text.sell_price,
+              currency: userSettings?.data.currency,
             })}
           </Text>
-        </div>
-      </>
-    ),
-  },
-  {
-    title: 'P/L',
-    dataIndex: 'realized',
-    key: 'realized.total_pl',
-    render: (text) => (
-      <>
-        {formatCurrencyWithColors({
-          value: text.total_pl,
-          currency,
-        })}
-        {formatPercentageWithColors({ value: text.total_pl_percentage })}
-      </>
-    ),
-  },
-];
+          <div className="flex space-x-0.5 flex-row">
+            <Text className="whitespace-nowrap" keyboard>
+              x{formatNumber({ value: text.quantity })}{' '}
+            </Text>
+            <Text type="secondary">
+              {formatCurrency({
+                value: text.cost_per_share_sell,
+                currency: userSettings?.data.currency,
+              })}
+            </Text>
+          </div>
+        </>
+      ),
+    },
+    {
+      title: 'P/L',
+      dataIndex: 'realized',
+      key: 'realized.total_pl',
+      render: (text: StocksHeldData['realized']) => (
+        <>
+          {formatCurrencyWithColors({
+            value: text.total_pl,
+            currency: userSettings?.data.currency,
+          })}{' '}
+          <Text type="secondary">
+            {formatPercentage({ value: text.total_pl_percentage })}
+          </Text>
+        </>
+      ),
+    },
+  ];
+};

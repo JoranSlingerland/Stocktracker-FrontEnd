@@ -1,7 +1,8 @@
 import { Table, Skeleton, Empty, TableColumnProps } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+import type { ColumnType, TableProps } from 'antd/es/table';
+import { Key } from 'antd/es/table/interface';
 
-export default function AntdTable({
+export default function AntdTable<T>({
   columns,
   data,
   isLoading,
@@ -12,17 +13,23 @@ export default function AntdTable({
   searchText,
   globalSorter,
 }: {
-  columns: ColumnsType;
-  data: any[] | undefined;
+  columns: ColumnType<T>[];
+  data: T[] | undefined;
   isLoading: boolean;
   caption?: JSX.Element;
   searchEnabled?: boolean;
-  tableProps?: any;
-  columnProps?: TableColumnProps<any>;
-  searchText?: string;
+  tableProps?: TableProps<any>;
+  columnProps?: TableColumnProps<T>;
+  searchText?: string[];
   globalSorter?: boolean;
 }): JSX.Element {
-  const sorterBy = (key: string) => (a: any, b: any) => {
+  const sorterBy = (key: Key | undefined) => (a: any, b: any) => {
+    if (!key) return 0;
+    if (typeof key === 'number') {
+      if (a < b) return -1;
+      if (a > b) return 1;
+      return 0;
+    }
     const keyList = key.split('.');
     keyList.forEach((key) => {
       a = a[key];
@@ -34,13 +41,13 @@ export default function AntdTable({
     return 0;
   };
 
-  const colDataIndexList = columns.map((col: any) => col.dataIndex);
+  const colDataIndexList = columns.map((col) => col.dataIndex);
 
-  columns = columns.map((col: any) => {
+  columns = columns.map((col) => {
     const filterProps: any = {};
     if (searchEnabled) {
       filterProps.filteredValue = searchText;
-      filterProps.onFilter = (value: any, record: any) => {
+      filterProps.onFilter = (value: string, record: T) => {
         // deep copy record
         let searchRecord = JSON.parse(JSON.stringify(record));
         Object.keys(searchRecord).forEach((key) => {

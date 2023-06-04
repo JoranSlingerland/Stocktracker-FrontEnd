@@ -16,14 +16,13 @@ export const InputTransactionsColumns = (
     id: string[],
     container: 'input_invested' | 'input_transactions'
   ) => Promise<void>,
-  parentCallback: () => void,
-  currency: string
-): ColumnsType => [
+  parentCallback: () => void
+): ColumnsType<InputTransactionData> => [
   {
     title: 'Name',
     dataIndex: 'symbol',
     key: 'symbol',
-    render: (text: string, record: any) => (
+    render: (text: string, record) => (
       <div className="min-w-16">
         {formatImageAndText(text, record.meta.name, record.meta.icon)}
       </div>
@@ -40,7 +39,7 @@ export const InputTransactionsColumns = (
     title: 'Cost',
     dataIndex: 'total_cost',
     key: 'total_cost',
-    render: (text, record: any) => (
+    render: (text: number, record) => (
       <div className="min-w-32">
         <Text strong>
           {formatCurrency({
@@ -49,7 +48,7 @@ export const InputTransactionsColumns = (
           })}
         </Text>
         <div className="flex space-x-0.5 flex-row">
-          <Text keyboard> x{formatNumber(record.quantity)} </Text>
+          <Text keyboard> x{formatNumber({ value: record.quantity })} </Text>
           <Text type="secondary">
             {formatCurrency({
               value: record.cost_per_share,
@@ -83,7 +82,7 @@ export const InputTransactionsColumns = (
     key: 'actions',
     width: 60,
     sorter: false,
-    render: (text, record: any) => (
+    render: (text, record) => (
       <div className="flex">
         <Popconfirm
           title="Are you sure you want to delete this item?"
@@ -105,7 +104,6 @@ export const InputTransactionsColumns = (
         <StockFormModal
           parentCallback={parentCallback}
           initialValues={record}
-          currency={currency}
           isEdit={true}
         />
       </div>

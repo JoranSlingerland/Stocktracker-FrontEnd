@@ -4,21 +4,23 @@ import {
   formatPercentageWithColors,
 } from '../utils/formatting';
 import { LineChartData } from '../services/chart/line';
-import { TotalsData } from '../../components/types/types';
+import { useProps } from '../hooks/useProps';
 
 export default function tabs({
   totalPerformanceData,
   valueGrowthData,
   loading,
-  currency,
   tabState,
 }: {
   totalPerformanceData: TotalsData[] | undefined;
   valueGrowthData: LineChartData | undefined;
   loading: boolean;
-  currency: string;
-  tabState: any;
+  tabState: {
+    tab: number;
+    setTab: React.Dispatch<React.SetStateAction<number>>;
+  };
 }): JSX.Element {
+  const { userSettings } = useProps();
   const { tab, setTab } = tabState;
   const firstData = valueGrowthData?.datasets[0]?.data[0] ?? 0;
   const lastData =
@@ -66,7 +68,9 @@ export default function tabs({
         100,
         <Statistic
           value={valueGrowth}
-          formatter={(value) => formatCurrency({ value, currency })}
+          formatter={(value) =>
+            formatCurrency({ value, currency: userSettings?.data.currency })
+          }
           title={valueGrowth > 0 ? 'Value growth' : 'Value loss'}
           className="ml-1"
         ></Statistic>,
@@ -87,7 +91,9 @@ export default function tabs({
         <Statistic
           value={totalPerformanceData?.[0]?.realized.dividends}
           title={'Received dividends'}
-          formatter={(value) => formatCurrency({ value, currency })}
+          formatter={(value) =>
+            formatCurrency({ value, currency: userSettings?.data.currency })
+          }
           className="ml-1"
         />
       )}
@@ -97,7 +103,9 @@ export default function tabs({
         <Statistic
           value={totalPerformanceData?.[0]?.realized.transaction_cost}
           title={'Transaction cost'}
-          formatter={(value) => formatCurrency({ value, currency })}
+          formatter={(value) =>
+            formatCurrency({ value, currency: userSettings?.data.currency })
+          }
           className="ml-1"
         />
       )}
@@ -106,7 +114,9 @@ export default function tabs({
         100,
         <Statistic
           value={totalPerformanceData?.[0]?.unrealized.total_pl}
-          formatter={(value) => formatCurrency({ value, currency })}
+          formatter={(value) =>
+            formatCurrency({ value, currency: userSettings?.data.currency })
+          }
           title={
             totalPerformanceData &&
             totalPerformanceData[0]?.unrealized?.total_pl > 0

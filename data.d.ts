@@ -1,4 +1,4 @@
-interface UserInfo_Type {
+interface UserInfo {
   clientPrincipal: {
     userId: string;
     userRoles: string[];
@@ -13,6 +13,12 @@ interface TimeFramestate {
   setTimeFrame: React.Dispatch<
     React.SetStateAction<'max' | 'year' | 'month' | 'week' | 'ytd'>
   >;
+}
+
+interface TimeFrameBody {
+  endDate?: string;
+  startDate?: string;
+  allData?: boolean;
 }
 
 interface MetaData {
@@ -151,11 +157,16 @@ interface InputTransactionData {
   total_cost: number;
 }
 
-export type {
-  UserInfo_Type,
-  TimeFramestate,
-  TotalsData,
-  StocksHeldData,
-  InputInvestedData,
-  InputTransactionData,
-};
+interface InputTransactionData {
+  symbol: string;
+  date: string;
+  currency: string;
+  cost_per_share: number;
+  quantity: number;
+  transaction_type: string;
+  transaction_cost: number;
+  domain: string;
+  id: string;
+  meta: MetaData;
+  total_cost: number;
+}

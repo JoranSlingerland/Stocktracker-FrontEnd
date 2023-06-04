@@ -1,11 +1,10 @@
-import { TotalsData } from '../../../types/types';
 import { totalsData } from '../../../constants/placeholders';
 import { useFetch } from '../../../hooks/useFetch';
 import { SharedQuery, getTableDataPerformance } from './shared';
 
 // Totals
 interface GetTableDataPerformanceQueryTotals extends SharedQuery {
-  dataType: 'totals';
+  containerName: 'totals';
 }
 
 function useTableDataPerformanceTotals({

@@ -1,32 +1,15 @@
-interface InputObject {
-  date: string;
-  [key: string]: any;
-}
-
-interface OutputObject {
-  date: string;
-  [key: string]: any;
-}
-
-interface OutputArrayItem {
-  month: string;
-  values: OutputObject[];
-}
+import { inputTransactionData } from '../constants/placeholders';
 
 function convertTransactionsArray(
-  inputArray: InputObject[] | undefined
-): OutputArrayItem[] {
-  const outputArray: OutputArrayItem[] = [];
+  inputArray: InputTransactionData[] | undefined
+): { month: string; values: InputTransactionData[] }[] {
+  const outputArray: { month: string; values: InputTransactionData[] }[] = [];
 
   if (!inputArray) {
     return [
       {
         month: '',
-        values: [
-          {
-            date: '',
-          },
-        ],
+        values: [inputTransactionData],
       },
     ];
   }
@@ -39,27 +22,24 @@ function convertTransactionsArray(
     return [
       {
         month: '',
-        values: [
-          {
-            date: '',
-          },
-        ],
+        values: [inputTransactionData],
       },
     ];
   }
 
-  const groupedByMonth: { [month: string]: OutputObject[] } = inputArray.reduce(
-    (acc, obj) => {
-      const date = new Date(obj.date);
-      const month = date.toLocaleString('en-us', { month: 'long' });
-      if (!acc[month]) {
-        acc[month] = [];
-      }
-      acc[month].push(obj);
-      return acc;
-    },
-    {} as { [month: string]: OutputObject[] } // Add index signature
-  );
+  const groupedByMonth: { [month: string]: InputTransactionData[] } =
+    inputArray.reduce(
+      (acc, obj) => {
+        const date = new Date(obj.date);
+        const month = date.toLocaleString('en-us', { month: 'long' });
+        if (!acc[month]) {
+          acc[month] = [];
+        }
+        acc[month].push(obj);
+        return acc;
+      },
+      {} as { [month: string]: InputTransactionData[] } // Add index signature
+    );
 
   for (const [month, values] of Object.entries(groupedByMonth)) {
     outputArray.push({ month, values });

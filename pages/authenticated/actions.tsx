@@ -8,13 +8,12 @@ import {
 import { deleteInputItems } from '../../components/services/input/delete';
 import { InputInvestedColumns } from '../../components/elements/columns/InputInvestedColumns';
 import { InputTransactionsColumns } from '../../components/elements/columns/InputTransactionsColumns';
-import { UseUserData } from '../../components/services/user/get';
 import { useTableDataBasicInputInvested } from '../../components/services/table/basic/inputInvested';
 import { useTableDataBasicInputTransactions } from '../../components/services/table/basic/inputTransactions';
 const { Search } = Input;
 const { Title } = Typography;
 
-export default function Home({ userSettings }: { userSettings: UseUserData }) {
+export default function Home() {
   const {
     data: inputTransactionsData,
     isLoading: inputTransactionsIsloading,
@@ -36,9 +35,10 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
     },
   });
   const [InputTransactionsSearchText, setInputTransactionsSearchText] =
-    useState<any>();
-  const [InputInvestedSearchText, setInputInvestedSearchText] =
-    useState<any>(undefined);
+    useState<string[]>([]);
+  const [InputInvestedSearchText, setInputInvestedSearchText] = useState<
+    string[]
+  >([]);
 
   async function deleteData(
     id: string[],
@@ -52,7 +52,7 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
     }).then(() => {
       if (container === 'input_invested' && inputInvestedData) {
         const newData = inputInvestedData.filter(
-          (item: any) => !id.includes(item.id)
+          (item) => !id.includes(item.id)
         );
         inputInvestedOverwrite(newData);
         inputInvestedRefetch({ cacheOnly: true });
@@ -78,10 +78,8 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
       </Title>
       <AntdTable
         isLoading={inputTransactionsIsloading}
-        columns={InputTransactionsColumns(
-          deleteData,
-          () => inputTransactionsRefetch(),
-          userSettings.data.currency
+        columns={InputTransactionsColumns(deleteData, () =>
+          inputTransactionsRefetch()
         )}
         data={inputTransactionsData}
         globalSorter={true}
@@ -113,7 +111,6 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
             </div>
             <div className="mb-1 ml-auto">
               <StockFormModal
-                currency={userSettings.data.currency}
                 parentCallback={() => inputTransactionsRefetch()}
               />
             </div>
@@ -126,11 +123,7 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
       </Title>
       <AntdTable
         isLoading={inputInvestedIsloading}
-        columns={InputInvestedColumns(
-          userSettings.data.currency,
-          deleteData,
-          () => inputInvestedRefetch()
-        )}
+        columns={InputInvestedColumns(deleteData, () => inputInvestedRefetch())}
         data={inputInvestedData}
         globalSorter={true}
         searchEnabled={true}
@@ -161,7 +154,6 @@ export default function Home({ userSettings }: { userSettings: UseUserData }) {
             </div>
             <div className="ml-auto">
               <TransactionsFormModal
-                currency={userSettings.data.currency}
                 parentCallback={() => inputInvestedRefetch()}
               />
             </div>

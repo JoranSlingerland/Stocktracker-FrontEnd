@@ -2,16 +2,21 @@ import { cachedFetch } from '../../utils/api';
 import { useFetch } from '../../hooks/useFetch';
 
 interface GetBarchartDataQuery {
-  allData: boolean;
+  allData?: boolean;
   startDate?: string;
   endDate?: string;
   dataType: 'dividend' | 'transaction_cost';
 }
 
+interface barChartDataSet {
+  label: string;
+  data: number[];
+  backgroundColor: string;
+}
+
 interface BarChartData {
-  date: string;
-  value: number;
-  category: string;
+  datasets: barChartDataSet[];
+  labels: string[];
 }
 
 async function getBarchartData({
@@ -37,13 +42,11 @@ function useBarchartData({
   query: GetBarchartDataQuery;
   enabled?: boolean;
 }) {
-  const fetchResult = useFetch<undefined, GetBarchartDataQuery, BarChartData[]>(
-    {
-      query,
-      fetchData: getBarchartData,
-      enabled,
-    }
-  );
+  const fetchResult = useFetch<undefined, GetBarchartDataQuery, BarChartData>({
+    query,
+    fetchData: getBarchartData,
+    enabled,
+  });
 
   return fetchResult;
 }
