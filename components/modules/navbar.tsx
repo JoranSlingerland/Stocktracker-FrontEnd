@@ -111,177 +111,173 @@ export default function App() {
     );
   }
 
-  function OverViewBar({ loading }: { loading: boolean }) {
-    return (
-      <div className="w-96 p-2 cursor-default">
-        <div className="flex flex-row">
-          <Text strong>Portfolio Value</Text>
+  const OverViewBar = ({ loading }: { loading: boolean }) => (
+    <div className="w-96 p-2 cursor-default">
+      <div className="flex flex-row">
+        <Text strong>Portfolio Value</Text>
 
-          <Select
-            showArrow={false}
-            className="ml-auto mr-0"
-            defaultValue={timeFrame}
-            style={{ width: 80 }}
-            options={[
-              { value: 'max', label: 'Max' },
-              { value: 'year', label: 'Year' },
-              { value: 'month', label: 'Month' },
-              { value: 'week', label: 'Week' },
-              { value: 'ytd', label: 'YTD' },
-            ]}
-            onChange={(value) => {
-              setTimeFrame(value);
-            }}
-          />
-        </div>
-        <Divider className="m-2" />
-        <div>
-          <Skeleton
-            active={loading}
-            paragraph={false}
-            title={true}
-            loading={loading}
-            className="w-40"
-          >
-            <Statistic
-              value={totalPerformance?.data?.[0]?.unrealized.total_value}
-              formatter={(value) =>
-                formatCurrency({ value, currency: userSettings?.data.currency })
-              }
-            />
-          </Skeleton>
-        </div>
-        <Tabs
-          size="small"
-          activeKey={tab}
-          onChange={(activeKey) => {
-            setTab(activeKey);
-          }}
-          items={[
-            {
-              key: '1',
-              label: 'Total',
-              children: (
-                <div>
-                  {overViewBarRow(
-                    'Value P/L',
-                    totalPerformance?.data?.[0]?.combined.value_pl,
-                    totalPerformance?.data?.[0]?.combined.value_pl_percentage,
-                    loading
-                  )}
-                  {overViewBarRow(
-                    'Forex P/L',
-                    totalPerformance?.data?.[0]?.combined.forex_pl,
-                    totalPerformance?.data?.[0]?.combined.forex_pl_percentage,
-                    loading
-                  )}
-                  {overViewBarRow(
-                    'Dividend',
-                    totalPerformance?.data?.[0]?.realized.dividends,
-                    totalPerformance?.data?.[0]?.realized.dividends_percentage,
-                    loading
-                  )}
-                  {overViewBarRow(
-                    'Fees',
-                    totalPerformance?.data?.[0]?.realized?.transaction_cost
-                      ? totalPerformance?.data[0]?.realized.transaction_cost *
-                          -1
-                      : 0,
-                    totalPerformance?.data?.[0]?.realized
-                      ?.transaction_cost_percentage
-                      ? totalPerformance?.data[0]?.realized
-                          .transaction_cost_percentage * -1
-                      : 0,
-                    loading
-                  )}
-                  <Divider className="m-2" />
-                  {overViewBarRow(
-                    'Total P/L',
-                    totalPerformance?.data?.[0]?.combined.total_pl,
-                    totalPerformance?.data?.[0]?.combined.total_pl_percentage,
-                    loading
-                  )}
-                </div>
-              ),
-            },
-            {
-              key: '2',
-              label: 'Unrealized',
-              children: (
-                <div>
-                  {overViewBarRow(
-                    'Value P/L',
-                    totalPerformance?.data?.[0]?.unrealized.value_pl,
-                    totalPerformance?.data?.[0]?.unrealized.value_pl_percentage,
-                    loading
-                  )}
-                  {overViewBarRow(
-                    'Forex P/L',
-                    totalPerformance?.data?.[0]?.unrealized.forex_pl,
-                    totalPerformance?.data?.[0]?.unrealized.forex_pl_percentage,
-                    loading
-                  )}
-                  <Divider className="m-2" />
-                  {overViewBarRow(
-                    'Total P/L',
-                    totalPerformance?.data?.[0]?.unrealized.total_pl,
-                    totalPerformance?.data?.[0]?.unrealized.total_pl_percentage,
-                    loading
-                  )}
-                </div>
-              ),
-            },
-            {
-              key: '3',
-              label: 'Realized',
-              children: (
-                <div>
-                  {overViewBarRow(
-                    'Value P/L',
-                    totalPerformance?.data?.[0]?.realized.value_pl,
-                    totalPerformance?.data?.[0]?.realized.value_pl_percentage,
-                    loading
-                  )}
-                  {overViewBarRow(
-                    'Forex P/L',
-                    totalPerformance?.data?.[0]?.realized.forex_pl,
-                    totalPerformance?.data?.[0]?.realized.forex_pl_percentage,
-                    loading
-                  )}
-                  {overViewBarRow(
-                    'Dividend',
-                    totalPerformance?.data?.[0]?.realized.dividends,
-                    totalPerformance?.data?.[0]?.realized.dividends_percentage,
-                    loading
-                  )}
-                  {overViewBarRow(
-                    'Fees',
-                    totalPerformance?.data?.[0]?.realized?.transaction_cost
-                      ? totalPerformance?.data[0]?.realized.transaction_cost *
-                          -1
-                      : 0,
-                    totalPerformance?.data?.[0]?.realized
-                      ?.transaction_cost_percentage
-                      ? totalPerformance?.data[0]?.realized
-                          .transaction_cost_percentage * -1
-                      : 0,
-                    loading
-                  )}
-                  <Divider className="m-2" />
-                  {overViewBarRow(
-                    'Total P/L',
-                    totalPerformance?.data?.[0]?.realized.total_pl,
-                    totalPerformance?.data?.[0]?.realized.total_pl_percentage,
-                    loading
-                  )}
-                </div>
-              ),
-            },
+        <Select
+          showArrow={false}
+          className="ml-auto mr-0"
+          defaultValue={timeFrame}
+          style={{ width: 80 }}
+          options={[
+            { value: 'max', label: 'Max' },
+            { value: 'year', label: 'Year' },
+            { value: 'month', label: 'Month' },
+            { value: 'week', label: 'Week' },
+            { value: 'ytd', label: 'YTD' },
           ]}
+          onChange={(value) => {
+            setTimeFrame(value);
+          }}
         />
       </div>
-    );
-  }
+      <Divider className="m-2" />
+      <div>
+        <Skeleton
+          active={loading}
+          paragraph={false}
+          title={true}
+          loading={loading}
+          className="w-40"
+        >
+          <Statistic
+            value={totalPerformance?.data?.[0]?.unrealized.total_value}
+            formatter={(value) =>
+              formatCurrency({ value, currency: userSettings?.data.currency })
+            }
+          />
+        </Skeleton>
+      </div>
+      <Tabs
+        size="small"
+        activeKey={tab}
+        onChange={(activeKey) => {
+          setTab(activeKey);
+        }}
+        items={[
+          {
+            key: '1',
+            label: 'Total',
+            children: (
+              <div>
+                {overViewBarRow(
+                  'Value P/L',
+                  totalPerformance?.data?.[0]?.combined.value_pl,
+                  totalPerformance?.data?.[0]?.combined.value_pl_percentage,
+                  loading
+                )}
+                {overViewBarRow(
+                  'Forex P/L',
+                  totalPerformance?.data?.[0]?.combined.forex_pl,
+                  totalPerformance?.data?.[0]?.combined.forex_pl_percentage,
+                  loading
+                )}
+                {overViewBarRow(
+                  'Dividend',
+                  totalPerformance?.data?.[0]?.realized.dividends,
+                  totalPerformance?.data?.[0]?.realized.dividends_percentage,
+                  loading
+                )}
+                {overViewBarRow(
+                  'Fees',
+                  totalPerformance?.data?.[0]?.realized?.transaction_cost
+                    ? totalPerformance?.data[0]?.realized.transaction_cost * -1
+                    : 0,
+                  totalPerformance?.data?.[0]?.realized
+                    ?.transaction_cost_percentage
+                    ? totalPerformance?.data[0]?.realized
+                        .transaction_cost_percentage * -1
+                    : 0,
+                  loading
+                )}
+                <Divider className="m-2" />
+                {overViewBarRow(
+                  'Total P/L',
+                  totalPerformance?.data?.[0]?.combined.total_pl,
+                  totalPerformance?.data?.[0]?.combined.total_pl_percentage,
+                  loading
+                )}
+              </div>
+            ),
+          },
+          {
+            key: '2',
+            label: 'Unrealized',
+            children: (
+              <div>
+                {overViewBarRow(
+                  'Value P/L',
+                  totalPerformance?.data?.[0]?.unrealized.value_pl,
+                  totalPerformance?.data?.[0]?.unrealized.value_pl_percentage,
+                  loading
+                )}
+                {overViewBarRow(
+                  'Forex P/L',
+                  totalPerformance?.data?.[0]?.unrealized.forex_pl,
+                  totalPerformance?.data?.[0]?.unrealized.forex_pl_percentage,
+                  loading
+                )}
+                <Divider className="m-2" />
+                {overViewBarRow(
+                  'Total P/L',
+                  totalPerformance?.data?.[0]?.unrealized.total_pl,
+                  totalPerformance?.data?.[0]?.unrealized.total_pl_percentage,
+                  loading
+                )}
+              </div>
+            ),
+          },
+          {
+            key: '3',
+            label: 'Realized',
+            children: (
+              <div>
+                {overViewBarRow(
+                  'Value P/L',
+                  totalPerformance?.data?.[0]?.realized.value_pl,
+                  totalPerformance?.data?.[0]?.realized.value_pl_percentage,
+                  loading
+                )}
+                {overViewBarRow(
+                  'Forex P/L',
+                  totalPerformance?.data?.[0]?.realized.forex_pl,
+                  totalPerformance?.data?.[0]?.realized.forex_pl_percentage,
+                  loading
+                )}
+                {overViewBarRow(
+                  'Dividend',
+                  totalPerformance?.data?.[0]?.realized.dividends,
+                  totalPerformance?.data?.[0]?.realized.dividends_percentage,
+                  loading
+                )}
+                {overViewBarRow(
+                  'Fees',
+                  totalPerformance?.data?.[0]?.realized?.transaction_cost
+                    ? totalPerformance?.data[0]?.realized.transaction_cost * -1
+                    : 0,
+                  totalPerformance?.data?.[0]?.realized
+                    ?.transaction_cost_percentage
+                    ? totalPerformance?.data[0]?.realized
+                        .transaction_cost_percentage * -1
+                    : 0,
+                  loading
+                )}
+                <Divider className="m-2" />
+                {overViewBarRow(
+                  'Total P/L',
+                  totalPerformance?.data?.[0]?.realized.total_pl,
+                  totalPerformance?.data?.[0]?.realized.total_pl_percentage,
+                  loading
+                )}
+              </div>
+            ),
+          },
+        ]}
+      />
+    </div>
+  );
 
   const navItems: MenuItem[] = [
     {
@@ -353,7 +349,7 @@ export default function App() {
               <Text>
                 {formatPercentageWithColors({
                   value:
-                    totalPerformance?.data?.[0]?.unrealized.value_pl_percentage,
+                    totalPerformance?.data?.[0]?.combined?.total_pl_percentage,
                   addIcon: true,
                 })}
               </Text>
